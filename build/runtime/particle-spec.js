@@ -14,6 +14,7 @@ import { InterfaceType, SlotType, Type } from './type.js';
 import { createCheck } from './particle-check.js';
 import { createParticleClaim } from './particle-claim.js';
 import { Flags } from './flags.js';
+import * as AstNode from './manifest-ast-nodes.js';
 function asType(t) {
     return (t instanceof Type) ? t : Type.fromLiteral(t);
 }
@@ -272,7 +273,7 @@ export class ParticleSpec {
                 results.push(`${indent}${connection.direction}${connection.isOptional ? '?' : ''} ${connection.type.toString()} ${connection.name}${tags}`);
             }
             else {
-                results.push(`${indent}${connection.name}: ${connection.direction}${connection.isOptional ? '?' : ''} ${connection.type.toString()}${tags}`);
+                results.push(`${indent}${connection.name}: ${AstNode.preSlandlesDirectionToDirection(connection.direction, connection.isOptional)} ${connection.type.toString()}${tags}`);
             }
             for (const dependent of connection.dependentConnections) {
                 writeConnection(dependent, indent + '  ');
@@ -311,7 +312,7 @@ export class ParticleSpec {
             }
             else {
                 tokens.push(`${s.name}:`);
-                tokens.push(`${direction}${s.isRequired ? '' : '?'}`);
+                tokens.push(`${direction}s${s.isRequired ? '' : '?'}`);
                 const fieldSet = [];
                 // TODO(jopra): Move the formFactor and handle to the slot type information.
                 if (s.formFactor) {
@@ -322,7 +323,7 @@ export class ParticleSpec {
                 }
                 const fields = (fieldSet.length !== 0) ? ` {${fieldSet.join(', ')}}` : '';
                 if (s.isSet) {
-                    tokens.push(`[Slot]${fields}`);
+                    tokens.push(`[Slot${fields}]`);
                 }
                 else {
                     tokens.push(`Slot${fields}`);
@@ -392,7 +393,7 @@ export class ParticleSpec {
                             }
                         }
                         else if (!handle.isInput) {
-                            throw new Error(`Can't make a check on handle ${handleName} (not an input handle).`);
+                            throw new Error(`Can't make a check on handle ${handleName} with direction ${handle.direction} (not an input handle).`);
                         }
                         if (handle.check) {
                             throw new Error(`Can't make multiple checks on the same input (${handleName}).`);

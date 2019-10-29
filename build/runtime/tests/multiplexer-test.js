@@ -53,18 +53,18 @@ describe('Multiplexer', () => {
         await arc.idle;
         assert.strictEqual(slotsCreated, 3);
     });
-    it('SLANDLES Processes multiple inputs', Flags.withPostSlandlesSyntax(async () => {
+    it('SLANDLES SYNTAX Processes multiple inputs', Flags.withPostSlandlesSyntax(async () => {
         const manifest = await Manifest.parse(`
       import 'src/runtime/tests/artifacts/Common/SLANDLESMultiplexer.arcs'
       import 'src/runtime/tests/artifacts/SLANDLEStest-particles.arcs'
 
       recipe
+        slot0: slot 'rootslotid-slotid'
         handle0: use 'test:1'
-        slot0: \`slot 'rootslotid-slotid'
         SlandleMultiplexer
-          hostedParticle: host SlandleConsumerParticle
-          annotation: \`consume slot0
-          list: in handle0
+          hostedParticle: any SlandleConsumerParticle
+          annotation: consumes slot0
+          list: reads handle0
     `, { loader: new Loader(), fileName: '' });
         const recipe = manifest.recipes[0];
         const barType = checkDefined(manifest.findTypeByName('Bar'));

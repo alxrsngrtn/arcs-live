@@ -8,11 +8,12 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { BigCollectionType, CollectionType, Type, TypeVariable } from '../type.js';
+import { Direction } from '../manifest-ast-nodes.js';
 export interface TypeListInfo {
     type: Type;
-    direction?: string;
+    direction?: Direction;
     connection?: {
-        direction: string;
+        direction: Direction;
     };
 }
 export declare class TypeChecker {

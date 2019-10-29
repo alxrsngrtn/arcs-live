@@ -10,6 +10,7 @@
 import { assert } from '../platform/assert-web.js';
 import { TypeChecker } from './recipe/type-checker.js';
 import { Type, TypeVariable } from './type.js';
+import * as AstNode from './manifest-ast-nodes.js';
 import { Flags } from './flags.js';
 function _typeFromLiteral(member) {
     return Type.fromLiteral(member);
@@ -126,7 +127,8 @@ export class InterfaceInfo {
             }
             else {
                 const nameStr = h.name ? `${h.name}: ` : '';
-                return `  ${nameStr}${h.direction || 'any'} ${h.type.toString()}`;
+                const direction = AstNode.preSlandlesDirectionToDirection(h.direction || 'any');
+                return `  ${nameStr}${direction} ${h.type.toString()}`;
             }
         }).join('\n');
     }
@@ -139,7 +141,7 @@ export class InterfaceInfo {
             }
             else {
                 const nameStr = slot.name ? `${slot.name}: ` : '';
-                return `  ${nameStr}${slot.direction || 'any'}${slot.isRequired ? '' : '?'} ${slot.isSet ? '[Slot]' : 'Slot'}`;
+                return `  ${nameStr}${slot.direction}s${slot.isRequired ? '' : '?'} ${slot.isSet ? '[Slot]' : 'Slot'}`;
             }
         })
             .join('\n');

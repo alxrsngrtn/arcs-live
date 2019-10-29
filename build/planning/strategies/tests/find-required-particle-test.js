@@ -12,8 +12,9 @@ import { Manifest } from '../../../runtime/manifest.js';
 import { StubLoader } from '../../../runtime/testing/stub-loader.js';
 import { FindRequiredParticle } from '../../strategies/find-required-particle.js';
 import { StrategyTestHelper } from '../../testing/strategy-test-helper.js';
+import { Flags } from '../../../runtime/flags.js';
 describe('FindRequiredParticles', () => {
-    it('find single required particle that provides a slot', async () => {
+    it('find single required particle that provides a slot', Flags.withPreSlandlesSyntax(async () => {
         const loader = new StubLoader({
             '*': `defineParticle(({Particle}) => class Noop extends Particle {});`
         });
@@ -50,7 +51,7 @@ describe('FindRequiredParticles', () => {
         assert.isTrue(recipe.isResolved());
         await arc.instantiate(recipe);
         assert.isTrue(arc.activeRecipe.normalize());
-    });
+    }));
     it('find single required particle that consumes slot', async () => {
         const loader = new StubLoader({
             '*': `defineParticle(({Particle}) => class Noop extends Particle {});`

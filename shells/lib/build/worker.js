@@ -91,8 +91,8 @@
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* WEBPACK VAR INJECTION */(function(global) {/* harmony import */ var _build_runtime_particle_execution_context_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2);
-/* harmony import */ var _build_platform_loader_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(48);
-/* harmony import */ var _build_runtime_id_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(19);
+/* harmony import */ var _build_platform_loader_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(49);
+/* harmony import */ var _build_runtime_id_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(20);
 /**
  * @license
  * Copyright 2019 Google LLC.
@@ -153,13 +153,13 @@ __webpack_require__.r(__webpack_exports__);
 /* WEBPACK VAR INJECTION */(function(global) {/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ParticleExecutionContext", function() { return ParticleExecutionContext; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 /* harmony import */ var _api_channel_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(4);
-/* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(14);
-/* harmony import */ var _slot_proxy_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(44);
-/* harmony import */ var _storage_proxy_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(16);
-/* harmony import */ var _storageNG_storage_proxy_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(26);
-/* harmony import */ var _wasm_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(45);
-/* harmony import */ var _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(15);
-/* harmony import */ var _flags_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(10);
+/* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(15);
+/* harmony import */ var _slot_proxy_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(45);
+/* harmony import */ var _storage_proxy_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(17);
+/* harmony import */ var _storageNG_storage_proxy_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(27);
+/* harmony import */ var _wasm_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(46);
+/* harmony import */ var _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(16);
+/* harmony import */ var _flags_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(11);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -556,8 +556,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 /* harmony import */ var _particle_spec_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(5);
 /* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(8);
-/* harmony import */ var _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(15);
-/* harmony import */ var _util_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(31);
+/* harmony import */ var _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(16);
+/* harmony import */ var _util_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(32);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -1187,9 +1187,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modality_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6);
 /* harmony import */ var _recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(7);
 /* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(8);
-/* harmony import */ var _particle_check_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(42);
-/* harmony import */ var _particle_claim_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(43);
-/* harmony import */ var _flags_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(10);
+/* harmony import */ var _particle_check_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(43);
+/* harmony import */ var _particle_claim_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(44);
+/* harmony import */ var _flags_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(11);
+/* harmony import */ var _manifest_ast_nodes_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(10);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -1199,6 +1200,7 @@ __webpack_require__.r(__webpack_exports__);
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+
 
 
 
@@ -1464,7 +1466,7 @@ class ParticleSpec {
                 results.push(`${indent}${connection.direction}${connection.isOptional ? '?' : ''} ${connection.type.toString()} ${connection.name}${tags}`);
             }
             else {
-                results.push(`${indent}${connection.name}: ${connection.direction}${connection.isOptional ? '?' : ''} ${connection.type.toString()}${tags}`);
+                results.push(`${indent}${connection.name}: ${_manifest_ast_nodes_js__WEBPACK_IMPORTED_MODULE_7__["preSlandlesDirectionToDirection"](connection.direction, connection.isOptional)} ${connection.type.toString()}${tags}`);
             }
             for (const dependent of connection.dependentConnections) {
                 writeConnection(dependent, indent + '  ');
@@ -1503,7 +1505,7 @@ class ParticleSpec {
             }
             else {
                 tokens.push(`${s.name}:`);
-                tokens.push(`${direction}${s.isRequired ? '' : '?'}`);
+                tokens.push(`${direction}s${s.isRequired ? '' : '?'}`);
                 const fieldSet = [];
                 // TODO(jopra): Move the formFactor and handle to the slot type information.
                 if (s.formFactor) {
@@ -1514,7 +1516,7 @@ class ParticleSpec {
                 }
                 const fields = (fieldSet.length !== 0) ? ` {${fieldSet.join(', ')}}` : '';
                 if (s.isSet) {
-                    tokens.push(`[Slot]${fields}`);
+                    tokens.push(`[Slot${fields}]`);
                 }
                 else {
                     tokens.push(`Slot${fields}`);
@@ -1584,7 +1586,7 @@ class ParticleSpec {
                             }
                         }
                         else if (!handle.isInput) {
-                            throw new Error(`Can't make a check on handle ${handleName} (not an input handle).`);
+                            throw new Error(`Can't make a check on handle ${handleName} with direction ${handle.direction} (not an input handle).`);
                         }
                         if (handle.check) {
                             throw new Error(`Can't make multiple checks on the same input (${handleName}).`);
@@ -2012,14 +2014,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ArcType", function() { return ArcType; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "HandleType", function() { return HandleType; });
 /* harmony import */ var _interface_info_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(9);
-/* harmony import */ var _schema_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(11);
-/* harmony import */ var _slot_info_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(38);
-/* harmony import */ var _synthetic_types_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(39);
-/* harmony import */ var _type_variable_info_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(40);
-/* harmony import */ var _crdt_crdt_count_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(41);
-/* harmony import */ var _crdt_crdt_collection_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(23);
-/* harmony import */ var _crdt_crdt_singleton_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(25);
-/* harmony import */ var _storageNG_handle_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(22);
+/* harmony import */ var _schema_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(12);
+/* harmony import */ var _slot_info_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(39);
+/* harmony import */ var _synthetic_types_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(40);
+/* harmony import */ var _type_variable_info_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(41);
+/* harmony import */ var _crdt_crdt_count_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(42);
+/* harmony import */ var _crdt_crdt_collection_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(24);
+/* harmony import */ var _crdt_crdt_singleton_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(26);
+/* harmony import */ var _storageNG_handle_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(23);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -2759,7 +2761,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 /* harmony import */ var _recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(7);
 /* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(8);
-/* harmony import */ var _flags_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(10);
+/* harmony import */ var _manifest_ast_nodes_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(10);
+/* harmony import */ var _flags_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(11);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -2769,6 +2772,7 @@ __webpack_require__.r(__webpack_exports__);
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+
 
 
 
@@ -2883,12 +2887,13 @@ class InterfaceInfo {
     _handleConnectionsToManifestString() {
         return this.handleConnections
             .map(h => {
-            if (_flags_js__WEBPACK_IMPORTED_MODULE_3__["Flags"].usePreSlandlesSyntax) {
+            if (_flags_js__WEBPACK_IMPORTED_MODULE_4__["Flags"].usePreSlandlesSyntax) {
                 return `  ${h.direction || 'any'} ${h.type.toString()} ${h.name ? h.name : '*'}`;
             }
             else {
                 const nameStr = h.name ? `${h.name}: ` : '';
-                return `  ${nameStr}${h.direction || 'any'} ${h.type.toString()}`;
+                const direction = _manifest_ast_nodes_js__WEBPACK_IMPORTED_MODULE_3__["preSlandlesDirectionToDirection"](h.direction || 'any');
+                return `  ${nameStr}${direction} ${h.type.toString()}`;
             }
         }).join('\n');
     }
@@ -2896,12 +2901,12 @@ class InterfaceInfo {
         // TODO deal with isRequired
         return this.slots
             .map(slot => {
-            if (_flags_js__WEBPACK_IMPORTED_MODULE_3__["Flags"].usePreSlandlesSyntax) {
+            if (_flags_js__WEBPACK_IMPORTED_MODULE_4__["Flags"].usePreSlandlesSyntax) {
                 return `  ${slot.isRequired ? 'must ' : ''}${slot.direction} ${slot.isSet ? 'set of ' : ''}${slot.name || ''}`;
             }
             else {
                 const nameStr = slot.name ? `${slot.name}: ` : '';
-                return `  ${nameStr}${slot.direction || 'any'}${slot.isRequired ? '' : '?'} ${slot.isSet ? '[Slot]' : 'Slot'}`;
+                return `  ${nameStr}${slot.direction}s${slot.isRequired ? '' : '?'} ${slot.isSet ? '[Slot]' : 'Slot'}`;
             }
         })
             .join('\n');
@@ -3175,6 +3180,136 @@ ${this._slotsToManifestString()}`;
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "BaseNode", function() { return BaseNode; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isCollectionType", function() { return isCollectionType; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isTypeVariable", function() { return isTypeVariable; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isSlotType", function() { return isSlotType; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "slandleType", function() { return slandleType; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "preSlandlesDirectionToDirection", function() { return preSlandlesDirectionToDirection; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "directionToPreSlandlesDirection", function() { return directionToPreSlandlesDirection; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "arrowToDirection", function() { return arrowToDirection; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "directionToArrow", function() { return directionToArrow; });
+/**
+ * A base token interface for the `kind` and `location` entries. This creates
+ * a TypeScript Discriminated Union for most tokens.
+ */
+class BaseNode {
+}
+function isCollectionType(node) {
+    return node.kind === 'collection-type';
+}
+function isTypeVariable(node) {
+    return node.kind === 'variable-type';
+}
+function isSlotType(node) {
+    return node.kind === 'slot-type';
+}
+function slandleType(arg) {
+    if (isSlotType(arg.type)) {
+        return arg.type;
+    }
+    if (isCollectionType(arg.type) && isSlotType(arg.type.type)) {
+        return arg.type.type;
+    }
+    return undefined;
+}
+function preSlandlesDirectionToDirection(direction, isOptional = false) {
+    // TODO(jopra): Remove after syntax unification.
+    // Use switch for totality checking.
+    const opt = isOptional ? '?' : '';
+    switch (direction) {
+        case 'in':
+            return `reads${opt}`;
+        case 'out':
+            return `writes${opt}`;
+        case 'inout':
+            return `reads${opt} writes${opt}`;
+        case '`consume':
+            return `\`consumes${opt}`;
+        case '`provide':
+            return `\`provides${opt}`;
+        case 'host':
+            return `hosts${opt}`;
+        case 'any':
+            return `any${opt}`;
+        default:
+            // Catch nulls and unsafe values from javascript.
+            throw new Error(`Bad pre slandles direction ${direction}`);
+    }
+}
+function directionToPreSlandlesDirection(direction) {
+    // TODO(jopra): Remove after syntax unification.
+    // Use switch for totality checking.
+    switch (direction) {
+        case 'reads':
+            return 'in';
+        case 'writes':
+            return 'out';
+        case 'reads writes':
+            return 'inout';
+        case '`consumes':
+            return '`consume';
+        case '`provides':
+            return '`provide';
+        case 'hosts':
+            return 'host';
+        case 'any':
+            return 'any';
+        default:
+            // Catch nulls and unsafe values from javascript.
+            throw new Error(`Bad direction ${direction}`);
+    }
+}
+function arrowToDirection(arrow) {
+    // TODO(jopra): Remove after syntax unification.
+    // Use switch for totality checking.
+    switch (arrow) {
+        case '->':
+            return 'out';
+        case '<-':
+            return 'in';
+        case '<->':
+            return 'inout';
+        case '`consume':
+            return '`consume';
+        case '`provide':
+            return '`provide';
+        case '=':
+            return 'any';
+        default:
+            // Catch nulls and unsafe values from javascript.
+            throw new Error(`Bad arrow ${arrow}`);
+    }
+}
+function directionToArrow(dir) {
+    // TODO(jopra): Remove after syntax unification.
+    switch (dir) {
+        case 'in':
+            return '<-';
+        case 'out':
+            return '->';
+        case 'inout':
+            return '<->';
+        case 'host':
+            return '=';
+        case '`consume':
+            return '`consume';
+        case '`provide':
+            return '`provide';
+        case 'any':
+            return '=';
+        default:
+            throw new Error(`Unexpected direction ${dir}`);
+    }
+}
+//# sourceMappingURL=manifest-ast-nodes.js.map
+
+/***/ }),
+/* 11 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Flags", function() { return Flags; });
 /**
  * @license
@@ -3224,16 +3359,16 @@ Flags.reset();
 //# sourceMappingURL=flags.js.map
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Schema", function() { return Schema; });
-/* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(12);
+/* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(13);
 /* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(8);
-/* harmony import */ var _crdt_crdt_entity_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(34);
-/* harmony import */ var _crdt_crdt_singleton_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(25);
+/* harmony import */ var _crdt_crdt_entity_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(35);
+/* harmony import */ var _crdt_crdt_singleton_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(26);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -3437,7 +3572,7 @@ class Schema {
 //# sourceMappingURL=schema.js.map
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3445,9 +3580,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Entity", function() { return Entity; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 /* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(8);
-/* harmony import */ var _reference_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(13);
+/* harmony import */ var _reference_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(14);
 /* harmony import */ var _recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(7);
-/* harmony import */ var _symbols_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(21);
+/* harmony import */ var _symbols_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(22);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -3829,7 +3964,7 @@ function sanitizeEntry(type, value, name, context) {
 //# sourceMappingURL=entity.js.map
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3837,11 +3972,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Reference", function() { return Reference; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ClientReference", function() { return ClientReference; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(14);
+/* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(15);
 /* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(8);
-/* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(12);
-/* harmony import */ var _symbols_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(21);
-/* harmony import */ var _storageNG_handle_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(22);
+/* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(13);
+/* harmony import */ var _symbols_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(22);
+/* harmony import */ var _storageNG_handle_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(23);
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -3942,7 +4077,7 @@ class ClientReference extends Reference {
 //# sourceMappingURL=reference.js.map
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3954,16 +4089,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "handleFor", function() { return handleFor; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "unifiedHandleFor", function() { return unifiedHandleFor; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(15);
+/* harmony import */ var _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(16);
 /* harmony import */ var _particle_spec_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(5);
-/* harmony import */ var _reference_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(13);
-/* harmony import */ var _storage_proxy_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(16);
+/* harmony import */ var _reference_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(14);
+/* harmony import */ var _storage_proxy_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(17);
 /* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(8);
-/* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(12);
-/* harmony import */ var _id_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(19);
-/* harmony import */ var _symbols_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(21);
-/* harmony import */ var _storageNG_handle_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(22);
-/* harmony import */ var _storageNG_storage_proxy_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(26);
+/* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(13);
+/* harmony import */ var _id_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(20);
+/* harmony import */ var _symbols_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(22);
+/* harmony import */ var _storageNG_handle_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(23);
+/* harmony import */ var _storageNG_storage_proxy_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(27);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -4415,7 +4550,7 @@ function unifiedHandleFor(opts) {
 //# sourceMappingURL=handle.js.map
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4505,7 +4640,7 @@ registerSystemExceptionHandler((exception) => {
 //# sourceMappingURL=arc-exceptions.js.map
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4517,12 +4652,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "NoOpStorageProxy", function() { return NoOpStorageProxy; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "StorageProxyScheduler", function() { return StorageProxyScheduler; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _platform_sourcemapped_stacktrace_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(17);
-/* harmony import */ var _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(15);
-/* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(14);
-/* harmony import */ var _storage_crdt_collection_model_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(18);
+/* harmony import */ var _platform_sourcemapped_stacktrace_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(18);
+/* harmony import */ var _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(16);
+/* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(15);
+/* harmony import */ var _storage_crdt_collection_model_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(19);
 /* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(8);
-/* harmony import */ var _id_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(19);
+/* harmony import */ var _id_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(20);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -5160,7 +5295,7 @@ class StorageProxyScheduler {
 //# sourceMappingURL=storage-proxy.js.map
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5182,7 +5317,7 @@ const mapStackTrace = (x, f) => f([x]);
 //# sourceMappingURL=sourcemapped-stacktrace-node.js.map
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5311,7 +5446,7 @@ class CrdtCollectionModel {
 //# sourceMappingURL=crdt-collection-model.js.map
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5319,7 +5454,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "IdGenerator", function() { return IdGenerator; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Id", function() { return Id; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ArcId", function() { return ArcId; });
-/* harmony import */ var _random_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(20);
+/* harmony import */ var _random_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(21);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -5430,7 +5565,7 @@ class ArcId extends Id {
 //# sourceMappingURL=id.js.map
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5465,7 +5600,7 @@ class Random {
 //# sourceMappingURL=random.js.map
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5487,7 +5622,7 @@ const SYMBOL_INTERNALS = Symbol('internals');
 //# sourceMappingURL=symbols.js.map
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5498,14 +5633,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SingletonHandle", function() { return SingletonHandle; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "handleNGFor", function() { return handleNGFor; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(15);
-/* harmony import */ var _crdt_crdt_collection_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(23);
-/* harmony import */ var _crdt_crdt_singleton_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(25);
-/* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(12);
-/* harmony import */ var _id_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(19);
+/* harmony import */ var _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(16);
+/* harmony import */ var _crdt_crdt_collection_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(24);
+/* harmony import */ var _crdt_crdt_singleton_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(26);
+/* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(13);
+/* harmony import */ var _id_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(20);
 /* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(8);
-/* harmony import */ var _storage_proxy_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(26);
-/* harmony import */ var _symbols_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(21);
+/* harmony import */ var _storage_proxy_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(27);
+/* harmony import */ var _symbols_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(22);
 /**
  * @license
  * Copyright (c) 2019 Google Inc. All rights reserved.
@@ -5748,7 +5883,7 @@ function handleNGFor(key, storageProxy, idGenerator, particle, canRead, canWrite
 //# sourceMappingURL=handle.js.map
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5756,7 +5891,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CollectionOpTypes", function() { return CollectionOpTypes; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CRDTCollection", function() { return CRDTCollection; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "simplifyFastForwardOp", function() { return simplifyFastForwardOp; });
-/* harmony import */ var _crdt_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(24);
+/* harmony import */ var _crdt_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(25);
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(3);
 /**
  * @license
@@ -6009,7 +6144,7 @@ function getSingleActorIncrement(oldVersion, newVersion) {
 //# sourceMappingURL=crdt-collection.js.map
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -6042,15 +6177,15 @@ var ChangeType;
 //# sourceMappingURL=crdt.js.map
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SingletonOpTypes", function() { return SingletonOpTypes; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CRDTSingleton", function() { return CRDTSingleton; });
-/* harmony import */ var _crdt_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(24);
-/* harmony import */ var _crdt_collection_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(23);
+/* harmony import */ var _crdt_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(25);
+/* harmony import */ var _crdt_collection_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(24);
 /**
  * @license
  * Copyright (c) 2019 Google Inc. All rights reserved.
@@ -6135,7 +6270,7 @@ class CRDTSingleton {
 //# sourceMappingURL=crdt-singleton.js.map
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -6143,11 +6278,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "StorageProxy", function() { return StorageProxy; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "NoOpStorageProxy", function() { return NoOpStorageProxy; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "StorageProxyScheduler", function() { return StorageProxyScheduler; });
-/* harmony import */ var _platform_sourcemapped_stacktrace_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(17);
-/* harmony import */ var _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(15);
-/* harmony import */ var _crdt_crdt_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(24);
+/* harmony import */ var _platform_sourcemapped_stacktrace_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(18);
+/* harmony import */ var _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(16);
+/* harmony import */ var _crdt_crdt_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(25);
 /* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(8);
-/* harmony import */ var _store_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(27);
+/* harmony import */ var _store_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(28);
 /**
  * @license
  * Copyright (c) 2019 Google Inc. All rights reserved.
@@ -6452,23 +6587,23 @@ class StorageProxyScheduler {
 //# sourceMappingURL=storage-proxy.js.map
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Store", function() { return Store; });
-/* harmony import */ var _drivers_driver_factory_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(28);
-/* harmony import */ var _store_interface_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(29);
+/* harmony import */ var _drivers_driver_factory_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(29);
+/* harmony import */ var _store_interface_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(30);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ActiveStore", function() { return _store_interface_js__WEBPACK_IMPORTED_MODULE_1__["ActiveStore"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ProxyMessageType", function() { return _store_interface_js__WEBPACK_IMPORTED_MODULE_1__["ProxyMessageType"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "StorageMode", function() { return _store_interface_js__WEBPACK_IMPORTED_MODULE_1__["StorageMode"]; });
 
-/* harmony import */ var _direct_store_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(30);
-/* harmony import */ var _reference_mode_store_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(32);
-/* harmony import */ var _unified_store_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(36);
+/* harmony import */ var _direct_store_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(31);
+/* harmony import */ var _reference_mode_store_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(33);
+/* harmony import */ var _unified_store_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(37);
 /**
  * @license
  * Copyright (c) 2019 Google Inc. All rights reserved.
@@ -6544,7 +6679,7 @@ Store.constructors = new Map([
 //# sourceMappingURL=store.js.map
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -6613,7 +6748,7 @@ DriverFactory.providers = new Set();
 //# sourceMappingURL=driver-factory.js.map
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -6695,17 +6830,17 @@ class ActiveStore {
 //# sourceMappingURL=store-interface.js.map
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DirectStoreState", function() { return DirectStoreState; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DirectStore", function() { return DirectStore; });
-/* harmony import */ var _crdt_crdt_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(24);
-/* harmony import */ var _drivers_driver_factory_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(28);
-/* harmony import */ var _store_interface_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(29);
-/* harmony import */ var _util_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(31);
+/* harmony import */ var _crdt_crdt_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(25);
+/* harmony import */ var _drivers_driver_factory_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(29);
+/* harmony import */ var _store_interface_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(30);
+/* harmony import */ var _util_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(32);
 /**
  * @license
  * Copyright (c) 2019 Google Inc. All rights reserved.
@@ -6972,7 +7107,7 @@ class DirectStore extends _store_interface_js__WEBPACK_IMPORTED_MODULE_2__["Acti
 //# sourceMappingURL=direct-store.js.map
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -7065,7 +7200,7 @@ function noAwait(result) { }
 //# sourceMappingURL=util.js.map
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -7074,13 +7209,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ReferenceSingleton", function() { return ReferenceSingleton; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ReferenceModeStorageKey", function() { return ReferenceModeStorageKey; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ReferenceModeStore", function() { return ReferenceModeStore; });
-/* harmony import */ var _crdt_crdt_singleton_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(25);
-/* harmony import */ var _crdt_crdt_collection_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(23);
-/* harmony import */ var _store_interface_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(29);
-/* harmony import */ var _backing_store_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(33);
-/* harmony import */ var _crdt_crdt_entity_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(34);
-/* harmony import */ var _direct_store_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(30);
-/* harmony import */ var _storage_key_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(35);
+/* harmony import */ var _crdt_crdt_singleton_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(26);
+/* harmony import */ var _crdt_crdt_collection_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(24);
+/* harmony import */ var _store_interface_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(30);
+/* harmony import */ var _backing_store_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(34);
+/* harmony import */ var _crdt_crdt_entity_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(35);
+/* harmony import */ var _direct_store_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(31);
+/* harmony import */ var _storage_key_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(36);
 /* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(8);
 /**
  * @license
@@ -7717,13 +7852,13 @@ function isSingletonOperation(operation) {
 //# sourceMappingURL=reference-mode-store.js.map
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "BackingStore", function() { return BackingStore; });
-/* harmony import */ var _direct_store_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(30);
+/* harmony import */ var _direct_store_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(31);
 /**
  * @license
  * Copyright (c) 2019 Google Inc. All rights reserved.
@@ -7803,16 +7938,16 @@ class BackingStore {
 //# sourceMappingURL=backing-store.js.map
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EntityOpTypes", function() { return EntityOpTypes; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CRDTEntity", function() { return CRDTEntity; });
-/* harmony import */ var _crdt_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(24);
-/* harmony import */ var _crdt_collection_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(23);
-/* harmony import */ var _crdt_singleton_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(25);
+/* harmony import */ var _crdt_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(25);
+/* harmony import */ var _crdt_collection_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(24);
+/* harmony import */ var _crdt_singleton_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(26);
 /**
  * @license
  * Copyright (c) 2019 Google Inc. All rights reserved.
@@ -7977,7 +8112,7 @@ class CRDTEntity {
 //# sourceMappingURL=crdt-entity.js.map
 
 /***/ }),
-/* 35 */
+/* 36 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -8006,13 +8141,13 @@ class StorageKey {
 //# sourceMappingURL=storage-key.js.map
 
 /***/ }),
-/* 36 */
+/* 37 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UnifiedStore", function() { return UnifiedStore; });
-/* harmony import */ var _recipe_comparable_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(37);
+/* harmony import */ var _recipe_comparable_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(38);
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(3);
 /**
  * @license
@@ -8132,7 +8267,7 @@ class UnifiedStore {
 //# sourceMappingURL=unified-store.js.map
 
 /***/ }),
-/* 37 */
+/* 38 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -8208,7 +8343,7 @@ function compareComparables(o1, o2) {
 //# sourceMappingURL=comparable.js.map
 
 /***/ }),
-/* 38 */
+/* 39 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -8238,7 +8373,7 @@ class SlotInfo {
 //# sourceMappingURL=slot-info.js.map
 
 /***/ }),
-/* 39 */
+/* 40 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -8278,14 +8413,14 @@ class ArcHandle {
 //# sourceMappingURL=synthetic-types.js.map
 
 /***/ }),
-/* 40 */
+/* 41 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TypeVariableInfo", function() { return TypeVariableInfo; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _schema_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(11);
+/* harmony import */ var _schema_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(12);
 /* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(8);
 /**
  * @license
@@ -8485,14 +8620,14 @@ class TypeVariableInfo {
 //# sourceMappingURL=type-variable-info.js.map
 
 /***/ }),
-/* 41 */
+/* 42 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CountOpTypes", function() { return CountOpTypes; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CRDTCount", function() { return CRDTCount; });
-/* harmony import */ var _crdt_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(24);
+/* harmony import */ var _crdt_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(25);
 /**
  * @license
  * Copyright (c) 2019 Google Inc. All rights reserved.
@@ -8585,7 +8720,7 @@ class CRDTCount {
 //# sourceMappingURL=crdt-count.js.map
 
 /***/ }),
-/* 42 */
+/* 43 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -8756,7 +8891,7 @@ function createCheck(checkTarget, astNode, handleConnectionMap) {
 //# sourceMappingURL=particle-check.js.map
 
 /***/ }),
-/* 43 */
+/* 44 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -8838,7 +8973,7 @@ function createParticleClaim(handle, astNode, handleConnectionMap) {
 //# sourceMappingURL=particle-claim.js.map
 
 /***/ }),
-/* 44 */
+/* 45 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -8912,7 +9047,7 @@ class SlotProxy {
 //# sourceMappingURL=slot-proxy.js.map
 
 /***/ }),
-/* 45 */
+/* 46 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -8922,13 +9057,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "WasmContainer", function() { return WasmContainer; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "WasmParticle", function() { return WasmParticle; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(12);
-/* harmony import */ var _reference_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(13);
+/* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(13);
+/* harmony import */ var _reference_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(14);
 /* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(8);
-/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(46);
-/* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(14);
-/* harmony import */ var _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(15);
-/* harmony import */ var _bimap_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(47);
+/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(47);
+/* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(15);
+/* harmony import */ var _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(16);
+/* harmony import */ var _bimap_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(48);
 /**
  * @license
  * Copyright (c) 2019 Google Inc. All rights reserved.
@@ -9662,14 +9797,14 @@ class WasmParticle extends _particle_js__WEBPACK_IMPORTED_MODULE_4__["Particle"]
 //# sourceMappingURL=wasm.js.map
 
 /***/ }),
-/* 46 */
+/* 47 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Particle", function() { return Particle; });
-/* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(14);
-/* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(12);
+/* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(15);
+/* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(13);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -9933,7 +10068,7 @@ class Particle {
 //# sourceMappingURL=particle.js.map
 
 /***/ }),
-/* 47 */
+/* 48 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -10010,14 +10145,14 @@ class BiMap {
 //# sourceMappingURL=bimap.js.map
 
 /***/ }),
-/* 48 */
+/* 49 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PlatformLoader", function() { return PlatformLoader; });
-/* harmony import */ var _loader_platform_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(49);
-/* harmony import */ var _logs_factory_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(64);
+/* harmony import */ var _loader_platform_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(50);
+/* harmony import */ var _logs_factory_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(65);
 /**
  * @license
  * Copyright 2019 Google LLC.
@@ -10106,19 +10241,19 @@ class PlatformLoader extends _loader_platform_js__WEBPACK_IMPORTED_MODULE_0__["P
 //# sourceMappingURL=loader-web.js.map
 
 /***/ }),
-/* 49 */
+/* 50 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PlatformLoaderBase", function() { return PlatformLoaderBase; });
-/* harmony import */ var _runtime_loader_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(50);
-/* harmony import */ var _runtime_particle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(46);
-/* harmony import */ var _runtime_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(56);
-/* harmony import */ var _runtime_multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(59);
-/* harmony import */ var _runtime_transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(55);
-/* harmony import */ var _runtime_ui_particle_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(60);
-/* harmony import */ var _runtime_ui_multiplexer_particle_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(62);
+/* harmony import */ var _runtime_loader_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(51);
+/* harmony import */ var _runtime_particle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(47);
+/* harmony import */ var _runtime_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(57);
+/* harmony import */ var _runtime_multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(60);
+/* harmony import */ var _runtime_transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(56);
+/* harmony import */ var _runtime_ui_particle_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(61);
+/* harmony import */ var _runtime_ui_multiplexer_particle_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(63);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -10203,23 +10338,23 @@ class PlatformLoaderBase extends _runtime_loader_js__WEBPACK_IMPORTED_MODULE_0__
 //# sourceMappingURL=loader-platform.js.map
 
 /***/ }),
-/* 50 */
+/* 51 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Loader", function() { return Loader; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _platform_fetch_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(51);
-/* harmony import */ var _platform_fs_web_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(52);
-/* harmony import */ var _platform_vm_web_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(53);
-/* harmony import */ var _converters_jsonldToManifest_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(54);
-/* harmony import */ var _reference_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(13);
-/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(46);
-/* harmony import */ var _transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(55);
-/* harmony import */ var _dom_particle_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(56);
-/* harmony import */ var _multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(59);
-/* harmony import */ var _ui_particle_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(60);
+/* harmony import */ var _platform_fetch_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(52);
+/* harmony import */ var _platform_fs_web_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(53);
+/* harmony import */ var _platform_vm_web_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(54);
+/* harmony import */ var _converters_jsonldToManifest_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(55);
+/* harmony import */ var _reference_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(14);
+/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(47);
+/* harmony import */ var _transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(56);
+/* harmony import */ var _dom_particle_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(57);
+/* harmony import */ var _multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(60);
+/* harmony import */ var _ui_particle_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(61);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -10383,7 +10518,7 @@ class Loader {
 //# sourceMappingURL=loader.js.map
 
 /***/ }),
-/* 51 */
+/* 52 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -10407,7 +10542,7 @@ const localFetch = fetch;
 //# sourceMappingURL=fetch-web.js.map
 
 /***/ }),
-/* 52 */
+/* 53 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -10427,7 +10562,7 @@ const fs = {};
 
 
 /***/ }),
-/* 53 */
+/* 54 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -10447,7 +10582,7 @@ const vm = {};
 
 
 /***/ }),
-/* 54 */
+/* 55 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -10562,14 +10697,14 @@ class JsonldToManifest {
 //# sourceMappingURL=jsonldToManifest.js.map
 
 /***/ }),
-/* 55 */
+/* 56 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TransformationDomParticle", function() { return TransformationDomParticle; });
-/* harmony import */ var _dom_particle_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(56);
-/* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(12);
+/* harmony import */ var _dom_particle_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(57);
+/* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(13);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -10618,14 +10753,14 @@ class TransformationDomParticle extends _dom_particle_js__WEBPACK_IMPORTED_MODUL
 //# sourceMappingURL=transformation-dom-particle.js.map
 
 /***/ }),
-/* 56 */
+/* 57 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DomParticle", function() { return DomParticle; });
-/* harmony import */ var _modalities_dom_components_xen_xen_state_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(57);
-/* harmony import */ var _dom_particle_base_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(58);
+/* harmony import */ var _modalities_dom_components_xen_xen_state_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(58);
+/* harmony import */ var _dom_particle_base_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(59);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -10798,7 +10933,7 @@ class DomParticle extends Object(_modalities_dom_components_xen_xen_state_js__WE
 //# sourceMappingURL=dom-particle.js.map
 
 /***/ }),
-/* 57 */
+/* 58 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -10951,14 +11086,14 @@ const XenStateMixin = Base => class extends Base {
 
 
 /***/ }),
-/* 58 */
+/* 59 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DomParticleBase", function() { return DomParticleBase; });
-/* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(14);
-/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(46);
+/* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(15);
+/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(47);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -11236,7 +11371,7 @@ class DomParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particl
 //# sourceMappingURL=dom-particle-base.js.map
 
 /***/ }),
-/* 59 */
+/* 60 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -11244,8 +11379,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MultiplexerDomParticle", function() { return MultiplexerDomParticle; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 /* harmony import */ var _particle_spec_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(5);
-/* harmony import */ var _transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(55);
-/* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(12);
+/* harmony import */ var _transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(56);
+/* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(13);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -11429,14 +11564,14 @@ class MultiplexerDomParticle extends _transformation_dom_particle_js__WEBPACK_IM
 //# sourceMappingURL=multiplexer-dom-particle.js.map
 
 /***/ }),
-/* 60 */
+/* 61 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UiParticle", function() { return UiParticle; });
-/* harmony import */ var _modalities_dom_components_xen_xen_state_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(57);
-/* harmony import */ var _ui_particle_base_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(61);
+/* harmony import */ var _modalities_dom_components_xen_xen_state_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(58);
+/* harmony import */ var _ui_particle_base_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(62);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -11584,15 +11719,15 @@ class UiParticle extends UiStatefulParticle {
 //# sourceMappingURL=ui-particle.js.map
 
 /***/ }),
-/* 61 */
+/* 62 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UiParticleBase", function() { return UiParticleBase; });
-/* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(12);
-/* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(14);
-/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(46);
+/* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(13);
+/* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(15);
+/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(47);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -11772,14 +11907,14 @@ class UiParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_2__["Particle
 //# sourceMappingURL=ui-particle-base.js.map
 
 /***/ }),
-/* 62 */
+/* 63 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UiMultiplexerParticle", function() { return UiMultiplexerParticle; });
 /* harmony import */ var _particle_spec_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(5);
-/* harmony import */ var _ui_transformation_particle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(63);
+/* harmony import */ var _ui_transformation_particle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(64);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -11942,14 +12077,14 @@ class UiMultiplexerParticle extends _ui_transformation_particle_js__WEBPACK_IMPO
 //# sourceMappingURL=ui-multiplexer-particle.js.map
 
 /***/ }),
-/* 63 */
+/* 64 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UiTransformationParticle", function() { return UiTransformationParticle; });
-/* harmony import */ var _ui_particle_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(60);
-/* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(12);
+/* harmony import */ var _ui_particle_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(61);
+/* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(13);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -11987,13 +12122,13 @@ class UiTransformationParticle extends _ui_particle_js__WEBPACK_IMPORTED_MODULE_
 //# sourceMappingURL=ui-transformation-particle.js.map
 
 /***/ }),
-/* 64 */
+/* 65 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* WEBPACK VAR INJECTION */(function(global) {/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "logsFactory", function() { return logsFactory; });
-/* harmony import */ var _log_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(65);
+/* harmony import */ var _log_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(66);
 /**
  * @license
  * Copyright 2019 Google LLC.
@@ -12035,7 +12170,7 @@ const logsFactory = (preamble, color = '') => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(1)))
 
 /***/ }),
-/* 65 */
+/* 66 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";

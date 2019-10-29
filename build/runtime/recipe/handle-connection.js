@@ -12,7 +12,7 @@ import { SlotConnection } from './slot-connection.js';
 import { acceptedDirections } from './recipe-util.js';
 import { TypeChecker } from './type-checker.js';
 import { compareArrays, compareComparables, compareStrings } from './comparable.js';
-import { directionToArrow } from '../manifest-ast-nodes.js';
+import { directionToArrow, preSlandlesDirectionToDirection } from '../manifest-ast-nodes.js';
 import { Flags } from '../flags.js';
 export class HandleConnection {
     constructor(name, particle) {
@@ -253,7 +253,7 @@ export class HandleConnection {
         }
         else {
             result.push(`${this.name || '*'}:`);
-            result.push(this.direction);
+            result.push(preSlandlesDirectionToDirection(this.direction)); // TODO(jopra): support optionality.
         }
         if (this.handle) {
             if (this.handle.immediateValue) {

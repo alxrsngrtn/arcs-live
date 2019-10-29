@@ -1,9 +1,25 @@
-commit 2c488e396280355577edf5868e6f1d302ace34c9
-Author: Sarah Heimlich <heimlich@google.com>
-Date:   Tue Oct 29 14:33:58 2019 -0700
+commit 68075f5c8a25c2171eea12f6838a378907756593
+Author: Joshua Pratt <jp10010101010000@gmail.com>
+Date:   Wed Oct 30 08:34:56 2019 +1100
 
-    Tutorial refactor (#3914)
+    Unified directions updated names (#3920)
     
-    * Updates to tutorial 3 for PR
+    * Convert directions to capabilities for the parser and tests
     
-    * Refactoring of tutorial text.
+    * Convert tests
+    
+    * Convert code
+    
+    - Fixes for bugs found in usage and edge cases
+    
+    * Slandles syntax test, fix import
+    
+    * Undo accidental outer-particle using old new syntax
+    
+    * Fixes for parsing involving whiteSpace token splitting, adding a comment before call to thingMapper and undoing some accidental slandles syntax conversions
+    
+    * Ensure correct parsing of overlapping syntax
+    
+    * Fix slot 'type' serialization in particle spec
+    
+    * Propagating syntax changes and adding unified syntax tests

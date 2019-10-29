@@ -12,6 +12,7 @@ import { Manifest } from '../manifest.js';
 import { Handle } from '../recipe/handle.js';
 import { TypeChecker } from '../recipe/type-checker.js';
 import { EntityType, SlotType, TypeVariable } from '../type.js';
+import { Flags } from '../flags.js';
 describe('TypeChecker', () => {
     it('resolves a trio of in [~a], out [~b], in [Product]', async () => {
         const a = TypeVariable.make('a').collectionOf();
@@ -243,7 +244,35 @@ describe('TypeChecker', () => {
             assert.fail('a should be a type variable with EntityType constraints');
         }
     });
-    it('correctly applies then resolves a one-sided Entity constraint', async () => {
+    it('SLANDLES SYNTAX correctly applies then resolves a one-sided Entity constraint', Flags.withPostSlandlesSyntax(async () => {
+        const manifest = await Manifest.parse(`
+      interface Interface
+        item: reads ~a
+
+      particle Concrete
+        item: reads Product {}
+
+      particle Transformation
+        particle0: hosts Interface
+        collection: reads [~a]
+
+      recipe
+        h0: create
+        Transformation
+          particle0: hosts Concrete
+          collection: reads h0
+    `);
+        const recipe = manifest.recipes[0];
+        const type = Handle.effectiveType(null, recipe.handles[0].connections);
+        assert.strictEqual(false, type.isResolved());
+        assert.strictEqual(true, type.canEnsureResolved());
+        assert.strictEqual(true, type.maybeEnsureResolved());
+        assert.strictEqual(true, type.isResolved());
+        assert.strictEqual('Product', type.resolvedType().collectionType.entitySchema.names[0]);
+        recipe.normalize();
+        assert.strictEqual(true, recipe.isResolved());
+    }));
+    it('correctly applies then resolves a one-sided Entity constraint', Flags.withPreSlandlesSyntax(async () => {
         const manifest = await Manifest.parse(`
       interface Interface
         in ~a item
@@ -270,7 +299,7 @@ describe('TypeChecker', () => {
         assert.strictEqual('Product', type.resolvedType().collectionType.entitySchema.names[0]);
         recipe.normalize();
         assert.strictEqual(true, recipe.isResolved());
-    });
+    }));
     it(`doesn't resolve Entity and Collection`, async () => {
         const entity = {
             type: EntityType.make(['Product', 'Thing'], {}),

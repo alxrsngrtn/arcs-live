@@ -154,7 +154,7 @@ export class SlotConnection {
         }
         else {
             consumeRes.push(`${this.name}:`);
-            consumeRes.push('consume');
+            consumeRes.push('consumes');
             if (this.targetSlot) {
                 consumeRes.push(`${(nameMap && nameMap.get(this.targetSlot)) ||
                     this.targetSlot.localName}`);
@@ -183,7 +183,7 @@ export class SlotConnection {
             }
             else {
                 provideRes.push(`  ${psName}:`);
-                provideRes.push('provide');
+                provideRes.push('provides');
                 provideRes.push(`${(nameMap && nameMap.get(providedSlot)) || providedSlot}`);
             }
             result.push(provideRes.join(' '));

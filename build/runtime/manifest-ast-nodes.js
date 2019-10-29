@@ -22,6 +22,53 @@ export function slandleType(arg) {
     }
     return undefined;
 }
+export function preSlandlesDirectionToDirection(direction, isOptional = false) {
+    // TODO(jopra): Remove after syntax unification.
+    // Use switch for totality checking.
+    const opt = isOptional ? '?' : '';
+    switch (direction) {
+        case 'in':
+            return `reads${opt}`;
+        case 'out':
+            return `writes${opt}`;
+        case 'inout':
+            return `reads${opt} writes${opt}`;
+        case '`consume':
+            return `\`consumes${opt}`;
+        case '`provide':
+            return `\`provides${opt}`;
+        case 'host':
+            return `hosts${opt}`;
+        case 'any':
+            return `any${opt}`;
+        default:
+            // Catch nulls and unsafe values from javascript.
+            throw new Error(`Bad pre slandles direction ${direction}`);
+    }
+}
+export function directionToPreSlandlesDirection(direction) {
+    // TODO(jopra): Remove after syntax unification.
+    // Use switch for totality checking.
+    switch (direction) {
+        case 'reads':
+            return 'in';
+        case 'writes':
+            return 'out';
+        case 'reads writes':
+            return 'inout';
+        case '`consumes':
+            return '`consume';
+        case '`provides':
+            return '`provide';
+        case 'hosts':
+            return 'host';
+        case 'any':
+            return 'any';
+        default:
+            // Catch nulls and unsafe values from javascript.
+            throw new Error(`Bad direction ${direction}`);
+    }
+}
 export function arrowToDirection(arrow) {
     // TODO(jopra): Remove after syntax unification.
     // Use switch for totality checking.

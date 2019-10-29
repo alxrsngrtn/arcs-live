@@ -28,12 +28,12 @@ describe('ConvertConstraintsToConnections', () => {
     it('SLANDLES SYNTAX fills out an empty constraint', Flags.withPostSlandlesSyntax(async () => {
         const manifest = await Manifest.parse(`
       particle A
-        b: inout S {}
+        b: reads writes S {}
       particle C
-        d: inout S {}
+        d: reads writes S {}
 
       recipe
-        A.b: out C.d`);
+        A.b: writes C.d`);
         const generated = [{ result: manifest.recipes[0], score: 1, derivation: [], hash: '0', valid: true }];
         const cctc = new ConvertConstraintsToConnections(newArc(manifest));
         const results = await cctc.generateFrom(generated);
@@ -42,9 +42,9 @@ describe('ConvertConstraintsToConnections', () => {
         assert.deepEqual(result.toString(), `recipe
   handle0: create // S {}
   A as particle0
-    b: inout handle0
+    b: reads writes handle0
   C as particle1
-    d: inout handle0`);
+    d: reads writes handle0`);
     }));
     // TODO(jopra): Remove once slandles unification syntax is implemented.
     it('fills out an empty constraint', Flags.withPreSlandlesSyntax(async () => {
@@ -72,12 +72,12 @@ describe('ConvertConstraintsToConnections', () => {
         const manifest = await Manifest.parse(`
       schema S
       particle A
-        b: in S
+        b: reads S
       particle C
-        d: in S
+        d: reads S
 
       recipe
-        A.b: out C.d`);
+        A.b: writes C.d`);
         const generated = [{ result: manifest.recipes[0], score: 1, derivation: [], hash: '0', valid: true }];
         const cctc = new ConvertConstraintsToConnections(newArc(manifest));
         const results = await cctc.generateFrom(generated);
@@ -119,11 +119,11 @@ describe('ConvertConstraintsToConnections', () => {
         const parseManifest = async (constraint1, constraint2) => await Manifest.parse(`
       schema S
       particle A
-        b: in S
+        b: reads S
       particle C
-        d: in S
+        d: reads S
       particle E
-        f: out S
+        f: writes S
 
       recipe
         ${constraint1}
@@ -136,7 +136,7 @@ describe('ConvertConstraintsToConnections', () => {
             assert.lengthOf(results, 1, `Failed to resolve ${constraint1} & ${constraint2}`);
         };
         // Test for all possible combination of connection constraints with 3 particles.
-        const constraints = [['A.b: any C.d', 'C.d: any A.b'], ['A.b: out E.f', 'E.f: in A.b'], ['C.d: out E.f', 'E.f: in C.d']];
+        const constraints = [['A.b: any C.d', 'C.d: any A.b'], ['A.b: writes E.f', 'E.f: reads A.b'], ['C.d: writes E.f', 'E.f: reads C.d']];
         for (let i = 0; i < constraints.length; ++i) {
             for (let j = 0; j < constraints.length; ++j) {
                 if (i === j)
@@ -188,12 +188,12 @@ describe('ConvertConstraintsToConnections', () => {
         const manifest = await Manifest.parse(`
       schema S
       particle A
-        b: inout S
+        b: reads writes S
       particle C
-        d: inout S
+        d: reads writes S
 
       recipe
-        A.b: out C.d
+        A.b: writes C.d
         C`);
         const generated = [{ result: manifest.recipes[0], score: 1, derivation: [], hash: '0', valid: true }];
         const cctc = new ConvertConstraintsToConnections(newArc(manifest));
@@ -203,9 +203,9 @@ describe('ConvertConstraintsToConnections', () => {
         assert.deepEqual(result.toString(), `recipe
   handle0: create // S {}
   A as particle0
-    b: inout handle0
+    b: reads writes handle0
   C as particle1
-    d: inout handle0`);
+    d: reads writes handle0`);
     }));
     // TODO(jopra): Remove once slandles unification syntax is implemented.
     it('fills out a constraint, reusing a single particle', Flags.withPreSlandlesSyntax(async () => {
@@ -235,12 +235,12 @@ describe('ConvertConstraintsToConnections', () => {
         const manifest = await Manifest.parse(`
       schema S
       particle A
-        b: inout S
+        b: reads writes S
       particle C
-        d: inout S
+        d: reads writes S
 
       recipe
-        A.b: out C.d
+        A.b: writes C.d
         A`);
         const generated = [{ result: manifest.recipes[0], score: 1, derivation: [], hash: '0', valid: true }];
         const cctc = new ConvertConstraintsToConnections(newArc(manifest));
@@ -250,9 +250,9 @@ describe('ConvertConstraintsToConnections', () => {
         assert.deepEqual(result.toString(), `recipe
   handle0: create // S {}
   A as particle0
-    b: inout handle0
+    b: reads writes handle0
   C as particle1
-    d: inout handle0`);
+    d: reads writes handle0`);
     }));
     // TODO(jopra): Remove once slandles unification syntax is implemented.
     it('fills out a constraint, reusing a single particle (2)', Flags.withPreSlandlesSyntax(async () => {
@@ -282,12 +282,12 @@ describe('ConvertConstraintsToConnections', () => {
         const manifest = await Manifest.parse(`
       schema S
       particle A
-        b: inout S
+        b: reads writes S
       particle C
-        d: inout S
+        d: reads writes S
 
       recipe
-        A.b: out C.d
+        A.b: writes C.d
         C
         A`);
         const generated = [{ result: manifest.recipes[0], score: 1, derivation: [], hash: '0', valid: true }];
@@ -298,9 +298,9 @@ describe('ConvertConstraintsToConnections', () => {
         assert.deepEqual(result.toString(), `recipe
   handle0: create // S {}
   A as particle0
-    b: inout handle0
+    b: reads writes handle0
   C as particle1
-    d: inout handle0`);
+    d: reads writes handle0`);
     }));
     // TODO(jopra): Remove once slandles unification syntax is implemented.
     it('fills out a constraint, reusing two particles', Flags.withPreSlandlesSyntax(async () => {
@@ -331,15 +331,15 @@ describe('ConvertConstraintsToConnections', () => {
         const manifest = await Manifest.parse(`
       schema S
       particle A
-        b: inout S
+        b: reads writes S
       particle C
-        d: inout S
+        d: reads writes S
 
       recipe
-        A.b: out C.d
+        A.b: writes C.d
         handle1: use
         C
-          d: inout handle1
+          d: reads writes handle1
         A`);
         const generated = [{ result: manifest.recipes[0], score: 1, derivation: [], hash: '0', valid: true }];
         const cctc = new ConvertConstraintsToConnections(newArc(manifest));
@@ -349,9 +349,9 @@ describe('ConvertConstraintsToConnections', () => {
         assert.deepEqual(result.toString(), `recipe
   handle0: use // S {}
   A as particle0
-    b: inout handle0
+    b: reads writes handle0
   C as particle1
-    d: inout handle0`);
+    d: reads writes handle0`);
     }));
     // TODO(jopra): Remove once slandles unification syntax is implemented.
     it('fills out a constraint, reusing two particles and a handle', Flags.withPreSlandlesSyntax(async () => {
@@ -384,12 +384,12 @@ describe('ConvertConstraintsToConnections', () => {
         const manifest = await Manifest.parse(`
       schema S
       particle A
-        b: inout S
+        b: reads writes S
       particle C
-        d: inout S
+        d: reads writes S
 
       recipe
-        A.b: out C.d
+        A.b: writes C.d
         handle1: use
         C
         A
@@ -402,9 +402,9 @@ describe('ConvertConstraintsToConnections', () => {
         assert.deepEqual(result.toString(), `recipe
   handle0: use // S {}
   A as particle0
-    b: inout handle0
+    b: reads writes handle0
   C as particle1
-    d: inout handle0`);
+    d: reads writes handle0`);
     }));
     // TODO(jopra): Remove once slandles unification syntax is implemented.
     it('fills out a constraint, reusing two particles and a handle (2)', Flags.withPreSlandlesSyntax(async () => {
@@ -437,17 +437,17 @@ describe('ConvertConstraintsToConnections', () => {
         const manifest = await Manifest.parse(`
       schema S
       particle A
-        b: inout S
+        b: reads writes S
       particle C
-        d: inout S
+        d: reads writes S
 
       recipe
-        A.b: out C.d
+        A.b: writes C.d
         handle1: use
         C
-          d: inout handle1
+          d: reads writes handle1
         A
-          b: inout handle1`);
+          b: reads writes handle1`);
         const generated = [{ result: manifest.recipes[0], score: 1, derivation: [], hash: '0', valid: true }];
         const cctc = new ConvertConstraintsToConnections(newArc(manifest));
         const results = await cctc.generateFrom(generated);
@@ -456,9 +456,9 @@ describe('ConvertConstraintsToConnections', () => {
         assert.deepEqual(result.toString(), `recipe
   handle0: use // S {}
   A as particle0
-    b: inout handle0
+    b: reads writes handle0
   C as particle1
-    d: inout handle0`);
+    d: reads writes handle0`);
     }));
     // TODO(jopra): Remove once slandles unification syntax is implemented.
     it('removes an already fulfilled constraint', Flags.withPreSlandlesSyntax(async () => {
@@ -492,21 +492,21 @@ describe('ConvertConstraintsToConnections', () => {
         const manifest = await Manifest.parse(`
       schema S
       particle A in 'A.js'
-        b: out S
+        b: writes S
         modality vr
-        root: consume
+        root: consumes
       particle C in 'C.js'
-        d: in S
+        d: reads S
         modality vr
-        root: consume
+        root: consumes
       particle E in 'E.js'
-        f: in S
-        root: consume
+        f: reads S
+        root: consumes
 
       recipe
-        A.b: out C.d
+        A.b: writes C.d
       recipe
-        A.b: out E.f
+        A.b: writes E.f
     `);
         const generated = [{ result: manifest.recipes[0], score: 1, derivation: [], hash: '0', valid: true }, { result: manifest.recipes[1], score: 1, derivation: [], hash: '0', valid: true }];
         const cctc = new ConvertConstraintsToConnections(new Arc({
@@ -554,13 +554,13 @@ describe('ConvertConstraintsToConnections', () => {
     it('SLANDLES SYNTAX connects to handles', Flags.withPostSlandlesSyntax(async () => {
         const manifest = await Manifest.parse(`
       particle A
-        o: out S {}
+        o: writes S {}
       particle B
-        i: in S {}
+        i: reads S {}
       recipe
         h: ?
-        A.o: out h
-        h: out B.i
+        A.o: writes h
+        h: writes B.i
     `);
         const generated = [{ result: manifest.recipes[0], score: 1, derivation: [], hash: '0', valid: true }];
         const cctc = new ConvertConstraintsToConnections(newArc(manifest));
@@ -569,9 +569,9 @@ describe('ConvertConstraintsToConnections', () => {
         assert.deepEqual(results[0].result.toString(), `recipe
   handle0: ? // S {}
   A as particle0
-    o: out handle0
+    o: writes handle0
   B as particle1
-    i: in handle0`);
+    i: reads handle0`);
     }));
     // TODO(jopra): Remove once slandles unification syntax is implemented.
     it('connects to handles', Flags.withPreSlandlesSyntax(async () => {
@@ -599,13 +599,13 @@ describe('ConvertConstraintsToConnections', () => {
     it('SLANDLES SYNTAX connects existing particles to handles', Flags.withPostSlandlesSyntax(async () => {
         const manifest = await Manifest.parse(`
       particle A
-        o: out S {}
+        o: writes S {}
       particle B
-        i: in S {}
+        i: reads S {}
       recipe
         h: ?
-        A.o: out h
-        h: out B.i
+        A.o: writes h
+        h: writes B.i
         A
         B
     `);
@@ -616,9 +616,9 @@ describe('ConvertConstraintsToConnections', () => {
         assert.deepEqual(results[0].result.toString(), `recipe
   handle0: ? // S {}
   A as particle0
-    o: out handle0
+    o: writes handle0
   B as particle1
-    i: in handle0`);
+    i: reads handle0`);
     }));
     // TODO(jopra): Remove once slandles unification syntax is implemented.
     it('connects existing particles to handles', Flags.withPreSlandlesSyntax(async () => {
@@ -648,15 +648,15 @@ describe('ConvertConstraintsToConnections', () => {
     it(`SLANDLES SYNTAX doesn't attempt to duplicate existing handles to particles`, Flags.withPostSlandlesSyntax(async () => {
         const manifest = await Manifest.parse(`
       particle A
-        o: out S {}
+        o: writes S {}
       particle B
-        i: in S {}
+        i: reads S {}
       recipe
         h: ?
-        A.o: out h
-        h: out B.i
+        A.o: writes h
+        h: writes B.i
         A
-          o: out h
+          o: writes h
         B
     `);
         const generated = [{ result: manifest.recipes[0], score: 1, derivation: [], hash: '0', valid: true }];
@@ -666,9 +666,9 @@ describe('ConvertConstraintsToConnections', () => {
         assert.deepEqual(results[0].result.toString(), `recipe
   handle0: ? // S {}
   A as particle0
-    o: out handle0
+    o: writes handle0
   B as particle1
-    i: in handle0`);
+    i: reads handle0`);
     }));
     // TODO(jopra): Remove once slandles unification syntax is implemented.
     it(`doesn't attempt to duplicate existing handles to particles`, Flags.withPreSlandlesSyntax(async () => {
@@ -699,16 +699,16 @@ describe('ConvertConstraintsToConnections', () => {
     it(`SLANDLES SYNTAX duplicates particles to get handle connections right`, Flags.withPostSlandlesSyntax(async () => {
         const manifest = await Manifest.parse(`
       particle A
-        o: out S {}
+        o: writes S {}
       particle B
-        i: in S {}
+        i: reads S {}
       recipe
         h: ?
         j: ?
-        A.o: out h
-        h: out B.i
+        A.o: writes h
+        h: writes B.i
         A
-          o: out j
+          o: writes j
         B
     `);
         const generated = [{ result: manifest.recipes[0], score: 1, derivation: [], hash: '0', valid: true }];
@@ -719,11 +719,11 @@ describe('ConvertConstraintsToConnections', () => {
   handle0: ? // ~
   handle1: ? // S {}
   A as particle0
-    o: out handle0
+    o: writes handle0
   A as particle1
-    o: out handle1
+    o: writes handle1
   B as particle2
-    i: in handle1`);
+    i: reads handle1`);
     }));
     // TODO(jopra): Remove once slandles unification syntax is implemented.
     it(`duplicates particles to get handle connections right`, Flags.withPreSlandlesSyntax(async () => {
@@ -758,13 +758,13 @@ describe('ConvertConstraintsToConnections', () => {
     it('SLANDLES SYNTAX connects to tags', Flags.withPostSlandlesSyntax(async () => {
         const manifest = await Manifest.parse(`
     particle A
-      o: out S {}
+      o: writes S {}
     particle B
-      i: out S {}
+      i: writes S {}
     recipe
-      *: ? #hashtag
-      A.o: out #hashtag
-      #trashbag: in B.i
+      ? #hashtag
+      A.o: writes #hashtag
+      #trashbag: reads B.i
     `);
         const generated = [{ result: manifest.recipes[0], score: 1, derivation: [], hash: '0', valid: true }];
         const cctc = new ConvertConstraintsToConnections(newArc(manifest));
@@ -774,9 +774,9 @@ describe('ConvertConstraintsToConnections', () => {
   handle0: ? #hashtag // ~
   handle1: create #trashbag // ~
   A as particle0
-    o: out handle0
+    o: writes handle0
   B as particle1
-    i: out handle1`);
+    i: writes handle1`);
     }));
     // TODO(jopra): Remove once slandles unification syntax is implemented.
     it('connects to tags', Flags.withPreSlandlesSyntax(async () => {
@@ -805,13 +805,13 @@ describe('ConvertConstraintsToConnections', () => {
     it('SLANDLES SYNTAX connects existing particles to tags', Flags.withPostSlandlesSyntax(async () => {
         const manifest = await Manifest.parse(`
     particle A
-      o: out S {}
+      o: writes S {}
     particle B
-      i: out S {}
+      i: writes S {}
     recipe
-      *: ? #hashtag
-      A.o: out #hashtag
-      #trashbag: in B.i
+      ? #hashtag
+      A.o: writes #hashtag
+      #trashbag: reads B.i
       A
       B
     `);
@@ -823,9 +823,9 @@ describe('ConvertConstraintsToConnections', () => {
   handle0: ? #hashtag // ~
   handle1: create #trashbag // ~
   A as particle0
-    o: out handle0
+    o: writes handle0
   B as particle1
-    i: out handle1`);
+    i: writes handle1`);
     }));
     // TODO(jopra): Remove once slandles unification syntax is implemented.
     it('connects existing particles to tags', Flags.withPreSlandlesSyntax(async () => {
@@ -856,17 +856,17 @@ describe('ConvertConstraintsToConnections', () => {
     it(`SLANDLES SYNTAX doesn't attempt to duplicate existing connections to tags`, Flags.withPostSlandlesSyntax(async () => {
         const manifest = await Manifest.parse(`
     particle A
-      o: out S {}
+      o: writes S {}
     particle B
-      i: out S {}
+      i: writes S {}
     recipe
       handle0: ? #hashtag
-      A.o: out #hashtag
-      #trashbag: in B.i
+      A.o: writes #hashtag
+      #trashbag: reads B.i
       A
-        o: out handle0
+        o: writes handle0
       B
-        i: out handle0
+        i: writes handle0
     `);
         const generated = [{ result: manifest.recipes[0], score: 1, derivation: [], hash: '0', valid: true }];
         const cctc = new ConvertConstraintsToConnections(newArc(manifest));
@@ -875,9 +875,9 @@ describe('ConvertConstraintsToConnections', () => {
         assert.deepEqual(results[0].result.toString(), `recipe
   handle0: ? #hashtag // ~
   A as particle0
-    o: out handle0
+    o: writes handle0
   B as particle1
-    i: out handle0`);
+    i: writes handle0`);
     }));
     // TODO(jopra): Remove once slandles unification syntax is implemented.
     it(`doesn't attempt to duplicate existing connections to tags`, Flags.withPreSlandlesSyntax(async () => {
@@ -909,11 +909,11 @@ describe('ConvertConstraintsToConnections', () => {
     it(`SLANDLES SYNTAX connects particles together when there's only one possible connection`, Flags.withPostSlandlesSyntax(async () => {
         const manifest = await Manifest.parse(`
     particle A
-      o: out S {}
+      o: writes S {}
     particle B
-      i: in S {}
+      i: reads S {}
     recipe
-      A: out B
+      A: writes B
     `);
         const generated = [{ result: manifest.recipes[0], score: 1, derivation: [], hash: '0', valid: true }];
         const cctc = new ConvertConstraintsToConnections(newArc(manifest));
@@ -948,13 +948,13 @@ describe('ConvertConstraintsToConnections', () => {
     it(`SLANDLES SYNTAX connects particles together when there's extra things that can't connect`, Flags.withPostSlandlesSyntax(async () => {
         const manifest = await Manifest.parse(`
     particle A
-      o: out S {}
-      i: in S {}
+      o: writes S {}
+      i: reads S {}
     particle B
-      i: in S {}
-      i2: in T {}
+      i: reads S {}
+      i2: reads T {}
     recipe
-      A: out B
+      A: writes B
     `);
         const generated = [{ result: manifest.recipes[0], score: 1, derivation: [], hash: '0', valid: true }];
         const cctc = new ConvertConstraintsToConnections(newArc(manifest));
@@ -991,13 +991,13 @@ describe('ConvertConstraintsToConnections', () => {
     it(`SLANDLES SYNTAX connects particles together with multiple connections`, Flags.withPostSlandlesSyntax(async () => {
         const manifest = await Manifest.parse(`
     particle A
-      o: out S {}
-      i: in T {}
+      o: writes S {}
+      i: reads T {}
     particle B
-      i: in S {}
-      o: out T {}
+      i: reads S {}
+      o: writes T {}
     recipe
-      A: inout B
+      A: reads writes B
     `);
         const generated = [{ result: manifest.recipes[0], score: 1, derivation: [], hash: '0', valid: true }];
         const cctc = new ConvertConstraintsToConnections(newArc(manifest));

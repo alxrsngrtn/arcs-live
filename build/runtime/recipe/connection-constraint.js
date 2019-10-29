@@ -8,7 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { assert } from '../../platform/assert-web.js';
-import { directionToArrow } from '../manifest-ast-nodes.js';
+import { directionToArrow, preSlandlesDirectionToDirection } from '../manifest-ast-nodes.js';
 import { compareArrays, compareComparables, compareStrings } from './comparable.js';
 import { Flags } from '../flags.js';
 export class EndPoint {
@@ -140,7 +140,7 @@ export class ConnectionConstraint {
         if (Flags.usePreSlandlesSyntax) {
             return `${this.from.toString(nameMap)} ${directionToArrow(this.direction)} ${this.to.toString(nameMap)}${unresolved}`;
         }
-        return `${this.from.toString(nameMap)}: ${this.direction} ${this.to.toString(nameMap)}${unresolved}`;
+        return `${this.from.toString(nameMap)}: ${preSlandlesDirectionToDirection(this.direction)} ${this.to.toString(nameMap)}${unresolved}`;
     }
 }
 //# sourceMappingURL=connection-constraint.js.map

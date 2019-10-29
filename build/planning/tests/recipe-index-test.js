@@ -42,8 +42,8 @@ describe('RecipeIndex', () => {
       schema Lumberjack
 
       particle Transform
-        person: in Person
-        lumberjack: out Lumberjack
+        person: reads Person
+        lumberjack: writes Lumberjack
 
       recipe
         Transform
@@ -52,8 +52,8 @@ describe('RecipeIndex', () => {
   handle0: ? // ~
   handle1: ? // ~
   Transform as particle0
-    lumberjack: out handle0
-    person: in handle1`
+    lumberjack: writes handle0
+    person: reads handle1`
         ]);
     }));
     // TODO(jopra): Remove once slandles unification syntax is implemented.
@@ -82,7 +82,7 @@ describe('RecipeIndex', () => {
       schema Person
 
       particle A
-        person: inout Person
+        person: reads writes Person
 
       recipe
         person: create
@@ -91,7 +91,7 @@ describe('RecipeIndex', () => {
             `recipe
   handle0: create // Person {}
   A as particle0
-    person: inout handle0`
+    person: reads writes handle0`
         ]);
     }));
     // TODO(jopra): Remove once slandles unification syntax is implemented.
@@ -115,22 +115,22 @@ describe('RecipeIndex', () => {
     it('SLANDLES SYNTAX resolves local slots, but not a root slot', Flags.withPostSlandlesSyntax(async () => {
         assert.sameMembers(await extractIndexRecipeStrings(`
       particle A
-        root: consume
-          detail: provide
+        root: consumes
+          detail: provides
       particle B
-        detail: consume
+        detail: consumes
 
       recipe
         A
-          root: consume
+          root: consumes
         B
     `), [
             `recipe
   A as particle0
-    root: consume
-      detail: provide slot0
+    root: consumes
+      detail: provides slot0
   B as particle1
-    detail: consume slot0`
+    detail: consumes slot0`
         ]);
     }));
     it('resolves local slots, but not a root slot', Flags.withPreSlandlesSyntax(async () => {
@@ -161,25 +161,25 @@ describe('RecipeIndex', () => {
       schema C
 
       particle Transform
-        a: in A
-        b: out B
+        a: reads A
+        b: writes B
       particle TransformAgain
-        b: in B
-        c: out C
+        b: reads B
+        c: writes C
 
       recipe
-        Transform.b: out TransformAgain.b
+        Transform.b: writes TransformAgain.b
     `), [
             `recipe
   handle0: ? // ~
   handle1: create // B {}
   handle2: ? // ~
   Transform as particle0
-    a: in handle0
-    b: out handle1
+    a: reads handle0
+    b: writes handle1
   TransformAgain as particle1
-    b: in handle1
-    c: out handle2`
+    b: reads handle1
+    c: writes handle2`
         ]);
     }));
     // TODO(jopra): Remove once slandles unification syntax is implemented.
@@ -247,21 +247,21 @@ describe('RecipeIndex', () => {
       schema Thing
 
       particle A
-        thing: in Thing
+        thing: reads Thing
       recipe A
         thing: map
         A
           thing: any thing
 
       particle B
-        thing: out Thing
+        thing: writes Thing
       recipe B
         thing: create
         B
           thing: any thing
 
       particle C
-        thing: in Thing
+        thing: reads Thing
       recipe C
         thing: use
         C
