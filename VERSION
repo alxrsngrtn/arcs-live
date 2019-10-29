@@ -1,24 +1,19 @@
-commit df8fbe035a7854096908b6e59cbfc02fcae5eb0f
+commit c561930f09354dc8bece7e643db05ae42e0f2a5b
 Author: Alex Rosengarten <alxr@google.com>
-Date:   Tue Oct 29 15:14:40 2019 -0700
+Date:   Tue Oct 29 15:34:42 2019 -0700
 
-    schema2kotlin: Generation of Empty entities + added imports (#3897)
+    Fix: _syncHandle sometimes causing NPEs in Kotlin / Wasm code (#3900)
     
-    * fixed a few kotlin issues
-    - Now importing classes from arcs package given custom package
-    - On generation of classes with no fields, generate class, not data class.
+    * passing in js null instead of 0
     
-    * using correct kotlin indentation
+    * _syncHandle: defensive against NPEs
     
-    * rm unnecessary imports
+    * treating out-of-bounds memory error
     
-    * fix: imports
-    fix: imports
-    - alphabetic import order
-    - no `;`
+    * using 0 over null
     
-    * Revert "using correct kotlin indentation"
+    * Don't sync handles if there's no encoding
     
-    This reverts commit 0f146e4b
+    * properly handle nullable syncs and updates
     
-    * ++idiomatic kotlin
+    * fix collections issue: too many iterations
