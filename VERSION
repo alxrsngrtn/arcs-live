@@ -1,9 +1,5 @@
-commit 8faa4c6b4cecf354341e2efd848138a9f4c42631
-Author: Alex Rosengarten <alxr@google.com>
-Date:   Tue Oct 29 15:52:27 2019 -0700
+commit abdbf2bceb7358284ea6d10a771ea61fb5cf5a5b
+Author: yuangu-google <yuangu@google.com>
+Date:   Tue Oct 29 16:26:49 2019 -0700
 
-    schema2*: support to specify package from Bazel / Blaze rule (#3927)
-    
-    * added package as arg to rule
-    
-    * Tutorial: specifying custom pkg
+    Comment out require ingestion arc. (#3923)
