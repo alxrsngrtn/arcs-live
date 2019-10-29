@@ -1,19 +1,9 @@
-commit c561930f09354dc8bece7e643db05ae42e0f2a5b
+commit 8faa4c6b4cecf354341e2efd848138a9f4c42631
 Author: Alex Rosengarten <alxr@google.com>
-Date:   Tue Oct 29 15:34:42 2019 -0700
+Date:   Tue Oct 29 15:52:27 2019 -0700
 
-    Fix: _syncHandle sometimes causing NPEs in Kotlin / Wasm code (#3900)
+    schema2*: support to specify package from Bazel / Blaze rule (#3927)
     
-    * passing in js null instead of 0
+    * added package as arg to rule
     
-    * _syncHandle: defensive against NPEs
-    
-    * treating out-of-bounds memory error
-    
-    * using 0 over null
-    
-    * Don't sync handles if there's no encoding
-    
-    * properly handle nullable syncs and updates
-    
-    * fix collections issue: too many iterations
+    * Tutorial: specifying custom pkg
