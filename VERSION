@@ -1,25 +1,24 @@
-commit 68075f5c8a25c2171eea12f6838a378907756593
-Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Wed Oct 30 08:34:56 2019 +1100
+commit df8fbe035a7854096908b6e59cbfc02fcae5eb0f
+Author: Alex Rosengarten <alxr@google.com>
+Date:   Tue Oct 29 15:14:40 2019 -0700
 
-    Unified directions updated names (#3920)
+    schema2kotlin: Generation of Empty entities + added imports (#3897)
     
-    * Convert directions to capabilities for the parser and tests
+    * fixed a few kotlin issues
+    - Now importing classes from arcs package given custom package
+    - On generation of classes with no fields, generate class, not data class.
     
-    * Convert tests
+    * using correct kotlin indentation
     
-    * Convert code
+    * rm unnecessary imports
     
-    - Fixes for bugs found in usage and edge cases
+    * fix: imports
+    fix: imports
+    - alphabetic import order
+    - no `;`
     
-    * Slandles syntax test, fix import
+    * Revert "using correct kotlin indentation"
     
-    * Undo accidental outer-particle using old new syntax
+    This reverts commit 0f146e4b
     
-    * Fixes for parsing involving whiteSpace token splitting, adding a comment before call to thingMapper and undoing some accidental slandles syntax conversions
-    
-    * Ensure correct parsing of overlapping syntax
-    
-    * Fix slot 'type' serialization in particle spec
-    
-    * Propagating syntax changes and adding unified syntax tests
+    * ++idiomatic kotlin

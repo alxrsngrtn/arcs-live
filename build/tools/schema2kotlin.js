@@ -34,6 +34,7 @@ export class Schema2Kotlin extends Schema2Base {
         return parts.map(part => part[0].toUpperCase() + part.slice(1)).join('') + '.kt';
     }
     fileHeader(outName) {
+        const withCustomPackage = (populate) => this.scope !== 'arcs' ? populate : '';
         return `\
 package ${this.scope}
 
@@ -41,7 +42,12 @@ package ${this.scope}
 // GENERATED CODE -- DO NOT EDIT
 //
 // Current implementation doesn't support references or optional field detection
-`;
+
+${withCustomPackage(`import arcs.Particle;
+import arcs.Entity
+import arcs.StringEncoder
+import arcs.StringDecoder
+`)}`;
     }
     getClassGenerator(node) {
         return new KotlinGenerator(node);
@@ -71,27 +77,26 @@ class KotlinGenerator {
         if (aliases.length) {
             typeDecls = '\n' + aliases.map(a => `typealias ${a} = ${name}`).join('\n') + '\n';
         }
+        const withFields = (populate) => fieldCount === 0 ? '' : populate;
+        const withoutFields = (populate) => fieldCount === 0 ? populate : '';
         return `\
 
-data class ${name}(
-  ${this.fields.join(', ')}
-) : Entity<${name}>() {
+${withFields('data ')}class ${name}(${withFields(`\n  ${this.fields.join(',\n  ')}\n`)}) : Entity<${name}>() {
+
   override fun decodeEntity(encoded: String): ${name}? {
-    if (encoded.isEmpty()) {
-      return null
-    }
+    if (encoded.isEmpty()) return null
+    
     val decoder = StringDecoder(encoded)
-    this.internalId = decoder.decodeText()
+    internalId = decoder.decodeText()
     decoder.validate("|")
-    var i = 0
-    while (!decoder.done() && i < ${fieldCount}) {
+    ${withFields(`0.until(${fieldCount}).takeWhile { !decoder.done() }
+     .forEach {
       val name = decoder.upTo(":")
       when (name) {
         ${this.decode.join('\n        ')}
       }
       decoder.validate("|")
-      i++
-    }
+     }`)}
     return this
   }
 
@@ -101,6 +106,10 @@ data class ${name}(
     ${this.encode.join('\n    ')}
     return encoder.result()
   }
+  ${withoutFields(`
+  override fun toString(): String {
+    return "${name}()"
+  }`)}
 }
 ${typeDecls}
 `;
