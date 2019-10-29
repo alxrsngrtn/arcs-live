@@ -1,9 +1,9 @@
-commit 1521d57389b3427f6e750706e431262e68c89d32
-Author: Jason Feinstein <jwf@google.com>
-Date:   Tue Oct 29 00:05:51 2019 -0700
+commit 2c488e396280355577edf5868e6f1d302ace34c9
+Author: Sarah Heimlich <heimlich@google.com>
+Date:   Tue Oct 29 14:33:58 2019 -0700
 
-    StoreInterface, Store, ...., and.. DirectStore! (#3918)
+    Tutorial refactor (#3914)
     
-    This PR implements everything required to get `DirectStore` up and running.
+    * Updates to tutorial 3 for PR
     
-    I still would like to port more of the tests over from TypeScript (like sequence tests, for example), but I think this is a decent landmark before the PR becomes too huge.
+    * Refactoring of tutorial text.
