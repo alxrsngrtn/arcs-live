@@ -1,11 +1,9 @@
-commit e25db80f2f0216954546505a22e68caf90981c93
-Author: yuangu-google <yuangu@google.com>
-Date:   Mon Oct 28 21:56:58 2019 -0700
+commit 1521d57389b3427f6e750706e431262e68c89d32
+Author: Jason Feinstein <jwf@google.com>
+Date:   Tue Oct 29 00:05:51 2019 -0700
 
-    Use dynamic manifest in Android Arcs. (#3916)
+    StoreInterface, Store, ...., and.. DirectStore! (#3918)
     
-    * Use dynamic manifest in Android Arcs.
+    This PR implements everything required to get `DirectStore` up and running.
     
-    * Resolve comments.
-    
-    * Add return code to AndroidArcsClient.
+    I still would like to port more of the tests over from TypeScript (like sequence tests, for example), but I think this is a decent landmark before the PR becomes too huge.
