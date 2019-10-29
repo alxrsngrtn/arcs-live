@@ -1,8 +1,11 @@
-commit 9a75a9dfea5d53fbf127703790d4bb34de070b99
-Author: ianull <ianchang@google.com>
-Date:   Mon Oct 28 13:28:11 2019 -0700
+commit e25db80f2f0216954546505a22e68caf90981c93
+Author: yuangu-google <yuangu@google.com>
+Date:   Mon Oct 28 21:56:58 2019 -0700
 
-    Arcs never gets ready (#3908)
+    Use dynamic manifest in Android Arcs. (#3916)
     
-    The ready listeners registered at ArcsShellApi.init() are removed
-    when the AndroidArcsEnvironment initializes.
+    * Use dynamic manifest in Android Arcs.
+    
+    * Resolve comments.
+    
+    * Add return code to AndroidArcsClient.
