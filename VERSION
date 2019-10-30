@@ -1,5 +1,13 @@
-commit 59d6dba437fe2ad345a0f30a0808636d33d1282d
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Wed Oct 30 06:25:46 2019 -0700
+commit cd83831697215a27b294731afbd8c5b831e0d678
+Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
+Date:   Thu Oct 31 01:09:40 2019 +1100
 
-    A test for alias + extend in schemas (#3887)
+    Fix android demo app, configure shell (#3935)
+    
+    The shell-android API was modified in #3925 to require sending a 'configure'
+    message after receiving the 'ready' message. This PR adds that, and
+    mostly restores functionality in the demo app.
+    
+    Also updates the demo app to use the generated root manifest
+    demo_manifest_bundle.arcs, and fixes the generation script (semicolons
+    caused it to break).
