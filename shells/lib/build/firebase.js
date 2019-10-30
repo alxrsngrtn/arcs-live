@@ -120,8 +120,8 @@ module.exports = g;
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var firebase_app__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(68);
 /* harmony import */ var firebase_app__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(firebase_app__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var firebase_database__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(74);
-/* harmony import */ var firebase_storage__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(78);
+/* harmony import */ var firebase_database__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(73);
+/* harmony import */ var firebase_storage__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(76);
 /**
  * @license
  * Copyright 2019 Google LLC.
@@ -184,7 +184,7 @@ Object.defineProperty(exports, '__esModule', { value: true });
 
 var tslib_1 = __webpack_require__(70);
 var util = __webpack_require__(71);
-var logger$1 = __webpack_require__(73);
+var logger$1 = __webpack_require__(72);
 
 /**
  * @license
@@ -204,13 +204,12 @@ var logger$1 = __webpack_require__(73);
  */
 var _a;
 var ERRORS = (_a = {},
-    _a["no-app" /* NO_APP */] = "No Firebase App '{$name}' has been created - " +
+    _a["no-app" /* NO_APP */] = "No Firebase App '{$appName}' has been created - " +
         'call Firebase App.initializeApp()',
-    _a["bad-app-name" /* BAD_APP_NAME */] = "Illegal App name: '{$name}",
-    _a["duplicate-app" /* DUPLICATE_APP */] = "Firebase App named '{$name}' already exists",
-    _a["app-deleted" /* APP_DELETED */] = "Firebase App named '{$name}' already deleted",
-    _a["duplicate-service" /* DUPLICATE_SERVICE */] = "Firebase service named '{$name}' already registered",
-    _a["invalid-app-argument" /* INVALID_APP_ARGUMENT */] = 'firebase.{$name}() takes either no argument or a ' +
+    _a["bad-app-name" /* BAD_APP_NAME */] = "Illegal App name: '{$appName}",
+    _a["duplicate-app" /* DUPLICATE_APP */] = "Firebase App named '{$appName}' already exists",
+    _a["app-deleted" /* APP_DELETED */] = "Firebase App named '{$appName}' already deleted",
+    _a["invalid-app-argument" /* INVALID_APP_ARGUMENT */] = 'firebase.{$appName}() takes either no argument or a ' +
         'Firebase App instance.',
     _a);
 var ERROR_FACTORY = new util.ErrorFactory('app', 'Firebase', ERRORS);
@@ -322,9 +321,9 @@ var FirebaseAppImpl = /** @class */ (function () {
                     services.push(_this.services_[serviceKey][instanceKey]);
                 }
             }
-            return Promise.all(services.map(function (service) {
-                return service.INTERNAL.delete();
-            }));
+            return Promise.all(services
+                .filter(function (service) { return 'INTERNAL' in service; })
+                .map(function (service) { return service.INTERNAL.delete(); }));
         })
             .then(function () {
             _this.isDeleted_ = true;
@@ -335,7 +334,7 @@ var FirebaseAppImpl = /** @class */ (function () {
      * Return a service instance associated with this app (creating it
      * on demand), identified by the passed instanceIdentifier.
      *
-     * NOTE: Currently storage is the only one that is leveraging this
+     * NOTE: Currently storage and functions are the only ones that are leveraging this
      * functionality. They invoke it by calling:
      *
      * ```javascript
@@ -365,9 +364,26 @@ var FirebaseAppImpl = /** @class */ (function () {
         return this.services_[name][instanceIdentifier];
     };
     /**
+     * Remove a service instance from the cache, so we will create a new instance for this service
+     * when people try to get this service again.
+     *
+     * NOTE: currently only firestore is using this functionality to support firestore shutdown.
+     *
+     * @param name The service name
+     * @param instanceIdentifier instance identifier in case multiple instances are allowed
+     * @internal
+     */
+    FirebaseAppImpl.prototype._removeServiceInstance = function (name, instanceIdentifier) {
+        if (instanceIdentifier === void 0) { instanceIdentifier = DEFAULT_ENTRY_NAME; }
+        if (this.services_[name] && this.services_[name][instanceIdentifier]) {
+            delete this.services_[name][instanceIdentifier];
+        }
+    };
+    /**
      * Callback function used to extend an App instance at the time
      * of service instance creation.
      */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     FirebaseAppImpl.prototype.extendApp = function (props) {
         var _this = this;
         // Copy the object onto the FirebaseAppImpl prototype
@@ -394,7 +410,7 @@ var FirebaseAppImpl = /** @class */ (function () {
      */
     FirebaseAppImpl.prototype.checkDestroyed_ = function () {
         if (this.isDeleted_) {
-            throw ERROR_FACTORY.create("app-deleted" /* APP_DELETED */, { name: this.name_ });
+            throw ERROR_FACTORY.create("app-deleted" /* APP_DELETED */, { appName: this.name_ });
         }
     };
     return FirebaseAppImpl;
@@ -405,7 +421,7 @@ var FirebaseAppImpl = /** @class */ (function () {
     FirebaseAppImpl.prototype.delete ||
     console.log('dc');
 
-var version = "6.0.4";
+var version = "6.6.2";
 
 /**
  * @license
@@ -423,9 +439,24 @@ var version = "6.0.4";
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-function contains(obj, key) {
-    return Object.prototype.hasOwnProperty.call(obj, key);
-}
+var logger = new logger$1.Logger('@firebase/app');
+
+/**
+ * @license
+ * Copyright 2019 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 /**
  * Because auth can't share code with other components, we attach the utility functions
  * in an internal namespace to share code.
@@ -444,7 +475,9 @@ function createFirebaseNamespaceCore(firebaseAppImpl) {
         // @ts-ignore
         __esModule: true,
         initializeApp: initializeApp,
+        // @ts-ignore
         app: app,
+        // @ts-ignore
         apps: null,
         SDK_VERSION: version,
         INTERNAL: {
@@ -464,7 +497,8 @@ function createFirebaseNamespaceCore(firebaseAppImpl) {
     //
     //   import * as firebase from 'firebase';
     //   which becomes: var firebase = require('firebase');
-    util.patchProperty(namespace, 'default', namespace);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    namespace['default'] = namespace;
     // firebase.apps is a read-only getter.
     Object.defineProperty(namespace, 'apps', {
         get: getApps
@@ -483,12 +517,13 @@ function createFirebaseNamespaceCore(firebaseAppImpl) {
      */
     function app(name) {
         name = name || DEFAULT_ENTRY_NAME;
-        if (!contains(apps, name)) {
-            throw ERROR_FACTORY.create("no-app" /* NO_APP */, { name: name });
+        if (!util.contains(apps, name)) {
+            throw ERROR_FACTORY.create("no-app" /* NO_APP */, { appName: name });
         }
         return apps[name];
     }
-    util.patchProperty(app, 'App', firebaseAppImpl);
+    // @ts-ignore
+    app['App'] = firebaseAppImpl;
     function initializeApp(options, rawConfig) {
         if (rawConfig === void 0) { rawConfig = {}; }
         if (typeof rawConfig !== 'object' || rawConfig === null) {
@@ -501,10 +536,12 @@ function createFirebaseNamespaceCore(firebaseAppImpl) {
         }
         var name = config.name;
         if (typeof name !== 'string' || !name) {
-            throw ERROR_FACTORY.create("bad-app-name" /* BAD_APP_NAME */, { name: String(name) });
+            throw ERROR_FACTORY.create("bad-app-name" /* BAD_APP_NAME */, {
+                appName: String(name)
+            });
         }
-        if (contains(apps, name)) {
-            throw ERROR_FACTORY.create("duplicate-app" /* DUPLICATE_APP */, { name: name });
+        if (util.contains(apps, name)) {
+            throw ERROR_FACTORY.create("duplicate-app" /* DUPLICATE_APP */, { appName: name });
         }
         var app = new firebaseAppImpl(options, config, namespace);
         apps[name] = app;
@@ -527,9 +564,11 @@ function createFirebaseNamespaceCore(firebaseAppImpl) {
      */
     function registerService(name, createService, serviceProperties, appHook, allowMultipleInstances) {
         if (allowMultipleInstances === void 0) { allowMultipleInstances = false; }
-        // Cannot re-register a service that already exists
+        // If re-registering a service that already exists, return existing service
         if (factories[name]) {
-            throw ERROR_FACTORY.create("duplicate-service" /* DUPLICATE_SERVICE */, { name: name });
+            logger.debug("There were multiple attempts to register service " + name + ".");
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            return namespace[name];
         }
         // Capture the service factory for later service instantiation
         factories[name] = createService;
@@ -544,14 +583,16 @@ function createFirebaseNamespaceCore(firebaseAppImpl) {
         // The Service namespace is an accessor function ...
         function serviceNamespace(appArg) {
             if (appArg === void 0) { appArg = app(); }
+            // @ts-ignore
             if (typeof appArg[name] !== 'function') {
                 // Invalid argument.
                 // This happens in the following case: firebase.storage('gs:/')
                 throw ERROR_FACTORY.create("invalid-app-argument" /* INVALID_APP_ARGUMENT */, {
-                    name: name
+                    appName: name
                 });
             }
             // Forward service instance lookup to the FirebaseApp.
+            // @ts-ignore
             return appArg[name]();
         }
         // ... and a container for service-level properties.
@@ -559,16 +600,22 @@ function createFirebaseNamespaceCore(firebaseAppImpl) {
             util.deepExtend(serviceNamespace, serviceProperties);
         }
         // Monkey-patch the serviceNamespace onto the firebase namespace
+        // @ts-ignore
         namespace[name] = serviceNamespace;
         // Patch the FirebaseAppImpl prototype
-        firebaseAppImpl.prototype[name] = function () {
-            var args = [];
-            for (var _i = 0; _i < arguments.length; _i++) {
-                args[_i] = arguments[_i];
-            }
-            var serviceFxn = this._getService.bind(this, name);
-            return serviceFxn.apply(this, allowMultipleInstances ? args : []);
-        };
+        // @ts-ignore
+        firebaseAppImpl.prototype[name] =
+            // TODO: The eslint disable can be removed and the 'ignoreRestArgs'
+            // option added to the no-explicit-any rule when ESlint releases it.
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            function () {
+                var args = [];
+                for (var _i = 0; _i < arguments.length; _i++) {
+                    args[_i] = arguments[_i];
+                }
+                var serviceFxn = this._getService.bind(this, name);
+                return serviceFxn.apply(this, allowMultipleInstances ? args : []);
+            };
         return serviceNamespace;
     }
     function callAppHooks(app, eventName) {
@@ -621,7 +668,11 @@ function createFirebaseNamespaceCore(firebaseAppImpl) {
  */
 function createFirebaseNamespace() {
     var namespace = createFirebaseNamespaceCore(FirebaseAppImpl);
-    namespace.INTERNAL = tslib_1.__assign({}, namespace.INTERNAL, { createFirebaseNamespace: createFirebaseNamespace, extendNamespace: extendNamespace, createSubscribe: util.createSubscribe, ErrorFactory: util.ErrorFactory, deepExtend: util.deepExtend });
+    namespace.INTERNAL = tslib_1.__assign({}, namespace.INTERNAL, { createFirebaseNamespace: createFirebaseNamespace,
+        extendNamespace: extendNamespace,
+        createSubscribe: util.createSubscribe,
+        ErrorFactory: util.ErrorFactory,
+        deepExtend: util.deepExtend });
     /**
      * Patch the top-level firebase namespace with additional properties.
      *
@@ -649,10 +700,11 @@ function createFirebaseNamespace() {
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-var logger = new logger$1.Logger('@firebase/app');
 // Firebase Lite detection
-if (util.isBrowser() && 'firebase' in self) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+if (util.isBrowser() && self.firebase !== undefined) {
     logger.warn("\n    Warning: Firebase is already defined in the global scope. Please make sure\n    Firebase library is only loaded once.\n  ");
+    // eslint-disable-next-line
     var sdkVersion = self.firebase.SDK_VERSION;
     if (sdkVersion && sdkVersion.indexOf('LITE') >= 0) {
         logger.warn("\n    Warning: You are trying to load Firebase while using Firebase Performance standalone script.\n    You should load Firebase Performance with this instance of Firebase to avoid loading duplicate code.\n    ");
@@ -660,14 +712,21 @@ if (util.isBrowser() && 'firebase' in self) {
 }
 var firebaseNamespace = createFirebaseNamespace();
 var initializeApp = firebaseNamespace.initializeApp;
+// TODO: This disable can be removed and the 'ignoreRestArgs' option added to
+// the no-explicit-any rule when ESlint releases it.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 firebaseNamespace.initializeApp = function () {
+    var args = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+        args[_i] = arguments[_i];
+    }
     // Environment check before initializing app
     // Do the check in initializeApp, so people have a chance to disable it by setting logLevel
     // in @firebase/logger
     if (util.isNode()) {
-        logger.warn("\n      Warning: This is a browser-targeted Firebase bundle but it appears it is being\n      run in a Node environment.  If running in a Node environment, make sure you\n      are using the bundle specified by the \"main\" field in package.json.\n      \n      If you are using Webpack, you can specify \"main\" as the first item in\n      \"resolve.mainFields\":\n      https://webpack.js.org/configuration/resolve/#resolvemainfields\n      \n      If using Rollup, use the rollup-plugin-node-resolve plugin and set \"module\"\n      to false and \"main\" to true:\n      https://github.com/rollup/rollup-plugin-node-resolve\n      ");
+        logger.warn("\n      Warning: This is a browser-targeted Firebase bundle but it appears it is being\n      run in a Node environment.  If running in a Node environment, make sure you\n      are using the bundle specified by the \"main\" field in package.json.\n      \n      If you are using Webpack, you can specify \"main\" as the first item in\n      \"resolve.mainFields\":\n      https://webpack.js.org/configuration/resolve/#resolvemainfields\n      \n      If using Rollup, use the rollup-plugin-node-resolve plugin and specify \"main\"\n      as the first item in \"mainFields\", e.g. ['main', 'module'].\n      https://github.com/rollup/rollup-plugin-node-resolve\n      ");
     }
-    return initializeApp.apply(undefined, arguments);
+    return initializeApp.apply(undefined, args);
 };
 var firebase = firebaseNamespace;
 
@@ -695,6 +754,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__values", function() { return __values; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__read", function() { return __read; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__spread", function() { return __spread; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__spreadArrays", function() { return __spreadArrays; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__await", function() { return __await; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__asyncGenerator", function() { return __asyncGenerator; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__asyncDelegator", function() { return __asyncDelegator; });
@@ -747,8 +807,10 @@ function __rest(s, e) {
     for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
         t[p] = s[p];
     if (s != null && typeof Object.getOwnPropertySymbols === "function")
-        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) if (e.indexOf(p[i]) < 0)
-            t[p[i]] = s[p[i]];
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
     return t;
 }
 
@@ -842,6 +904,14 @@ function __spread() {
     return ar;
 }
 
+function __spreadArrays() {
+    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
+    for (var r = Array(s), k = 0, i = 0; i < il; i++)
+        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
+            r[k] = a[j];
+    return r;
+};
+
 function __await(v) {
     return this instanceof __await ? (this.v = v, this) : new __await(v);
 }
@@ -900,7 +970,7 @@ function __importDefault(mod) {
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
-var tslib_1 = __webpack_require__(72);
+var tslib_1 = __webpack_require__(70);
 
 /**
  * @license
@@ -954,8 +1024,6 @@ var CONSTANTS = {
  */
 /**
  * Throws an error if the provided assertion is falsy
- * @param {*} assertion The assertion to be tested for falsiness
- * @param {!string} message The message to display if the check fails
  */
 var assert = function (assertion, message) {
     if (!assertion) {
@@ -964,8 +1032,6 @@ var assert = function (assertion, message) {
 };
 /**
  * Returns an Error object suitable for throwing.
- * @param {string} message
- * @return {!Error}
  */
 var assertionError = function (message) {
     return new Error('Firebase Database (' +
@@ -992,7 +1058,8 @@ var assertionError = function (message) {
  */
 var stringToByteArray = function (str) {
     // TODO(user): Use native implementations if/when available
-    var out = [], p = 0;
+    var out = [];
+    var p = 0;
     for (var i = 0; i < str.length; i++) {
         var c = str.charCodeAt(i);
         if (c < 128) {
@@ -1002,9 +1069,9 @@ var stringToByteArray = function (str) {
             out[p++] = (c >> 6) | 192;
             out[p++] = (c & 63) | 128;
         }
-        else if ((c & 0xfc00) == 0xd800 &&
+        else if ((c & 0xfc00) === 0xd800 &&
             i + 1 < str.length &&
-            (str.charCodeAt(i + 1) & 0xfc00) == 0xdc00) {
+            (str.charCodeAt(i + 1) & 0xfc00) === 0xdc00) {
             // Surrogate Pair
             c = 0x10000 + ((c & 0x03ff) << 10) + (str.charCodeAt(++i) & 0x03ff);
             out[p++] = (c >> 18) | 240;
@@ -1023,12 +1090,13 @@ var stringToByteArray = function (str) {
 /**
  * Turns an array of numbers into the string given by the concatenation of the
  * characters to which the numbers correspond.
- * @param {Array<number>} bytes Array of numbers representing characters.
- * @return {string} Stringification of the array.
+ * @param bytes Array of numbers representing characters.
+ * @return Stringification of the array.
  */
 var byteArrayToString = function (bytes) {
     // TODO(user): Use native implementations if/when available
-    var out = [], pos = 0, c = 0;
+    var out = [];
+    var pos = 0, c = 0;
     while (pos < bytes.length) {
         var c1 = bytes[pos++];
         if (c1 < 128) {
@@ -1056,48 +1124,41 @@ var byteArrayToString = function (bytes) {
     }
     return out.join('');
 };
+// We define it as an object literal instead of a class because a class compiled down to es5 can't
+// be treeshaked. https://github.com/rollup/rollup/issues/1691
 // Static lookup maps, lazily populated by init_()
 var base64 = {
     /**
      * Maps bytes to characters.
-     * @type {Object}
-     * @private
      */
     byteToCharMap_: null,
     /**
      * Maps characters to bytes.
-     * @type {Object}
-     * @private
      */
     charToByteMap_: null,
     /**
      * Maps bytes to websafe characters.
-     * @type {Object}
      * @private
      */
     byteToCharMapWebSafe_: null,
     /**
      * Maps websafe characters to bytes.
-     * @type {Object}
      * @private
      */
     charToByteMapWebSafe_: null,
     /**
      * Our default alphabet, shared between
      * ENCODED_VALS and ENCODED_VALS_WEBSAFE
-     * @type {string}
      */
     ENCODED_VALS_BASE: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' + 'abcdefghijklmnopqrstuvwxyz' + '0123456789',
     /**
      * Our default alphabet. Value 64 (=) is special; it means "nothing."
-     * @type {string}
      */
     get ENCODED_VALS() {
         return this.ENCODED_VALS_BASE + '+/=';
     },
     /**
      * Our websafe alphabet.
-     * @type {string}
      */
     get ENCODED_VALS_WEBSAFE() {
         return this.ENCODED_VALS_BASE + '-_.';
@@ -1108,24 +1169,23 @@ var base64 = {
      * ASSUME_* variables to avoid pulling in the full useragent detection library
      * but still allowing the standard per-browser compilations.
      *
-     * @type {boolean}
      */
     HAS_NATIVE_SUPPORT: typeof atob === 'function',
     /**
      * Base64-encode an array of bytes.
      *
-     * @param {Array<number>|Uint8Array} input An array of bytes (numbers with
+     * @param input An array of bytes (numbers with
      *     value in [0, 255]) to encode.
-     * @param {boolean=} opt_webSafe Boolean indicating we should use the
+     * @param webSafe Boolean indicating we should use the
      *     alternative alphabet.
-     * @return {string} The base64 encoded string.
+     * @return The base64 encoded string.
      */
-    encodeByteArray: function (input, opt_webSafe) {
+    encodeByteArray: function (input, webSafe) {
         if (!Array.isArray(input)) {
             throw Error('encodeByteArray takes an array as a parameter');
         }
         this.init_();
-        var byteToCharMap = opt_webSafe
+        var byteToCharMap = webSafe
             ? this.byteToCharMapWebSafe_
             : this.byteToCharMap_;
         var output = [];
@@ -1152,34 +1212,34 @@ var base64 = {
     /**
      * Base64-encode a string.
      *
-     * @param {string} input A string to encode.
-     * @param {boolean=} opt_webSafe If true, we should use the
+     * @param input A string to encode.
+     * @param webSafe If true, we should use the
      *     alternative alphabet.
-     * @return {string} The base64 encoded string.
+     * @return The base64 encoded string.
      */
-    encodeString: function (input, opt_webSafe) {
+    encodeString: function (input, webSafe) {
         // Shortcut for Mozilla browsers that implement
         // a native base64 encoder in the form of "btoa/atob"
-        if (this.HAS_NATIVE_SUPPORT && !opt_webSafe) {
+        if (this.HAS_NATIVE_SUPPORT && !webSafe) {
             return btoa(input);
         }
-        return this.encodeByteArray(stringToByteArray(input), opt_webSafe);
+        return this.encodeByteArray(stringToByteArray(input), webSafe);
     },
     /**
      * Base64-decode a string.
      *
-     * @param {string} input to decode.
-     * @param {boolean=} opt_webSafe True if we should use the
+     * @param input to decode.
+     * @param webSafe True if we should use the
      *     alternative alphabet.
-     * @return {string} string representing the decoded value.
+     * @return string representing the decoded value.
      */
-    decodeString: function (input, opt_webSafe) {
+    decodeString: function (input, webSafe) {
         // Shortcut for Mozilla browsers that implement
         // a native base64 encoder in the form of "btoa/atob"
-        if (this.HAS_NATIVE_SUPPORT && !opt_webSafe) {
+        if (this.HAS_NATIVE_SUPPORT && !webSafe) {
             return atob(input);
         }
-        return byteArrayToString(this.decodeStringToByteArray(input, opt_webSafe));
+        return byteArrayToString(this.decodeStringToByteArray(input, webSafe));
     },
     /**
      * Base64-decode a string.
@@ -1192,13 +1252,13 @@ var base64 = {
      * padding will be inferred.  If the group has one or two characters, it decodes
      * to one byte.  If the group has three characters, it decodes to two bytes.
      *
-     * @param {string} input Input to decode.
-     * @param {boolean=} opt_webSafe True if we should use the web-safe alphabet.
-     * @return {!Array<number>} bytes representing the decoded value.
+     * @param input Input to decode.
+     * @param webSafe True if we should use the web-safe alphabet.
+     * @return bytes representing the decoded value.
      */
-    decodeStringToByteArray: function (input, opt_webSafe) {
+    decodeStringToByteArray: function (input, webSafe) {
         this.init_();
-        var charToByteMap = opt_webSafe
+        var charToByteMap = webSafe
             ? this.charToByteMapWebSafe_
             : this.charToByteMap_;
         var output = [];
@@ -1218,10 +1278,10 @@ var base64 = {
             }
             var outByte1 = (byte1 << 2) | (byte2 >> 4);
             output.push(outByte1);
-            if (byte3 != 64) {
+            if (byte3 !== 64) {
                 var outByte2 = ((byte2 << 4) & 0xf0) | (byte3 >> 2);
                 output.push(outByte2);
-                if (byte4 != 64) {
+                if (byte4 !== 64) {
                     var outByte3 = ((byte3 << 6) & 0xc0) | byte4;
                     output.push(outByte3);
                 }
@@ -1257,8 +1317,6 @@ var base64 = {
 };
 /**
  * URL-safe base64 encoding
- * @param {!string} str
- * @return {!string}
  */
 var base64Encode = function (str) {
     var utf8Bytes = stringToByteArray(str);
@@ -1270,8 +1328,8 @@ var base64Encode = function (str) {
  * NOTE: DO NOT use the global atob() function - it does NOT support the
  * base64Url variant encoding.
  *
- * @param {string} str To be decoded
- * @return {?string} Decoded result, if possible
+ * @param str To be decoded
+ * @return Decoded result, if possible
  */
 var base64Decode = function (str) {
     try {
@@ -1348,10 +1406,6 @@ function deepExtend(target, source) {
     }
     return target;
 }
-// TODO: Really needed (for JSCompiler type checking)?
-function patchProperty(obj, prop, value) {
-    obj[prop] = value;
-}
 
 /**
  * @license
@@ -1372,6 +1426,8 @@ function patchProperty(obj, prop, value) {
 var Deferred = /** @class */ (function () {
     function Deferred() {
         var _this = this;
+        this.reject = function () { };
+        this.resolve = function () { };
         this.promise = new Promise(function (resolve, reject) {
             _this.resolve = resolve;
             _this.reject = reject;
@@ -1381,8 +1437,6 @@ var Deferred = /** @class */ (function () {
      * Our API internals are not promiseified and cannot because our callback APIs have subtle expectations around
      * invoking promises inline, which Promises are forbidden to do. This method accepts an optional node-style callback
      * and returns a node-style callback which will resolve or reject the Deferred's promise.
-     * @param {((?function(?(Error)): (?|undefined))| (?function(?(Error),?=): (?|undefined)))=} callback
-     * @return {!function(?(Error), ?=)}
      */
     Deferred.prototype.wrapCallback = function (callback) {
         var _this = this;
@@ -1449,6 +1503,8 @@ function getUA() {
  */
 function isMobileCordova() {
     return (typeof window !== 'undefined' &&
+        // @ts-ignore Setting up an broadly applicable index signature for Window
+        // just to deal with this case would probably be a bad idea.
         !!(window['cordova'] || window['phonegap'] || window['PhoneGap']) &&
         /ios|iphone|ipod|ipad|android|blackberry|iemobile/i.test(getUA()));
 }
@@ -1624,9 +1680,6 @@ function stringify(data) {
  * Notes:
  * - May return with invalid / incomplete claims if there's no native base64 decoding support.
  * - Doesn't check if the token is actually valid.
- *
- * @param {?string} token
- * @return {{header: *, claims: *, data: *, signature: string}}
  */
 var decode = function (token) {
     var header = {}, claims = {}, data = {}, signature = '';
@@ -1653,12 +1706,11 @@ var decode = function (token) {
  * Notes:
  * - May return a false negative if there's no native base64 decoding support.
  * - Doesn't check if the token is actually valid.
- *
- * @param {?string} token
- * @return {boolean}
  */
 var isValidTimestamp = function (token) {
-    var claims = decode(token).claims, now = Math.floor(new Date().getTime() / 1000), validSince, validUntil;
+    var claims = decode(token).claims;
+    var now = Math.floor(new Date().getTime() / 1000);
+    var validSince = 0, validUntil = 0;
     if (typeof claims === 'object') {
         if (claims.hasOwnProperty('nbf')) {
             validSince = claims['nbf'];
@@ -1674,7 +1726,11 @@ var isValidTimestamp = function (token) {
             validUntil = validSince + 86400;
         }
     }
-    return (now && validSince && validUntil && now >= validSince && now <= validUntil);
+    return (!!now &&
+        !!validSince &&
+        !!validUntil &&
+        now >= validSince &&
+        now <= validUntil);
 };
 /**
  * Decodes a Firebase auth. token and returns its issued at time if valid, null otherwise.
@@ -1682,9 +1738,6 @@ var isValidTimestamp = function (token) {
  * Notes:
  * - May return null if there's no native base64 decoding support.
  * - Doesn't check if the token is actually valid.
- *
- * @param {?string} token
- * @return {?number}
  */
 var issuedAtTime = function (token) {
     var claims = decode(token).claims;
@@ -1699,9 +1752,6 @@ var issuedAtTime = function (token) {
  * Notes:
  * - May return a false negative if there's no native base64 decoding support.
  * - Doesn't check if the token is actually valid.
- *
- * @param {?string} token
- * @return {boolean}
  */
 var isValidFormat = function (token) {
     var decoded = decode(token), claims = decoded.claims;
@@ -1713,9 +1763,6 @@ var isValidFormat = function (token) {
  * Notes:
  * - May return a false negative if there's no native base64 decoding support.
  * - Doesn't check if the token is actually valid.
- *
- * @param {?string} token
- * @return {boolean}
  */
 var isAdmin = function (token) {
     var claims = decode(token).claims;
@@ -1738,122 +1785,34 @@ var isAdmin = function (token) {
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-// See http://www.devthought.com/2012/01/18/an-object-is-not-a-hash/
-var contains = function (obj, key) {
+function contains(obj, key) {
     return Object.prototype.hasOwnProperty.call(obj, key);
-};
-var safeGet = function (obj, key) {
-    if (Object.prototype.hasOwnProperty.call(obj, key))
+}
+function safeGet(obj, key) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
         return obj[key];
-    // else return undefined.
-};
-/**
- * Enumerates the keys/values in an object, excluding keys defined on the prototype.
- *
- * @param {?Object.<K,V>} obj Object to enumerate.
- * @param {!function(K, V)} fn Function to call for each key and value.
- * @template K,V
- */
-var forEach = function (obj, fn) {
+    }
+    else {
+        return undefined;
+    }
+}
+function isEmpty(obj) {
     for (var key in obj) {
         if (Object.prototype.hasOwnProperty.call(obj, key)) {
-            fn(key, obj[key]);
+            return false;
         }
     }
-};
-/**
- * Copies all the (own) properties from one object to another.
- * @param {!Object} objTo
- * @param {!Object} objFrom
- * @return {!Object} objTo
- */
-var extend = function (objTo, objFrom) {
-    forEach(objFrom, function (key, value) {
-        objTo[key] = value;
-    });
-    return objTo;
-};
-/**
- * Returns a clone of the specified object.
- * @param {!Object} obj
- * @return {!Object} cloned obj.
- */
-var clone = function (obj) {
-    return extend({}, obj);
-};
-/**
- * Returns true if obj has typeof "object" and is not null.  Unlike goog.isObject(), does not return true
- * for functions.
- *
- * @param obj {*} A potential object.
- * @returns {boolean} True if it's an object.
- */
-var isNonNullObject = function (obj) {
-    return typeof obj === 'object' && obj !== null;
-};
-var isEmpty = function (obj) {
-    for (var key in obj) {
-        return false;
-    }
     return true;
-};
-var getCount = function (obj) {
-    var rv = 0;
-    for (var key in obj) {
-        rv++;
-    }
-    return rv;
-};
-var map = function (obj, f, opt_obj) {
+}
+function map(obj, fn, contextObj) {
     var res = {};
     for (var key in obj) {
-        res[key] = f.call(opt_obj, obj[key], key, obj);
-    }
-    return res;
-};
-var findKey = function (obj, fn, opt_this) {
-    for (var key in obj) {
-        if (fn.call(opt_this, obj[key], key, obj)) {
-            return key;
-        }
-    }
-    return undefined;
-};
-var findValue = function (obj, fn, opt_this) {
-    var key = findKey(obj, fn, opt_this);
-    return key && obj[key];
-};
-var getAnyKey = function (obj) {
-    for (var key in obj) {
-        return key;
-    }
-};
-var getValues = function (obj) {
-    var res = [];
-    var i = 0;
-    for (var key in obj) {
-        res[i++] = obj[key];
-    }
-    return res;
-};
-/**
- * Tests whether every key/value pair in an object pass the test implemented
- * by the provided function
- *
- * @param {?Object.<K,V>} obj Object to test.
- * @param {!function(K, V)} fn Function to call for each key and value.
- * @template K,V
- */
-var every = function (obj, fn) {
-    for (var key in obj) {
         if (Object.prototype.hasOwnProperty.call(obj, key)) {
-            if (!fn(key, obj[key])) {
-                return false;
-            }
+            res[key] = fn.call(contextObj, obj[key], key, obj);
         }
     }
-    return true;
-};
+    return res;
+}
 
 /**
  * @license
@@ -1872,16 +1831,13 @@ var every = function (obj, fn) {
  * limitations under the License.
  */
 /**
- * Returns a querystring-formatted string (e.g. &arg=val&arg2=val2) from a params
- * object (e.g. {arg: 'val', arg2: 'val2'})
+ * Returns a querystring-formatted string (e.g. &arg=val&arg2=val2) from a
+ * params object (e.g. {arg: 'val', arg2: 'val2'})
  * Note: You must prepend it with ? when adding it to a URL.
- *
- * @param {!Object} querystringParams
- * @return {string}
  */
-var querystring = function (querystringParams) {
+function querystring(querystringParams) {
     var params = [];
-    forEach(querystringParams, function (key, value) {
+    var _loop_1 = function (key, value) {
         if (Array.isArray(value)) {
             value.forEach(function (arrayVal) {
                 params.push(encodeURIComponent(key) + '=' + encodeURIComponent(arrayVal));
@@ -1890,16 +1846,18 @@ var querystring = function (querystringParams) {
         else {
             params.push(encodeURIComponent(key) + '=' + encodeURIComponent(value));
         }
-    });
+    };
+    for (var _i = 0, _a = Object.entries(querystringParams); _i < _a.length; _i++) {
+        var _b = _a[_i], key = _b[0], value = _b[1];
+        _loop_1(key, value);
+    }
     return params.length ? '&' + params.join('&') : '';
-};
+}
 /**
- * Decodes a querystring (e.g. ?arg=val&arg2=val2) into a params object (e.g. {arg: 'val', arg2: 'val2'})
- *
- * @param {string} querystring
- * @return {!Object}
+ * Decodes a querystring (e.g. ?arg=val&arg2=val2) into a params object
+ * (e.g. {arg: 'val', arg2: 'val2'})
  */
-var querystringDecode = function (querystring) {
+function querystringDecode(querystring) {
     var obj = {};
     var tokens = querystring.replace(/^\?/, '').split('&');
     tokens.forEach(function (token) {
@@ -1909,7 +1867,7 @@ var querystringDecode = function (querystring) {
         }
     });
     return obj;
-};
+}
 
 /**
  * @license
@@ -1955,26 +1913,22 @@ var Sha1 = /** @class */ (function () {
         /**
          * Holds the previous values of accumulated variables a-e in the compress_
          * function.
-         * @type {!Array<number>}
          * @private
          */
         this.chain_ = [];
         /**
          * A buffer holding the partially computed hash result.
-         * @type {!Array<number>}
          * @private
          */
         this.buf_ = [];
         /**
          * An array of 80 bytes, each a part of the message to be hashed.  Referred to
          * as the message schedule in the docs.
-         * @type {!Array<number>}
          * @private
          */
         this.W_ = [];
         /**
          * Contains data needed to pad messages less than 64 bytes.
-         * @type {!Array<number>}
          * @private
          */
         this.pad_ = [];
@@ -2004,13 +1958,13 @@ var Sha1 = /** @class */ (function () {
     };
     /**
      * Internal compress helper function.
-     * @param {!Array<number>|!Uint8Array|string} buf Block to compress.
-     * @param {number=} opt_offset Offset of the block in the buffer.
+     * @param buf Block to compress.
+     * @param offset Offset of the block in the buffer.
      * @private
      */
-    Sha1.prototype.compress_ = function (buf, opt_offset) {
-        if (!opt_offset) {
-            opt_offset = 0;
+    Sha1.prototype.compress_ = function (buf, offset) {
+        if (!offset) {
+            offset = 0;
         }
         var W = this.W_;
         // get 16 big endian words
@@ -2025,21 +1979,21 @@ var Sha1 = /** @class */ (function () {
                 // (https://bugs.webkit.org/show_bug.cgi?id=109036) has been fixed and
                 // most clients have been updated.
                 W[i] =
-                    (buf.charCodeAt(opt_offset) << 24) |
-                        (buf.charCodeAt(opt_offset + 1) << 16) |
-                        (buf.charCodeAt(opt_offset + 2) << 8) |
-                        buf.charCodeAt(opt_offset + 3);
-                opt_offset += 4;
+                    (buf.charCodeAt(offset) << 24) |
+                        (buf.charCodeAt(offset + 1) << 16) |
+                        (buf.charCodeAt(offset + 2) << 8) |
+                        buf.charCodeAt(offset + 3);
+                offset += 4;
             }
         }
         else {
             for (var i = 0; i < 16; i++) {
                 W[i] =
-                    (buf[opt_offset] << 24) |
-                        (buf[opt_offset + 1] << 16) |
-                        (buf[opt_offset + 2] << 8) |
-                        buf[opt_offset + 3];
-                opt_offset += 4;
+                    (buf[offset] << 24) |
+                        (buf[offset + 1] << 16) |
+                        (buf[offset + 2] << 8) |
+                        buf[offset + 3];
+                offset += 4;
             }
         }
         // expand to 80 words
@@ -2088,37 +2042,37 @@ var Sha1 = /** @class */ (function () {
         this.chain_[3] = (this.chain_[3] + d) & 0xffffffff;
         this.chain_[4] = (this.chain_[4] + e) & 0xffffffff;
     };
-    Sha1.prototype.update = function (bytes, opt_length) {
+    Sha1.prototype.update = function (bytes, length) {
         // TODO(johnlenz): tighten the function signature and remove this check
         if (bytes == null) {
             return;
         }
-        if (opt_length === undefined) {
-            opt_length = bytes.length;
+        if (length === undefined) {
+            length = bytes.length;
         }
-        var lengthMinusBlock = opt_length - this.blockSize;
+        var lengthMinusBlock = length - this.blockSize;
         var n = 0;
         // Using local instead of member variables gives ~5% speedup on Firefox 16.
         var buf = this.buf_;
         var inbuf = this.inbuf_;
         // The outer while loop should execute at most twice.
-        while (n < opt_length) {
+        while (n < length) {
             // When we have no data in the block to top up, we can directly process the
             // input buffer (assuming it contains sufficient data). This gives ~25%
             // speedup on Chrome 23 and ~15% speedup on Firefox 16, but requires that
             // the data is provided in large chunks (or in multiples of 64 bytes).
-            if (inbuf == 0) {
+            if (inbuf === 0) {
                 while (n <= lengthMinusBlock) {
                     this.compress_(bytes, n);
                     n += this.blockSize;
                 }
             }
             if (typeof bytes === 'string') {
-                while (n < opt_length) {
+                while (n < length) {
                     buf[inbuf] = bytes.charCodeAt(n);
                     ++inbuf;
                     ++n;
-                    if (inbuf == this.blockSize) {
+                    if (inbuf === this.blockSize) {
                         this.compress_(buf);
                         inbuf = 0;
                         // Jump to the outer loop so we use the full-block optimization.
@@ -2127,11 +2081,11 @@ var Sha1 = /** @class */ (function () {
                 }
             }
             else {
-                while (n < opt_length) {
+                while (n < length) {
                     buf[inbuf] = bytes[n];
                     ++inbuf;
                     ++n;
-                    if (inbuf == this.blockSize) {
+                    if (inbuf === this.blockSize) {
                         this.compress_(buf);
                         inbuf = 0;
                         // Jump to the outer loop so we use the full-block optimization.
@@ -2141,7 +2095,7 @@ var Sha1 = /** @class */ (function () {
             }
         }
         this.inbuf_ = inbuf;
-        this.total_ += opt_length;
+        this.total_ += length;
     };
     /** @override */
     Sha1.prototype.digest = function () {
@@ -2246,7 +2200,11 @@ var ObserverProxy = /** @class */ (function () {
             throw new Error('Missing Observer.');
         }
         // Assemble an Observer object when passed as callback functions.
-        if (implementsAnyMethods(nextOrObserver, ['next', 'error', 'complete'])) {
+        if (implementsAnyMethods(nextOrObserver, [
+            'next',
+            'error',
+            'complete'
+        ])) {
             observer = nextOrObserver;
         }
         else {
@@ -2270,6 +2228,7 @@ var ObserverProxy = /** @class */ (function () {
         // just respond to the Observer with the final error or complete
         // event.
         if (this.finalized) {
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises
             this.task.then(function () {
                 try {
                     if (_this.finalError) {
@@ -2317,6 +2276,7 @@ var ObserverProxy = /** @class */ (function () {
     ObserverProxy.prototype.sendOne = function (i, fn) {
         var _this = this;
         // Execute the callback asynchronously
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
         this.task.then(function () {
             if (_this.observers !== undefined && _this.observers[i] !== undefined) {
                 try {
@@ -2343,6 +2303,7 @@ var ObserverProxy = /** @class */ (function () {
             this.finalError = err;
         }
         // Proxy is no longer needed - garbage collect references
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
         this.task.then(function () {
             _this.observers = undefined;
             _this.onNoObservers = undefined;
@@ -2407,10 +2368,10 @@ function noop() {
  * Check to make sure the appropriate number of arguments are provided for a public function.
  * Throws an error if it fails.
  *
- * @param {!string} fnName The function name
- * @param {!number} minCount The minimum number of arguments to allow for the function call
- * @param {!number} maxCount The maximum number of argument to allow for the function call
- * @param {!number} argCount The actual number of arguments provided.
+ * @param fnName The function name
+ * @param minCount The minimum number of arguments to allow for the function call
+ * @param maxCount The maximum number of argument to allow for the function call
+ * @param argCount The actual number of arguments provided.
  */
 var validateArgCount = function (fnName, minCount, maxCount, argCount) {
     var argError;
@@ -2434,10 +2395,10 @@ var validateArgCount = function (fnName, minCount, maxCount, argCount) {
 /**
  * Generates a string to prefix an error message about failed argument validation
  *
- * @param {!string} fnName The function name
- * @param {!number} argumentNumber The index of the argument
- * @param {boolean} optional Whether or not the argument is optional
- * @return {!string} The prefix to add to the error thrown for validation.
+ * @param fnName The function name
+ * @param argumentNumber The index of the argument
+ * @param optional Whether or not the argument is optional
+ * @return The prefix to add to the error thrown for validation.
  */
 function errorPrefix(fnName, argumentNumber, optional) {
     var argName = '';
@@ -2462,14 +2423,15 @@ function errorPrefix(fnName, argumentNumber, optional) {
     return error;
 }
 /**
- * @param {!string} fnName
- * @param {!number} argumentNumber
- * @param {!string} namespace
- * @param {boolean} optional
+ * @param fnName
+ * @param argumentNumber
+ * @param namespace
+ * @param optional
  */
 function validateNamespace(fnName, argumentNumber, namespace, optional) {
-    if (optional && !namespace)
+    if (optional && !namespace) {
         return;
+    }
     if (typeof namespace !== 'string') {
         //TODO: I should do more validation here. We only allow certain chars in namespaces.
         throw new Error(errorPrefix(fnName, argumentNumber, optional) +
@@ -2477,18 +2439,22 @@ function validateNamespace(fnName, argumentNumber, namespace, optional) {
     }
 }
 function validateCallback(fnName, argumentNumber, callback, optional) {
-    if (optional && !callback)
+    if (optional && !callback) {
         return;
-    if (typeof callback !== 'function')
+    }
+    if (typeof callback !== 'function') {
         throw new Error(errorPrefix(fnName, argumentNumber, optional) +
             'must be a valid function.');
+    }
 }
 function validateContextObject(fnName, argumentNumber, context, optional) {
-    if (optional && !context)
+    if (optional && !context) {
         return;
-    if (typeof context !== 'object' || context === null)
+    }
+    if (typeof context !== 'object' || context === null) {
         throw new Error(errorPrefix(fnName, argumentNumber, optional) +
             'must be a valid context object.');
+    }
 }
 
 /**
@@ -2521,7 +2487,8 @@ function validateContextObject(fnName, argumentNumber, context, optional) {
  * @return {Array}
  */
 var stringToByteArray$1 = function (str) {
-    var out = [], p = 0;
+    var out = [];
+    var p = 0;
     for (var i = 0; i < str.length; i++) {
         var c = str.charCodeAt(i);
         // Is this the lead surrogate in a surrogate pair?
@@ -2580,23 +2547,6 @@ var stringLength = function (str) {
     return p;
 };
 
-/**
- * @license
- * Copyright 2017 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 exports.CONSTANTS = CONSTANTS;
 exports.Deferred = Deferred;
 exports.ErrorFactory = ErrorFactory;
@@ -2608,36 +2558,25 @@ exports.async = async;
 exports.base64 = base64;
 exports.base64Decode = base64Decode;
 exports.base64Encode = base64Encode;
-exports.clone = clone;
 exports.contains = contains;
 exports.createSubscribe = createSubscribe;
 exports.decode = decode;
 exports.deepCopy = deepCopy;
 exports.deepExtend = deepExtend;
 exports.errorPrefix = errorPrefix;
-exports.every = every;
-exports.extend = extend;
-exports.findKey = findKey;
-exports.findValue = findValue;
-exports.forEach = forEach;
-exports.getAnyKey = getAnyKey;
-exports.getCount = getCount;
 exports.getUA = getUA;
-exports.getValues = getValues;
 exports.isAdmin = isAdmin;
 exports.isBrowser = isBrowser;
 exports.isEmpty = isEmpty;
 exports.isMobileCordova = isMobileCordova;
 exports.isNode = isNode;
 exports.isNodeSdk = isNodeSdk;
-exports.isNonNullObject = isNonNullObject;
 exports.isReactNative = isReactNative;
 exports.isValidFormat = isValidFormat;
 exports.isValidTimestamp = isValidTimestamp;
 exports.issuedAtTime = issuedAtTime;
 exports.jsonEval = jsonEval;
 exports.map = map;
-exports.patchProperty = patchProperty;
 exports.querystring = querystring;
 exports.querystringDecode = querystringDecode;
 exports.safeGet = safeGet;
@@ -2655,220 +2594,6 @@ exports.validateNamespace = validateNamespace;
 /***/ }),
 
 /***/ 72:
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__extends", function() { return __extends; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__assign", function() { return __assign; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__rest", function() { return __rest; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__decorate", function() { return __decorate; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__param", function() { return __param; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__metadata", function() { return __metadata; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__awaiter", function() { return __awaiter; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__generator", function() { return __generator; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__exportStar", function() { return __exportStar; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__values", function() { return __values; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__read", function() { return __read; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__spread", function() { return __spread; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__await", function() { return __await; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__asyncGenerator", function() { return __asyncGenerator; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__asyncDelegator", function() { return __asyncDelegator; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__asyncValues", function() { return __asyncValues; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__makeTemplateObject", function() { return __makeTemplateObject; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__importStar", function() { return __importStar; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__importDefault", function() { return __importDefault; });
-/*! *****************************************************************************
-Copyright (c) Microsoft Corporation. All rights reserved.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the
-License at http://www.apache.org/licenses/LICENSE-2.0
-
-THIS CODE IS PROVIDED ON AN *AS IS* BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-KIND, EITHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION ANY IMPLIED
-WARRANTIES OR CONDITIONS OF TITLE, FITNESS FOR A PARTICULAR PURPOSE,
-MERCHANTABLITY OR NON-INFRINGEMENT.
-
-See the Apache Version 2.0 License for specific language governing permissions
-and limitations under the License.
-***************************************************************************** */
-/* global Reflect, Promise */
-
-var extendStatics = function(d, b) {
-    extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return extendStatics(d, b);
-};
-
-function __extends(d, b) {
-    extendStatics(d, b);
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-}
-
-var __assign = function() {
-    __assign = Object.assign || function __assign(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
-        }
-        return t;
-    }
-    return __assign.apply(this, arguments);
-}
-
-function __rest(s, e) {
-    var t = {};
-    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
-        t[p] = s[p];
-    if (s != null && typeof Object.getOwnPropertySymbols === "function")
-        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) if (e.indexOf(p[i]) < 0)
-            t[p[i]] = s[p[i]];
-    return t;
-}
-
-function __decorate(decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-}
-
-function __param(paramIndex, decorator) {
-    return function (target, key) { decorator(target, key, paramIndex); }
-}
-
-function __metadata(metadataKey, metadataValue) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(metadataKey, metadataValue);
-}
-
-function __awaiter(thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-}
-
-function __generator(thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
-            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [op[0] & 2, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-    }
-}
-
-function __exportStar(m, exports) {
-    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
-}
-
-function __values(o) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator], i = 0;
-    if (m) return m.call(o);
-    return {
-        next: function () {
-            if (o && i >= o.length) o = void 0;
-            return { value: o && o[i++], done: !o };
-        }
-    };
-}
-
-function __read(o, n) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator];
-    if (!m) return o;
-    var i = m.call(o), r, ar = [], e;
-    try {
-        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-    }
-    catch (error) { e = { error: error }; }
-    finally {
-        try {
-            if (r && !r.done && (m = i["return"])) m.call(i);
-        }
-        finally { if (e) throw e.error; }
-    }
-    return ar;
-}
-
-function __spread() {
-    for (var ar = [], i = 0; i < arguments.length; i++)
-        ar = ar.concat(__read(arguments[i]));
-    return ar;
-}
-
-function __await(v) {
-    return this instanceof __await ? (this.v = v, this) : new __await(v);
-}
-
-function __asyncGenerator(thisArg, _arguments, generator) {
-    if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
-    var g = generator.apply(thisArg, _arguments || []), i, q = [];
-    return i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function () { return this; }, i;
-    function verb(n) { if (g[n]) i[n] = function (v) { return new Promise(function (a, b) { q.push([n, v, a, b]) > 1 || resume(n, v); }); }; }
-    function resume(n, v) { try { step(g[n](v)); } catch (e) { settle(q[0][3], e); } }
-    function step(r) { r.value instanceof __await ? Promise.resolve(r.value.v).then(fulfill, reject) : settle(q[0][2], r); }
-    function fulfill(value) { resume("next", value); }
-    function reject(value) { resume("throw", value); }
-    function settle(f, v) { if (f(v), q.shift(), q.length) resume(q[0][0], q[0][1]); }
-}
-
-function __asyncDelegator(o) {
-    var i, p;
-    return i = {}, verb("next"), verb("throw", function (e) { throw e; }), verb("return"), i[Symbol.iterator] = function () { return this; }, i;
-    function verb(n, f) { i[n] = o[n] ? function (v) { return (p = !p) ? { value: __await(o[n](v)), done: n === "return" } : f ? f(v) : v; } : f; }
-}
-
-function __asyncValues(o) {
-    if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
-    var m = o[Symbol.asyncIterator], i;
-    return m ? m.call(o) : (o = typeof __values === "function" ? __values(o) : o[Symbol.iterator](), i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function () { return this; }, i);
-    function verb(n) { i[n] = o[n] && function (v) { return new Promise(function (resolve, reject) { v = o[n](v), settle(resolve, reject, v.done, v.value); }); }; }
-    function settle(resolve, reject, d, v) { Promise.resolve(v).then(function(v) { resolve({ value: v, done: d }); }, reject); }
-}
-
-function __makeTemplateObject(cooked, raw) {
-    if (Object.defineProperty) { Object.defineProperty(cooked, "raw", { value: raw }); } else { cooked.raw = raw; }
-    return cooked;
-};
-
-function __importStar(mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result.default = mod;
-    return result;
-}
-
-function __importDefault(mod) {
-    return (mod && mod.__esModule) ? mod : { default: mod };
-}
-
-
-/***/ }),
-
-/***/ 73:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2930,8 +2655,9 @@ var defaultLogHandler = function (instance, logType) {
     for (var _i = 2; _i < arguments.length; _i++) {
         args[_i - 2] = arguments[_i];
     }
-    if (logType < instance.logLevel)
+    if (logType < instance.logLevel) {
         return;
+    }
     var now = new Date().toISOString();
     switch (logType) {
         /**
@@ -3076,37 +2802,20 @@ function setLogLevel(level) {
 
 /***/ }),
 
-/***/ 74:
+/***/ 73:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _firebase_database__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(75);
+/* harmony import */ var _firebase_database__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(74);
 /* harmony import */ var _firebase_database__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_firebase_database__WEBPACK_IMPORTED_MODULE_0__);
 
-
-/**
- * @license
- * Copyright 2017 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 //# sourceMappingURL=index.esm.js.map
 
 
 /***/ }),
 
-/***/ 75:
+/***/ 74:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3117,9 +2826,9 @@ Object.defineProperty(exports, '__esModule', { value: true });
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
 var firebase = _interopDefault(__webpack_require__(69));
-var tslib_1 = __webpack_require__(77);
+var tslib_1 = __webpack_require__(70);
 var util = __webpack_require__(71);
-var logger$1 = __webpack_require__(73);
+var logger$1 = __webpack_require__(72);
 
 /**
  * @license
@@ -3313,6 +3022,15 @@ var SessionStorage = createStoragefor('sessionStorage');
  */
 var logClient = new logger$1.Logger('@firebase/database');
 /**
+ * Environment variable for enabling interaction with the Firebase Realtime Database
+ * emulator. If set, the module will present the endpoint with a fake "owner" credential
+ * (see EmulatorAuthTokenProvider) instead of one belonging to a real account.
+ *
+ * The expected format for this variable is '<HOST>:<PORT>'. The transfer protocol must be
+ * omitted and will default to 'http'.
+ */
+var FIREBASE_DATABASE_EMULATOR_HOST_VAR = 'FIREBASE_DATABASE_EMULATOR_HOST';
+/**
  * Returns a locally-unique ID (generated by just incrementing up from 0 each time its called).
  * @type {function(): number} Generated ID.
  */
@@ -3423,7 +3141,7 @@ var logWrapper = function (prefix) {
         for (var _i = 0; _i < arguments.length; _i++) {
             var_args[_i] = arguments[_i];
         }
-        log.apply(void 0, [prefix].concat(var_args));
+        log.apply(void 0, tslib_1.__spread([prefix], var_args));
     };
 };
 /**
@@ -3434,7 +3152,7 @@ var error = function () {
     for (var _i = 0; _i < arguments.length; _i++) {
         var_args[_i] = arguments[_i];
     }
-    var message = 'FIREBASE INTERNAL ERROR: ' + buildLogMessage_.apply(void 0, var_args);
+    var message = 'FIREBASE INTERNAL ERROR: ' + buildLogMessage_.apply(void 0, tslib_1.__spread(var_args));
     logClient.error(message);
 };
 /**
@@ -3445,7 +3163,7 @@ var fatal = function () {
     for (var _i = 0; _i < arguments.length; _i++) {
         var_args[_i] = arguments[_i];
     }
-    var message = "FIREBASE FATAL ERROR: " + buildLogMessage_.apply(void 0, var_args);
+    var message = "FIREBASE FATAL ERROR: " + buildLogMessage_.apply(void 0, tslib_1.__spread(var_args));
     logClient.error(message);
     throw new Error(message);
 };
@@ -3457,7 +3175,7 @@ var warn = function () {
     for (var _i = 0; _i < arguments.length; _i++) {
         var_args[_i] = arguments[_i];
     }
-    var message = 'FIREBASE WARNING: ' + buildLogMessage_.apply(void 0, var_args);
+    var message = 'FIREBASE WARNING: ' + buildLogMessage_.apply(void 0, tslib_1.__spread(var_args));
     logClient.warn(message);
 };
 /**
@@ -3647,25 +3365,16 @@ var splitStringBySize = function (str, segsize) {
 /**
  * Apply a function to each (key, value) pair in an object or
  * apply a function to each (index, value) pair in an array
- * @param {!(Object|Array)} obj The object or array to iterate over
- * @param {function(?, ?)} fn The function to apply
+ * @param obj The object or array to iterate over
+ * @param fn The function to apply
  */
-var each = function (obj, fn) {
-    if (Array.isArray(obj)) {
-        for (var i = 0; i < obj.length; ++i) {
-            fn(i, obj[i]);
+function each(obj, fn) {
+    for (var key in obj) {
+        if (obj.hasOwnProperty(key)) {
+            fn(key, obj[key]);
         }
     }
-    else {
-        /**
-         * in the conversion of code we removed the goog.object.forEach
-         * function which did a value,key callback. We standardized on
-         * a single impl that does a key, value callback. So we invert
-         * to not have to touch the `each` code points
-         */
-        util.forEach(obj, function (key, val) { return fn(val, key); });
-    }
-};
+}
 /**
  * Borrowed from http://hg.secondlife.com/llsd/src/tip/js/typedarray.js (MIT License)
  * I made one modification at the end and removed the NaN / Infinity
@@ -4224,18 +3933,22 @@ var RepoInfo = /** @class */ (function () {
      * @param {boolean} webSocketOnly Whether to prefer websockets over all other transports (used by Nest).
      * @param {string=} persistenceKey Override the default session persistence storage key
      */
-    function RepoInfo(host, secure, namespace, webSocketOnly, persistenceKey) {
+    function RepoInfo(host, secure, namespace, webSocketOnly, persistenceKey, includeNamespaceInQueryParams) {
         if (persistenceKey === void 0) { persistenceKey = ''; }
+        if (includeNamespaceInQueryParams === void 0) { includeNamespaceInQueryParams = false; }
         this.secure = secure;
         this.namespace = namespace;
         this.webSocketOnly = webSocketOnly;
         this.persistenceKey = persistenceKey;
+        this.includeNamespaceInQueryParams = includeNamespaceInQueryParams;
         this.host = host.toLowerCase();
         this.domain = this.host.substr(this.host.indexOf('.') + 1);
         this.internalHost = PersistentStorage.get('host:' + host) || this.host;
     }
     RepoInfo.prototype.needsQueryParam = function () {
-        return this.host !== this.internalHost || this.isCustomHost();
+        return (this.host !== this.internalHost ||
+            this.isCustomHost() ||
+            this.includeNamespaceInQueryParams);
     };
     RepoInfo.prototype.isCacheableHost = function () {
         return this.internalHost.substr(0, 2) === 's-';
@@ -4279,7 +3992,7 @@ var RepoInfo = /** @class */ (function () {
             params['ns'] = this.namespace;
         }
         var pairs = [];
-        util.forEach(params, function (key, value) {
+        each(params, function (key, value) {
             pairs.push(key + '=' + value);
         });
         return connURL + pairs.join('&');
@@ -4339,22 +4052,32 @@ function decodePath(pathString) {
  * @return {!{[key:string]:string}} key value hash
  */
 function decodeQuery(queryString) {
+    var e_1, _a;
     var results = {};
     if (queryString.charAt(0) === '?') {
         queryString = queryString.substring(1);
     }
-    for (var _i = 0, _a = queryString.split('&'); _i < _a.length; _i++) {
-        var segment = _a[_i];
-        if (segment.length === 0) {
-            continue;
+    try {
+        for (var _b = tslib_1.__values(queryString.split('&')), _c = _b.next(); !_c.done; _c = _b.next()) {
+            var segment = _c.value;
+            if (segment.length === 0) {
+                continue;
+            }
+            var kv = segment.split('=');
+            if (kv.length === 2) {
+                results[decodeURIComponent(kv[0])] = decodeURIComponent(kv[1]);
+            }
+            else {
+                warn("Invalid query segment '" + segment + "' in query '" + queryString + "'");
+            }
         }
-        var kv = segment.split('=');
-        if (kv.length === 2) {
-            results[decodeURIComponent(kv[0])] = decodeURIComponent(kv[1]);
+    }
+    catch (e_1_1) { e_1 = { error: e_1_1 }; }
+    finally {
+        try {
+            if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
         }
-        else {
-            warn("Invalid query segment '" + segment + "' in query '" + queryString + "'");
-        }
+        finally { if (e_1) throw e_1.error; }
     }
     return results;
 }
@@ -4364,7 +4087,7 @@ function decodeQuery(queryString) {
  * @return {{repoInfo: !RepoInfo, path: !Path}}
  */
 var parseRepoInfo = function (dataURL) {
-    var parsedUrl = parseURL(dataURL), namespace = parsedUrl.subdomain;
+    var parsedUrl = parseDatabaseURL(dataURL), namespace = parsedUrl.namespace;
     if (parsedUrl.domain === 'firebase') {
         fatal(parsedUrl.host +
             ' is no longer supported. ' +
@@ -4380,18 +4103,20 @@ var parseRepoInfo = function (dataURL) {
     }
     var webSocketOnly = parsedUrl.scheme === 'ws' || parsedUrl.scheme === 'wss';
     return {
-        repoInfo: new RepoInfo(parsedUrl.host, parsedUrl.secure, namespace, webSocketOnly),
+        repoInfo: new RepoInfo(parsedUrl.host, parsedUrl.secure, namespace, webSocketOnly, 
+        /*persistenceKey=*/ '', 
+        /*includeNamespaceInQueryParams=*/ namespace != parsedUrl.subdomain),
         path: new Path(parsedUrl.pathString)
     };
 };
 /**
  *
  * @param {!string} dataURL
- * @return {{host: string, port: number, domain: string, subdomain: string, secure: boolean, scheme: string, pathString: string}}
+ * @return {{host: string, port: number, domain: string, subdomain: string, secure: boolean, scheme: string, pathString: string, namespace: string}}
  */
-var parseURL = function (dataURL) {
+var parseDatabaseURL = function (dataURL) {
     // Default to empty strings in the event of a malformed string.
-    var host = '', domain = '', subdomain = '', pathString = '';
+    var host = '', domain = '', subdomain = '', pathString = '', namespace = '';
     // Always default to SSL, unless otherwise specified.
     var secure = true, scheme = 'https', port = 443;
     // Don't do any validation here. The caller is responsible for validating the result of parsing.
@@ -4431,6 +4156,8 @@ var parseURL = function (dataURL) {
             // Normalize namespaces to lowercase to share storage / connection.
             domain = parts[1];
             subdomain = parts[0].toLowerCase();
+            // We interpret the subdomain of a 3 component URL as the namespace name.
+            namespace = subdomain;
         }
         else if (parts.length === 2) {
             domain = parts[0];
@@ -4438,9 +4165,9 @@ var parseURL = function (dataURL) {
         else if (parts[0].slice(0, colonInd).toLowerCase() === 'localhost') {
             domain = 'localhost';
         }
-        // Support `ns` query param if subdomain not already set
-        if (subdomain === '' && 'ns' in queryParams) {
-            subdomain = queryParams['ns'];
+        // Always treat the value of the `ns` as the namespace name if it is present.
+        if ('ns' in queryParams) {
+            namespace = queryParams['ns'];
         }
     }
     return {
@@ -4450,7 +4177,8 @@ var parseURL = function (dataURL) {
         subdomain: subdomain,
         secure: secure,
         scheme: scheme,
-        pathString: pathString
+        pathString: pathString,
+        namespace: namespace
     };
 };
 
@@ -4578,8 +4306,9 @@ var validateFirebaseData = function (errorPrefix, data, path_) {
     // TODO = Perf = Consider combining the recursive validation of keys into NodeFromJSON
     // to save extra walking of large objects.
     if (data && typeof data === 'object') {
-        var hasDotValue_1 = false, hasActualChild_1 = false;
-        util.forEach(data, function (key, value) {
+        var hasDotValue_1 = false;
+        var hasActualChild_1 = false;
+        each(data, function (key, value) {
             if (key === '.value') {
                 hasDotValue_1 = true;
             }
@@ -4666,7 +4395,7 @@ var validateFirebaseMergeDataArg = function (fnName, argumentNumber, data, path,
         throw new Error(errorPrefix + ' must be an object containing the children to replace.');
     }
     var mergePaths = [];
-    util.forEach(data, function (key, value) {
+    each(data, function (key, value) {
         var curPath = new Path(key);
         validateFirebaseData(errorPrefix, value, path.child(curPath));
         if (curPath.getBack() === '.priority') {
@@ -5203,7 +4932,8 @@ var validatePriorityNode = function (priorityNode) {
         var val = priorityNode.val();
         util.assert(typeof val === 'string' ||
             typeof val === 'number' ||
-            (typeof val === 'object' && util.contains(val, '.sv')), 'Priority must be a string or number.');
+            (typeof val === 'object' &&
+                util.contains(val, '.sv')), 'Priority must be a string or number.');
     }
     else {
         util.assert(priorityNode === MAX_NODE || priorityNode.isEmpty(), 'priority of unexpected type.');
@@ -6360,12 +6090,6 @@ var buildChildSet = function (childList, cmp, keyFn, mapSortFn) {
  */
 var _defaultIndexMap;
 var fallbackObject = {};
-/**
- *
- * @param {Object.<string, FallbackType|SortedMap.<NamedNode, Node>>} indexes
- * @param {Object.<string, Index>} indexSet
- * @constructor
- */
 var IndexMap = /** @class */ (function () {
     function IndexMap(indexes_, indexSet_) {
         this.indexes_ = indexes_;
@@ -6374,8 +6098,6 @@ var IndexMap = /** @class */ (function () {
     Object.defineProperty(IndexMap, "Default", {
         /**
          * The default IndexMap for nodes without a priority
-         * @type {!IndexMap}
-         * @const
          */
         get: function () {
             util.assert(fallbackObject && PRIORITY_INDEX, 'ChildrenNode.ts has not been loaded');
@@ -6387,36 +6109,22 @@ var IndexMap = /** @class */ (function () {
         enumerable: true,
         configurable: true
     });
-    /**
-     *
-     * @param {!string} indexKey
-     * @return {?SortedMap.<NamedNode, Node>}
-     */
     IndexMap.prototype.get = function (indexKey) {
         var sortedMap = util.safeGet(this.indexes_, indexKey);
         if (!sortedMap)
             throw new Error('No index defined for ' + indexKey);
-        if (sortedMap === fallbackObject) {
+        if (sortedMap instanceof SortedMap) {
+            return sortedMap;
+        }
+        else {
             // The index exists, but it falls back to just name comparison. Return null so that the calling code uses the
             // regular child map
             return null;
         }
-        else {
-            return sortedMap;
-        }
     };
-    /**
-     * @param {!Index} indexDefinition
-     * @return {boolean}
-     */
     IndexMap.prototype.hasIndex = function (indexDefinition) {
         return util.contains(this.indexSet_, indexDefinition.toString());
     };
-    /**
-     * @param {!Index} indexDefinition
-     * @param {!SortedMap.<string, !Node>} existingChildren
-     * @return {!IndexMap}
-     */
     IndexMap.prototype.addIndex = function (indexDefinition, existingChildren) {
         util.assert(indexDefinition !== KEY_INDEX, "KeyIndex always exists and isn't meant to be added to the IndexMap.");
         var childList = [];
@@ -6437,17 +6145,14 @@ var IndexMap = /** @class */ (function () {
             newIndex = fallbackObject;
         }
         var indexName = indexDefinition.toString();
-        var newIndexSet = util.clone(this.indexSet_);
+        var newIndexSet = tslib_1.__assign({}, this.indexSet_);
         newIndexSet[indexName] = indexDefinition;
-        var newIndexes = util.clone(this.indexes_);
+        var newIndexes = tslib_1.__assign({}, this.indexes_);
         newIndexes[indexName] = newIndex;
         return new IndexMap(newIndexes, newIndexSet);
     };
     /**
      * Ensure that this node is properly tracked in any indexes that we're maintaining
-     * @param {!NamedNode} namedNode
-     * @param {!SortedMap.<string, !Node>} existingChildren
-     * @return {!IndexMap}
      */
     IndexMap.prototype.addToIndexes = function (namedNode, existingChildren) {
         var _this = this;
@@ -6488,9 +6193,6 @@ var IndexMap = /** @class */ (function () {
     };
     /**
      * Create a new IndexMap instance with the given value removed
-     * @param {!NamedNode} namedNode
-     * @param {!SortedMap.<string, !Node>} existingChildren
-     * @return {!IndexMap}
      */
     IndexMap.prototype.removeFromIndexes = function (namedNode, existingChildren) {
         var newIndexes = util.map(this.indexes_, function (indexedChildren) {
@@ -7064,11 +6766,11 @@ function nodeFromJSON$1(json, priority) {
     if (!(json instanceof Array) && USE_HINZE) {
         var children_1 = [];
         var childrenHavePriority_1 = false;
-        var hinzeJsonObj_1 = json;
-        util.forEach(hinzeJsonObj_1, function (key, child) {
-            if (typeof key !== 'string' || key.substring(0, 1) !== '.') {
+        var hinzeJsonObj = json;
+        each(hinzeJsonObj, function (key, child) {
+            if (key.substring(0, 1) !== '.') {
                 // Ignore metadata nodes
-                var childNode = nodeFromJSON$1(hinzeJsonObj_1[key]);
+                var childNode = nodeFromJSON$1(child);
                 if (!childNode.isEmpty()) {
                     childrenHavePriority_1 =
                         childrenHavePriority_1 || !childNode.getPriority().isEmpty();
@@ -7090,9 +6792,8 @@ function nodeFromJSON$1(json, priority) {
     }
     else {
         var node_1 = ChildrenNode.EMPTY_NODE;
-        var jsonObj_1 = json;
-        util.forEach(jsonObj_1, function (key, childData) {
-            if (util.contains(jsonObj_1, key)) {
+        each(json, function (key, childData) {
+            if (util.contains(json, key)) {
                 if (key.substring(0, 1) !== '.') {
                     // ignore metadata nodes.
                     var childNode = nodeFromJSON$1(childData);
@@ -7683,7 +7384,7 @@ var ChildEventRegistration = /** @class */ (function () {
      */
     ChildEventRegistration.prototype.createEvent = function (change, query) {
         util.assert(change.childName != null, 'Child events should have a childName.');
-        var ref = query.getRef().child(/** @type {!string} */ (change.childName));
+        var ref = query.getRef().child(/** @type {!string} */ change.childName);
         var index = query.getQueryParams().getIndex();
         return new DataEvent(change.type, this, new DataSnapshot(change.snapshotNode, ref, index), change.prevName);
     };
@@ -7711,20 +7412,23 @@ var ChildEventRegistration = /** @class */ (function () {
      * @inheritDoc
      */
     ChildEventRegistration.prototype.matches = function (other) {
+        var _this = this;
         if (other instanceof ChildEventRegistration) {
             if (!this.callbacks_ || !other.callbacks_) {
                 return true;
             }
             else if (this.context_ === other.context_) {
-                var otherCount = util.getCount(other.callbacks_);
-                var thisCount = util.getCount(this.callbacks_);
+                var otherKeys = Object.keys(other.callbacks_);
+                var thisKeys = Object.keys(this.callbacks_);
+                var otherCount = otherKeys.length;
+                var thisCount = thisKeys.length;
                 if (otherCount === thisCount) {
                     // If count is 1, do an exact match on eventType, if either is defined but null, it's a match.
-                    //  If event types don't match, not a match
+                    // If event types don't match, not a match
                     // If count is not 1, exact match across all
                     if (otherCount === 1) {
-                        var otherKey /** @type {!string} */ = util.getAnyKey(other.callbacks_);
-                        var thisKey /** @type {!string} */ = util.getAnyKey(this.callbacks_);
+                        var otherKey = otherKeys[0];
+                        var thisKey = thisKeys[0];
                         return (thisKey === otherKey &&
                             (!other.callbacks_[otherKey] ||
                                 !this.callbacks_[thisKey] ||
@@ -7732,7 +7436,9 @@ var ChildEventRegistration = /** @class */ (function () {
                     }
                     else {
                         // Exact match on each key.
-                        return util.every(this.callbacks_, function (eventType, cb) { return other.callbacks_[eventType] === cb; });
+                        return thisKeys.every(function (eventType) {
+                            return other.callbacks_[eventType] === _this.callbacks_[eventType];
+                        });
                     }
                 }
             }
@@ -8257,130 +7963,28 @@ var Query = /** @class */ (function () {
  * limitations under the License.
  */
 /**
- * Implements a set with a count of elements.
- *
- * @template K, V
- */
-var CountedSet = /** @class */ (function () {
-    function CountedSet() {
-        this.set = {};
-    }
-    /**
-     * @param {!K} item
-     * @param {V} val
-     */
-    CountedSet.prototype.add = function (item, val) {
-        this.set[item] = val !== null ? val : true;
-    };
-    /**
-     * @param {!K} key
-     * @return {boolean}
-     */
-    CountedSet.prototype.contains = function (key) {
-        return util.contains(this.set, key);
-    };
-    /**
-     * @param {!K} item
-     * @return {V}
-     */
-    CountedSet.prototype.get = function (item) {
-        return this.contains(item) ? this.set[item] : undefined;
-    };
-    /**
-     * @param {!K} item
-     */
-    CountedSet.prototype.remove = function (item) {
-        delete this.set[item];
-    };
-    /**
-     * Deletes everything in the set
-     */
-    CountedSet.prototype.clear = function () {
-        this.set = {};
-    };
-    /**
-     * True if there's nothing in the set
-     * @return {boolean}
-     */
-    CountedSet.prototype.isEmpty = function () {
-        return util.isEmpty(this.set);
-    };
-    /**
-     * @return {number} The number of items in the set
-     */
-    CountedSet.prototype.count = function () {
-        return util.getCount(this.set);
-    };
-    /**
-     * Run a function on each k,v pair in the set
-     * @param {function(K, V)} fn
-     */
-    CountedSet.prototype.each = function (fn) {
-        util.forEach(this.set, function (k, v) { return fn(k, v); });
-    };
-    /**
-     * Mostly for debugging
-     * @return {Array.<K>} The keys present in this CountedSet
-     */
-    CountedSet.prototype.keys = function () {
-        var keys = [];
-        util.forEach(this.set, function (k) {
-            keys.push(k);
-        });
-        return keys;
-    };
-    return CountedSet;
-}());
-
-/**
- * @license
- * Copyright 2017 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-/**
  * Helper class to store a sparse set of snapshots.
- *
- * @constructor
  */
 var SparseSnapshotTree = /** @class */ (function () {
     function SparseSnapshotTree() {
-        /**
-         * @private
-         * @type {Node}
-         */
-        this.value_ = null;
-        /**
-         * @private
-         * @type {CountedSet}
-         */
-        this.children_ = null;
+        this.value = null;
+        this.children = new Map();
     }
     /**
      * Gets the node stored at the given path if one exists.
      *
-     * @param {!Path} path Path to look up snapshot for.
-     * @return {?Node} The retrieved node, or null.
+     * @param path Path to look up snapshot for.
+     * @return The retrieved node, or null.
      */
     SparseSnapshotTree.prototype.find = function (path) {
-        if (this.value_ != null) {
-            return this.value_.getChild(path);
+        if (this.value != null) {
+            return this.value.getChild(path);
         }
-        else if (!path.isEmpty() && this.children_ != null) {
+        else if (!path.isEmpty() && this.children.size > 0) {
             var childKey = path.getFront();
             path = path.popFront();
-            if (this.children_.contains(childKey)) {
-                var childTree = this.children_.get(childKey);
+            if (this.children.has(childKey)) {
+                var childTree = this.children.get(childKey);
                 return childTree.find(path);
             }
             else {
@@ -8395,26 +7999,23 @@ var SparseSnapshotTree = /** @class */ (function () {
      * Stores the given node at the specified path. If there is already a node
      * at a shallower path, it merges the new data into that snapshot node.
      *
-     * @param {!Path} path Path to look up snapshot for.
-     * @param {!Node} data The new data, or null.
+     * @param path Path to look up snapshot for.
+     * @param data The new data, or null.
      */
     SparseSnapshotTree.prototype.remember = function (path, data) {
         if (path.isEmpty()) {
-            this.value_ = data;
-            this.children_ = null;
+            this.value = data;
+            this.children.clear();
         }
-        else if (this.value_ !== null) {
-            this.value_ = this.value_.updateChild(path, data);
+        else if (this.value !== null) {
+            this.value = this.value.updateChild(path, data);
         }
         else {
-            if (this.children_ == null) {
-                this.children_ = new CountedSet();
-            }
             var childKey = path.getFront();
-            if (!this.children_.contains(childKey)) {
-                this.children_.add(childKey, new SparseSnapshotTree());
+            if (!this.children.has(childKey)) {
+                this.children.set(childKey, new SparseSnapshotTree());
             }
-            var child = this.children_.get(childKey);
+            var child = this.children.get(childKey);
             path = path.popFront();
             child.remember(path, data);
         }
@@ -8422,24 +8023,24 @@ var SparseSnapshotTree = /** @class */ (function () {
     /**
      * Purge the data at path from the cache.
      *
-     * @param {!Path} path Path to look up snapshot for.
-     * @return {boolean} True if this node should now be removed.
+     * @param path Path to look up snapshot for.
+     * @return True if this node should now be removed.
      */
     SparseSnapshotTree.prototype.forget = function (path) {
         if (path.isEmpty()) {
-            this.value_ = null;
-            this.children_ = null;
+            this.value = null;
+            this.children.clear();
             return true;
         }
         else {
-            if (this.value_ !== null) {
-                if (this.value_.isLeafNode()) {
+            if (this.value !== null) {
+                if (this.value.isLeafNode()) {
                     // We're trying to forget a node that doesn't exist
                     return false;
                 }
                 else {
-                    var value = this.value_;
-                    this.value_ = null;
+                    var value = this.value;
+                    this.value = null;
                     var self_1 = this;
                     value.forEachChild(PRIORITY_INDEX, function (key, tree) {
                         self_1.remember(new Path(key), tree);
@@ -8447,22 +8048,16 @@ var SparseSnapshotTree = /** @class */ (function () {
                     return this.forget(path);
                 }
             }
-            else if (this.children_ !== null) {
+            else if (this.children.size > 0) {
                 var childKey = path.getFront();
                 path = path.popFront();
-                if (this.children_.contains(childKey)) {
-                    var safeToRemove = this.children_.get(childKey).forget(path);
+                if (this.children.has(childKey)) {
+                    var safeToRemove = this.children.get(childKey).forget(path);
                     if (safeToRemove) {
-                        this.children_.remove(childKey);
+                        this.children.delete(childKey);
                     }
                 }
-                if (this.children_.isEmpty()) {
-                    this.children_ = null;
-                    return true;
-                }
-                else {
-                    return false;
-                }
+                return this.children.size === 0;
             }
             else {
                 return true;
@@ -8473,12 +8068,12 @@ var SparseSnapshotTree = /** @class */ (function () {
      * Recursively iterates through all of the stored tree and calls the
      * callback on each one.
      *
-     * @param {!Path} prefixPath Path to look up node for.
-     * @param {!Function} func The function to invoke for each tree.
+     * @param prefixPath Path to look up node for.
+     * @param func The function to invoke for each tree.
      */
     SparseSnapshotTree.prototype.forEachTree = function (prefixPath, func) {
-        if (this.value_ !== null) {
-            func(prefixPath, this.value_);
+        if (this.value !== null) {
+            func(prefixPath, this.value);
         }
         else {
             this.forEachChild(function (key, tree) {
@@ -8490,14 +8085,12 @@ var SparseSnapshotTree = /** @class */ (function () {
     /**
      * Iterates through each immediate child and triggers the callback.
      *
-     * @param {!Function} func The function to invoke for each child.
+     * @param func The function to invoke for each child.
      */
     SparseSnapshotTree.prototype.forEachChild = function (func) {
-        if (this.children_ !== null) {
-            this.children_.each(function (key, tree) {
-                func(key, tree);
-            });
-        }
+        this.children.forEach(function (tree, key) {
+            func(key, tree);
+        });
     };
     return SparseSnapshotTree;
 }());
@@ -8771,7 +8364,7 @@ var ImmutableTree = /** @class */ (function () {
      */
     ImmutableTree.fromObject = function (obj) {
         var tree = ImmutableTree.Empty;
-        util.forEach(obj, function (childPath, childSnap) {
+        each(obj, function (childPath, childSnap) {
             tree = tree.set(new Path(childPath), childSnap);
         });
         return tree;
@@ -9620,44 +9213,38 @@ var IndexedFilter = /** @class */ (function () {
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * @constructor
- */
 var ChildChangeAccumulator = /** @class */ (function () {
     function ChildChangeAccumulator() {
-        this.changeMap_ = {};
+        this.changeMap = new Map();
     }
-    /**
-     * @param {!Change} change
-     */
     ChildChangeAccumulator.prototype.trackChildChange = function (change) {
         var type = change.type;
-        var childKey /** @type {!string} */ = change.childName;
+        var childKey = change.childName;
         util.assert(type == Change.CHILD_ADDED ||
             type == Change.CHILD_CHANGED ||
             type == Change.CHILD_REMOVED, 'Only child changes supported for tracking');
         util.assert(childKey !== '.priority', 'Only non-priority child changes can be tracked.');
-        var oldChange = util.safeGet(this.changeMap_, childKey);
+        var oldChange = this.changeMap.get(childKey);
         if (oldChange) {
             var oldType = oldChange.type;
             if (type == Change.CHILD_ADDED && oldType == Change.CHILD_REMOVED) {
-                this.changeMap_[childKey] = Change.childChangedChange(childKey, change.snapshotNode, oldChange.snapshotNode);
+                this.changeMap.set(childKey, Change.childChangedChange(childKey, change.snapshotNode, oldChange.snapshotNode));
             }
             else if (type == Change.CHILD_REMOVED &&
                 oldType == Change.CHILD_ADDED) {
-                delete this.changeMap_[childKey];
+                this.changeMap.delete(childKey);
             }
             else if (type == Change.CHILD_REMOVED &&
                 oldType == Change.CHILD_CHANGED) {
-                this.changeMap_[childKey] = Change.childRemovedChange(childKey, oldChange.oldSnap);
+                this.changeMap.set(childKey, Change.childRemovedChange(childKey, oldChange.oldSnap));
             }
             else if (type == Change.CHILD_CHANGED &&
                 oldType == Change.CHILD_ADDED) {
-                this.changeMap_[childKey] = Change.childAddedChange(childKey, change.snapshotNode);
+                this.changeMap.set(childKey, Change.childAddedChange(childKey, change.snapshotNode));
             }
             else if (type == Change.CHILD_CHANGED &&
                 oldType == Change.CHILD_CHANGED) {
-                this.changeMap_[childKey] = Change.childChangedChange(childKey, change.snapshotNode, oldChange.oldSnap);
+                this.changeMap.set(childKey, Change.childChangedChange(childKey, change.snapshotNode, oldChange.oldSnap));
             }
             else {
                 throw util.assertionError('Illegal combination of changes: ' +
@@ -9667,14 +9254,11 @@ var ChildChangeAccumulator = /** @class */ (function () {
             }
         }
         else {
-            this.changeMap_[childKey] = change;
+            this.changeMap.set(childKey, change);
         }
     };
-    /**
-     * @return {!Array.<!Change>}
-     */
     ChildChangeAccumulator.prototype.getChanges = function () {
-        return util.getValues(this.changeMap_);
+        return Array.from(this.changeMap.values());
     };
     return ChildChangeAccumulator;
 }());
@@ -9904,9 +9488,7 @@ var ViewProcessor = /** @class */ (function () {
             if (accumulator.length > 0 ||
                 !oldViewCache.getEventCache().isFullyInitialized() ||
                 (isLeafOrEmpty &&
-                    !eventSnap
-                        .getNode()
-                        .equals(/** @type {!Node} */ (oldCompleteSnap))) ||
+                    !eventSnap.getNode().equals(/** @type {!Node} */ oldCompleteSnap)) ||
                 !eventSnap
                     .getNode()
                     .getPriority()
@@ -10712,11 +10294,8 @@ var SyncPoint = /** @class */ (function () {
          * queryId and the value is the View for that query.
          *
          * NOTE: This list will be quite small (usually 1, but perhaps 2 or 3; any more is an odd use case).
-         *
-         * @type {!Object.<!string, !View>}
-         * @private
          */
-        this.views_ = {};
+        this.views = new Map();
     }
     Object.defineProperty(SyncPoint, "__referenceConstructor", {
         get: function () {
@@ -10730,32 +10309,33 @@ var SyncPoint = /** @class */ (function () {
         enumerable: true,
         configurable: true
     });
-    /**
-     * @return {boolean}
-     */
     SyncPoint.prototype.isEmpty = function () {
-        return util.isEmpty(this.views_);
+        return this.views.size === 0;
     };
-    /**
-     *
-     * @param {!Operation} operation
-     * @param {!WriteTreeRef} writesCache
-     * @param {?Node} optCompleteServerCache
-     * @return {!Array.<!Event>}
-     */
     SyncPoint.prototype.applyOperation = function (operation, writesCache, optCompleteServerCache) {
+        var e_1, _a;
         var queryId = operation.source.queryId;
         if (queryId !== null) {
-            var view = util.safeGet(this.views_, queryId);
+            var view = this.views.get(queryId);
             util.assert(view != null, 'SyncTree gave us an op for an invalid query.');
             return view.applyOperation(operation, writesCache, optCompleteServerCache);
         }
         else {
-            var events_1 = [];
-            util.forEach(this.views_, function (key, view) {
-                events_1 = events_1.concat(view.applyOperation(operation, writesCache, optCompleteServerCache));
-            });
-            return events_1;
+            var events = [];
+            try {
+                for (var _b = tslib_1.__values(this.views.values()), _c = _b.next(); !_c.done; _c = _b.next()) {
+                    var view = _c.value;
+                    events = events.concat(view.applyOperation(operation, writesCache, optCompleteServerCache));
+                }
+            }
+            catch (e_1_1) { e_1 = { error: e_1_1 }; }
+            finally {
+                try {
+                    if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+                }
+                finally { if (e_1) throw e_1.error; }
+            }
+            return events;
         }
     };
     /**
@@ -10770,7 +10350,7 @@ var SyncPoint = /** @class */ (function () {
      */
     SyncPoint.prototype.addEventRegistration = function (query, eventRegistration, writesCache, serverCache, serverCacheComplete) {
         var queryId = query.queryIdentifier();
-        var view = util.safeGet(this.views_, queryId);
+        var view = this.views.get(queryId);
         if (!view) {
             // TODO: make writesCache take flag for complete server node
             var eventCache = writesCache.calcCompleteEventCache(serverCacheComplete ? serverCache : null);
@@ -10787,10 +10367,10 @@ var SyncPoint = /** @class */ (function () {
                 eventCacheComplete = false;
             }
             var viewCache = new ViewCache(new CacheNode(
-            /** @type {!Node} */ (eventCache), eventCacheComplete, false), new CacheNode(
-            /** @type {!Node} */ (serverCache), serverCacheComplete, false));
+            /** @type {!Node} */ eventCache, eventCacheComplete, false), new CacheNode(
+            /** @type {!Node} */ serverCache, serverCacheComplete, false));
             view = new View(query, viewCache);
-            this.views_[queryId] = view;
+            this.views.set(queryId, view);
         }
         // This is guaranteed to exist now, we just created anything that was missing
         view.addEventRegistration(eventRegistration);
@@ -10808,34 +10388,44 @@ var SyncPoint = /** @class */ (function () {
      * @return {{removed:!Array.<!Query>, events:!Array.<!Event>}} removed queries and any cancel events
      */
     SyncPoint.prototype.removeEventRegistration = function (query, eventRegistration, cancelError) {
+        var e_2, _a;
         var queryId = query.queryIdentifier();
         var removed = [];
         var cancelEvents = [];
         var hadCompleteView = this.hasCompleteView();
         if (queryId === 'default') {
-            // When you do ref.off(...), we search all views for the registration to remove.
-            var self_1 = this;
-            util.forEach(this.views_, function (viewQueryId, view) {
-                cancelEvents = cancelEvents.concat(view.removeEventRegistration(eventRegistration, cancelError));
-                if (view.isEmpty()) {
-                    delete self_1.views_[viewQueryId];
-                    // We'll deal with complete views later.
-                    if (!view
-                        .getQuery()
-                        .getQueryParams()
-                        .loadsAllData()) {
-                        removed.push(view.getQuery());
+            try {
+                // When you do ref.off(...), we search all views for the registration to remove.
+                for (var _b = tslib_1.__values(this.views.entries()), _c = _b.next(); !_c.done; _c = _b.next()) {
+                    var _d = tslib_1.__read(_c.value, 2), viewQueryId = _d[0], view = _d[1];
+                    cancelEvents = cancelEvents.concat(view.removeEventRegistration(eventRegistration, cancelError));
+                    if (view.isEmpty()) {
+                        this.views.delete(viewQueryId);
+                        // We'll deal with complete views later.
+                        if (!view
+                            .getQuery()
+                            .getQueryParams()
+                            .loadsAllData()) {
+                            removed.push(view.getQuery());
+                        }
                     }
                 }
-            });
+            }
+            catch (e_2_1) { e_2 = { error: e_2_1 }; }
+            finally {
+                try {
+                    if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+                }
+                finally { if (e_2) throw e_2.error; }
+            }
         }
         else {
             // remove the callback from the specific view.
-            var view = util.safeGet(this.views_, queryId);
+            var view = this.views.get(queryId);
             if (view) {
                 cancelEvents = cancelEvents.concat(view.removeEventRegistration(eventRegistration, cancelError));
                 if (view.isEmpty()) {
-                    delete this.views_[queryId];
+                    this.views.delete(queryId);
                     // We'll deal with complete views later.
                     if (!view
                         .getQuery()
@@ -10852,35 +10442,51 @@ var SyncPoint = /** @class */ (function () {
         }
         return { removed: removed, events: cancelEvents };
     };
-    /**
-     * @return {!Array.<!View>}
-     */
     SyncPoint.prototype.getQueryViews = function () {
-        var _this = this;
-        var values = Object.keys(this.views_).map(function (key) { return _this.views_[key]; });
-        return values.filter(function (view) {
-            return !view
-                .getQuery()
-                .getQueryParams()
-                .loadsAllData();
-        });
+        var e_3, _a;
+        var result = [];
+        try {
+            for (var _b = tslib_1.__values(this.views.values()), _c = _b.next(); !_c.done; _c = _b.next()) {
+                var view = _c.value;
+                if (!view
+                    .getQuery()
+                    .getQueryParams()
+                    .loadsAllData()) {
+                    result.push(view);
+                }
+            }
+        }
+        catch (e_3_1) { e_3 = { error: e_3_1 }; }
+        finally {
+            try {
+                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+            }
+            finally { if (e_3) throw e_3.error; }
+        }
+        return result;
     };
     /**
-     *
-     * @param {!Path} path The path to the desired complete snapshot
-     * @return {?Node} A complete cache, if it exists
+     * @param path The path to the desired complete snapshot
+     * @return A complete cache, if it exists
      */
     SyncPoint.prototype.getCompleteServerCache = function (path) {
+        var e_4, _a;
         var serverCache = null;
-        util.forEach(this.views_, function (key, view) {
-            serverCache = serverCache || view.getCompleteServerCache(path);
-        });
+        try {
+            for (var _b = tslib_1.__values(this.views.values()), _c = _b.next(); !_c.done; _c = _b.next()) {
+                var view = _c.value;
+                serverCache = serverCache || view.getCompleteServerCache(path);
+            }
+        }
+        catch (e_4_1) { e_4 = { error: e_4_1 }; }
+        finally {
+            try {
+                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+            }
+            finally { if (e_4) throw e_4.error; }
+        }
         return serverCache;
     };
-    /**
-     * @param {!Query} query
-     * @return {?View}
-     */
     SyncPoint.prototype.viewForQuery = function (query) {
         var params = query.getQueryParams();
         if (params.loadsAllData()) {
@@ -10888,33 +10494,36 @@ var SyncPoint = /** @class */ (function () {
         }
         else {
             var queryId = query.queryIdentifier();
-            return util.safeGet(this.views_, queryId);
+            return this.views.get(queryId);
         }
     };
-    /**
-     * @param {!Query} query
-     * @return {boolean}
-     */
     SyncPoint.prototype.viewExistsForQuery = function (query) {
         return this.viewForQuery(query) != null;
     };
-    /**
-     * @return {boolean}
-     */
     SyncPoint.prototype.hasCompleteView = function () {
         return this.getCompleteView() != null;
     };
-    /**
-     * @return {?View}
-     */
     SyncPoint.prototype.getCompleteView = function () {
-        var completeView = util.findValue(this.views_, function (view) {
-            return view
-                .getQuery()
-                .getQueryParams()
-                .loadsAllData();
-        });
-        return completeView || null;
+        var e_5, _a;
+        try {
+            for (var _b = tslib_1.__values(this.views.values()), _c = _b.next(); !_c.done; _c = _b.next()) {
+                var view = _c.value;
+                if (view
+                    .getQuery()
+                    .getQueryParams()
+                    .loadsAllData()) {
+                    return view;
+                }
+            }
+        }
+        catch (e_5_1) { e_5 = { error: e_5_1 }; }
+        finally {
+            try {
+                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+            }
+            finally { if (e_5) throw e_5.error; }
+        }
+        return null;
     };
     return SyncPoint;
 }());
@@ -10940,19 +10549,11 @@ var SyncPoint = /** @class */ (function () {
  * dealing with priority writes and multiple nested writes. At any given path there is only allowed to be one write
  * modifying that path. Any write to an existing path or shadowing an existing path will modify that existing write
  * to reflect the write added.
- *
- * @constructor
- * @param {!ImmutableTree.<!Node>} writeTree
  */
 var CompoundWrite = /** @class */ (function () {
     function CompoundWrite(writeTree_) {
         this.writeTree_ = writeTree_;
     }
-    /**
-     * @param {!Path} path
-     * @param {!Node} node
-     * @return {!CompoundWrite}
-     */
     CompoundWrite.prototype.addWrite = function (path, node) {
         if (path.isEmpty()) {
             return new CompoundWrite(new ImmutableTree(node));
@@ -10973,14 +10574,9 @@ var CompoundWrite = /** @class */ (function () {
             }
         }
     };
-    /**
-     * @param {!Path} path
-     * @param {!Object.<string, !Node>} updates
-     * @return {!CompoundWrite}
-     */
     CompoundWrite.prototype.addWrites = function (path, updates) {
         var newWrite = this;
-        util.forEach(updates, function (childKey, node) {
+        each(updates, function (childKey, node) {
             newWrite = newWrite.addWrite(path.child(childKey), node);
         });
         return newWrite;
@@ -10989,7 +10585,7 @@ var CompoundWrite = /** @class */ (function () {
      * Will remove a write at the given path and deeper paths. This will <em>not</em> modify a write at a higher
      * location, which must be removed by calling this method with that path.
      *
-     * @param {!Path} path The path at which a write and all deeper writes should be removed
+     * @param path The path at which a write and all deeper writes should be removed
      * @return {!CompoundWrite} The new CompoundWrite with the removed path
      */
     CompoundWrite.prototype.removeWrite = function (path) {
@@ -11005,8 +10601,8 @@ var CompoundWrite = /** @class */ (function () {
      * Returns whether this CompoundWrite will fully overwrite a node at a given location and can therefore be
      * considered "complete".
      *
-     * @param {!Path} path The path to check for
-     * @return {boolean} Whether there is a complete write at that path
+     * @param path The path to check for
+     * @return Whether there is a complete write at that path
      */
     CompoundWrite.prototype.hasCompleteWrite = function (path) {
         return this.getCompleteNode(path) != null;
@@ -11015,8 +10611,8 @@ var CompoundWrite = /** @class */ (function () {
      * Returns a node for a path if and only if the node is a "complete" overwrite at that path. This will not aggregate
      * writes from deeper paths, but will return child nodes from a more shallow path.
      *
-     * @param {!Path} path The path to get a complete write
-     * @return {?Node} The node if complete at that path, or null otherwise.
+     * @param path The path to get a complete write
+     * @return The node if complete at that path, or null otherwise.
      */
     CompoundWrite.prototype.getCompleteNode = function (path) {
         var rootmost = this.writeTree_.findRootMostValueAndPath(path);
@@ -11032,7 +10628,7 @@ var CompoundWrite = /** @class */ (function () {
     /**
      * Returns all children that are guaranteed to be a complete overwrite.
      *
-     * @return {!Array.<NamedNode>} A list of all complete children.
+     * @return A list of all complete children.
      */
     CompoundWrite.prototype.getCompleteChildren = function () {
         var children = [];
@@ -11054,10 +10650,6 @@ var CompoundWrite = /** @class */ (function () {
         }
         return children;
     };
-    /**
-     * @param {!Path} path
-     * @return {!CompoundWrite}
-     */
     CompoundWrite.prototype.childCompoundWrite = function (path) {
         if (path.isEmpty()) {
             return this;
@@ -11074,7 +10666,7 @@ var CompoundWrite = /** @class */ (function () {
     };
     /**
      * Returns true if this CompoundWrite is empty and therefore does not modify any nodes.
-     * @return {boolean} Whether this CompoundWrite is empty
+     * @return Whether this CompoundWrite is empty
      */
     CompoundWrite.prototype.isEmpty = function () {
         return this.writeTree_.isEmpty();
@@ -11082,50 +10674,40 @@ var CompoundWrite = /** @class */ (function () {
     /**
      * Applies this CompoundWrite to a node. The node is returned with all writes from this CompoundWrite applied to the
      * node
-     * @param {!Node} node The node to apply this CompoundWrite to
-     * @return {!Node} The node with all writes applied
+     * @param node The node to apply this CompoundWrite to
+     * @return The node with all writes applied
      */
     CompoundWrite.prototype.apply = function (node) {
-        return CompoundWrite.applySubtreeWrite_(Path.Empty, this.writeTree_, node);
+        return applySubtreeWrite(Path.Empty, this.writeTree_, node);
     };
-    /**
-     * @type {!CompoundWrite}
-     */
     CompoundWrite.Empty = new CompoundWrite(new ImmutableTree(null));
-    /**
-     * @param {!Path} relativePath
-     * @param {!ImmutableTree.<!Node>} writeTree
-     * @param {!Node} node
-     * @return {!Node}
-     * @private
-     */
-    CompoundWrite.applySubtreeWrite_ = function (relativePath, writeTree, node) {
-        if (writeTree.value != null) {
-            // Since there a write is always a leaf, we're done here
-            return node.updateChild(relativePath, writeTree.value);
-        }
-        else {
-            var priorityWrite_1 = null;
-            writeTree.children.inorderTraversal(function (childKey, childTree) {
-                if (childKey === '.priority') {
-                    // Apply priorities at the end so we don't update priorities for either empty nodes or forget
-                    // to apply priorities to empty nodes that are later filled
-                    util.assert(childTree.value !== null, 'Priority writes must always be leaf nodes');
-                    priorityWrite_1 = childTree.value;
-                }
-                else {
-                    node = CompoundWrite.applySubtreeWrite_(relativePath.child(childKey), childTree, node);
-                }
-            });
-            // If there was a priority write, we only apply it if the node is not empty
-            if (!node.getChild(relativePath).isEmpty() && priorityWrite_1 !== null) {
-                node = node.updateChild(relativePath.child('.priority'), priorityWrite_1);
-            }
-            return node;
-        }
-    };
     return CompoundWrite;
 }());
+function applySubtreeWrite(relativePath, writeTree, node) {
+    if (writeTree.value != null) {
+        // Since there a write is always a leaf, we're done here
+        return node.updateChild(relativePath, writeTree.value);
+    }
+    else {
+        var priorityWrite_1 = null;
+        writeTree.children.inorderTraversal(function (childKey, childTree) {
+            if (childKey === '.priority') {
+                // Apply priorities at the end so we don't update priorities for either empty nodes or forget
+                // to apply priorities to empty nodes that are later filled
+                util.assert(childTree.value !== null, 'Priority writes must always be leaf nodes');
+                priorityWrite_1 = childTree.value;
+            }
+            else {
+                node = applySubtreeWrite(relativePath.child(childKey), childTree, node);
+            }
+        });
+        // If there was a priority write, we only apply it if the node is not empty
+        if (!node.getChild(relativePath).isEmpty() && priorityWrite_1 !== null) {
+            node = node.updateChild(relativePath.child('.priority'), priorityWrite_1);
+        }
+        return node;
+    }
+}
 
 /**
  * @license
@@ -11288,7 +10870,7 @@ var WriteTree = /** @class */ (function () {
             }
             else {
                 var children = writeToRemove.children;
-                util.forEach(children, function (childName) {
+                each(children, function (childName) {
                     _this.visibleWrites_ = _this.visibleWrites_.removeWrite(writeToRemove.path.child(childName));
                 });
             }
@@ -11484,9 +11066,6 @@ var WriteTree = /** @class */ (function () {
      * Returns a node if there is a complete overwrite for this path. More specifically, if there is a write at
      * a higher path, this will return the child of that write relative to the write and this path.
      * Returns null if there is no write at this path.
-     *
-     * @param {!Path} path
-     * @return {?Node}
      */
     WriteTree.prototype.shadowingWrite = function (path) {
         return this.visibleWrites_.getCompleteNode(path);
@@ -11494,14 +11073,6 @@ var WriteTree = /** @class */ (function () {
     /**
      * This method is used when processing child remove events on a query. If we can, we pull in children that were outside
      * the window, but may now be in the window.
-     *
-     * @param {!Path} treePath
-     * @param {?Node} completeServerData
-     * @param {!NamedNode} startPost
-     * @param {!number} count
-     * @param {boolean} reverse
-     * @param {!Index} index
-     * @return {!Array.<!NamedNode>}
      */
     WriteTree.prototype.calcIndexedSlice = function (treePath, completeServerData, startPost, count, reverse, index) {
         var toIterate;
@@ -11537,26 +11108,22 @@ var WriteTree = /** @class */ (function () {
             return [];
         }
     };
-    /**
-     * @param {!WriteRecord} writeRecord
-     * @param {!Path} path
-     * @return {boolean}
-     * @private
-     */
     WriteTree.prototype.recordContainsPath_ = function (writeRecord, path) {
         if (writeRecord.snap) {
             return writeRecord.path.contains(path);
         }
         else {
-            // findKey can return undefined, so use !! to coerce to boolean
-            return !!util.findKey(writeRecord.children, function (childSnap, childName) {
-                return writeRecord.path.child(childName).contains(path);
-            });
+            for (var childName in writeRecord.children) {
+                if (writeRecord.children.hasOwnProperty(childName) &&
+                    writeRecord.path.child(childName).contains(path)) {
+                    return true;
+                }
+            }
+            return false;
         }
     };
     /**
      * Re-layer the writes and merges into a tree so we can efficiently calculate event snapshots
-     * @private
      */
     WriteTree.prototype.resetTree_ = function () {
         this.visibleWrites_ = WriteTree.layerTree_(this.allWrites_, WriteTree.DefaultFilter_, Path.Empty);
@@ -11569,10 +11136,6 @@ var WriteTree = /** @class */ (function () {
     };
     /**
      * The default filter used when constructing the tree. Keep everything that's visible.
-     *
-     * @param {!WriteRecord} write
-     * @return {boolean}
-     * @private
      */
     WriteTree.DefaultFilter_ = function (write) {
         return write.visible;
@@ -11580,12 +11143,6 @@ var WriteTree = /** @class */ (function () {
     /**
      * Static method. Given an array of WriteRecords, a filter for which ones to include, and a path, construct the tree of
      * event data at that path.
-     *
-     * @param {!Array.<!WriteRecord>} writes
-     * @param {!function(!WriteRecord):boolean} filter
-     * @param {!Path} treeRoot
-     * @return {!CompoundWrite}
-     * @private
      */
     WriteTree.layerTree_ = function (writes, filter, treeRoot) {
         var compoundWrite = CompoundWrite.Empty;
@@ -11791,27 +11348,19 @@ var SyncTree = /** @class */ (function () {
         this.listenProvider_ = listenProvider_;
         /**
          * Tree of SyncPoints.  There's a SyncPoint at any location that has 1 or more views.
-         * @type {!ImmutableTree.<!SyncPoint>}
-         * @private
          */
         this.syncPointTree_ = ImmutableTree.Empty;
         /**
          * A tree of all pending user writes (user-initiated set()'s, transaction()'s, update()'s, etc.).
-         * @type {!WriteTree}
-         * @private
          */
         this.pendingWriteTree_ = new WriteTree();
-        this.tagToQueryMap_ = {};
-        this.queryToTagMap_ = {};
+        this.tagToQueryMap = new Map();
+        this.queryToTagMap = new Map();
     }
     /**
      * Apply the data changes for a user-generated set() or transaction() call.
      *
-     * @param {!Path} path
-     * @param {!Node} newData
-     * @param {number} writeId
-     * @param {boolean=} visible
-     * @return {!Array.<!Event>} Events to raise.
+     * @return Events to raise.
      */
     SyncTree.prototype.applyUserOverwrite = function (path, newData, writeId, visible) {
         // Record pending write.
@@ -11826,10 +11375,7 @@ var SyncTree = /** @class */ (function () {
     /**
      * Apply the data from a user-generated update() call
      *
-     * @param {!Path} path
-     * @param {!Object.<string, !Node>} changedChildren
-     * @param {!number} writeId
-     * @return {!Array.<!Event>} Events to raise.
+     * @return Events to raise.
      */
     SyncTree.prototype.applyUserMerge = function (path, changedChildren, writeId) {
         // Record pending merge.
@@ -11840,9 +11386,8 @@ var SyncTree = /** @class */ (function () {
     /**
      * Acknowledge a pending user write that was previously registered with applyUserOverwrite() or applyUserMerge().
      *
-     * @param {!number} writeId
-     * @param {boolean=} revert True if the given write failed and needs to be reverted
-     * @return {!Array.<!Event>} Events to raise.
+     * @param revert True if the given write failed and needs to be reverted
+     * @return Events to raise.
      */
     SyncTree.prototype.ackUserWrite = function (writeId, revert) {
         if (revert === void 0) { revert = false; }
@@ -11858,7 +11403,7 @@ var SyncTree = /** @class */ (function () {
                 affectedTree_1 = affectedTree_1.set(Path.Empty, true);
             }
             else {
-                util.forEach(write.children, function (pathString, node) {
+                each(write.children, function (pathString, node) {
                     affectedTree_1 = affectedTree_1.set(new Path(pathString), node);
                 });
             }
@@ -11868,9 +11413,7 @@ var SyncTree = /** @class */ (function () {
     /**
      * Apply new server data for the specified path..
      *
-     * @param {!Path} path
-     * @param {!Node} newData
-     * @return {!Array.<!Event>} Events to raise.
+     * @return Events to raise.
      */
     SyncTree.prototype.applyServerOverwrite = function (path, newData) {
         return this.applyOperationToSyncPoints_(new Overwrite(OperationSource.Server, path, newData));
@@ -11878,9 +11421,7 @@ var SyncTree = /** @class */ (function () {
     /**
      * Apply new server data to be merged in at the specified path.
      *
-     * @param {!Path} path
-     * @param {!Object.<string, !Node>} changedChildren
-     * @return {!Array.<!Event>} Events to raise.
+     * @return Events to raise.
      */
     SyncTree.prototype.applyServerMerge = function (path, changedChildren) {
         var changeTree = ImmutableTree.fromObject(changedChildren);
@@ -11889,8 +11430,7 @@ var SyncTree = /** @class */ (function () {
     /**
      * Apply a listen complete for a query
      *
-     * @param {!Path} path
-     * @return {!Array.<!Event>} Events to raise.
+     * @return Events to raise.
      */
     SyncTree.prototype.applyListenComplete = function (path) {
         return this.applyOperationToSyncPoints_(new ListenComplete(OperationSource.Server, path));
@@ -11898,10 +11438,7 @@ var SyncTree = /** @class */ (function () {
     /**
      * Apply new server data for the specified tagged query.
      *
-     * @param {!Path} path
-     * @param {!Node} snap
-     * @param {!number} tag
-     * @return {!Array.<!Event>} Events to raise.
+     * @return Events to raise.
      */
     SyncTree.prototype.applyTaggedQueryOverwrite = function (path, snap, tag) {
         var queryKey = this.queryKeyForTag_(tag);
@@ -11920,10 +11457,7 @@ var SyncTree = /** @class */ (function () {
     /**
      * Apply server data to be merged in for the specified tagged query.
      *
-     * @param {!Path} path
-     * @param {!Object.<string, !Node>} changedChildren
-     * @param {!number} tag
-     * @return {!Array.<!Event>} Events to raise.
+     * @return Events to raise.
      */
     SyncTree.prototype.applyTaggedQueryMerge = function (path, changedChildren, tag) {
         var queryKey = this.queryKeyForTag_(tag);
@@ -11943,9 +11477,7 @@ var SyncTree = /** @class */ (function () {
     /**
      * Apply a listen complete for a tagged query
      *
-     * @param {!Path} path
-     * @param {!number} tag
-     * @return {!Array.<!Event>} Events to raise.
+     * @return Events to raise.
      */
     SyncTree.prototype.applyTaggedListenComplete = function (path, tag) {
         var queryKey = this.queryKeyForTag_(tag);
@@ -11964,9 +11496,7 @@ var SyncTree = /** @class */ (function () {
     /**
      * Add an event callback for the specified query.
      *
-     * @param {!Query} query
-     * @param {!EventRegistration} eventRegistration
-     * @return {!Array.<!Event>} Events to raise.
+     * @return Events to raise.
      */
     SyncTree.prototype.addEventRegistration = function (query, eventRegistration) {
         var path = query.path;
@@ -12009,11 +11539,10 @@ var SyncTree = /** @class */ (function () {
         if (!viewAlreadyExists && !query.getQueryParams().loadsAllData()) {
             // We need to track a tag for this query
             var queryKey = SyncTree.makeQueryKey_(query);
-            util.assert(!(queryKey in this.queryToTagMap_), 'View does not exist, but we have a tag');
+            util.assert(!this.queryToTagMap.has(queryKey), 'View does not exist, but we have a tag');
             var tag = SyncTree.getNextQueryTag_();
-            this.queryToTagMap_[queryKey] = tag;
-            // Coerce to string to avoid sparse arrays.
-            this.tagToQueryMap_['_' + tag] = queryKey;
+            this.queryToTagMap.set(queryKey, tag);
+            this.tagToQueryMap.set(tag, queryKey);
         }
         var writesCache = this.pendingWriteTree_.childWrites(path);
         var events = syncPoint.addEventRegistration(query, eventRegistration, writesCache, serverCache, serverCacheComplete);
@@ -12029,10 +11558,9 @@ var SyncTree = /** @class */ (function () {
      * If query is the default query, we'll check all queries for the specified eventRegistration.
      * If eventRegistration is null, we'll remove all callbacks for the specified query/queries.
      *
-     * @param {!Query} query
-     * @param {?EventRegistration} eventRegistration If null, all callbacks are removed.
-     * @param {Error=} cancelError If a cancelError is provided, appropriate cancel events will be returned.
-     * @return {!Array.<!Event>} Cancel events, if cancelError was provided.
+     * @param eventRegistration If null, all callbacks are removed.
+     * @param cancelError If a cancelError is provided, appropriate cancel events will be returned.
+     * @return Cancel events, if cancelError was provided.
      */
     SyncTree.prototype.removeEventRegistration = function (query, eventRegistration, cancelError) {
         var _this = this;
@@ -12096,7 +11624,7 @@ var SyncTree = /** @class */ (function () {
                 }
                 else {
                     removed.forEach(function (queryToRemove) {
-                        var tagToRemove = _this.queryToTagMap_[SyncTree.makeQueryKey_(queryToRemove)];
+                        var tagToRemove = _this.queryToTagMap.get(SyncTree.makeQueryKey_(queryToRemove));
                         _this.listenProvider_.stopListening(SyncTree.queryForListening_(queryToRemove), tagToRemove);
                     });
                 }
@@ -12111,9 +11639,9 @@ var SyncTree = /** @class */ (function () {
      * it, but as this is only used by transaction code, that should always be the case anyways.
      *
      * Note: this method will *include* hidden writes from transaction with applyLocally set to false.
-     * @param {!Path} path The path to the data we want
-     * @param {Array.<number>=} writeIdsToExclude A specific set to be excluded
-     * @return {?Node}
+     *
+     * @param path The path to the data we want
+     * @param writeIdsToExclude A specific set to be excluded
      */
     SyncTree.prototype.calcCompleteEventCache = function (path, writeIdsToExclude) {
         var includeHiddenSets = true;
@@ -12130,10 +11658,6 @@ var SyncTree = /** @class */ (function () {
     /**
      * This collapses multiple unfiltered views into a single view, since we only need a single
      * listener for them.
-     *
-     * @param {!ImmutableTree.<!SyncPoint>} subtree
-     * @return {!Array.<!View>}
-     * @private
      */
     SyncTree.prototype.collectDistinctViewsForSubTree_ = function (subtree) {
         return subtree.fold(function (relativePath, maybeChildSyncPoint, childMap) {
@@ -12147,34 +11671,29 @@ var SyncTree = /** @class */ (function () {
                 if (maybeChildSyncPoint) {
                     views_1 = maybeChildSyncPoint.getQueryViews();
                 }
-                util.forEach(childMap, function (key, childViews) {
+                each(childMap, function (_key, childViews) {
                     views_1 = views_1.concat(childViews);
                 });
                 return views_1;
             }
         });
     };
-    /**
-     * @param {!Array.<!Query>} queries
-     * @private
-     */
     SyncTree.prototype.removeTags_ = function (queries) {
         for (var j = 0; j < queries.length; ++j) {
             var removedQuery = queries[j];
             if (!removedQuery.getQueryParams().loadsAllData()) {
                 // We should have a tag for this
                 var removedQueryKey = SyncTree.makeQueryKey_(removedQuery);
-                var removedQueryTag = this.queryToTagMap_[removedQueryKey];
-                delete this.queryToTagMap_[removedQueryKey];
-                delete this.tagToQueryMap_['_' + removedQueryTag];
+                var removedQueryTag = this.queryToTagMap.get(removedQueryKey);
+                this.queryToTagMap.delete(removedQueryKey);
+                this.tagToQueryMap.delete(removedQueryTag);
             }
         }
     };
     /**
      * Normalizes a query to a query we send the server for listening
-     * @param {!Query} query
-     * @return {!Query} The normalized query
-     * @private
+     *
+     * @return The normalized query
      */
     SyncTree.queryForListening_ = function (query) {
         if (query.getQueryParams().loadsAllData() &&
@@ -12182,7 +11701,7 @@ var SyncTree = /** @class */ (function () {
             // We treat queries that load all data as default queries
             // Cast is necessary because ref() technically returns Firebase which is actually fb.api.Firebase which inherits
             // from Query
-            return /** @type {!Query} */ query.getRef();
+            return query.getRef();
         }
         else {
             return query;
@@ -12191,10 +11710,7 @@ var SyncTree = /** @class */ (function () {
     /**
      * For a given new listen, manage the de-duplication of outstanding subscriptions.
      *
-     * @param {!Query} query
-     * @param {!View} view
-     * @return {!Array.<!Event>} This method can return events to support synchronous data sources
-     * @private
+     * @return This method can return events to support synchronous data sources
      */
     SyncTree.prototype.setupListener_ = function (query, view) {
         var path = query.path;
@@ -12221,7 +11737,7 @@ var SyncTree = /** @class */ (function () {
                     if (maybeChildSyncPoint) {
                         queries_1 = queries_1.concat(maybeChildSyncPoint.getQueryViews().map(function (view) { return view.getQuery(); }));
                     }
-                    util.forEach(childMap, function (key, childQueries) {
+                    each(childMap, function (_key, childQueries) {
                         queries_1 = queries_1.concat(childQueries);
                     });
                     return queries_1;
@@ -12234,12 +11750,6 @@ var SyncTree = /** @class */ (function () {
         }
         return events;
     };
-    /**
-     *
-     * @param {!View} view
-     * @return {{hashFn: function(), onComplete: function(!string, *)}}
-     * @private
-     */
     SyncTree.prototype.createListenerForView_ = function (view) {
         var _this = this;
         var query = view.getQuery();
@@ -12270,18 +11780,12 @@ var SyncTree = /** @class */ (function () {
     };
     /**
      * Given a query, computes a "queryKey" suitable for use in our queryToTagMap_.
-     * @private
-     * @param {!Query} query
-     * @return {string}
      */
     SyncTree.makeQueryKey_ = function (query) {
         return query.path.toString() + '$' + query.queryIdentifier();
     };
     /**
      * Given a queryKey (created by makeQueryKey), parse it back into a path and queryId.
-     * @private
-     * @param {!string} queryKey
-     * @return {{queryId: !string, path: !Path}}
      */
     SyncTree.parseQueryKey_ = function (queryKey) {
         var splitIndex = queryKey.indexOf('$');
@@ -12293,38 +11797,25 @@ var SyncTree = /** @class */ (function () {
     };
     /**
      * Return the query associated with the given tag, if we have one
-     * @param {!number} tag
-     * @return {?string}
-     * @private
      */
     SyncTree.prototype.queryKeyForTag_ = function (tag) {
-        return this.tagToQueryMap_['_' + tag];
+        return this.tagToQueryMap.get(tag);
     };
     /**
      * Return the tag associated with the given query.
-     * @param {!Query} query
-     * @return {?number}
-     * @private
      */
     SyncTree.prototype.tagForQuery_ = function (query) {
         var queryKey = SyncTree.makeQueryKey_(query);
-        return util.safeGet(this.queryToTagMap_, queryKey);
+        return this.queryToTagMap.get(queryKey);
     };
     /**
      * Static accessor for query tags.
-     * @return {number}
-     * @private
      */
     SyncTree.getNextQueryTag_ = function () {
         return SyncTree.nextQueryTag_++;
     };
     /**
      * A helper method to apply tagged operations
-     *
-     * @param {!Path} queryPath
-     * @param {!Operation} operation
-     * @return {!Array.<!Event>}
-     * @private
      */
     SyncTree.prototype.applyTaggedOperation_ = function (queryPath, operation) {
         var syncPoint = this.syncPointTree_.get(queryPath);
@@ -12345,10 +11836,6 @@ var SyncTree = /** @class */ (function () {
      *   3. A snapshot Node with cached server data, if we have it.
   
      * - We concatenate all of the events returned by each SyncPoint and return the result.
-     *
-     * @param {!Operation} operation
-     * @return {!Array.<!Event>}
-     * @private
      */
     SyncTree.prototype.applyOperationToSyncPoints_ = function (operation) {
         return this.applyOperationHelper_(operation, this.syncPointTree_, 
@@ -12356,13 +11843,6 @@ var SyncTree = /** @class */ (function () {
     };
     /**
      * Recursive helper for applyOperationToSyncPoints_
-     *
-     * @private
-     * @param {!Operation} operation
-     * @param {ImmutableTree.<!SyncPoint>} syncPointTree
-     * @param {?Node} serverCache
-     * @param {!WriteTreeRef} writesCache
-     * @return {!Array.<!Event>}
      */
     SyncTree.prototype.applyOperationHelper_ = function (operation, syncPointTree, serverCache, writesCache) {
         if (operation.path.isEmpty()) {
@@ -12393,13 +11873,6 @@ var SyncTree = /** @class */ (function () {
     };
     /**
      * Recursive helper for applyOperationToSyncPoints_
-     *
-     * @private
-     * @param {!Operation} operation
-     * @param {ImmutableTree.<!SyncPoint>} syncPointTree
-     * @param {?Node} serverCache
-     * @param {!WriteTreeRef} writesCache
-     * @return {!Array.<!Event>}
      */
     SyncTree.prototype.applyOperationDescendantsHelper_ = function (operation, syncPointTree, serverCache, writesCache) {
         var _this = this;
@@ -12426,8 +11899,6 @@ var SyncTree = /** @class */ (function () {
     };
     /**
      * Static tracker for next query tag.
-     * @type {number}
-     * @private
      */
     SyncTree.nextQueryTag_ = 1;
     return SyncTree;
@@ -12486,18 +11957,11 @@ var SnapshotHolder = /** @class */ (function () {
 /**
  * Abstraction around FirebaseApp's token fetching capabilities.
  */
-var AuthTokenProvider = /** @class */ (function () {
-    /**
-     * @param {!FirebaseApp} app_
-     */
-    function AuthTokenProvider(app_) {
+var FirebaseAuthTokenProvider = /** @class */ (function () {
+    function FirebaseAuthTokenProvider(app_) {
         this.app_ = app_;
     }
-    /**
-     * @param {boolean} forceRefresh
-     * @return {!Promise<FirebaseAuthTokenData>}
-     */
-    AuthTokenProvider.prototype.getToken = function (forceRefresh) {
+    FirebaseAuthTokenProvider.prototype.getToken = function (forceRefresh) {
         return this.app_['INTERNAL']['getToken'](forceRefresh).then(null, 
         // .catch
         function (error) {
@@ -12512,15 +11976,15 @@ var AuthTokenProvider = /** @class */ (function () {
             }
         });
     };
-    AuthTokenProvider.prototype.addTokenChangeListener = function (listener) {
+    FirebaseAuthTokenProvider.prototype.addTokenChangeListener = function (listener) {
         // TODO: We might want to wrap the listener and call it with no args to
         // avoid a leaky abstraction, but that makes removing the listener harder.
         this.app_['INTERNAL']['addAuthTokenListener'](listener);
     };
-    AuthTokenProvider.prototype.removeTokenChangeListener = function (listener) {
+    FirebaseAuthTokenProvider.prototype.removeTokenChangeListener = function (listener) {
         this.app_['INTERNAL']['removeAuthTokenListener'](listener);
     };
-    AuthTokenProvider.prototype.notifyForInvalidToken = function () {
+    FirebaseAuthTokenProvider.prototype.notifyForInvalidToken = function () {
         var errorMessage = 'Provided authentication credentials for the app named "' +
             this.app_.name +
             '" are invalid. This usually indicates your app was not ' +
@@ -12545,7 +12009,45 @@ var AuthTokenProvider = /** @class */ (function () {
         }
         warn(errorMessage);
     };
-    return AuthTokenProvider;
+    return FirebaseAuthTokenProvider;
+}());
+
+/**
+ * @license
+ * Copyright 2019 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+var EmulatorAuthToken = /** @class */ (function () {
+    function EmulatorAuthToken(accessToken) {
+        this.accessToken = accessToken;
+    }
+    return EmulatorAuthToken;
+}());
+var EmulatorAuthTokenProvider = /** @class */ (function () {
+    function EmulatorAuthTokenProvider(app_) {
+        this.app_ = app_;
+    }
+    EmulatorAuthTokenProvider.prototype.getToken = function (forceRefresh) {
+        return Promise.resolve(new EmulatorAuthToken('owner'));
+    };
+    EmulatorAuthTokenProvider.prototype.addTokenChangeListener = function (listener) { };
+    EmulatorAuthTokenProvider.prototype.removeTokenChangeListener = function (listener) { };
+    EmulatorAuthTokenProvider.prototype.notifyForInvalidToken = function () {
+        var errorMessage = 'Database emulator unexpectedly rejected fake "owner" credentials.';
+        warn(errorMessage);
+    };
+    return EmulatorAuthTokenProvider;
 }());
 
 /**
@@ -12652,9 +12154,9 @@ var StatsListener = /** @class */ (function () {
     }
     StatsListener.prototype.get = function () {
         var newStats = this.collection_.get();
-        var delta = util.clone(newStats);
+        var delta = tslib_1.__assign({}, newStats);
         if (this.last_) {
-            util.forEach(this.last_, function (stat, value) {
+            each(this.last_, function (stat, value) {
                 delta[stat] = delta[stat] - value;
             });
         }
@@ -12711,7 +12213,7 @@ var StatsReporter = /** @class */ (function () {
         var stats = this.statsListener_.get();
         var reportedStats = {};
         var haveStatsToReport = false;
-        util.forEach(stats, function (stat, value) {
+        each(stats, function (stat, value) {
             if (value > 0 && util.contains(_this.statsToReport_, stat)) {
                 reportedStats[stat] = value;
                 haveStatsToReport = true;
@@ -12934,7 +12436,7 @@ var EventEmitter = /** @class */ (function () {
         }
         if (Array.isArray(this.listeners_[eventType])) {
             // Clone the list, since callbacks could add/remove listeners.
-            var listeners = this.listeners_[eventType].slice();
+            var listeners = tslib_1.__spread(this.listeners_[eventType]);
             for (var i = 0; i < listeners.length; i++) {
                 listeners[i].callback.apply(listeners[i].context, var_args);
             }
@@ -13225,7 +12727,6 @@ var FIREBASE_LONGPOLL_CALLBACK_ID_PARAM = 'cb';
 var FIREBASE_LONGPOLL_SEGMENT_NUM_PARAM = 'seg';
 var FIREBASE_LONGPOLL_SEGMENTS_IN_PACKET = 'ts';
 var FIREBASE_LONGPOLL_DATA_PARAM = 'd';
-var FIREBASE_LONGPOLL_DISCONN_FRAME_PARAM = 'disconn';
 var FIREBASE_LONGPOLL_DISCONN_FRAME_REQUEST_PARAM = 'dframe';
 //Data size constants.
 //TODO: Perf: the maximum length actually differs from browser to browser.
@@ -13303,7 +12804,7 @@ var BrowserPollConnection = /** @class */ (function () {
                 for (var _i = 0; _i < arguments.length; _i++) {
                     args[_i] = arguments[_i];
                 }
-                var command = args[0], arg1 = args[1], arg2 = args[2];
+                var _a = tslib_1.__read(args, 5), command = _a[0], arg1 = _a[1], arg2 = _a[2], arg3 = _a[3], arg4 = _a[4];
                 _this.incrementIncomingBytes_(args);
                 if (!_this.scriptTagHolder)
                     return; // we closed the connection.
@@ -13340,7 +12841,7 @@ var BrowserPollConnection = /** @class */ (function () {
                 for (var _i = 0; _i < arguments.length; _i++) {
                     args[_i] = arguments[_i];
                 }
-                var pN = args[0], data = args[1];
+                var _a = tslib_1.__read(args, 2), pN = _a[0], data = _a[1];
                 _this.incrementIncomingBytes_(args);
                 _this.myPacketOrderer.handleResponse(pN, data);
             }, function () {
@@ -13360,8 +12861,7 @@ var BrowserPollConnection = /** @class */ (function () {
             if (_this.lastSessionId) {
                 urlParams[LAST_SESSION_PARAM] = _this.lastSessionId;
             }
-            if (!util.isNodeSdk() &&
-                typeof location !== 'undefined' &&
+            if (typeof location !== 'undefined' &&
                 location.href &&
                 location.href.indexOf(FORGE_DOMAIN) !== -1) {
                 urlParams[REFERER_PARAM] = FORGE_REF;
@@ -13394,15 +12894,21 @@ var BrowserPollConnection = /** @class */ (function () {
     };
     // Static method, use string literal so it can be accessed in a generic way
     BrowserPollConnection.isAvailable = function () {
-        // NOTE: In React-Native there's normally no 'document', but if you debug a React-Native app in
-        // the Chrome debugger, 'document' is defined, but document.createElement is null (2015/06/08).
-        return (BrowserPollConnection.forceAllow_ ||
-            (!BrowserPollConnection.forceDisallow_ &&
+        if (util.isNodeSdk()) {
+            return false;
+        }
+        else if (BrowserPollConnection.forceAllow_) {
+            return true;
+        }
+        else {
+            // NOTE: In React-Native there's normally no 'document', but if you debug a React-Native app in
+            // the Chrome debugger, 'document' is defined, but document.createElement is null (2015/06/08).
+            return (!BrowserPollConnection.forceDisallow_ &&
                 typeof document !== 'undefined' &&
                 document.createElement != null &&
                 !isChromeExtensionContentScript() &&
-                !isWindowsStoreApp() &&
-                !util.isNodeSdk()));
+                !isWindowsStoreApp());
+        }
     };
     /**
      * No-op for polling
@@ -13521,10 +13027,7 @@ var FirebaseIFrameScriptHolder = /** @class */ (function () {
         this.urlFn = urlFn;
         //We maintain a count of all of the outstanding requests, because if we have too many active at once it can cause
         //problems in some browsers.
-        /**
-         * @type {CountedSet.<number, number>}
-         */
-        this.outstandingRequests = new CountedSet();
+        this.outstandingRequests = new Set();
         //A queue of the pending segments waiting for transmission to the server.
         this.pendingSegs = [];
         //A serial number. We use this for two things:
@@ -13640,14 +13143,6 @@ var FirebaseIFrameScriptHolder = /** @class */ (function () {
                 }
             }, Math.floor(0));
         }
-        if (util.isNodeSdk() && this.myID) {
-            var urlParams = {};
-            urlParams[FIREBASE_LONGPOLL_DISCONN_FRAME_PARAM] = 't';
-            urlParams[FIREBASE_LONGPOLL_ID_PARAM] = this.myID;
-            urlParams[FIREBASE_LONGPOLL_PW_PARAM] = this.myPW;
-            var theURL = this.urlFn(urlParams);
-            FirebaseIFrameScriptHolder.nodeRestRequest(theURL);
-        }
         // Protect from being called recursively.
         var onDisconnect = this.onDisconnect;
         if (onDisconnect) {
@@ -13680,7 +13175,7 @@ var FirebaseIFrameScriptHolder = /** @class */ (function () {
         // close the old request.
         if (this.alive &&
             this.sendNewPolls &&
-            this.outstandingRequests.count() < (this.pendingSegs.length > 0 ? 2 : 1)) {
+            this.outstandingRequests.size < (this.pendingSegs.length > 0 ? 2 : 1)) {
             //construct our url
             this.currentSerial++;
             var urlParams = {};
@@ -13753,9 +13248,9 @@ var FirebaseIFrameScriptHolder = /** @class */ (function () {
     FirebaseIFrameScriptHolder.prototype.addLongPollTag_ = function (url, serial) {
         var _this = this;
         //remember that we sent this request.
-        this.outstandingRequests.add(serial, 1);
+        this.outstandingRequests.add(serial);
         var doNewRequest = function () {
-            _this.outstandingRequests.remove(serial);
+            _this.outstandingRequests.delete(serial);
             _this.newRequest_();
         };
         // If this request doesn't return on its own accord (by the server sending us some data), we'll
@@ -13814,6 +13309,29 @@ var FirebaseIFrameScriptHolder = /** @class */ (function () {
     };
     return FirebaseIFrameScriptHolder;
 }());
+
+/**
+ * @license
+ * Copyright 2019 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/** The semver (www.semver.org) version of the SDK. */
+var SDK_VERSION = '';
+// SDK_VERSION should be set before any database instance is created
+function setSDKVersion(version) {
+    SDK_VERSION = version;
+}
 
 /**
  * @license
@@ -13908,7 +13426,7 @@ var WebSocketConnection = /** @class */ (function () {
                 // UA Format: Firebase/<wire_protocol>/<sdk_version>/<platform>/<device>
                 var options = {
                     headers: {
-                        'User-Agent': "Firebase/" + PROTOCOL_VERSION + "/" + firebase.SDK_VERSION + "/" + process.platform + "/" + device
+                        'User-Agent': "Firebase/" + PROTOCOL_VERSION + "/" + SDK_VERSION + "/" + process.platform + "/" + device
                     }
                 };
                 // Plumb appropriate http_proxy environment variable into faye-websocket if it exists.
@@ -14197,6 +13715,7 @@ var TransportManager = /** @class */ (function () {
      * @private
      */
     TransportManager.prototype.initTransports_ = function (repoInfo) {
+        var e_1, _a;
         var isWebSocketsAvailable = WebSocketConnection && WebSocketConnection['isAvailable']();
         var isSkipPollConnection = isWebSocketsAvailable && !WebSocketConnection.previouslyFailed();
         if (repoInfo.webSocketOnly) {
@@ -14208,12 +13727,22 @@ var TransportManager = /** @class */ (function () {
             this.transports_ = [WebSocketConnection];
         }
         else {
-            var transports_1 = (this.transports_ = []);
-            each(TransportManager.ALL_TRANSPORTS, function (i, transport) {
-                if (transport && transport['isAvailable']()) {
-                    transports_1.push(transport);
+            var transports = (this.transports_ = []);
+            try {
+                for (var _b = tslib_1.__values(TransportManager.ALL_TRANSPORTS), _c = _b.next(); !_c.done; _c = _b.next()) {
+                    var transport = _c.value;
+                    if (transport && transport['isAvailable']()) {
+                        transports.push(transport);
+                    }
                 }
-            });
+            }
+            catch (e_1_1) { e_1 = { error: e_1_1 }; }
+            finally {
+                try {
+                    if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+                }
+                finally { if (e_1) throw e_1.error; }
+            }
         }
     };
     /**
@@ -14831,12 +14360,8 @@ var PersistentConnection = /** @class */ (function (_super) {
     tslib_1.__extends(PersistentConnection, _super);
     /**
      * @implements {ServerActions}
-     * @param {!RepoInfo} repoInfo_ Data about the namespace we are connecting to
-     * @param {function(string, *, boolean, ?number)} onDataUpdate_ A callback for new data from the server
-     * @param onConnectStatus_
-     * @param onServerInfoUpdate_
-     * @param authTokenProvider_
-     * @param authOverride_
+     * @param repoInfo_ Data about the namespace we are connecting to
+     * @param onDataUpdate_ A callback for new data from the server
      */
     function PersistentConnection(repoInfo_, onDataUpdate_, onConnectStatus_, onServerInfoUpdate_, authTokenProvider_, authOverride_) {
         var _this = _super.call(this) || this;
@@ -14849,9 +14374,9 @@ var PersistentConnection = /** @class */ (function (_super) {
         // Used for diagnostic logging.
         _this.id = PersistentConnection.nextPersistentConnectionId_++;
         _this.log_ = logWrapper('p:' + _this.id + ':');
-        /** @private {Object} */
         _this.interruptReasons_ = {};
-        _this.listens_ = {};
+        /** Map<path, Map<queryId, ListenSpec>> */
+        _this.listens = new Map();
         _this.outstandingPuts_ = [];
         _this.outstandingPutCount_ = 0;
         _this.onDisconnectRequestQueue_ = [];
@@ -14860,19 +14385,12 @@ var PersistentConnection = /** @class */ (function (_super) {
         _this.maxReconnectDelay_ = RECONNECT_MAX_DELAY_DEFAULT;
         _this.securityDebugCallback_ = null;
         _this.lastSessionId = null;
-        /** @private {number|null} */
         _this.establishConnectionTimer_ = null;
-        /** @private {boolean} */
         _this.visible_ = false;
         // Before we get connected, we keep a queue of pending messages to send.
         _this.requestCBHash_ = {};
         _this.requestNumber_ = 0;
-        /** @private {?{
-         *   sendRequest(Object),
-         *   close()
-         * }} */
         _this.realtime_ = null;
-        /** @private {string|null} */
         _this.authToken_ = null;
         _this.forceTokenRefresh_ = false;
         _this.invalidAuthTokenCount_ = 0;
@@ -14889,12 +14407,6 @@ var PersistentConnection = /** @class */ (function (_super) {
         }
         return _this;
     }
-    /**
-     * @param {!string} action
-     * @param {*} body
-     * @param {function(*)=} onResponse
-     * @protected
-     */
     PersistentConnection.prototype.sendRequest = function (action, body, onResponse) {
         var curReqNum = ++this.requestNumber_;
         var msg = { r: curReqNum, a: action, b: body };
@@ -14912,28 +14424,23 @@ var PersistentConnection = /** @class */ (function (_super) {
         var queryId = query.queryIdentifier();
         var pathString = query.path.toString();
         this.log_('Listen called for ' + pathString + ' ' + queryId);
-        this.listens_[pathString] = this.listens_[pathString] || {};
+        if (!this.listens.has(pathString)) {
+            this.listens.set(pathString, new Map());
+        }
         util.assert(query.getQueryParams().isDefault() ||
             !query.getQueryParams().loadsAllData(), 'listen() called for non-default but complete query');
-        util.assert(!this.listens_[pathString][queryId], 'listen() called twice for same path/queryId.');
+        util.assert(!this.listens.get(pathString).has(queryId), 'listen() called twice for same path/queryId.');
         var listenSpec = {
             onComplete: onComplete,
             hashFn: currentHashFn,
             query: query,
             tag: tag
         };
-        this.listens_[pathString][queryId] = listenSpec;
+        this.listens.get(pathString).set(queryId, listenSpec);
         if (this.connected_) {
             this.sendListen_(listenSpec);
         }
     };
-    /**
-     * @param {!{onComplete(),
-     *           hashFn():!string,
-     *           query: !Query,
-     *           tag: ?number}} listenSpec
-     * @private
-     */
     PersistentConnection.prototype.sendListen_ = function (listenSpec) {
         var _this = this;
         var query = listenSpec.query;
@@ -14953,7 +14460,8 @@ var PersistentConnection = /** @class */ (function (_super) {
             var status = message[ /*status*/'s'];
             // print warnings in any case...
             PersistentConnection.warnOnListenWarnings_(payload, query);
-            var currentListenSpec = _this.listens_[pathString] && _this.listens_[pathString][queryId];
+            var currentListenSpec = _this.listens.get(pathString) &&
+                _this.listens.get(pathString).get(queryId);
             // only trigger actions if the listen hasn't been removed and readded
             if (currentListenSpec === listenSpec) {
                 _this.log_('listen response', message);
@@ -14966,11 +14474,6 @@ var PersistentConnection = /** @class */ (function (_super) {
             }
         });
     };
-    /**
-     * @param {*} payload
-     * @param {!Query} query
-     * @private
-     */
     PersistentConnection.warnOnListenWarnings_ = function (payload, query) {
         if (payload && typeof payload === 'object' && util.contains(payload, 'w')) {
             var warnings = util.safeGet(payload, 'w');
@@ -15006,10 +14509,6 @@ var PersistentConnection = /** @class */ (function (_super) {
         }
         this.reduceReconnectDelayIfAdminCredential_(token);
     };
-    /**
-     * @param {!string} credential
-     * @private
-     */
     PersistentConnection.prototype.reduceReconnectDelayIfAdminCredential_ = function (credential) {
         // NOTE: This isn't intended to be bulletproof (a malicious developer can always just modify the client).
         // Additionally, we don't bother resetting the max delay back to the default if auth fails / expires.
@@ -15204,10 +14703,6 @@ var PersistentConnection = /** @class */ (function (_super) {
             });
         }
     };
-    /**
-     * @param {*} message
-     * @private
-     */
     PersistentConnection.prototype.onDataMessage_ = function (message) {
         if ('r' in message) {
             // this is a response
@@ -15272,10 +14767,6 @@ var PersistentConnection = /** @class */ (function (_super) {
             _this.establishConnection_();
         }, Math.floor(timeout));
     };
-    /**
-     * @param {boolean} visible
-     * @private
-     */
     PersistentConnection.prototype.onVisible_ = function (visible) {
         // NOTE: Tabbing away and back to a window will defeat our reconnect backoff, but I think that's fine.
         if (visible &&
@@ -15398,9 +14889,6 @@ var PersistentConnection = /** @class */ (function (_super) {
             });
         }
     };
-    /**
-     * @param {string} reason
-     */
     PersistentConnection.prototype.interrupt = function (reason) {
         log('Interrupting connection for reason: ' + reason);
         this.interruptReasons_[reason] = true;
@@ -15417,9 +14905,6 @@ var PersistentConnection = /** @class */ (function (_super) {
             }
         }
     };
-    /**
-     * @param {string} reason
-     */
     PersistentConnection.prototype.resume = function (reason) {
         log('Resuming connection for reason: ' + reason);
         delete this.interruptReasons_[reason];
@@ -15448,11 +14933,6 @@ var PersistentConnection = /** @class */ (function (_super) {
         if (this.outstandingPutCount_ === 0)
             this.outstandingPuts_ = [];
     };
-    /**
-     * @param {!string} pathString
-     * @param {Array.<*>=} query
-     * @private
-     */
     PersistentConnection.prototype.onListenRevoked_ = function (pathString, query) {
         // Remove the listen and manufacture a "permission_denied" error for the failed listen.
         var queryId;
@@ -15466,20 +14946,15 @@ var PersistentConnection = /** @class */ (function (_super) {
         if (listen && listen.onComplete)
             listen.onComplete('permission_denied');
     };
-    /**
-     * @param {!string} pathString
-     * @param {!string} queryId
-     * @return {{queries:Array.<Query>, onComplete:function(string)}}
-     * @private
-     */
     PersistentConnection.prototype.removeListen_ = function (pathString, queryId) {
         var normalizedPathString = new Path(pathString).toString(); // normalize path.
         var listen;
-        if (this.listens_[normalizedPathString] !== undefined) {
-            listen = this.listens_[normalizedPathString][queryId];
-            delete this.listens_[normalizedPathString][queryId];
-            if (util.getCount(this.listens_[normalizedPathString]) === 0) {
-                delete this.listens_[normalizedPathString];
+        if (this.listens.has(normalizedPathString)) {
+            var map = this.listens.get(normalizedPathString);
+            listen = map.get(queryId);
+            map.delete(queryId);
+            if (map.size === 0) {
+                this.listens.delete(normalizedPathString);
             }
         }
         else {
@@ -15518,16 +14993,36 @@ var PersistentConnection = /** @class */ (function (_super) {
         }
     };
     PersistentConnection.prototype.restoreState_ = function () {
-        var _this = this;
+        var e_1, _a, e_2, _b;
         //Re-authenticate ourselves if we have a credential stored.
         this.tryAuth();
-        // Puts depend on having received the corresponding data update from the server before they complete, so we must
-        // make sure to send listens before puts.
-        util.forEach(this.listens_, function (pathString, queries) {
-            util.forEach(queries, function (key, listenSpec) {
-                _this.sendListen_(listenSpec);
-            });
-        });
+        try {
+            // Puts depend on having received the corresponding data update from the server before they complete, so we must
+            // make sure to send listens before puts.
+            for (var _c = tslib_1.__values(this.listens.values()), _d = _c.next(); !_d.done; _d = _c.next()) {
+                var queries = _d.value;
+                try {
+                    for (var _e = (e_2 = void 0, tslib_1.__values(queries.values())), _f = _e.next(); !_f.done; _f = _e.next()) {
+                        var listenSpec = _f.value;
+                        this.sendListen_(listenSpec);
+                    }
+                }
+                catch (e_2_1) { e_2 = { error: e_2_1 }; }
+                finally {
+                    try {
+                        if (_f && !_f.done && (_b = _e.return)) _b.call(_e);
+                    }
+                    finally { if (e_2) throw e_2.error; }
+                }
+            }
+        }
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (_d && !_d.done && (_a = _c.return)) _a.call(_c);
+            }
+            finally { if (e_1) throw e_1.error; }
+        }
         for (var i = 0; i < this.outstandingPuts_.length; i++) {
             if (this.outstandingPuts_[i])
                 this.sendPut_(i);
@@ -15539,7 +15034,6 @@ var PersistentConnection = /** @class */ (function (_super) {
     };
     /**
      * Sends client stats for first connection
-     * @private
      */
     PersistentConnection.prototype.sendConnectStats_ = function () {
         var stats = {};
@@ -15550,7 +15044,7 @@ var PersistentConnection = /** @class */ (function (_super) {
         else if (util.CONSTANTS.NODE_CLIENT) {
             clientName = 'node';
         }
-        stats['sdk.' + clientName + '.' + firebase.SDK_VERSION.replace(/\./g, '-')] = 1;
+        stats['sdk.' + clientName + '.' + SDK_VERSION.replace(/\./g, '-')] = 1;
         if (util.isMobileCordova()) {
             stats['framework.cordova'] = 1;
         }
@@ -15559,22 +15053,13 @@ var PersistentConnection = /** @class */ (function (_super) {
         }
         this.reportStats(stats);
     };
-    /**
-     * @return {boolean}
-     * @private
-     */
     PersistentConnection.prototype.shouldReconnect_ = function () {
         var online = OnlineMonitor.getInstance().currentlyOnline();
         return util.isEmpty(this.interruptReasons_) && online;
     };
-    /**
-     * @private
-     */
     PersistentConnection.nextPersistentConnectionId_ = 0;
     /**
      * Counter for number of connections created. Mainly used for tagging in the logs
-     * @type {number}
-     * @private
      */
     PersistentConnection.nextConnectionId_ = 0;
     return PersistentConnection;
@@ -15774,11 +15259,6 @@ var INTERRUPT_REASON = 'repo_interrupt';
  * A connection to a single data repository.
  */
 var Repo = /** @class */ (function () {
-    /**
-     * @param {!RepoInfo} repoInfo_
-     * @param {boolean} forceRestClient
-     * @param {!FirebaseApp} app
-     */
     function Repo(repoInfo_, forceRestClient, app) {
         var _this = this;
         this.repoInfo_ = repoInfo_;
@@ -15788,15 +15268,18 @@ var Repo = /** @class */ (function () {
         this.eventQueue_ = new EventQueue();
         this.nextWriteId_ = 1;
         this.interceptServerDataCallback_ = null;
-        // A list of data pieces and paths to be set when this client disconnects.
+        /** A list of data pieces and paths to be set when this client disconnects. */
         this.onDisconnect_ = new SparseSnapshotTree();
-        /**
-         * TODO: This should be @private but it's used by test_access.js and internal.js
-         * @type {?PersistentConnection}
-         */
+        // TODO: This should be @private but it's used by test_access.js and internal.js
         this.persistentConnection_ = null;
-        /** @type {!AuthTokenProvider} */
-        var authTokenProvider = new AuthTokenProvider(app);
+        var authTokenProvider;
+        if (typeof process !== 'undefined' &&
+            process.env[FIREBASE_DATABASE_EMULATOR_HOST_VAR]) {
+            authTokenProvider = new EmulatorAuthTokenProvider(app);
+        }
+        else {
+            authTokenProvider = new FirebaseAuthTokenProvider(app);
+        }
         this.stats_ = StatsManager.getCollection(repoInfo_);
         if (forceRestClient || beingCrawled()) {
             this.server_ = new ReadonlyRestClient(this.repoInfo_, this.onDataUpdate_.bind(this), authTokenProvider);
@@ -15861,19 +15344,19 @@ var Repo = /** @class */ (function () {
         });
     }
     /**
-     * @return {string}  The URL corresponding to the root of this Firebase.
+     * @return The URL corresponding to the root of this Firebase.
      */
     Repo.prototype.toString = function () {
         return ((this.repoInfo_.secure ? 'https://' : 'http://') + this.repoInfo_.host);
     };
     /**
-     * @return {!string} The namespace represented by the repo.
+     * @return The namespace represented by the repo.
      */
     Repo.prototype.name = function () {
         return this.repoInfo_.namespace;
     };
     /**
-     * @return {!number} The time in milliseconds, taking the server offset into account if we have one.
+     * @return The time in milliseconds, taking the server offset into account if we have one.
      */
     Repo.prototype.serverTime = function () {
         var offsetNode = this.infoData_.getNode(new Path('.info/serverTimeOffset'));
@@ -15882,7 +15365,6 @@ var Repo = /** @class */ (function () {
     };
     /**
      * Generate ServerValues using some variables from the repo object.
-     * @return {!Object}
      */
     Repo.prototype.generateServerValues = function () {
         return generateWithValues({
@@ -15891,12 +15373,6 @@ var Repo = /** @class */ (function () {
     };
     /**
      * Called by realtime when we get new messages from the server.
-     *
-     * @private
-     * @param {string} pathString
-     * @param {*} data
-     * @param {boolean} isMerge
-     * @param {?number} tag
      */
     Repo.prototype.onDataUpdate_ = function (pathString, data, isMerge, tag) {
         // For testing.
@@ -15936,40 +15412,22 @@ var Repo = /** @class */ (function () {
         }
         this.eventQueue_.raiseEventsForChangedPath(affectedPath, events);
     };
-    /**
-     * TODO: This should be @private but it's used by test_access.js and internal.js
-     * @param {?function(!string, *):*} callback
-     * @private
-     */
+    // TODO: This should be @private but it's used by test_access.js and internal.js
     Repo.prototype.interceptServerData_ = function (callback) {
         this.interceptServerDataCallback_ = callback;
     };
-    /**
-     * @param {!boolean} connectStatus
-     * @private
-     */
     Repo.prototype.onConnectStatus_ = function (connectStatus) {
         this.updateInfo_('connected', connectStatus);
         if (connectStatus === false) {
             this.runOnDisconnectEvents_();
         }
     };
-    /**
-     * @param {!Object} updates
-     * @private
-     */
     Repo.prototype.onServerInfoUpdate_ = function (updates) {
         var _this = this;
-        each(updates, function (value, key) {
+        each(updates, function (key, value) {
             _this.updateInfo_(key, value);
         });
     };
-    /**
-     *
-     * @param {!string} pathString
-     * @param {*} value
-     * @private
-     */
     Repo.prototype.updateInfo_ = function (pathString, value) {
         var path = new Path('/.info/' + pathString);
         var newNode = nodeFromJSON$1(value);
@@ -15977,19 +15435,9 @@ var Repo = /** @class */ (function () {
         var events = this.infoSyncTree_.applyServerOverwrite(path, newNode);
         this.eventQueue_.raiseEventsForChangedPath(path, events);
     };
-    /**
-     * @return {!number}
-     * @private
-     */
     Repo.prototype.getNextWriteId_ = function () {
         return this.nextWriteId_++;
     };
-    /**
-     * @param {!Path} path
-     * @param {*} newVal
-     * @param {number|string|null} newPriority
-     * @param {?function(?Error, *=)} onComplete
-     */
     Repo.prototype.setWithPriority = function (path, newVal, newPriority, onComplete) {
         var _this = this;
         this.log_('set', {
@@ -16019,11 +15467,6 @@ var Repo = /** @class */ (function () {
         // We queued the events above, so just flush the queue here
         this.eventQueue_.raiseEventsForChangedPath(affectedPath, []);
     };
-    /**
-     * @param {!Path} path
-     * @param {!Object} childrenToMerge
-     * @param {?function(?Error, *=)} onComplete
-     */
     Repo.prototype.update = function (path, childrenToMerge, onComplete) {
         var _this = this;
         this.log_('update', { path: path.toString(), value: childrenToMerge });
@@ -16031,7 +15474,7 @@ var Repo = /** @class */ (function () {
         var empty = true;
         var serverValues = this.generateServerValues();
         var changedChildren = {};
-        util.forEach(childrenToMerge, function (changedKey, changedValue) {
+        each(childrenToMerge, function (changedKey, changedValue) {
             empty = false;
             var newNodeUnresolved = nodeFromJSON$1(changedValue);
             changedChildren[changedKey] = resolveDeferredValueSnapshot(newNodeUnresolved, serverValues);
@@ -16050,7 +15493,7 @@ var Repo = /** @class */ (function () {
                 _this.eventQueue_.raiseEventsForChangedPath(affectedPath, clearEvents);
                 _this.callOnCompleteCallback(onComplete, status, errorReason);
             });
-            util.forEach(childrenToMerge, function (changedPath) {
+            each(childrenToMerge, function (changedPath) {
                 var affectedPath = _this.abortTransactions_(path.child(changedPath));
                 _this.rerunTransactions_(affectedPath);
             });
@@ -16064,7 +15507,6 @@ var Repo = /** @class */ (function () {
     };
     /**
      * Applies all of the changes stored up in the onDisconnect_ tree.
-     * @private
      */
     Repo.prototype.runOnDisconnectEvents_ = function () {
         var _this = this;
@@ -16080,10 +15522,6 @@ var Repo = /** @class */ (function () {
         this.onDisconnect_ = new SparseSnapshotTree();
         this.eventQueue_.raiseEventsForChangedPath(Path.Empty, events);
     };
-    /**
-     * @param {!Path} path
-     * @param {?function(?Error, *=)} onComplete
-     */
     Repo.prototype.onDisconnectCancel = function (path, onComplete) {
         var _this = this;
         this.server_.onDisconnectCancel(path.toString(), function (status, errorReason) {
@@ -16093,11 +15531,6 @@ var Repo = /** @class */ (function () {
             _this.callOnCompleteCallback(onComplete, status, errorReason);
         });
     };
-    /**
-     * @param {!Path} path
-     * @param {*} value
-     * @param {?function(?Error, *=)} onComplete
-     */
     Repo.prototype.onDisconnectSet = function (path, value, onComplete) {
         var _this = this;
         var newNode = nodeFromJSON$1(value);
@@ -16108,12 +15541,6 @@ var Repo = /** @class */ (function () {
             _this.callOnCompleteCallback(onComplete, status, errorReason);
         });
     };
-    /**
-     * @param {!Path} path
-     * @param {*} value
-     * @param {*} priority
-     * @param {?function(?Error, *=)} onComplete
-     */
     Repo.prototype.onDisconnectSetWithPriority = function (path, value, priority, onComplete) {
         var _this = this;
         var newNode = nodeFromJSON$1(value, priority);
@@ -16124,11 +15551,6 @@ var Repo = /** @class */ (function () {
             _this.callOnCompleteCallback(onComplete, status, errorReason);
         });
     };
-    /**
-     * @param {!Path} path
-     * @param {*} childrenToMerge
-     * @param {?function(?Error, *=)} onComplete
-     */
     Repo.prototype.onDisconnectUpdate = function (path, childrenToMerge, onComplete) {
         var _this = this;
         if (util.isEmpty(childrenToMerge)) {
@@ -16138,7 +15560,7 @@ var Repo = /** @class */ (function () {
         }
         this.server_.onDisconnectMerge(path.toString(), childrenToMerge, function (status, errorReason) {
             if (status === 'ok') {
-                util.forEach(childrenToMerge, function (childName, childNode) {
+                each(childrenToMerge, function (childName, childNode) {
                     var newChildNode = nodeFromJSON$1(childNode);
                     _this.onDisconnect_.remember(path.child(childName), newChildNode);
                 });
@@ -16146,10 +15568,6 @@ var Repo = /** @class */ (function () {
             _this.callOnCompleteCallback(onComplete, status, errorReason);
         });
     };
-    /**
-     * @param {!Query} query
-     * @param {!EventRegistration} eventRegistration
-     */
     Repo.prototype.addEventCallbackForQuery = function (query, eventRegistration) {
         var events;
         if (query.path.getFront() === '.info') {
@@ -16160,10 +15578,6 @@ var Repo = /** @class */ (function () {
         }
         this.eventQueue_.raiseEventsAtPath(query.path, events);
     };
-    /**
-     * @param {!Query} query
-     * @param {?EventRegistration} eventRegistration
-     */
     Repo.prototype.removeEventCallbackForQuery = function (query, eventRegistration) {
         // These are guaranteed not to raise events, since we're not passing in a cancelError. However, we can future-proof
         // a little bit by handling the return values anyways.
@@ -16202,21 +15616,19 @@ var Repo = /** @class */ (function () {
         var longestName = Object.keys(stats).reduce(function (previousValue, currentValue) {
             return Math.max(currentValue.length, previousValue);
         }, 0);
-        util.forEach(stats, function (stat, value) {
+        each(stats, function (stat, value) {
+            var paddedStat = stat;
             // pad stat names to be the same length (plus 2 extra spaces).
-            for (var i = stat.length; i < longestName + 2; i++)
-                stat += ' ';
-            console.log(stat + value);
+            for (var i = stat.length; i < longestName + 2; i++) {
+                paddedStat += ' ';
+            }
+            console.log(paddedStat + value);
         });
     };
     Repo.prototype.statsIncrementCounter = function (metric) {
         this.stats_.incrementCounter(metric);
         this.statsReporter_.includeStat(metric);
     };
-    /**
-     * @param {...*} var_args
-     * @private
-     */
     Repo.prototype.log_ = function () {
         var var_args = [];
         for (var _i = 0; _i < arguments.length; _i++) {
@@ -16226,13 +15638,8 @@ var Repo = /** @class */ (function () {
         if (this.persistentConnection_) {
             prefix = this.persistentConnection_.id + ':';
         }
-        log.apply(void 0, [prefix].concat(var_args));
+        log.apply(void 0, tslib_1.__spread([prefix], var_args));
     };
-    /**
-     * @param {?function(?Error, *=)} callback
-     * @param {!string} status
-     * @param {?string=} errorReason
-     */
     Repo.prototype.callOnCompleteCallback = function (callback, status, errorReason) {
         if (callback) {
             exceptionGuard(function () {
@@ -17436,7 +16843,7 @@ var Tree = /** @class */ (function () {
      */
     Tree.prototype.forEachChild = function (action) {
         var _this = this;
-        util.forEach(this.node_.children, function (child, childTree) {
+        each(this.node_.children, function (child, childTree) {
             action(new Tree(child, _this, childTree));
         });
     };
@@ -18162,6 +17569,15 @@ var RepoManager = /** @class */ (function () {
         }
         var parsedUrl = parseRepoInfo(dbUrl);
         var repoInfo = parsedUrl.repoInfo;
+        var dbEmulatorHost = undefined;
+        if (typeof process !== 'undefined') {
+            dbEmulatorHost = process.env[FIREBASE_DATABASE_EMULATOR_HOST_VAR];
+        }
+        if (dbEmulatorHost) {
+            dbUrl = "http://" + dbEmulatorHost + "?ns=" + repoInfo.namespace;
+            parsedUrl = parseRepoInfo(dbUrl);
+            repoInfo = parsedUrl.repoInfo;
+        }
         validateUrl('Invalid Firebase Database URL', 1, parsedUrl);
         if (!parsedUrl.path.isEmpty()) {
             fatal('Database URL must point to the root of a Firebase Database ' +
@@ -18461,13 +17877,6 @@ var queryIdentifier = function (query) {
     return query.queryIdentifier();
 };
 /**
- * @param {!Query} firebaseRef
- * @return {!Object}
- */
-var listens = function (firebaseRef) {
-    return firebaseRef.repo.persistentConnection_.listens_;
-};
-/**
  * Forces the RepoManager to create Repos that use ReadonlyRestClient instead of PersistentConnection.
  *
  * @param {boolean} forceRestClient
@@ -18482,7 +17891,6 @@ var TEST_ACCESS = /*#__PURE__*/Object.freeze({
   hijackHash: hijackHash,
   ConnectionTarget: ConnectionTarget,
   queryIdentifier: queryIdentifier,
-  listens: listens,
   forceRestClient: forceRestClient
 });
 
@@ -18504,6 +17912,8 @@ var TEST_ACCESS = /*#__PURE__*/Object.freeze({
  */
 var ServerValue = Database.ServerValue;
 function registerDatabase(instance) {
+    // set SDK_VERSION
+    setSDKVersion(instance.SDK_VERSION);
     // Register the Database Service with the 'firebase' namespace.
     var namespace = instance.INTERNAL.registerService('database', function (app, unused, url) { return RepoManager.getInstance().databaseFromApp(app, url); }, 
     // firebase.database namespace properties
@@ -18533,11 +17943,11 @@ exports.enableLogging = enableLogging;
 exports.registerDatabase = registerDatabase;
 //# sourceMappingURL=index.cjs.js.map
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(76)))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(75)))
 
 /***/ }),
 
-/***/ 76:
+/***/ 75:
 /***/ (function(module, exports) {
 
 // shim for using process in browser
@@ -18728,250 +18138,19 @@ process.umask = function() { return 0; };
 
 /***/ }),
 
-/***/ 77:
+/***/ 76:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__extends", function() { return __extends; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__assign", function() { return __assign; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__rest", function() { return __rest; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__decorate", function() { return __decorate; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__param", function() { return __param; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__metadata", function() { return __metadata; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__awaiter", function() { return __awaiter; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__generator", function() { return __generator; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__exportStar", function() { return __exportStar; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__values", function() { return __values; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__read", function() { return __read; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__spread", function() { return __spread; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__await", function() { return __await; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__asyncGenerator", function() { return __asyncGenerator; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__asyncDelegator", function() { return __asyncDelegator; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__asyncValues", function() { return __asyncValues; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__makeTemplateObject", function() { return __makeTemplateObject; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__importStar", function() { return __importStar; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__importDefault", function() { return __importDefault; });
-/*! *****************************************************************************
-Copyright (c) Microsoft Corporation. All rights reserved.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the
-License at http://www.apache.org/licenses/LICENSE-2.0
+/* harmony import */ var _firebase_storage__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(77);
 
-THIS CODE IS PROVIDED ON AN *AS IS* BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-KIND, EITHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION ANY IMPLIED
-WARRANTIES OR CONDITIONS OF TITLE, FITNESS FOR A PARTICULAR PURPOSE,
-MERCHANTABLITY OR NON-INFRINGEMENT.
-
-See the Apache Version 2.0 License for specific language governing permissions
-and limitations under the License.
-***************************************************************************** */
-/* global Reflect, Promise */
-
-var extendStatics = function(d, b) {
-    extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return extendStatics(d, b);
-};
-
-function __extends(d, b) {
-    extendStatics(d, b);
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-}
-
-var __assign = function() {
-    __assign = Object.assign || function __assign(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
-        }
-        return t;
-    }
-    return __assign.apply(this, arguments);
-}
-
-function __rest(s, e) {
-    var t = {};
-    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
-        t[p] = s[p];
-    if (s != null && typeof Object.getOwnPropertySymbols === "function")
-        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) if (e.indexOf(p[i]) < 0)
-            t[p[i]] = s[p[i]];
-    return t;
-}
-
-function __decorate(decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-}
-
-function __param(paramIndex, decorator) {
-    return function (target, key) { decorator(target, key, paramIndex); }
-}
-
-function __metadata(metadataKey, metadataValue) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(metadataKey, metadataValue);
-}
-
-function __awaiter(thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-}
-
-function __generator(thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
-            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [op[0] & 2, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-    }
-}
-
-function __exportStar(m, exports) {
-    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
-}
-
-function __values(o) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator], i = 0;
-    if (m) return m.call(o);
-    return {
-        next: function () {
-            if (o && i >= o.length) o = void 0;
-            return { value: o && o[i++], done: !o };
-        }
-    };
-}
-
-function __read(o, n) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator];
-    if (!m) return o;
-    var i = m.call(o), r, ar = [], e;
-    try {
-        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-    }
-    catch (error) { e = { error: error }; }
-    finally {
-        try {
-            if (r && !r.done && (m = i["return"])) m.call(i);
-        }
-        finally { if (e) throw e.error; }
-    }
-    return ar;
-}
-
-function __spread() {
-    for (var ar = [], i = 0; i < arguments.length; i++)
-        ar = ar.concat(__read(arguments[i]));
-    return ar;
-}
-
-function __await(v) {
-    return this instanceof __await ? (this.v = v, this) : new __await(v);
-}
-
-function __asyncGenerator(thisArg, _arguments, generator) {
-    if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
-    var g = generator.apply(thisArg, _arguments || []), i, q = [];
-    return i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function () { return this; }, i;
-    function verb(n) { if (g[n]) i[n] = function (v) { return new Promise(function (a, b) { q.push([n, v, a, b]) > 1 || resume(n, v); }); }; }
-    function resume(n, v) { try { step(g[n](v)); } catch (e) { settle(q[0][3], e); } }
-    function step(r) { r.value instanceof __await ? Promise.resolve(r.value.v).then(fulfill, reject) : settle(q[0][2], r); }
-    function fulfill(value) { resume("next", value); }
-    function reject(value) { resume("throw", value); }
-    function settle(f, v) { if (f(v), q.shift(), q.length) resume(q[0][0], q[0][1]); }
-}
-
-function __asyncDelegator(o) {
-    var i, p;
-    return i = {}, verb("next"), verb("throw", function (e) { throw e; }), verb("return"), i[Symbol.iterator] = function () { return this; }, i;
-    function verb(n, f) { i[n] = o[n] ? function (v) { return (p = !p) ? { value: __await(o[n](v)), done: n === "return" } : f ? f(v) : v; } : f; }
-}
-
-function __asyncValues(o) {
-    if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
-    var m = o[Symbol.asyncIterator], i;
-    return m ? m.call(o) : (o = typeof __values === "function" ? __values(o) : o[Symbol.iterator](), i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function () { return this; }, i);
-    function verb(n) { i[n] = o[n] && function (v) { return new Promise(function (resolve, reject) { v = o[n](v), settle(resolve, reject, v.done, v.value); }); }; }
-    function settle(resolve, reject, d, v) { Promise.resolve(v).then(function(v) { resolve({ value: v, done: d }); }, reject); }
-}
-
-function __makeTemplateObject(cooked, raw) {
-    if (Object.defineProperty) { Object.defineProperty(cooked, "raw", { value: raw }); } else { cooked.raw = raw; }
-    return cooked;
-};
-
-function __importStar(mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result.default = mod;
-    return result;
-}
-
-function __importDefault(mod) {
-    return (mod && mod.__esModule) ? mod : { default: mod };
-}
-
-
-/***/ }),
-
-/***/ 78:
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _firebase_storage__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(79);
-
-
-/**
- * @license
- * Copyright 2017 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 //# sourceMappingURL=index.esm.js.map
 
 
 /***/ }),
 
-/***/ 79:
+/***/ 77:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -18979,6 +18158,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "registerStorage", function() { return registerStorage; });
 /* harmony import */ var _firebase_app__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(69);
 /* harmony import */ var _firebase_app__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_firebase_app__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(70);
+
 
 
 /**
@@ -19155,6 +18336,12 @@ function invalidUrl(url) {
 function invalidDefaultBucket(bucket) {
     return new FirebaseStorageError(Code.INVALID_DEFAULT_BUCKET, "Invalid default bucket '" + bucket + "'.");
 }
+function noDefaultBucket() {
+    return new FirebaseStorageError(Code.NO_DEFAULT_BUCKET, 'No default bucket ' +
+        "found. Did you set the '" +
+        CONFIG_STORAGE_BUCKET_KEY +
+        "' property when initializing the app?");
+}
 function cannotSliceBlob() {
     return new FirebaseStorageError(Code.CANNOT_SLICE_BLOB, 'Cannot slice blob for upload. Please retry the upload.');
 }
@@ -19259,29 +18446,31 @@ function formatValidator(stringFormat) {
  * @struct
  */
 var StringData = /** @class */ (function () {
-    function StringData(data, opt_contentType) {
+    function StringData(data, contentType) {
         this.data = data;
-        this.contentType = opt_contentType || null;
+        this.contentType = contentType || null;
     }
     return StringData;
 }());
-function dataFromString(format, string) {
+function dataFromString(format, stringData) {
     switch (format) {
         case StringFormat.RAW:
-            return new StringData(utf8Bytes_(string));
+            return new StringData(utf8Bytes_(stringData));
         case StringFormat.BASE64:
         case StringFormat.BASE64URL:
-            return new StringData(base64Bytes_(format, string));
+            return new StringData(base64Bytes_(format, stringData));
         case StringFormat.DATA_URL:
-            return new StringData(dataURLBytes_(string), dataURLContentType_(string));
+            return new StringData(dataURLBytes_(stringData), dataURLContentType_(stringData));
+        default:
+        // do nothing
     }
     // assert(false);
     throw unknown();
 }
-function utf8Bytes_(string) {
+function utf8Bytes_(value) {
     var b = [];
-    for (var i = 0; i < string.length; i++) {
-        var c = string.charCodeAt(i);
+    for (var i = 0; i < value.length; i++) {
+        var c = value.charCodeAt(i);
         if (c <= 127) {
             b.push(c);
         }
@@ -19290,23 +18479,22 @@ function utf8Bytes_(string) {
                 b.push(192 | (c >> 6), 128 | (c & 63));
             }
             else {
-                if ((c & 64512) == 55296) {
+                if ((c & 64512) === 55296) {
                     // The start of a surrogate pair.
-                    var valid = i < string.length - 1 &&
-                        (string.charCodeAt(i + 1) & 64512) == 56320;
+                    var valid = i < value.length - 1 && (value.charCodeAt(i + 1) & 64512) === 56320;
                     if (!valid) {
                         // The second surrogate wasn't there.
                         b.push(239, 191, 189);
                     }
                     else {
                         var hi = c;
-                        var lo = string.charCodeAt(++i);
+                        var lo = value.charCodeAt(++i);
                         c = 65536 | ((hi & 1023) << 10) | (lo & 1023);
                         b.push(240 | (c >> 18), 128 | ((c >> 12) & 63), 128 | ((c >> 6) & 63), 128 | (c & 63));
                     }
                 }
                 else {
-                    if ((c & 64512) == 56320) {
+                    if ((c & 64512) === 56320) {
                         // Invalid low surrogate.
                         b.push(239, 191, 189);
                     }
@@ -19319,21 +18507,21 @@ function utf8Bytes_(string) {
     }
     return new Uint8Array(b);
 }
-function percentEncodedBytes_(string) {
+function percentEncodedBytes_(value) {
     var decoded;
     try {
-        decoded = decodeURIComponent(string);
+        decoded = decodeURIComponent(value);
     }
     catch (e) {
         throw invalidFormat(StringFormat.DATA_URL, 'Malformed data URL.');
     }
     return utf8Bytes_(decoded);
 }
-function base64Bytes_(format, string) {
+function base64Bytes_(format, value) {
     switch (format) {
         case StringFormat.BASE64: {
-            var hasMinus = string.indexOf('-') !== -1;
-            var hasUnder = string.indexOf('_') !== -1;
+            var hasMinus = value.indexOf('-') !== -1;
+            var hasUnder = value.indexOf('_') !== -1;
             if (hasMinus || hasUnder) {
                 var invalidChar = hasMinus ? '-' : '_';
                 throw invalidFormat(format, "Invalid character '" +
@@ -19343,19 +18531,21 @@ function base64Bytes_(format, string) {
             break;
         }
         case StringFormat.BASE64URL: {
-            var hasPlus = string.indexOf('+') !== -1;
-            var hasSlash = string.indexOf('/') !== -1;
+            var hasPlus = value.indexOf('+') !== -1;
+            var hasSlash = value.indexOf('/') !== -1;
             if (hasPlus || hasSlash) {
                 var invalidChar = hasPlus ? '+' : '/';
                 throw invalidFormat(format, "Invalid character '" + invalidChar + "' found: is it base64 encoded?");
             }
-            string = string.replace(/-/g, '+').replace(/_/g, '/');
+            value = value.replace(/-/g, '+').replace(/_/g, '/');
             break;
         }
+        default:
+        // do nothing
     }
     var bytes;
     try {
-        bytes = atob(string);
+        bytes = atob(value);
     }
     catch (e) {
         throw invalidFormat(format, 'Invalid character found');
@@ -19388,8 +18578,8 @@ var DataURLParts = /** @class */ (function () {
     }
     return DataURLParts;
 }());
-function dataURLBytes_(string) {
-    var parts = new DataURLParts(string);
+function dataURLBytes_(dataUrl) {
+    var parts = new DataURLParts(dataUrl);
     if (parts.base64) {
         return base64Bytes_(StringFormat.BASE64, parts.rest);
     }
@@ -19397,8 +18587,8 @@ function dataURLBytes_(string) {
         return percentEncodedBytes_(parts.rest);
     }
 }
-function dataURLContentType_(string) {
-    var parts = new DataURLParts(string);
+function dataURLContentType_(dataUrl) {
+    var parts = new DataURLParts(dataUrl);
     return parts.contentType;
 }
 function endsWith(s, end) {
@@ -19487,84 +18677,6 @@ function taskStateFromInternalTaskState(state) {
  * limitations under the License.
  */
 /**
- * @fileoverview Contains methods for working with objects.
- */
-function contains(obj, prop) {
-    return Object.prototype.hasOwnProperty.call(obj, prop);
-}
-function forEach(obj, f) {
-    for (var key in obj) {
-        if (contains(obj, key)) {
-            f(key, obj[key]);
-        }
-    }
-}
-function clone(obj) {
-    if (obj == null) {
-        return {};
-    }
-    var c = {};
-    forEach(obj, function (key, val) {
-        c[key] = val;
-    });
-    return c;
-}
-
-/**
- * @license
- * Copyright 2017 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-/**
- * @fileoverview Implements the promise abstraction interface for external
- * (public SDK) packaging, which just passes through to the firebase-app impl.
- */
-/**
- * @template T
- * @param {function((function(T): void),
- *                  (function(!Error): void))} resolver
- */
-function make(resolver) {
-    return new Promise(resolver);
-}
-/**
- * @template T
- */
-function resolve(value) {
-    return Promise.resolve(value);
-}
-function reject(error) {
-    return Promise.reject(error);
-}
-
-/**
- * @license
- * Copyright 2017 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-/**
  * @return False if the object is undefined or null, true otherwise.
  */
 function isDef(p) {
@@ -19587,6 +18699,9 @@ function isNonArrayObject(p) {
 }
 function isString(p) {
     return typeof p === 'string' || p instanceof String;
+}
+function isInteger(p) {
+    return isNumber(p) && Number.isInteger(p);
 }
 function isNumber(p) {
     return typeof p === 'number' || p instanceof Number;
@@ -19650,16 +18765,16 @@ var NetworkXhrIo = /** @class */ (function () {
         this.sent_ = false;
         this.xhr_ = new XMLHttpRequest();
         this.errorCode_ = ErrorCode.NO_ERROR;
-        this.sendPromise_ = make(function (resolve, reject) {
-            _this.xhr_.addEventListener('abort', function (event) {
+        this.sendPromise_ = new Promise(function (resolve) {
+            _this.xhr_.addEventListener('abort', function () {
                 _this.errorCode_ = ErrorCode.ABORT;
                 resolve(_this);
             });
-            _this.xhr_.addEventListener('error', function (event) {
+            _this.xhr_.addEventListener('error', function () {
                 _this.errorCode_ = ErrorCode.NETWORK_ERROR;
                 resolve(_this);
             });
-            _this.xhr_.addEventListener('load', function (event) {
+            _this.xhr_.addEventListener('load', function () {
                 resolve(_this);
             });
         });
@@ -19667,21 +18782,21 @@ var NetworkXhrIo = /** @class */ (function () {
     /**
      * @override
      */
-    NetworkXhrIo.prototype.send = function (url, method, opt_body, opt_headers) {
-        var _this = this;
+    NetworkXhrIo.prototype.send = function (url, method, body, headers) {
         if (this.sent_) {
             throw internalError('cannot .send() more than once');
         }
         this.sent_ = true;
         this.xhr_.open(method, url, true);
-        if (isDef(opt_headers)) {
-            var headers = opt_headers;
-            forEach(headers, function (key, val) {
-                _this.xhr_.setRequestHeader(key, val.toString());
-            });
+        if (isDef(headers)) {
+            for (var key in headers) {
+                if (headers.hasOwnProperty(key)) {
+                    this.xhr_.setRequestHeader(key, headers[key].toString());
+                }
+            }
         }
-        if (isDef(opt_body)) {
-            this.xhr_.send(opt_body);
+        if (isDef(body)) {
+            this.xhr_.send(body);
         }
         else {
             this.xhr_.send();
@@ -19796,25 +18911,185 @@ var XhrIoPool = /** @class */ (function () {
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * Returns the Object resulting from parsing the given JSON, or null if the
- * given string does not represent a JSON object.
- */
-function jsonObjectOrNull(s) {
-    var obj;
-    try {
-        obj = JSON.parse(s);
+function getBlobBuilder() {
+    if (typeof BlobBuilder !== 'undefined') {
+        return BlobBuilder;
     }
-    catch (e) {
-        return null;
-    }
-    if (isNonArrayObject(obj)) {
-        return obj;
+    else if (typeof WebKitBlobBuilder !== 'undefined') {
+        return WebKitBlobBuilder;
     }
     else {
-        return null;
+        return undefined;
     }
 }
+/**
+ * Concatenates one or more values together and converts them to a Blob.
+ *
+ * @param args The values that will make up the resulting blob.
+ * @return The blob.
+ */
+function getBlob() {
+    var args = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+        args[_i] = arguments[_i];
+    }
+    var BlobBuilder = getBlobBuilder();
+    if (BlobBuilder !== undefined) {
+        var bb = new BlobBuilder();
+        for (var i = 0; i < args.length; i++) {
+            bb.append(args[i]);
+        }
+        return bb.getBlob();
+    }
+    else {
+        if (isNativeBlobDefined()) {
+            return new Blob(args);
+        }
+        else {
+            throw Error("This browser doesn't seem to support creating Blobs");
+        }
+    }
+}
+/**
+ * Slices the blob. The returned blob contains data from the start byte
+ * (inclusive) till the end byte (exclusive). Negative indices cannot be used.
+ *
+ * @param blob The blob to be sliced.
+ * @param start Index of the starting byte.
+ * @param end Index of the ending byte.
+ * @return The blob slice or null if not supported.
+ */
+function sliceBlob(blob, start, end) {
+    if (blob.webkitSlice) {
+        return blob.webkitSlice(start, end);
+    }
+    else if (blob.mozSlice) {
+        return blob.mozSlice(start, end);
+    }
+    else if (blob.slice) {
+        return blob.slice(start, end);
+    }
+    return null;
+}
+
+/**
+ * @license
+ * Copyright 2017 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/**
+ * @param opt_elideCopy If true, doesn't copy mutable input data
+ *     (e.g. Uint8Arrays). Pass true only if you know the objects will not be
+ *     modified after this blob's construction.
+ */
+var FbsBlob = /** @class */ (function () {
+    function FbsBlob(data, elideCopy) {
+        var size = 0;
+        var blobType = '';
+        if (isNativeBlob(data)) {
+            this.data_ = data;
+            size = data.size;
+            blobType = data.type;
+        }
+        else if (data instanceof ArrayBuffer) {
+            if (elideCopy) {
+                this.data_ = new Uint8Array(data);
+            }
+            else {
+                this.data_ = new Uint8Array(data.byteLength);
+                this.data_.set(new Uint8Array(data));
+            }
+            size = this.data_.length;
+        }
+        else if (data instanceof Uint8Array) {
+            if (elideCopy) {
+                this.data_ = data;
+            }
+            else {
+                this.data_ = new Uint8Array(data.length);
+                this.data_.set(data);
+            }
+            size = data.length;
+        }
+        this.size_ = size;
+        this.type_ = blobType;
+    }
+    FbsBlob.prototype.size = function () {
+        return this.size_;
+    };
+    FbsBlob.prototype.type = function () {
+        return this.type_;
+    };
+    FbsBlob.prototype.slice = function (startByte, endByte) {
+        if (isNativeBlob(this.data_)) {
+            var realBlob = this.data_;
+            var sliced = sliceBlob(realBlob, startByte, endByte);
+            if (sliced === null) {
+                return null;
+            }
+            return new FbsBlob(sliced);
+        }
+        else {
+            var slice = new Uint8Array(this.data_.buffer, startByte, endByte - startByte);
+            return new FbsBlob(slice, true);
+        }
+    };
+    FbsBlob.getBlob = function () {
+        var args = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            args[_i] = arguments[_i];
+        }
+        if (isNativeBlobDefined()) {
+            var blobby = args.map(function (val) {
+                if (val instanceof FbsBlob) {
+                    return val.data_;
+                }
+                else {
+                    return val;
+                }
+            });
+            return new FbsBlob(getBlob.apply(null, blobby));
+        }
+        else {
+            var uint8Arrays = args.map(function (val) {
+                if (isString(val)) {
+                    return dataFromString(StringFormat.RAW, val).data;
+                }
+                else {
+                    // Blobs don't exist, so this has to be a Uint8Array.
+                    return val.data_;
+                }
+            });
+            var finalLength_1 = 0;
+            uint8Arrays.forEach(function (array) {
+                finalLength_1 += array.byteLength;
+            });
+            var merged_1 = new Uint8Array(finalLength_1);
+            var index_1 = 0;
+            uint8Arrays.forEach(function (array) {
+                for (var i = 0; i < array.length; i++) {
+                    merged_1[index_1++] = array[i];
+                }
+            });
+            return new FbsBlob(merged_1, true);
+        }
+    };
+    FbsBlob.prototype.uploadData = function () {
+        return this.data_;
+    };
+    return FbsBlob;
+}());
 
 /**
  * @license
@@ -19843,6 +19118,13 @@ var Location = /** @class */ (function () {
     Object.defineProperty(Location.prototype, "path", {
         get: function () {
             return this.path_;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Location.prototype, "isRoot", {
+        get: function () {
+            return this.path.length === 0;
         },
         enumerable: true,
         configurable: true
@@ -19934,13 +19216,49 @@ var Location = /** @class */ (function () {
  * limitations under the License.
  */
 /**
+ * Returns the Object resulting from parsing the given JSON, or null if the
+ * given string does not represent a JSON object.
+ */
+function jsonObjectOrNull(s) {
+    var obj;
+    try {
+        obj = JSON.parse(s);
+    }
+    catch (e) {
+        return null;
+    }
+    if (isNonArrayObject(obj)) {
+        return obj;
+    }
+    else {
+        return null;
+    }
+}
+
+/**
+ * @license
+ * Copyright 2017 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/**
  * @fileoverview Contains helper methods for manipulating paths.
  */
 /**
  * @return Null if the path is already at the root.
  */
 function parent(path) {
-    if (path.length == 0) {
+    if (path.length === 0) {
         return null;
     }
     var index = path.lastIndexOf('/');
@@ -19953,9 +19271,7 @@ function parent(path) {
 function child(path, childPath) {
     var canonicalChildPath = childPath
         .split('/')
-        .filter(function (component) {
-        return component.length > 0;
-    })
+        .filter(function (component) { return component.length > 0; })
         .join('/');
     if (path.length === 0) {
         return canonicalChildPath;
@@ -20002,10 +19318,13 @@ function makeUrl(urlPart) {
 function makeQueryString(params) {
     var encode = encodeURIComponent;
     var queryPart = '?';
-    forEach(params, function (key, val) {
-        var nextPart = encode(key) + '=' + encode(val);
-        queryPart = queryPart + nextPart + '&';
-    });
+    for (var key in params) {
+        if (params.hasOwnProperty(key)) {
+            // @ts-ignore TODO: remove once typescript is upgraded to 3.5.x
+            var nextPart = encode(key) + '=' + encode(params[key]);
+            queryPart = queryPart + nextPart + '&';
+        }
+    }
     // Chop off the extra '&' or '?' on the end
     queryPart = queryPart.slice(0, -1);
     return queryPart;
@@ -20034,22 +19353,20 @@ function noXform_(metadata, value) {
  * @struct
  */
 var Mapping = /** @class */ (function () {
-    function Mapping(server, opt_local, opt_writable, opt_xform) {
+    function Mapping(server, local, writable, xform) {
         this.server = server;
-        this.local = opt_local || server;
-        this.writable = !!opt_writable;
-        this.xform = opt_xform || noXform_;
+        this.local = local || server;
+        this.writable = !!writable;
+        this.xform = xform || noXform_;
     }
     return Mapping;
 }());
 var mappings_ = null;
 function xformPath(fullPath) {
-    var valid = isString(fullPath);
-    if (!valid || fullPath.length < 2) {
+    if (!isString(fullPath) || fullPath.length < 2) {
         return fullPath;
     }
     else {
-        fullPath = fullPath;
         return lastComponent(fullPath);
     }
 }
@@ -20062,7 +19379,7 @@ function getMappings() {
     mappings.push(new Mapping('generation'));
     mappings.push(new Mapping('metageneration'));
     mappings.push(new Mapping('name', 'fullPath', true));
-    function mappingsXformPath(metadata, fullPath) {
+    function mappingsXformPath(_metadata, fullPath) {
         return xformPath(fullPath);
     }
     var nameMapping = new Mapping('name');
@@ -20071,9 +19388,9 @@ function getMappings() {
     /**
      * Coerces the second param to a number, if it is defined.
      */
-    function xformSize(metadata, size) {
+    function xformSize(_metadata, size) {
         if (isDef(size)) {
-            return +size;
+            return Number(size);
         }
         else {
             return size;
@@ -20163,159 +19480,29 @@ function toResourceString(metadata, mappings) {
     return JSON.stringify(resource);
 }
 function metadataValidator(p) {
-    var validType = p && isObject(p);
-    if (!validType) {
+    if (!isObject(p) || !p) {
         throw 'Expected Metadata object.';
     }
     for (var key in p) {
-        var val = p[key];
-        if (key === 'customMetadata') {
-            if (!isObject(val)) {
-                throw 'Expected object for \'customMetadata\' mapping.';
-            }
-        }
-        else {
-            if (isNonNullObject(val)) {
-                throw "Mapping for '" + key + "' cannot be an object.";
-            }
-        }
-    }
-}
-
-/**
- * @license
- * Copyright 2017 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-/**
- * @param name Name of the function.
- * @param specs Argument specs.
- * @param passed The actual arguments passed to the function.
- * @throws {fbs.Error} If the arguments are invalid.
- */
-function validate(name, specs, passed) {
-    var minArgs = specs.length;
-    var maxArgs = specs.length;
-    for (var i = 0; i < specs.length; i++) {
-        if (specs[i].optional) {
-            minArgs = i;
-            break;
-        }
-    }
-    var validLength = minArgs <= passed.length && passed.length <= maxArgs;
-    if (!validLength) {
-        throw invalidArgumentCount(minArgs, maxArgs, name, passed.length);
-    }
-    for (var i = 0; i < passed.length; i++) {
-        try {
-            specs[i].validator(passed[i]);
-        }
-        catch (e) {
-            if (e instanceof Error) {
-                throw invalidArgument(i, name, e.message);
+        if (p.hasOwnProperty(key)) {
+            var val = p[key];
+            if (key === 'customMetadata') {
+                if (!isObject(val)) {
+                    throw 'Expected object for \'customMetadata\' mapping.';
+                }
             }
             else {
-                throw invalidArgument(i, name, e);
+                if (isNonNullObject(val)) {
+                    throw "Mapping for '" + key + "' cannot be an object.";
+                }
             }
         }
     }
-}
-/**
- * @struct
- */
-var ArgSpec = /** @class */ (function () {
-    function ArgSpec(validator, opt_optional) {
-        var self = this;
-        this.validator = function (p) {
-            if (self.optional && !isJustDef(p)) {
-                return;
-            }
-            validator(p);
-        };
-        this.optional = !!opt_optional;
-    }
-    return ArgSpec;
-}());
-function and_(v1, v2) {
-    return function (p) {
-        v1(p);
-        v2(p);
-    };
-}
-function stringSpec(opt_validator, opt_optional) {
-    function stringValidator(p) {
-        if (!isString(p)) {
-            throw 'Expected string.';
-        }
-    }
-    var validator;
-    if (opt_validator) {
-        validator = and_(stringValidator, opt_validator);
-    }
-    else {
-        validator = stringValidator;
-    }
-    return new ArgSpec(validator, opt_optional);
-}
-function uploadDataSpec() {
-    function validator(p) {
-        var valid = p instanceof Uint8Array ||
-            p instanceof ArrayBuffer ||
-            (isNativeBlobDefined() && p instanceof Blob);
-        if (!valid) {
-            throw 'Expected Blob or File.';
-        }
-    }
-    return new ArgSpec(validator);
-}
-function metadataSpec(opt_optional) {
-    return new ArgSpec(metadataValidator, opt_optional);
-}
-function nonNegativeNumberSpec() {
-    function validator(p) {
-        var valid = isNumber(p) && p >= 0;
-        if (!valid) {
-            throw 'Expected a number 0 or greater.';
-        }
-    }
-    return new ArgSpec(validator);
-}
-function looseObjectSpec(opt_validator, opt_optional) {
-    function validator(p) {
-        var isLooseObject = p === null || (isDef(p) && p instanceof Object);
-        if (!isLooseObject) {
-            throw 'Expected an Object.';
-        }
-        if (opt_validator !== undefined && opt_validator !== null) {
-            opt_validator(p);
-        }
-    }
-    return new ArgSpec(validator, opt_optional);
-}
-function nullFunctionSpec(opt_optional) {
-    function validator(p) {
-        var valid = p === null || isFunction(p);
-        if (!valid) {
-            throw 'Expected a Function.';
-        }
-    }
-    return new ArgSpec(validator, opt_optional);
 }
 
 /**
  * @license
- * Copyright 2017 Google Inc.
+ * Copyright 2019 Google Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20329,225 +19516,68 @@ function nullFunctionSpec(opt_optional) {
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-function getBlobBuilder() {
-    if (typeof BlobBuilder !== 'undefined') {
-        return BlobBuilder;
+var MAX_RESULTS_KEY = 'maxResults';
+var MAX_MAX_RESULTS = 1000;
+var PAGE_TOKEN_KEY = 'pageToken';
+var PREFIXES_KEY = 'prefixes';
+var ITEMS_KEY = 'items';
+function fromBackendResponse(authWrapper, resource) {
+    var listResult = {
+        prefixes: [],
+        items: [],
+        nextPageToken: resource['nextPageToken']
+    };
+    var bucket = authWrapper.bucket();
+    if (bucket === null) {
+        throw noDefaultBucket();
     }
-    else if (typeof WebKitBlobBuilder !== 'undefined') {
-        return WebKitBlobBuilder;
-    }
-    else {
-        return undefined;
-    }
-}
-/**
- * Concatenates one or more values together and converts them to a Blob.
- *
- * @param var_args The values that will make up the resulting blob.
- * @return The blob.
- */
-function getBlob() {
-    var var_args = [];
-    for (var _i = 0; _i < arguments.length; _i++) {
-        var_args[_i] = arguments[_i];
-    }
-    var BlobBuilder = getBlobBuilder();
-    if (BlobBuilder !== undefined) {
-        var bb = new BlobBuilder();
-        for (var i = 0; i < var_args.length; i++) {
-            bb.append(var_args[i]);
+    if (resource[PREFIXES_KEY]) {
+        for (var _i = 0, _a = resource[PREFIXES_KEY]; _i < _a.length; _i++) {
+            var path = _a[_i];
+            var pathWithoutTrailingSlash = path.replace(/\/$/, '');
+            var reference = authWrapper.makeStorageReference(new Location(bucket, pathWithoutTrailingSlash));
+            listResult.prefixes.push(reference);
         }
-        return bb.getBlob();
     }
-    else {
-        if (isNativeBlobDefined()) {
-            return new Blob(var_args);
+    if (resource[ITEMS_KEY]) {
+        for (var _b = 0, _c = resource[ITEMS_KEY]; _b < _c.length; _b++) {
+            var item = _c[_b];
+            var reference = authWrapper.makeStorageReference(new Location(bucket, item['name']));
+            listResult.items.push(reference);
+        }
+    }
+    return listResult;
+}
+function fromResponseString(authWrapper, resourceString) {
+    var obj = jsonObjectOrNull(resourceString);
+    if (obj === null) {
+        return null;
+    }
+    var resource = obj;
+    return fromBackendResponse(authWrapper, resource);
+}
+function listOptionsValidator(p) {
+    if (!isObject(p) || !p) {
+        throw 'Expected ListOptions object.';
+    }
+    for (var key in p) {
+        if (key === MAX_RESULTS_KEY) {
+            if (!isInteger(p[MAX_RESULTS_KEY]) ||
+                p[MAX_RESULTS_KEY] <= 0) {
+                throw 'Expected maxResults to be a positive number.';
+            }
+            if (p[MAX_RESULTS_KEY] > 1000) {
+                throw "Expected maxResults to be less than or equal to " + MAX_MAX_RESULTS + ".";
+            }
+        }
+        else if (key === PAGE_TOKEN_KEY) {
+            if (p[PAGE_TOKEN_KEY] && !isString(p[PAGE_TOKEN_KEY])) {
+                throw 'Expected pageToken to be string.';
+            }
         }
         else {
-            throw Error("This browser doesn't seem to support creating Blobs");
+            throw 'Unknown option: ' + key;
         }
-    }
-}
-/**
- * Slices the blob. The returned blob contains data from the start byte
- * (inclusive) till the end byte (exclusive). Negative indices cannot be used.
- *
- * @param blob The blob to be sliced.
- * @param start Index of the starting byte.
- * @param end Index of the ending byte.
- * @return The blob slice or null if not supported.
- */
-function sliceBlob(blob, start, end) {
-    if (blob.webkitSlice) {
-        return blob.webkitSlice(start, end);
-    }
-    else if (blob.mozSlice) {
-        return blob.mozSlice(start, end);
-    }
-    else if (blob.slice) {
-        return blob.slice(start, end);
-    }
-    return null;
-}
-
-/**
- * @license
- * Copyright 2017 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-/**
- * @param opt_elideCopy If true, doesn't copy mutable input data
- *     (e.g. Uint8Arrays). Pass true only if you know the objects will not be
- *     modified after this blob's construction.
- */
-var FbsBlob = /** @class */ (function () {
-    function FbsBlob(data, opt_elideCopy) {
-        var size = 0;
-        var blobType = '';
-        if (isNativeBlob(data)) {
-            this.data_ = data;
-            size = data.size;
-            blobType = data.type;
-        }
-        else if (data instanceof ArrayBuffer) {
-            if (opt_elideCopy) {
-                this.data_ = new Uint8Array(data);
-            }
-            else {
-                this.data_ = new Uint8Array(data.byteLength);
-                this.data_.set(new Uint8Array(data));
-            }
-            size = this.data_.length;
-        }
-        else if (data instanceof Uint8Array) {
-            if (opt_elideCopy) {
-                this.data_ = data;
-            }
-            else {
-                this.data_ = new Uint8Array(data.length);
-                this.data_.set(data);
-            }
-            size = data.length;
-        }
-        this.size_ = size;
-        this.type_ = blobType;
-    }
-    FbsBlob.prototype.size = function () {
-        return this.size_;
-    };
-    FbsBlob.prototype.type = function () {
-        return this.type_;
-    };
-    FbsBlob.prototype.slice = function (startByte, endByte) {
-        if (isNativeBlob(this.data_)) {
-            var realBlob = this.data_;
-            var sliced = sliceBlob(realBlob, startByte, endByte);
-            if (sliced === null) {
-                return null;
-            }
-            return new FbsBlob(sliced);
-        }
-        else {
-            var slice = new Uint8Array(this.data_.buffer, startByte, endByte - startByte);
-            return new FbsBlob(slice, true);
-        }
-    };
-    FbsBlob.getBlob = function () {
-        var var_args = [];
-        for (var _i = 0; _i < arguments.length; _i++) {
-            var_args[_i] = arguments[_i];
-        }
-        if (isNativeBlobDefined()) {
-            var blobby = var_args.map(function (val) {
-                if (val instanceof FbsBlob) {
-                    return val.data_;
-                }
-                else {
-                    return val;
-                }
-            });
-            return new FbsBlob(getBlob.apply(null, blobby));
-        }
-        else {
-            var uint8Arrays = var_args.map(function (val) {
-                if (isString(val)) {
-                    return dataFromString(StringFormat.RAW, val).data;
-                }
-                else {
-                    // Blobs don't exist, so this has to be a Uint8Array.
-                    return val.data_;
-                }
-            });
-            var finalLength_1 = 0;
-            uint8Arrays.forEach(function (array) {
-                finalLength_1 += array.byteLength;
-            });
-            var merged_1 = new Uint8Array(finalLength_1);
-            var index_1 = 0;
-            uint8Arrays.forEach(function (array) {
-                for (var i = 0; i < array.length; i++) {
-                    merged_1[index_1++] = array[i];
-                }
-            });
-            return new FbsBlob(merged_1, true);
-        }
-    };
-    FbsBlob.prototype.uploadData = function () {
-        return this.data_;
-    };
-    return FbsBlob;
-}());
-
-/**
- * @license
- * Copyright 2017 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-/**
- * Returns true if the object is contained in the array (compared with ===).
- * @template T
- */
-function contains$1(array, elem) {
-    return array.indexOf(elem) !== -1;
-}
-/**
- * Returns a shallow copy of the array or array-like object (e.g. arguments).
- * @template T
- */
-function clone$1(arraylike) {
-    return Array.prototype.slice.call(arraylike);
-}
-/**
- * Removes the given element from the given array, if it is contained.
- * Directly modifies the passed-in array.
- * @template T
- */
-function remove(array, elem) {
-    var i = array.indexOf(elem);
-    if (i !== -1) {
-        array.splice(i, 1);
     }
 }
 
@@ -20612,6 +19642,14 @@ function metadataHandler(authWrapper, mappings) {
     }
     return handler;
 }
+function listHandler(authWrapper) {
+    function handler(xhr, text) {
+        var listResult = fromResponseString(authWrapper, text);
+        handlerCheck(listResult !== null);
+        return listResult;
+    }
+    return handler;
+}
 function downloadUrlHandler(authWrapper, mappings) {
     function handler(xhr, text) {
         var metadata = fromResourceString(authWrapper, text, mappings);
@@ -20665,6 +19703,32 @@ function getMetadata(authWrapper, location, mappings) {
     requestInfo.errorHandler = objectErrorHandler(location);
     return requestInfo;
 }
+function list(authWrapper, location, delimiter, pageToken, maxResults) {
+    var urlParams = {};
+    if (location.isRoot) {
+        urlParams['prefix'] = '';
+    }
+    else {
+        urlParams['prefix'] = location.path + '/';
+    }
+    if (delimiter && delimiter.length > 0) {
+        urlParams['delimiter'] = delimiter;
+    }
+    if (pageToken) {
+        urlParams['pageToken'] = pageToken;
+    }
+    if (maxResults) {
+        urlParams['maxResults'] = maxResults;
+    }
+    var urlPart = location.bucketOnlyServerUrl();
+    var url = makeUrl(urlPart);
+    var method = 'GET';
+    var timeout = authWrapper.maxOperationRetryTime();
+    var requestInfo = new RequestInfo(url, method, listHandler(authWrapper), timeout);
+    requestInfo.urlParams = urlParams;
+    requestInfo.errorHandler = sharedErrorHandler(location);
+    return requestInfo;
+}
 function getDownloadUrl(authWrapper, location, mappings) {
     var urlPart = location.fullServerUrl();
     var url = makeUrl(urlPart);
@@ -20692,7 +19756,7 @@ function deleteObject(authWrapper, location) {
     var url = makeUrl(urlPart);
     var method = 'DELETE';
     var timeout = authWrapper.maxOperationRetryTime();
-    function handler(xhr, text) { }
+    function handler(_xhr, _text) { }
     var requestInfo = new RequestInfo(url, method, handler, timeout);
     requestInfo.successCodes = [200, 204];
     requestInfo.errorHandler = objectErrorHandler(location);
@@ -20703,16 +19767,16 @@ function determineContentType_(metadata, blob) {
         (blob && blob.type()) ||
         'application/octet-stream');
 }
-function metadataForUpload_(location, blob, opt_metadata) {
-    var metadata = clone(opt_metadata);
-    metadata['fullPath'] = location.path;
-    metadata['size'] = blob.size();
-    if (!metadata['contentType']) {
-        metadata['contentType'] = determineContentType_(null, blob);
+function metadataForUpload_(location, blob, metadata) {
+    var metadataClone = Object.assign({}, metadata);
+    metadataClone['fullPath'] = location.path;
+    metadataClone['size'] = blob.size();
+    if (!metadataClone['contentType']) {
+        metadataClone['contentType'] = determineContentType_(null, blob);
     }
-    return metadata;
+    return metadataClone;
 }
-function multipartUpload(authWrapper, location, mappings, blob, opt_metadata) {
+function multipartUpload(authWrapper, location, mappings, blob, metadata) {
     var urlPart = location.bucketOnlyServerUrl();
     var headers = {
         'X-Goog-Upload-Protocol': 'multipart'
@@ -20730,8 +19794,8 @@ function multipartUpload(authWrapper, location, mappings, blob, opt_metadata) {
     }
     var boundary = genBoundary();
     headers['Content-Type'] = 'multipart/related; boundary=' + boundary;
-    var metadata = metadataForUpload_(location, blob, opt_metadata);
-    var metadataString = toResourceString(metadata, mappings);
+    var metadata_ = metadataForUpload_(location, blob, metadata);
+    var metadataString = toResourceString(metadata_, mappings);
     var preBlobPart = '--' +
         boundary +
         '\r\n' +
@@ -20741,14 +19805,14 @@ function multipartUpload(authWrapper, location, mappings, blob, opt_metadata) {
         boundary +
         '\r\n' +
         'Content-Type: ' +
-        metadata['contentType'] +
+        metadata_['contentType'] +
         '\r\n\r\n';
     var postBlobPart = '\r\n--' + boundary + '--';
     var body = FbsBlob.getBlob(preBlobPart, blob, postBlobPart);
     if (body === null) {
         throw cannotSliceBlob();
     }
-    var urlParams = { name: metadata['fullPath'] };
+    var urlParams = { name: metadata_['fullPath'] };
     var url = makeUrl(urlPart);
     var method = 'POST';
     var timeout = authWrapper.maxUploadRetryTime();
@@ -20776,34 +19840,34 @@ var ResumableUploadStatus = /** @class */ (function () {
     }
     return ResumableUploadStatus;
 }());
-function checkResumeHeader_(xhr, opt_allowed) {
-    var status;
+function checkResumeHeader_(xhr, allowed) {
+    var status = null;
     try {
         status = xhr.getResponseHeader('X-Goog-Upload-Status');
     }
     catch (e) {
         handlerCheck(false);
     }
-    var allowed = opt_allowed || ['active'];
-    handlerCheck(contains$1(allowed, status));
+    var allowedStatus = allowed || ['active'];
+    handlerCheck(!!status && allowedStatus.indexOf(status) !== -1);
     return status;
 }
-function createResumableUpload(authWrapper, location, mappings, blob, opt_metadata) {
+function createResumableUpload(authWrapper, location, mappings, blob, metadata) {
     var urlPart = location.bucketOnlyServerUrl();
-    var metadata = metadataForUpload_(location, blob, opt_metadata);
-    var urlParams = { name: metadata['fullPath'] };
+    var metadataForUpload = metadataForUpload_(location, blob, metadata);
+    var urlParams = { name: metadataForUpload['fullPath'] };
     var url = makeUrl(urlPart);
     var method = 'POST';
     var headers = {
         'X-Goog-Upload-Protocol': 'resumable',
         'X-Goog-Upload-Command': 'start',
         'X-Goog-Upload-Header-Content-Length': blob.size(),
-        'X-Goog-Upload-Header-Content-Type': metadata['contentType'],
+        'X-Goog-Upload-Header-Content-Type': metadataForUpload['contentType'],
         'Content-Type': 'application/json; charset=utf-8'
     };
-    var body = toResourceString(metadata, mappings);
+    var body = toResourceString(metadataForUpload, mappings);
     var timeout = authWrapper.maxUploadRetryTime();
-    function handler(xhr, text) {
+    function handler(xhr) {
         checkResumeHeader_(xhr);
         var url;
         try {
@@ -20827,16 +19891,20 @@ function createResumableUpload(authWrapper, location, mappings, blob, opt_metada
  */
 function getResumableUploadStatus(authWrapper, location, url, blob) {
     var headers = { 'X-Goog-Upload-Command': 'query' };
-    function handler(xhr, text) {
+    function handler(xhr) {
         var status = checkResumeHeader_(xhr, ['active', 'final']);
-        var sizeString;
+        var sizeString = null;
         try {
             sizeString = xhr.getResponseHeader('X-Goog-Upload-Size-Received');
         }
         catch (e) {
             handlerCheck(false);
         }
-        var size = parseInt(sizeString, 10);
+        if (!sizeString) {
+            // null or empty string
+            handlerCheck(false);
+        }
+        var size = Number(sizeString);
         handlerCheck(!isNaN(size));
         return new ResumableUploadStatus(size, blob.size(), status === 'final');
     }
@@ -20855,38 +19923,38 @@ var resumableUploadChunkSize = 256 * 1024;
 /**
  * @param url From a call to fbs.requests.createResumableUpload.
  * @param chunkSize Number of bytes to upload.
- * @param opt_status The previous status.
+ * @param status The previous status.
  *     If not passed or null, we start from the beginning.
  * @throws fbs.Error If the upload is already complete, the passed in status
  *     has a final size inconsistent with the blob, or the blob cannot be sliced
  *     for upload.
  */
-function continueResumableUpload(location, authWrapper, url, blob, chunkSize, mappings, opt_status, opt_progressCallback) {
+function continueResumableUpload(location, authWrapper, url, blob, chunkSize, mappings, status, progressCallback) {
     // TODO(andysoto): standardize on internal asserts
     // assert(!(opt_status && opt_status.finalized));
-    var status = new ResumableUploadStatus(0, 0);
-    if (opt_status) {
-        status.current = opt_status.current;
-        status.total = opt_status.total;
+    var status_ = new ResumableUploadStatus(0, 0);
+    if (status) {
+        status_.current = status.current;
+        status_.total = status.total;
     }
     else {
-        status.current = 0;
-        status.total = blob.size();
+        status_.current = 0;
+        status_.total = blob.size();
     }
-    if (blob.size() !== status.total) {
+    if (blob.size() !== status_.total) {
         throw serverFileWrongSize();
     }
-    var bytesLeft = status.total - status.current;
+    var bytesLeft = status_.total - status_.current;
     var bytesToUpload = bytesLeft;
     if (chunkSize > 0) {
         bytesToUpload = Math.min(bytesToUpload, chunkSize);
     }
-    var startByte = status.current;
+    var startByte = status_.current;
     var endByte = startByte + bytesToUpload;
     var uploadCommand = bytesToUpload === bytesLeft ? 'upload, finalize' : 'upload';
     var headers = {
         'X-Goog-Upload-Command': uploadCommand,
-        'X-Goog-Upload-Offset': status.current
+        'X-Goog-Upload-Offset': status_.current
     };
     var body = blob.slice(startByte, endByte);
     if (body === null) {
@@ -20898,7 +19966,7 @@ function continueResumableUpload(location, authWrapper, url, blob, chunkSize, ma
         // We'll only be able to bail out though, because you can't re-upload a
         // range that you previously uploaded.
         var uploadStatus = checkResumeHeader_(xhr, ['active', 'final']);
-        var newCurrent = status.current + bytesToUpload;
+        var newCurrent = status_.current + bytesToUpload;
         var size = blob.size();
         var metadata;
         if (uploadStatus === 'final') {
@@ -20914,7 +19982,7 @@ function continueResumableUpload(location, authWrapper, url, blob, chunkSize, ma
     var requestInfo = new RequestInfo(url, method, handler, timeout);
     requestInfo.headers = headers;
     requestInfo.body = body.uploadData();
-    requestInfo.progressCallback = opt_progressCallback || null;
+    requestInfo.progressCallback = progressCallback || null;
     requestInfo.errorHandler = sharedErrorHandler(location);
     return requestInfo;
 }
@@ -20939,14 +20007,14 @@ function continueResumableUpload(location, authWrapper, url, blob, chunkSize, ma
  * @struct
  */
 var Observer = /** @class */ (function () {
-    function Observer(nextOrObserver, opt_error, opt_complete) {
+    function Observer(nextOrObserver, error, complete) {
         var asFunctions = isFunction(nextOrObserver) ||
-            isDef(opt_error) ||
-            isDef(opt_complete);
+            isDef(error) ||
+            isDef(complete);
         if (asFunctions) {
             this.next = nextOrObserver;
-            this.error = opt_error || null;
-            this.complete = opt_complete || null;
+            this.error = error || null;
+            this.complete = complete || null;
         }
         else {
             var observer = nextOrObserver;
@@ -20987,6 +20055,140 @@ var UploadTaskSnapshot = /** @class */ (function () {
  * limitations under the License.
  */
 /**
+ * @param name Name of the function.
+ * @param specs Argument specs.
+ * @param passed The actual arguments passed to the function.
+ * @throws {fbs.Error} If the arguments are invalid.
+ */
+function validate(name, specs, passed) {
+    var minArgs = specs.length;
+    var maxArgs = specs.length;
+    for (var i = 0; i < specs.length; i++) {
+        if (specs[i].optional) {
+            minArgs = i;
+            break;
+        }
+    }
+    var validLength = minArgs <= passed.length && passed.length <= maxArgs;
+    if (!validLength) {
+        throw invalidArgumentCount(minArgs, maxArgs, name, passed.length);
+    }
+    for (var i = 0; i < passed.length; i++) {
+        try {
+            specs[i].validator(passed[i]);
+        }
+        catch (e) {
+            if (e instanceof Error) {
+                throw invalidArgument(i, name, e.message);
+            }
+            else {
+                throw invalidArgument(i, name, e);
+            }
+        }
+    }
+}
+/**
+ * @struct
+ */
+var ArgSpec = /** @class */ (function () {
+    function ArgSpec(validator, optional) {
+        var self = this;
+        this.validator = function (p) {
+            if (self.optional && !isJustDef(p)) {
+                return;
+            }
+            validator(p);
+        };
+        this.optional = !!optional;
+    }
+    return ArgSpec;
+}());
+function and_(v1, v2) {
+    return function (p) {
+        v1(p);
+        v2(p);
+    };
+}
+function stringSpec(validator, optional) {
+    function stringValidator(p) {
+        if (!isString(p)) {
+            throw 'Expected string.';
+        }
+    }
+    var chainedValidator;
+    if (validator) {
+        chainedValidator = and_(stringValidator, validator);
+    }
+    else {
+        chainedValidator = stringValidator;
+    }
+    return new ArgSpec(chainedValidator, optional);
+}
+function uploadDataSpec() {
+    function validator(p) {
+        var valid = p instanceof Uint8Array ||
+            p instanceof ArrayBuffer ||
+            (isNativeBlobDefined() && p instanceof Blob);
+        if (!valid) {
+            throw 'Expected Blob or File.';
+        }
+    }
+    return new ArgSpec(validator);
+}
+function metadataSpec(optional) {
+    return new ArgSpec(metadataValidator, optional);
+}
+function listOptionSpec(optional) {
+    return new ArgSpec(listOptionsValidator, optional);
+}
+function nonNegativeNumberSpec() {
+    function validator(p) {
+        var valid = isNumber(p) && p >= 0;
+        if (!valid) {
+            throw 'Expected a number 0 or greater.';
+        }
+    }
+    return new ArgSpec(validator);
+}
+function looseObjectSpec(validator, optional) {
+    function isLooseObjectValidator(p) {
+        var isLooseObject = p === null || (isDef(p) && p instanceof Object);
+        if (!isLooseObject) {
+            throw 'Expected an Object.';
+        }
+        if (validator !== undefined && validator !== null) {
+            validator(p);
+        }
+    }
+    return new ArgSpec(isLooseObjectValidator, optional);
+}
+function nullFunctionSpec(optional) {
+    function validator(p) {
+        var valid = p === null || isFunction(p);
+        if (!valid) {
+            throw 'Expected a Function.';
+        }
+    }
+    return new ArgSpec(validator, optional);
+}
+
+/**
+ * @license
+ * Copyright 2017 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/**
  * Returns a function that invokes f with its arguments asynchronously as a
  * microtask, i.e. as soon as possible after the current script returns back
  * into browser code.
@@ -20997,9 +20199,8 @@ function async(f) {
         for (var _i = 0; _i < arguments.length; _i++) {
             argsToForward[_i] = arguments[_i];
         }
-        resolve(true).then(function () {
-            f.apply(null, argsToForward);
-        });
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
+        Promise.resolve().then(function () { return f.apply(void 0, argsToForward); });
     };
 }
 
@@ -21072,7 +20273,7 @@ var UploadTask = /** @class */ (function () {
                 _this.transition_(InternalTaskState.ERROR);
             }
         };
-        this.promise_ = make(function (resolve, reject) {
+        this.promise_ = new Promise(function (resolve, reject) {
             _this.resolve_ = resolve;
             _this.reject_ = reject;
             _this.start_();
@@ -21084,9 +20285,7 @@ var UploadTask = /** @class */ (function () {
     UploadTask.prototype.makeProgressCallback_ = function () {
         var _this = this;
         var sizeBefore = this.transferred_;
-        return function (loaded, total) {
-            _this.updateProgress_(sizeBefore + loaded);
-        };
+        return function (loaded) { return _this.updateProgress_(sizeBefore + loaded); };
     };
     UploadTask.prototype.shouldDoResumable_ = function (blob) {
         return blob.size() > 256 * 1024;
@@ -21124,6 +20323,7 @@ var UploadTask = /** @class */ (function () {
     };
     UploadTask.prototype.resolveToken_ = function (callback) {
         var _this = this;
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
         this.authWrapper_.getAuthToken().then(function (authToken) {
             switch (_this.state_) {
                 case InternalTaskState.RUNNING:
@@ -21315,6 +20515,7 @@ var UploadTask = /** @class */ (function () {
                 this.state_ = state;
                 this.notifyObservers_();
                 break;
+            default: // Ignore
         }
     };
     UploadTask.prototype.completeTransitions_ = function () {
@@ -21346,10 +20547,7 @@ var UploadTask = /** @class */ (function () {
      * @param type The type of event to listen for.
      */
     UploadTask.prototype.on = function (type, nextOrObserver, error, completed) {
-        if (nextOrObserver === void 0) { nextOrObserver = undefined; }
-        if (error === void 0) { error = undefined; }
-        if (completed === void 0) { completed = undefined; }
-        function typeValidator(_p) {
+        function typeValidator() {
             if (type !== TaskEvent.STATE_CHANGED) {
                 throw "Expected one of the event types: [" + TaskEvent.STATE_CHANGED + "].";
             }
@@ -21358,6 +20556,7 @@ var UploadTask = /** @class */ (function () {
             '`next`, `error`, `complete` properties.';
         var nextValidator = nullFunctionSpec(true).validator;
         var observerValidator = looseObjectSpec(null, true).validator;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         function nextOrObserverValidator(p) {
             try {
                 nextValidator(p);
@@ -21387,7 +20586,7 @@ var UploadTask = /** @class */ (function () {
         validate('on', specs, arguments);
         var self = this;
         function makeBinder(specs) {
-            function binder(nextOrObserver, error, opt_complete) {
+            function binder(nextOrObserver, error, complete) {
                 if (specs !== null) {
                     validate('on', specs, arguments);
                 }
@@ -21448,12 +20647,15 @@ var UploadTask = /** @class */ (function () {
      * Removes the given observer.
      */
     UploadTask.prototype.removeObserver_ = function (observer) {
-        remove(this.observers_, observer);
+        var i = this.observers_.indexOf(observer);
+        if (i !== -1) {
+            this.observers_.splice(i, 1);
+        }
     };
     UploadTask.prototype.notifyObservers_ = function () {
         var _this = this;
         this.finishPromise_();
-        var observers = clone$1(this.observers_);
+        var observers = this.observers_.slice();
         observers.forEach(function (observer) {
             _this.notifyObserver_(observer);
         });
@@ -21485,24 +20687,24 @@ var UploadTask = /** @class */ (function () {
         switch (externalState) {
             case TaskState.RUNNING:
             case TaskState.PAUSED:
-                if (observer.next !== null) {
+                if (observer.next) {
                     async(observer.next.bind(observer, this.snapshot))();
                 }
                 break;
             case TaskState.SUCCESS:
-                if (observer.complete !== null) {
+                if (observer.complete) {
                     async(observer.complete.bind(observer))();
                 }
                 break;
             case TaskState.CANCELED:
             case TaskState.ERROR:
-                if (observer.error !== null) {
+                if (observer.error) {
                     async(observer.error.bind(observer, this.error_))();
                 }
                 break;
             default:
                 // TODO(andysoto): assert(false);
-                if (observer.error !== null) {
+                if (observer.error) {
                     async(observer.error.bind(observer, this.error_))();
                 }
         }
@@ -21551,7 +20753,7 @@ var UploadTask = /** @class */ (function () {
 
 /**
  * @license
- * Copyright 2017 Google Inc.
+ * Copyright 2019 Google Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21682,36 +20884,114 @@ var Reference = /** @class */ (function () {
     };
     /**
      * Uploads a string to this object's location.
-     * @param string The string to upload.
-     * @param opt_format The format of the string to upload.
+     * @param value The string to upload.
+     * @param format The format of the string to upload.
      * @return An UploadTask that lets you control and
      *     observe the upload.
      */
-    Reference.prototype.putString = function (string, format, opt_metadata) {
+    Reference.prototype.putString = function (value, format, metadata) {
         if (format === void 0) { format = StringFormat.RAW; }
-        validate('putString', [
-            stringSpec(),
-            stringSpec(formatValidator, true),
-            metadataSpec(true)
-        ], arguments);
+        validate('putString', [stringSpec(), stringSpec(formatValidator, true), metadataSpec(true)], arguments);
         this.throwIfRoot_('putString');
-        var data = dataFromString(format, string);
-        var metadata = clone(opt_metadata);
-        if (!isDef(metadata['contentType']) && isDef(data.contentType)) {
-            metadata['contentType'] = data.contentType;
+        var data = dataFromString(format, value);
+        var metadataClone = Object.assign({}, metadata);
+        if (!isDef(metadataClone['contentType']) &&
+            isDef(data.contentType)) {
+            metadataClone['contentType'] = data.contentType;
         }
-        return new UploadTask(this, this.authWrapper, this.location, this.mappings(), new FbsBlob(data.data, true), metadata);
+        return new UploadTask(this, this.authWrapper, this.location, this.mappings(), new FbsBlob(data.data, true), metadataClone);
     };
     /**
      * Deletes the object at this location.
      * @return A promise that resolves if the deletion succeeds.
      */
     Reference.prototype.delete = function () {
+        var _this = this;
         validate('delete', [], arguments);
         this.throwIfRoot_('delete');
+        return this.authWrapper.getAuthToken().then(function (authToken) {
+            var requestInfo = deleteObject(_this.authWrapper, _this.location);
+            return _this.authWrapper.makeRequest(requestInfo, authToken).getPromise();
+        });
+    };
+    /**
+     * List all items (files) and prefixes (folders) under this storage reference.
+     *
+     * This is a helper method for calling list() repeatedly until there are
+     * no more results. The default pagination size is 1000.
+     *
+     * Note: The results may not be consistent if objects are changed while this
+     * operation is running.
+     *
+     * Warning: listAll may potentially consume too many resources if there are
+     * too many results.
+     *
+     * @return A Promise that resolves with all the items and prefixes under
+     *      the current storage reference. `prefixes` contains references to
+     *      sub-directories and `items` contains references to objects in this
+     *      folder. `nextPageToken` is never returned.
+     */
+    Reference.prototype.listAll = function () {
+        validate('listAll', [], arguments);
+        var accumulator = {
+            prefixes: [],
+            items: []
+        };
+        return this.listAllHelper(accumulator).then(function () { return accumulator; });
+    };
+    Reference.prototype.listAllHelper = function (accumulator, pageToken) {
+        return Object(tslib__WEBPACK_IMPORTED_MODULE_1__["__awaiter"])(this, void 0, void 0, function () {
+            var opt, nextPage;
+            var _a, _b;
+            return Object(tslib__WEBPACK_IMPORTED_MODULE_1__["__generator"])(this, function (_c) {
+                switch (_c.label) {
+                    case 0:
+                        opt = {
+                            // maxResults is 1000 by default.
+                            pageToken: pageToken
+                        };
+                        return [4 /*yield*/, this.list(opt)];
+                    case 1:
+                        nextPage = _c.sent();
+                        (_a = accumulator.prefixes).push.apply(_a, nextPage.prefixes);
+                        (_b = accumulator.items).push.apply(_b, nextPage.items);
+                        if (!(nextPage.nextPageToken != null)) return [3 /*break*/, 3];
+                        return [4 /*yield*/, this.listAllHelper(accumulator, nextPage.nextPageToken)];
+                    case 2:
+                        _c.sent();
+                        _c.label = 3;
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    /**
+     * List items (files) and prefixes (folders) under this storage reference.
+     *
+     * List API is only available for Firebase Rules Version 2.
+     *
+     * GCS is a key-blob store. Firebase Storage imposes the semantic of '/'
+     * delimited folder structure.
+     * Refer to GCS's List API if you want to learn more.
+     *
+     * To adhere to Firebase Rules's Semantics, Firebase Storage does not
+     * support objects whose paths end with "/" or contain two consecutive
+     * "/"s. Firebase Storage List API will filter these unsupported objects.
+     * list() may fail if there are too many unsupported objects in the bucket.
+     *
+     * @param options See ListOptions for details.
+     * @return A Promise that resolves with the items and prefixes.
+     *      `prefixes` contains references to sub-folders and `items`
+     *      contains references to objects in this folder. `nextPageToken`
+     *      can be used to get the rest of the results.
+     */
+    Reference.prototype.list = function (options) {
+        validate('list', [listOptionSpec(true)], arguments);
         var self = this;
         return this.authWrapper.getAuthToken().then(function (authToken) {
-            var requestInfo = deleteObject(self.authWrapper, self.location);
+            var op = options || {};
+            var requestInfo = list(self.authWrapper, self.location, 
+            /*delimiter= */ '/', op.pageToken, op.maxResults);
             return self.authWrapper.makeRequest(requestInfo, authToken).getPromise();
         });
     };
@@ -21721,12 +21001,12 @@ var Reference = /** @class */ (function () {
      *     rejected.
      */
     Reference.prototype.getMetadata = function () {
+        var _this = this;
         validate('getMetadata', [], arguments);
         this.throwIfRoot_('getMetadata');
-        var self = this;
         return this.authWrapper.getAuthToken().then(function (authToken) {
-            var requestInfo = getMetadata(self.authWrapper, self.location, self.mappings());
-            return self.authWrapper.makeRequest(requestInfo, authToken).getPromise();
+            var requestInfo = getMetadata(_this.authWrapper, _this.location, _this.mappings());
+            return _this.authWrapper.makeRequest(requestInfo, authToken).getPromise();
         });
     };
     /**
@@ -21739,12 +21019,12 @@ var Reference = /** @class */ (function () {
      *     @see firebaseStorage.Reference.prototype.getMetadata
      */
     Reference.prototype.updateMetadata = function (metadata) {
+        var _this = this;
         validate('updateMetadata', [metadataSpec()], arguments);
         this.throwIfRoot_('updateMetadata');
-        var self = this;
         return this.authWrapper.getAuthToken().then(function (authToken) {
-            var requestInfo = updateMetadata(self.authWrapper, self.location, metadata, self.mappings());
-            return self.authWrapper.makeRequest(requestInfo, authToken).getPromise();
+            var requestInfo = updateMetadata(_this.authWrapper, _this.location, metadata, _this.mappings());
+            return _this.authWrapper.makeRequest(requestInfo, authToken).getPromise();
         });
     };
     /**
@@ -21752,12 +21032,12 @@ var Reference = /** @class */ (function () {
      *     URL for this object.
      */
     Reference.prototype.getDownloadURL = function () {
+        var _this = this;
         validate('getDownloadURL', [], arguments);
         this.throwIfRoot_('getDownloadURL');
-        var self = this;
         return this.authWrapper.getAuthToken().then(function (authToken) {
-            var requestInfo = getDownloadUrl(self.authWrapper, self.location, self.mappings());
-            return self.authWrapper
+            var requestInfo = getDownloadUrl(_this.authWrapper, _this.location, _this.mappings());
+            return _this.authWrapper
                 .makeRequest(requestInfo, authToken)
                 .getPromise()
                 .then(function (url) {
@@ -21783,68 +21063,46 @@ var Reference = /** @class */ (function () {
  */
 var FailRequest = /** @class */ (function () {
     function FailRequest(error) {
-        this.promise_ = reject(error);
+        this.promise_ = Promise.reject(error);
     }
     /** @inheritDoc */
     FailRequest.prototype.getPromise = function () {
         return this.promise_;
     };
     /** @inheritDoc */
-    FailRequest.prototype.cancel = function (appDelete) {
-        if (appDelete === void 0) { appDelete = false; }
+    FailRequest.prototype.cancel = function (_appDelete) {
     };
     return FailRequest;
 }());
 
-/**
- * @license
- * Copyright 2017 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-/**
- * @struct
- */
 var RequestMap = /** @class */ (function () {
     function RequestMap() {
-        this.map_ = {};
-        this.id_ = MIN_SAFE_INTEGER;
+        this.map = new Map();
+        this.id = MIN_SAFE_INTEGER;
     }
     /**
      * Registers the given request with this map.
      * The request is unregistered when it completes.
-     * @param r The request to register.
+     *
+     * @param request The request to register.
      */
-    RequestMap.prototype.addRequest = function (r) {
-        var id = this.id_;
-        this.id_++;
-        this.map_[id] = r;
-        var self = this;
-        function unmap() {
-            delete self.map_[id];
-        }
-        r.getPromise().then(unmap, unmap);
+    RequestMap.prototype.addRequest = function (request) {
+        var _this = this;
+        var id = this.id;
+        this.id++;
+        this.map.set(id, request);
+        request
+            .getPromise()
+            .then(function () { return _this.map.delete(id); }, function () { return _this.map.delete(id); });
     };
     /**
      * Cancels all registered requests.
      */
     RequestMap.prototype.clear = function () {
-        forEach(this.map_, function (key, val) {
-            if (val) {
-                val.cancel(true);
-            }
+        this.map.forEach(function (v) {
+            v && v.cancel(true);
         });
-        this.map_ = {};
+        this.map.clear();
     };
     return RequestMap;
 }());
@@ -21895,12 +21153,10 @@ var AuthWrapper = /** @class */ (function () {
                 else {
                     return null;
                 }
-            }, function (_error) {
-                return null;
-            });
+            }, function () { return null; });
         }
         else {
-            return resolve(null);
+            return Promise.resolve(null);
         }
     };
     AuthWrapper.prototype.bucket = function () {
@@ -21988,6 +21244,8 @@ function start(f, callback, timeout) {
     // type instead of a bunch of functions with state shared in the closure)
     var waitSeconds = 1;
     // Would type this as "number" but that doesn't work for Node so ¯\_(ツ)_/¯
+    // TODO: find a way to exclude Node type definition for storage because storage only works in browser
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     var timeoutId = null;
     var hitTimeout = false;
     var cancelState = 0;
@@ -21995,10 +21253,17 @@ function start(f, callback, timeout) {
         return cancelState === 2;
     }
     var triggeredCallback = false;
+    // TODO: This disable can be removed and the 'ignoreRestArgs' option added to
+    // the no-explicit-any rule when ESlint releases it.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     function triggerCallback() {
+        var args = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            args[_i] = arguments[_i];
+        }
         if (!triggeredCallback) {
             triggeredCallback = true;
-            callback.apply(null, arguments);
+            callback.apply(null, args);
         }
     }
     function callWithDelay(millis) {
@@ -22007,21 +21272,24 @@ function start(f, callback, timeout) {
             f(handler, canceled());
         }, millis);
     }
+    // TODO: This disable can be removed and the 'ignoreRestArgs' option added to
+    // the no-explicit-any rule when ESlint releases it.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     function handler(success) {
-        var var_args = [];
+        var args = [];
         for (var _i = 1; _i < arguments.length; _i++) {
-            var_args[_i - 1] = arguments[_i];
+            args[_i - 1] = arguments[_i];
         }
         if (triggeredCallback) {
             return;
         }
         if (success) {
-            triggerCallback.apply(null, arguments);
+            triggerCallback.call.apply(triggerCallback, [null, success].concat(args));
             return;
         }
         var mustStop = canceled() || hitTimeout;
         if (mustStop) {
-            triggerCallback.apply(null, arguments);
+            triggerCallback.call.apply(triggerCallback, [null, success].concat(args));
             return;
         }
         if (waitSeconds < 64) {
@@ -22100,6 +21368,7 @@ function stop(id) {
  */
 var NetworkRequest = /** @class */ (function () {
     function NetworkRequest(url, method, headers, body, successCodes, additionalRetryCodes, callback, errorCallback, timeout, progressCallback, pool) {
+        var _this = this;
         this.pendingXhr_ = null;
         this.backoffId_ = null;
         this.resolve_ = null;
@@ -22117,11 +21386,10 @@ var NetworkRequest = /** @class */ (function () {
         this.progressCallback_ = progressCallback;
         this.timeout_ = timeout;
         this.pool_ = pool;
-        var self = this;
-        this.promise_ = make(function (resolve, reject) {
-            self.resolve_ = resolve;
-            self.reject_ = reject;
-            self.start_();
+        this.promise_ = new Promise(function (resolve, reject) {
+            _this.resolve_ = resolve;
+            _this.reject_ = reject;
+            _this.start_();
         });
     }
     /**
@@ -22146,6 +21414,7 @@ var NetworkRequest = /** @class */ (function () {
             if (self.progressCallback_ !== null) {
                 xhr.addUploadProgressListener(progressListener);
             }
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises
             xhr
                 .send(self.url_, self.method_, self.body_, self.headers_)
                 .then(function (xhr) {
@@ -22161,7 +21430,7 @@ var NetworkRequest = /** @class */ (function () {
                     backoffCallback(false, new RequestEndStatus(false, null, wasCanceled));
                     return;
                 }
-                var successCode = contains$1(self.successCodes_, status);
+                var successCode = self.successCodes_.indexOf(status) !== -1;
                 backoffCallback(true, new RequestEndStatus(successCode, xhr));
             });
         }
@@ -22200,9 +21469,7 @@ var NetworkRequest = /** @class */ (function () {
                 }
                 else {
                     if (status.canceled) {
-                        var err = self.appDelete_
-                            ? appDeleted()
-                            : canceled();
+                        var err = self.appDelete_ ? appDeleted() : canceled();
                         reject(err);
                     }
                     else {
@@ -22244,8 +21511,8 @@ var NetworkRequest = /** @class */ (function () {
             // Too Many Requests: you're getting rate-limited, basically.
             429
         ];
-        var isExtraRetryCode = contains$1(extraRetryCodes, status);
-        var isRequestSpecificRetryCode = contains$1(this.additionalRetryCodes_, status);
+        var isExtraRetryCode = extraRetryCodes.indexOf(status) !== -1;
+        var isRequestSpecificRetryCode = this.additionalRetryCodes_.indexOf(status) !== -1;
         return isFiveHundredCode || isExtraRetryCode || isRequestSpecificRetryCode;
     };
     return NetworkRequest;
@@ -22256,10 +21523,10 @@ var NetworkRequest = /** @class */ (function () {
  * @struct
  */
 var RequestEndStatus = /** @class */ (function () {
-    function RequestEndStatus(wasSuccessCode, xhr, opt_canceled) {
+    function RequestEndStatus(wasSuccessCode, xhr, canceled) {
         this.wasSuccessCode = wasSuccessCode;
         this.xhr = xhr;
-        this.canceled = !!opt_canceled;
+        this.canceled = !!canceled;
     }
     return RequestEndStatus;
 }());
@@ -22269,8 +21536,8 @@ function addAuthHeader_(headers, authToken) {
     }
 }
 function addVersionHeader_(headers) {
-    var number = typeof _firebase_app__WEBPACK_IMPORTED_MODULE_0___default.a !== 'undefined' ? _firebase_app__WEBPACK_IMPORTED_MODULE_0___default.a.SDK_VERSION : 'AppManager';
-    headers['X-Firebase-Storage-Version'] = 'webjs/' + number;
+    var version = typeof _firebase_app__WEBPACK_IMPORTED_MODULE_0___default.a !== 'undefined' ? _firebase_app__WEBPACK_IMPORTED_MODULE_0___default.a.SDK_VERSION : 'AppManager';
+    headers['X-Firebase-Storage-Version'] = 'webjs/' + version;
 }
 /**
  * @template T
@@ -22278,7 +21545,7 @@ function addVersionHeader_(headers) {
 function makeRequest(requestInfo, authToken, pool) {
     var queryPart = makeQueryString(requestInfo.urlParams);
     var url = requestInfo.url + queryPart;
-    var headers = clone(requestInfo.headers);
+    var headers = Object.assign({}, requestInfo.headers);
     addAuthHeader_(headers, authToken);
     addVersionHeader_(headers);
     return new NetworkRequest(url, requestInfo.method, headers, requestInfo.body, requestInfo.successCodes, requestInfo.additionalRetryCodes, requestInfo.handler, requestInfo.errorHandler, requestInfo.timeout, requestInfo.progressCallback, pool);
@@ -22331,6 +21598,9 @@ var Service = /** @class */ (function () {
      */
     Service.prototype.ref = function (path) {
         function validator(path) {
+            if (typeof path !== 'string') {
+                throw 'Path is not a string.';
+            }
             if (/^[A-Za-z]+:\/\//.test(path)) {
                 throw 'Expected child path but got a URL, use refFromURL instead.';
             }
@@ -22353,6 +21623,9 @@ var Service = /** @class */ (function () {
      */
     Service.prototype.refFromURL = function (url) {
         function validator(p) {
+            if (typeof p !== 'string') {
+                throw 'Path is not a string.';
+            }
             if (!/^[A-Za-z]+:\/\//.test(p)) {
                 throw 'Expected full URL but got a child path, use ref instead.';
             }
@@ -22410,7 +21683,7 @@ var ServiceInternals = /** @class */ (function () {
      */
     ServiceInternals.prototype.delete = function () {
         this.service_.authWrapper_.deleteApp();
-        return resolve(undefined);
+        return Promise.resolve();
     };
     return ServiceInternals;
 }());
@@ -22435,8 +21708,8 @@ var ServiceInternals = /** @class */ (function () {
  * Type constant for Firebase Storage.
  */
 var STORAGE_TYPE = 'storage';
-function factory(app, unused, opt_url) {
-    return new Service(app, new XhrIoPool(), opt_url);
+function factory(app, unused, url) {
+    return new Service(app, new XhrIoPool(), url);
 }
 function registerStorage(instance) {
     var namespaceExports = {

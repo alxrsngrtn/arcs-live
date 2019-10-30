@@ -2,6 +2,7 @@
 
 const EventEmitter = require('events');
 const util = require('util');
+const formatUrl = require('url').format;
 const parseUrl = require('url').parse;
 
 const WebSocket = require('ws');
@@ -52,6 +53,7 @@ class Chrome extends EventEmitter {
         this.port = options.port || defaults.PORT;
         this.secure = !!(options.secure);
         this.useHostName = !!(options.useHostName);
+        this.alterPath = options.alterPath || ((path) => path);
         this.protocol = options.protocol;
         this.local = !!(options.local);
         this.target = options.target || defaultTarget;
@@ -85,9 +87,11 @@ class Chrome extends EventEmitter {
                 this._enqueueCommand(method, params, (error, response) => {
                     if (error) {
                         const request = {method, params};
-                        reject(error instanceof Error
-                               ? error // low-level WebSocket error
-                               : new ProtocolError(request, response));
+                        reject(
+                            error instanceof Error
+                                ? error // low-level WebSocket error
+                                : new ProtocolError(request, response)
+                        );
                     } else {
                         fulfill(response);
                     }
@@ -127,14 +131,17 @@ class Chrome extends EventEmitter {
             host: this.host,
             port: this.port,
             secure: this.secure,
-            useHostName: this.useHostName
+            useHostName: this.useHostName,
+            alterPath: this.alterPath
         };
         try {
             // fetch the WebSocket debugger URL
             const url = await this._fetchDebuggerURL(options);
-            this.webSocketUrl = url;
-            // update the connection parameters using the debugging URL
+            // allow the user to alter the URL
             const urlObject = parseUrl(url);
+            urlObject.pathname = options.alterPath(urlObject.pathname);
+            this.webSocketUrl = formatUrl(urlObject);
+            // update the connection parameters using the debugging URL
             options.host = urlObject.hostname;
             options.port = urlObject.port || options.port;
             // fetch the protocol and prepare the API
@@ -158,37 +165,34 @@ class Chrome extends EventEmitter {
     async _fetchDebuggerURL(options) {
         const userTarget = this.target;
         switch (typeof userTarget) {
-        case 'string':
-            {
-                let idOrUrl = userTarget;
-                // use default host and port if omitted (and a relative URL is specified)
-                if (idOrUrl.startsWith('/')) {
-                    idOrUrl = `ws://${this.host}:${this.port}${idOrUrl}`;
-                }
-                // a WebSocket URL is specified by the user (e.g., node-inspector)
-                if (idOrUrl.match(/^wss?:/i)) {
-                    return idOrUrl; // done!
-                }
-                // a target id is specified by the user
-                else {
-                    const targets = await devtools.List(options);
-                    const object = targets.find((target) => target.id === idOrUrl);
-                    return object.webSocketDebuggerUrl;
-                }
+        case 'string': {
+            let idOrUrl = userTarget;
+            // use default host and port if omitted (and a relative URL is specified)
+            if (idOrUrl.startsWith('/')) {
+                idOrUrl = `ws://${this.host}:${this.port}${idOrUrl}`;
             }
-        case 'object':
-            {
-                const object = userTarget;
-                return object.webSocketDebuggerUrl;
+            // a WebSocket URL is specified by the user (e.g., node-inspector)
+            if (idOrUrl.match(/^wss?:/i)) {
+                return idOrUrl; // done!
             }
-        case 'function':
-            {
-                const func = userTarget;
+            // a target id is specified by the user
+            else {
                 const targets = await devtools.List(options);
-                const result = func(targets);
-                const object = typeof result === 'number' ? targets[result] : result;
+                const object = targets.find((target) => target.id === idOrUrl);
                 return object.webSocketDebuggerUrl;
             }
+        }
+        case 'object': {
+            const object = userTarget;
+            return object.webSocketDebuggerUrl;
+        }
+        case 'function': {
+            const func = userTarget;
+            const targets = await devtools.List(options);
+            const result = func(targets);
+            const object = typeof result === 'number' ? targets[result] : result;
+            return object.webSocketDebuggerUrl;
+        }
         default:
             throw new Error(`Invalid target argument "${this.target}"`);
         }

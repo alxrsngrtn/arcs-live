@@ -1,5 +1,7 @@
-commit 5c5f057907f89bb258c270d82f1250bc686c39ad
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Tue Oct 29 17:47:40 2019 -0700
+commit bcee98712e2e934ffb1764c9ba81ea3d343de6be
+Author: Jason Feinstein <jwf@google.com>
+Date:   Tue Oct 29 17:57:20 2019 -0700
 
-    make shell configuration dynamic (#3925)
+    Create BackingStore (#3921)
+    
+    Implements `BackingStore` as an extension of `ActiveStore`.
