@@ -1,9 +1,11 @@
-commit 02a633628f5cba29617970d043fc5a9165372b17
-Author: raulverag <42563960+raulverag@users.noreply.github.com>
-Date:   Wed Oct 30 14:58:31 2019 +1100
+commit b6183dbd9949e9e513ac97d08c075c005627133b
+Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
+Date:   Wed Oct 30 15:35:48 2019 +1100
 
-    Warn about circular dependencies (#3932)
+    Create new deploy script for pipes-shell on Android (#3933)
     
-    * Warn about circular deps and ensure no new ones are added
-    
-    * update max cycles
+    This new script includes only the stuff that is strictly needed for
+    running the pipes-shell (i.e. webpacked shell code, webpacked arcs
+    runtime code, shell index.html), and notably does not include the entire
+    particles/ directory. It is up to the client to include the manifest
+    files it actually needs (via arcs_manifest/arcs_manifest_bundle rules).
