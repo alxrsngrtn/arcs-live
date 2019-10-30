@@ -2673,7 +2673,7 @@
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/tests/particles/particles-test.ts": {
-        "version": "887d2243a09ec65a1b8fe025e101c7a6ddf4bf86344a3631d496fd569d321eaa",
+        "version": "2731b5f701de09aa3d528a58c525cfae51734b17d398bb458cfef3a9a2b8eb50",
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
       },
       "../src/tests/particles/products-test.ts": {
@@ -2709,7 +2709,7 @@
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "../src/tools/manifest-checker.ts": {
-        "version": "97dadd1913ede3dfece56f606b841b7af35d72c145489757976945cb116d4e6d",
+        "version": "012d2f17ae9c651508e35ea43ade619605b880fa414419b6b919c05850adaae3",
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "../src/tools/schema2graph.ts": {
