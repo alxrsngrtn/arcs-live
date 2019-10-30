@@ -1,5 +1,7 @@
-commit 55c7feb2b4a803da44562560103075aabb1f2b87
-Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Wed Oct 30 13:58:19 2019 +1100
+commit e685665ffe2dfd0aa600c6025b3dde68566b7e3b
+Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
+Date:   Wed Oct 30 14:17:53 2019 +1100
 
-    Update sequence and multiplexing tests for post slandles syntax (#3930)
+    Moves bundled manifest files under the "arcs" subdirectory by default (#3931)
+    
+    This mimics the behaviour introduced in #3891, for #3819.
