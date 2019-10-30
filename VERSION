@@ -1,5 +1,5 @@
-commit 9f6bcbe8bda961c1f95e0f5792b81f45050f92e0
-Author: Alex Rosengarten <alxr@google.com>
-Date:   Wed Oct 30 11:23:30 2019 -0700
+commit 668a051679e4dd47d82c7dbca7b0c0dd3925b8d4
+Author: Sarah Heimlich <heimlich@google.com>
+Date:   Wed Oct 30 12:47:09 2019 -0700
 
-    fix generated schemas (#3938)
+    Adding Kotlin Tutorial 3 text. (#3924)
