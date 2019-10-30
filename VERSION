@@ -1,13 +1,5 @@
-commit cd83831697215a27b294731afbd8c5b831e0d678
-Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Thu Oct 31 01:09:40 2019 +1100
+commit 9f6bcbe8bda961c1f95e0f5792b81f45050f92e0
+Author: Alex Rosengarten <alxr@google.com>
+Date:   Wed Oct 30 11:23:30 2019 -0700
 
-    Fix android demo app, configure shell (#3935)
-    
-    The shell-android API was modified in #3925 to require sending a 'configure'
-    message after receiving the 'ready' message. This PR adds that, and
-    mostly restores functionality in the demo app.
-    
-    Also updates the demo app to use the generated root manifest
-    demo_manifest_bundle.arcs, and fixes the generation script (semicolons
-    caused it to break).
+    fix generated schemas (#3938)
