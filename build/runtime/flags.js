@@ -11,17 +11,22 @@
 class FlagDefaults {
 }
 FlagDefaults.useNewStorageStack = false;
-FlagDefaults.usePreSlandlesSyntax = true;
+// Enables the parsing of both pre and post slandles (unified) syntaxes.
+// Preslandles syntax is to be deprecated.
+FlagDefaults.parseBothSyntaxes = false;
+// Use pre slandles syntax for parsing and toString by default.
+// If parseBothSyntaxes is off, this will set which syntax is enabled.
+FlagDefaults.defaultToPreSlandlesSyntax = true;
 export class Flags extends FlagDefaults {
     /** Resets flags. To be called in test teardown methods. */
     static reset() {
         Object.assign(Flags, FlagDefaults);
     }
     static withPreSlandlesSyntax(f) {
-        return Flags.withFlags({ usePreSlandlesSyntax: true }, f);
+        return Flags.withFlags({ parseBothSyntaxes: false, defaultToPreSlandlesSyntax: true }, f);
     }
     static withPostSlandlesSyntax(f) {
-        return Flags.withFlags({ usePreSlandlesSyntax: false }, f);
+        return Flags.withFlags({ parseBothSyntaxes: false, defaultToPreSlandlesSyntax: false }, f);
     }
     static withNewStorageStack(f) {
         return Flags.withFlags({ useNewStorageStack: true }, f);

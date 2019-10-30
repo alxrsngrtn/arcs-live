@@ -158,11 +158,11 @@
         "signature": "edc8104acc921b34de3bba6cd5837d06b595db3441cbf4617b399dd1d9dacef2"
       },
       "../src/runtime/flags.ts": {
-        "version": "1c0bd469e95f7df7765833ad2f6c8f8554d4ccaf6c7b68580d30b6eb4263e653",
-        "signature": "bdbf2f6e132c1059dc0a3c196bebd8cc17241b0244d949f73e46086f6025d2b2"
+        "version": "27252752697c253f1da3753824c9af6de4b6c21135b0c6e9e33eeebe598cb51d",
+        "signature": "967755b2e36b81cd6719dfb2aef71140c3d592f73c109b239b460f50d96618ef"
       },
       "../src/runtime/interface-info.ts": {
-        "version": "990bfd691f8d9ec76085b1acf5d0e26656dbe876efe3e01828922a363ee611aa",
+        "version": "e8b27692a529b5efd23909072223e7e4112d2101a2cdc2c626daa21a2584f4d2",
         "signature": "f3a8eb8225764908b3beaa422b458c2291a753b108130759eb8b6d09246681bf"
       },
       "../src/runtime/type-variable-info.ts": {
@@ -178,7 +178,7 @@
         "signature": "3343b37a02fb1d5d29e95c4cf938a395120f1a62789b455bfacba67c4b7154c7"
       },
       "../src/runtime/recipe/connection-constraint.ts": {
-        "version": "cbd299e006a4436bcc5ee8f0473be3e523eb41572b7a871a524210d5914b0157",
+        "version": "d12b30c7bf2e9e3ae287d894ebc07256461733e331350454b08e14fc44ecdafe",
         "signature": "f0ce78d0bda005a2a98fb3754507480780f16d5beb2194a40640da53937e5d2e"
       },
       "../src/runtime/recipe/search.ts": {
@@ -186,7 +186,7 @@
         "signature": "b7ba4f64cdea87655b0d7c357b39e9f2ca63090d6b12e49eabe8f14f869ac198"
       },
       "../src/runtime/recipe/slot-connection.ts": {
-        "version": "ccefec7e674d713b09bb232311ff6f926fdb9e08cbea63e747924c19ca17140b",
+        "version": "a0f28cbce88e3257dea2ea1f5d6c5fc7ffe1d15e737483ae755f1cb2585c3bf3",
         "signature": "55f5349ef1be5c124bbde7a6f885aaf0f1c47d8e22dd945a36bb14fc55f43710"
       },
       "../src/runtime/recipe/walker.ts": {
@@ -198,7 +198,7 @@
         "signature": "30faac5ab576acd7b9cce2f46d22b74ab8ab2827c1c847045b7d7a3a1bde12b5"
       },
       "../src/runtime/recipe/slot.ts": {
-        "version": "a46fd80cb98eedc73a956e62d55b6fe77bb9287869db4ede8bfe1729c0ce544a",
+        "version": "e8c54dbd478b501d8a856a6c950feb3a9b16f53e0d1130607d035712aa9f1198",
         "signature": "f238eb00375ccbf9eeb8e96a54e29a7cacbbb4ab7e966d7f8a5fa0ff8ccd58a0"
       },
       "../src/runtime/slot-info.ts": {
@@ -210,7 +210,7 @@
         "signature": "b7fa49726506f2bc542e75950bd559b4b7631f6bb4944bc89e889b190c96ec6c"
       },
       "../src/runtime/recipe/handle.ts": {
-        "version": "5742bf36a42441738e45187db8ec06255daee7152a77a09097a4face1b003caf",
+        "version": "ee2106d1da80bd17b558dd650d414aec13857f1a8c016ef240c7d5131198b6b8",
         "signature": "16796312ddb3bfbfe86f426298d62335dcd6c9bbb0d5c9d46d491113bc1e4a74"
       },
       "../src/runtime/recipe/recipe-util.ts": {
@@ -218,7 +218,7 @@
         "signature": "9267c1cce7fcdfb8727fac3277b90ace79cc5a898c4f214a2eedfca1b90c439f"
       },
       "../src/runtime/recipe/handle-connection.ts": {
-        "version": "8fed016dcce6575cbdb392b4eb87b1a085fbb7b11dd8fc674d35270234225d8f",
+        "version": "f7b1b22513420fea269332dd81e6eaa2cf75b60b1b4d36eff752bb37852669fb",
         "signature": "0f5b3d55c7475fcb3d44c4fb6f71c0e361e99ed2b67b27a737725b855e3b55a4"
       },
       "../src/runtime/recipe/particle.ts": {
@@ -542,7 +542,7 @@
         "signature": "5f81ab9527a7fce014911edd1abd6e86326348360a48f3344bb9eabb33b7753e"
       },
       "../src/runtime/particle-spec.ts": {
-        "version": "76a399b829247cddfebe14ce077215d8455bcb2a972f13229f9d2689af89e4ee",
+        "version": "9977921735e9885184c00253fda59330001963e1d210dda8e1efd611a7d2f45b",
         "signature": "fed6d96abcedd4c828945e67e59023b905dffeae5a63c6d2f15163b0b72b3e8b"
       },
       "../src/runtime/particle-claim.ts": {
@@ -554,7 +554,7 @@
         "signature": "fa7c93280edeaf2f3ff9804b9d2c09945d9aef0311766490f6e8f1f46bc47c95"
       },
       "../src/gen/runtime/manifest-parser.ts": {
-        "version": "cd40888bc46b9a696743fbd98b5c96e4750a6c0e11c2deb6007656423e1d8efc",
+        "version": "dc729c37b8bf02dc00bed2dd735011a17d59660990b7bc38a738e22980183cf4",
         "signature": "ff2c763c7895327196fd3eb358dcc775b25f27bdae513079cc287433af262427"
       },
       "../src/runtime/manifest-meta.ts": {
@@ -758,7 +758,7 @@
         "signature": "c08aa4583a92c6e3d83ae1d122c449e8b08c0102ea261254c9f7d980caea6a14"
       },
       "../src/planning/strategies/convert-constraints-to-connections.ts": {
-        "version": "c202e784a30e87c94f3bf14d423d19ca3a47504dfbe2d3df97dd26ff4e756a89",
+        "version": "3943f356dc01ed13c06bd16aed8e0e43b57925c0c62d12d8ab66fd7039de6225",
         "signature": "95a9de353cd1aa8f2d1b88f2f0e1d7237ca260b459e7ea2b738460b2b83b8101"
       },
       "../src/planning/strategies/create-handle-group.ts": {
@@ -1318,7 +1318,7 @@
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/planning/strategies/tests/strategy-sequence-test.ts": {
-        "version": "79425db285677b7fa2374a8108e637bacaf678732c7d3e2a1b8f5b41b861d28b",
+        "version": "690255444d832d300f3abf8801c11ab08141bc71abe94d84b75920e3c6c8bb33",
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
       },
       "../src/planning/testing/arcs-planning-testing.ts": {

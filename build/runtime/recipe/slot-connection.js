@@ -144,7 +144,7 @@ export class SlotConnection {
     }
     toString(nameMap, options) {
         const consumeRes = [];
-        if (Flags.usePreSlandlesSyntax) {
+        if (Flags.defaultToPreSlandlesSyntax) {
             consumeRes.push('consume');
             consumeRes.push(`${this.name}`);
             if (this.targetSlot) {
@@ -176,7 +176,7 @@ export class SlotConnection {
                 const providedSlotSpec = this.particle.getSlotSpecByName(psName);
                 assert(providedSlotSpec, `Cannot find providedSlotSpec for ${psName}`);
             }
-            if (Flags.usePreSlandlesSyntax) {
+            if (Flags.defaultToPreSlandlesSyntax) {
                 provideRes.push('  provide');
                 provideRes.push(`${psName}`);
                 provideRes.push(`as ${(nameMap && nameMap.get(providedSlot)) || providedSlot}`);

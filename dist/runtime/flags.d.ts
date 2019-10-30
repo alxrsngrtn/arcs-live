@@ -10,7 +10,8 @@
 /** Arcs runtime flags. */
 declare class FlagDefaults {
     static useNewStorageStack: boolean;
-    static usePreSlandlesSyntax: boolean;
+    static parseBothSyntaxes: boolean;
+    static defaultToPreSlandlesSyntax: boolean;
 }
 export declare class Flags extends FlagDefaults {
     /** Resets flags. To be called in test teardown methods. */

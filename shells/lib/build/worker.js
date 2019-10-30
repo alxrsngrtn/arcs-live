@@ -1461,7 +1461,7 @@ class ParticleSpec {
         const indent = '  ';
         const writeConnection = (connection, indent) => {
             const tags = connection.tags.map((tag) => ` #${tag}`).join('');
-            if (_flags_js__WEBPACK_IMPORTED_MODULE_6__["Flags"].usePreSlandlesSyntax) {
+            if (_flags_js__WEBPACK_IMPORTED_MODULE_6__["Flags"].defaultToPreSlandlesSyntax) {
                 // TODO: Remove post slandles syntax
                 results.push(`${indent}${connection.direction}${connection.isOptional ? '?' : ''} ${connection.type.toString()} ${connection.name}${tags}`);
             }
@@ -1483,7 +1483,7 @@ class ParticleSpec {
         this.modality.names.forEach(a => results.push(`  modality ${a}`));
         const slotToString = (s, direction, indent) => {
             const tokens = [];
-            if (_flags_js__WEBPACK_IMPORTED_MODULE_6__["Flags"].usePreSlandlesSyntax) {
+            if (_flags_js__WEBPACK_IMPORTED_MODULE_6__["Flags"].defaultToPreSlandlesSyntax) {
                 if (s.isRequired) {
                     tokens.push('must');
                 }
@@ -2887,7 +2887,7 @@ class InterfaceInfo {
     _handleConnectionsToManifestString() {
         return this.handleConnections
             .map(h => {
-            if (_flags_js__WEBPACK_IMPORTED_MODULE_4__["Flags"].usePreSlandlesSyntax) {
+            if (_flags_js__WEBPACK_IMPORTED_MODULE_4__["Flags"].defaultToPreSlandlesSyntax) {
                 return `  ${h.direction || 'any'} ${h.type.toString()} ${h.name ? h.name : '*'}`;
             }
             else {
@@ -2901,7 +2901,7 @@ class InterfaceInfo {
         // TODO deal with isRequired
         return this.slots
             .map(slot => {
-            if (_flags_js__WEBPACK_IMPORTED_MODULE_4__["Flags"].usePreSlandlesSyntax) {
+            if (_flags_js__WEBPACK_IMPORTED_MODULE_4__["Flags"].defaultToPreSlandlesSyntax) {
                 return `  ${slot.isRequired ? 'must ' : ''}${slot.direction} ${slot.isSet ? 'set of ' : ''}${slot.name || ''}`;
             }
             else {
@@ -3324,17 +3324,22 @@ __webpack_require__.r(__webpack_exports__);
 class FlagDefaults {
 }
 FlagDefaults.useNewStorageStack = false;
-FlagDefaults.usePreSlandlesSyntax = true;
+// Enables the parsing of both pre and post slandles (unified) syntaxes.
+// Preslandles syntax is to be deprecated.
+FlagDefaults.parseBothSyntaxes = false;
+// Use pre slandles syntax for parsing and toString by default.
+// If parseBothSyntaxes is off, this will set which syntax is enabled.
+FlagDefaults.defaultToPreSlandlesSyntax = true;
 class Flags extends FlagDefaults {
     /** Resets flags. To be called in test teardown methods. */
     static reset() {
         Object.assign(Flags, FlagDefaults);
     }
     static withPreSlandlesSyntax(f) {
-        return Flags.withFlags({ usePreSlandlesSyntax: true }, f);
+        return Flags.withFlags({ parseBothSyntaxes: false, defaultToPreSlandlesSyntax: true }, f);
     }
     static withPostSlandlesSyntax(f) {
-        return Flags.withFlags({ usePreSlandlesSyntax: false }, f);
+        return Flags.withFlags({ parseBothSyntaxes: false, defaultToPreSlandlesSyntax: false }, f);
     }
     static withNewStorageStack(f) {
         return Flags.withFlags({ useNewStorageStack: true }, f);

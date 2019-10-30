@@ -141,7 +141,7 @@ export class Slot {
     toString(options = {}, nameMap) {
         const result = [];
         const name = (nameMap && nameMap.get(this)) || this.localName;
-        if (Flags.usePreSlandlesSyntax) {
+        if (Flags.defaultToPreSlandlesSyntax) {
             result.push('slot');
             if (this.id) {
                 result.push(`'${this.id}'`);

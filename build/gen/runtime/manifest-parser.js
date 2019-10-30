@@ -117,6 +117,10 @@ function peg$parse(input, options) {
             return manifestItem;
         });
         checkNormal(result);
+        if (preSlandlesSyntaxLocations.length > 0 && !Flags.defaultToPreSlandlesSyntax) {
+            console.warn('WARNING: Pre-Slandles Syntax is deprecated. Contact jopra@google.com for more information.');
+            console.warn(`WARNING: Used in \n  ${preSlandlesSyntaxLocations.map(loc => `line ${loc.start.line} column ${loc.start.column}`).join("\n  ")}`);
+        }
         return result;
     };
     const peg$c1 = function (triggerSet, simpleAnnotation) {
@@ -12634,6 +12638,7 @@ function peg$parse(input, options) {
     let indent = '';
     let startIndent = '';
     const indents = [];
+    const preSlandlesSyntaxLocations = [];
     const emptyRef = () => ({ kind: 'handle-ref', id: null, name: null, tags: [], location: location() });
     function extractIndented(items) {
         return items[1].map(item => item[1]);
@@ -12682,12 +12687,13 @@ function peg$parse(input, options) {
         return { ...data, location: location() };
     }
     function requireUsePreSlandleSyntax() {
-        /*if (!Flags.usePreSlandlesSyntax) {
-          error('using pre slandles syntax (disabled by flag)');
-        }*/
+        if (!Flags.parseBothSyntaxes && !Flags.defaultToPreSlandlesSyntax) {
+            error('using pre slandles syntax (disabled by flag)');
+        }
+        preSlandlesSyntaxLocations.push(location());
     }
     function requireUsePostSlandleSyntax() {
-        if (Flags.usePreSlandlesSyntax) {
+        if (!Flags.parseBothSyntaxes && Flags.defaultToPreSlandlesSyntax) {
             error('using post slandles syntax (disabled by flag)');
         }
     }

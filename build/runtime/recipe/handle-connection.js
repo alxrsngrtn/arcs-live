@@ -247,7 +247,7 @@ export class HandleConnection {
     }
     toString(nameMap, options) {
         const result = [];
-        if (Flags.usePreSlandlesSyntax) {
+        if (Flags.defaultToPreSlandlesSyntax) {
             result.push(`${this.name || '*'}`); // TODO: Remove post slandles syntax
             result.push(directionToArrow(this.direction));
         }

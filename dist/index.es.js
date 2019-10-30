@@ -184,17 +184,22 @@ function directionToArrow(dir) {
 class FlagDefaults {
 }
 FlagDefaults.useNewStorageStack = false;
-FlagDefaults.usePreSlandlesSyntax = true;
+// Enables the parsing of both pre and post slandles (unified) syntaxes.
+// Preslandles syntax is to be deprecated.
+FlagDefaults.parseBothSyntaxes = false;
+// Use pre slandles syntax for parsing and toString by default.
+// If parseBothSyntaxes is off, this will set which syntax is enabled.
+FlagDefaults.defaultToPreSlandlesSyntax = true;
 class Flags extends FlagDefaults {
     /** Resets flags. To be called in test teardown methods. */
     static reset() {
         Object.assign(Flags, FlagDefaults);
     }
     static withPreSlandlesSyntax(f) {
-        return Flags.withFlags({ usePreSlandlesSyntax: true }, f);
+        return Flags.withFlags({ parseBothSyntaxes: false, defaultToPreSlandlesSyntax: true }, f);
     }
     static withPostSlandlesSyntax(f) {
-        return Flags.withFlags({ usePreSlandlesSyntax: false }, f);
+        return Flags.withFlags({ parseBothSyntaxes: false, defaultToPreSlandlesSyntax: false }, f);
     }
     static withNewStorageStack(f) {
         return Flags.withFlags({ useNewStorageStack: true }, f);
@@ -336,7 +341,7 @@ class InterfaceInfo {
     _handleConnectionsToManifestString() {
         return this.handleConnections
             .map(h => {
-            if (Flags.usePreSlandlesSyntax) {
+            if (Flags.defaultToPreSlandlesSyntax) {
                 return `  ${h.direction || 'any'} ${h.type.toString()} ${h.name ? h.name : '*'}`;
             }
             else {
@@ -350,7 +355,7 @@ class InterfaceInfo {
         // TODO deal with isRequired
         return this.slots
             .map(slot => {
-            if (Flags.usePreSlandlesSyntax) {
+            if (Flags.defaultToPreSlandlesSyntax) {
                 return `  ${slot.isRequired ? 'must ' : ''}${slot.direction} ${slot.isSet ? 'set of ' : ''}${slot.name || ''}`;
             }
             else {
@@ -6861,7 +6866,7 @@ class ParticleSpec {
         const indent = '  ';
         const writeConnection = (connection, indent) => {
             const tags = connection.tags.map((tag) => ` #${tag}`).join('');
-            if (Flags.usePreSlandlesSyntax) {
+            if (Flags.defaultToPreSlandlesSyntax) {
                 // TODO: Remove post slandles syntax
                 results.push(`${indent}${connection.direction}${connection.isOptional ? '?' : ''} ${connection.type.toString()} ${connection.name}${tags}`);
             }
@@ -6883,7 +6888,7 @@ class ParticleSpec {
         this.modality.names.forEach(a => results.push(`  modality ${a}`));
         const slotToString = (s, direction, indent) => {
             const tokens = [];
-            if (Flags.usePreSlandlesSyntax) {
+            if (Flags.defaultToPreSlandlesSyntax) {
                 if (s.isRequired) {
                     tokens.push('must');
                 }
@@ -7743,6 +7748,10 @@ function peg$parse(input, options) {
             return manifestItem;
         });
         checkNormal(result);
+        if (preSlandlesSyntaxLocations.length > 0 && !Flags.defaultToPreSlandlesSyntax) {
+            console.warn('WARNING: Pre-Slandles Syntax is deprecated. Contact jopra@google.com for more information.');
+            console.warn(`WARNING: Used in \n  ${preSlandlesSyntaxLocations.map(loc => `line ${loc.start.line} column ${loc.start.column}`).join("\n  ")}`);
+        }
         return result;
     };
     const peg$c1 = function (triggerSet, simpleAnnotation) {
@@ -7870,6 +7879,7 @@ function peg$parse(input, options) {
     const peg$c54 = "*";
     const peg$c55 = peg$literalExpectation("*", false);
     const peg$c56 = function (direction, type, name) {
+        requireUsePreSlandleSyntax();
         direction = optional(direction, dir => dir[0], 'any');
         if (direction === 'host') {
             error(`Interface cannot have arguments with a 'host' direction.`);
@@ -7903,6 +7913,7 @@ function peg$parse(input, options) {
     const peg$c64 = "set of";
     const peg$c65 = peg$literalExpectation("set of", false);
     const peg$c66 = function (isRequired, direction, isSet, name) {
+        requireUsePreSlandleSyntax();
         return toAstNode({
             kind: 'interface-slot',
             name: optional(name, isRequired => name[1], null),
@@ -8139,6 +8150,7 @@ function peg$parse(input, options) {
         return arg;
     };
     const peg$c124 = function (direction, isOptional, type, nametag) {
+        requireUsePreSlandleSyntax();
         return toAstNode({
             kind: 'particle-argument',
             direction,
@@ -8181,6 +8193,7 @@ function peg$parse(input, options) {
     const peg$c141 = peg$classExpectation([["a", "z"], ["A", "Z"], ["0", "9"]], true, false);
     const peg$c142 = peg$anyExpectation();
     const peg$c143 = function () {
+        requireUsePreSlandleSyntax();
         return text();
     };
     const peg$c144 = peg$otherExpectation("a direction (e.g. reads writes, reads, writes, hosts, `consumes, `provides, any')");
@@ -8307,6 +8320,7 @@ function peg$parse(input, options) {
         });
     };
     const peg$c204 = function (isRequired, isSet, name, tags, items) {
+        requireUsePreSlandleSyntax();
         let formFactor = null;
         const provideSlotConnections = [];
         items = optional(items, extractIndented, []);
@@ -8401,6 +8415,7 @@ function peg$parse(input, options) {
         });
     };
     const peg$c219 = function (isRequired, isSet, name, tags, items) {
+        requireUsePreSlandleSyntax();
         let formFactor = null;
         const handles = [];
         items = items ? extractIndented(items) : [];
@@ -8546,6 +8561,7 @@ function peg$parse(input, options) {
         });
     };
     const peg$c234 = function (param, dir, target, dependentConnections) {
+        requireUsePreSlandleSyntax();
         return toAstNode({
             kind: 'handle-connection',
             param,
@@ -8574,6 +8590,7 @@ function peg$parse(input, options) {
         });
     };
     const peg$c236 = function (direction, ref, name, dependentSlotConnections) {
+        requireUsePreSlandleSyntax();
         return toAstNode({
             kind: 'slot-connection',
             direction,
@@ -8623,6 +8640,7 @@ function peg$parse(input, options) {
         return target;
     };
     const peg$c243 = function (from, direction, to) {
+        requireUsePreSlandleSyntax();
         return toAstNode({
             kind: 'connection',
             direction: arrowToDirection(direction),
@@ -8705,6 +8723,7 @@ function peg$parse(input, options) {
             requireUsePostSlandleSyntax();
         }
         if (namePreSlandles) {
+            requireUsePreSlandleSyntax();
             name = optional(namePreSlandles, n => n[1], null);
         }
         return toAstNode({
@@ -8798,6 +8817,7 @@ function peg$parse(input, options) {
     const peg$c288 = "slot";
     const peg$c289 = peg$literalExpectation("slot", false);
     const peg$c290 = function (ref, name) {
+        requireUsePreSlandleSyntax();
         return toAstNode({
             kind: 'slot',
             ref: optional(ref, ref => ref[1], emptyRef()),
@@ -20246,6 +20266,7 @@ function peg$parse(input, options) {
     let indent = '';
     let startIndent = '';
     const indents = [];
+    const preSlandlesSyntaxLocations = [];
     const emptyRef = () => ({ kind: 'handle-ref', id: null, name: null, tags: [], location: location() });
     function extractIndented(items) {
         return items[1].map(item => item[1]);
@@ -20293,8 +20314,14 @@ function peg$parse(input, options) {
     function toAstNode(data) {
         return { ...data, location: location() };
     }
+    function requireUsePreSlandleSyntax() {
+        if (!Flags.parseBothSyntaxes && !Flags.defaultToPreSlandlesSyntax) {
+            error('using pre slandles syntax (disabled by flag)');
+        }
+        preSlandlesSyntaxLocations.push(location());
+    }
     function requireUsePostSlandleSyntax() {
-        if (Flags.usePreSlandlesSyntax) {
+        if (!Flags.parseBothSyntaxes && Flags.defaultToPreSlandlesSyntax) {
             error('using post slandles syntax (disabled by flag)');
         }
     }
@@ -20482,7 +20509,7 @@ class ConnectionConstraint {
         if (options && options.showUnresolved === true && this.type === 'obligation') {
             unresolved = ' // unresolved obligation';
         }
-        if (Flags.usePreSlandlesSyntax) {
+        if (Flags.defaultToPreSlandlesSyntax) {
             return `${this.from.toString(nameMap)} ${directionToArrow(this.direction)} ${this.to.toString(nameMap)}${unresolved}`;
         }
         return `${this.from.toString(nameMap)}: ${preSlandlesDirectionToDirection(this.direction)} ${this.to.toString(nameMap)}${unresolved}`;
@@ -21133,7 +21160,7 @@ class HandleConnection {
     }
     toString(nameMap, options) {
         const result = [];
-        if (Flags.usePreSlandlesSyntax) {
+        if (Flags.defaultToPreSlandlesSyntax) {
             result.push(`${this.name || '*'}`); // TODO: Remove post slandles syntax
             result.push(directionToArrow(this.direction));
         }
@@ -22415,7 +22442,7 @@ class SlotConnection {
     }
     toString(nameMap, options) {
         const consumeRes = [];
-        if (Flags.usePreSlandlesSyntax) {
+        if (Flags.defaultToPreSlandlesSyntax) {
             consumeRes.push('consume');
             consumeRes.push(`${this.name}`);
             if (this.targetSlot) {
@@ -22447,7 +22474,7 @@ class SlotConnection {
                 const providedSlotSpec = this.particle.getSlotSpecByName(psName);
                 assert(providedSlotSpec, `Cannot find providedSlotSpec for ${psName}`);
             }
-            if (Flags.usePreSlandlesSyntax) {
+            if (Flags.defaultToPreSlandlesSyntax) {
                 provideRes.push('  provide');
                 provideRes.push(`${psName}`);
                 provideRes.push(`as ${(nameMap && nameMap.get(providedSlot)) || providedSlot}`);
@@ -22602,7 +22629,7 @@ class Slot {
     toString(options = {}, nameMap) {
         const result = [];
         const name = (nameMap && nameMap.get(this)) || this.localName;
-        if (Flags.usePreSlandlesSyntax) {
+        if (Flags.defaultToPreSlandlesSyntax) {
             result.push('slot');
             if (this.id) {
                 result.push(`'${this.id}'`);
@@ -22921,7 +22948,7 @@ class Handle$1 {
         // TODO: type? maybe output in a comment
         const result = [];
         const name = (nameMap && nameMap.get(this)) || this.localName;
-        if (Flags.usePreSlandlesSyntax) {
+        if (Flags.defaultToPreSlandlesSyntax) {
             result.push(this.fate);
             if (this.id) {
                 result.push(`'${this.id}'`);
@@ -35270,6 +35297,7 @@ class ConvertConstraintsToConnections extends Strategy {
                             return 'any';
                         }
                         if (a !== b) {
+                            // TODO(jopra): Double check this, should require both directions.
                             return 'any';
                         }
                         return a;
