@@ -1,7 +1,9 @@
-commit e685665ffe2dfd0aa600c6025b3dde68566b7e3b
-Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Wed Oct 30 14:17:53 2019 +1100
+commit 02a633628f5cba29617970d043fc5a9165372b17
+Author: raulverag <42563960+raulverag@users.noreply.github.com>
+Date:   Wed Oct 30 14:58:31 2019 +1100
 
-    Moves bundled manifest files under the "arcs" subdirectory by default (#3931)
+    Warn about circular dependencies (#3932)
     
-    This mimics the behaviour introduced in #3891, for #3819.
+    * Warn about circular deps and ensure no new ones are added
+    
+    * update max cycles
