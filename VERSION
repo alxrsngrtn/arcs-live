@@ -1,5 +1,5 @@
-commit abdbf2bceb7358284ea6d10a771ea61fb5cf5a5b
-Author: yuangu-google <yuangu@google.com>
-Date:   Tue Oct 29 16:26:49 2019 -0700
+commit 5c5f057907f89bb258c270d82f1250bc686c39ad
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Tue Oct 29 17:47:40 2019 -0700
 
-    Comment out require ingestion arc. (#3923)
+    make shell configuration dynamic (#3925)
