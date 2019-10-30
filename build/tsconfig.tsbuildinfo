@@ -2521,7 +2521,7 @@
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/runtime/tests/schema-test.ts": {
-        "version": "1a4091d9056b6994d33503194d3e2d63dd2593cbfbb574d957bc3eb08f219518",
+        "version": "6cb507972095449f28d7de1cc34f09b452a809978639a169263d28a418f3a1b1",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/slot-consumer-test.ts": {

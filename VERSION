@@ -1,43 +1,5 @@
-commit c7642a8dfed5dfcbaf37f1ce118593e6c23536b5
-Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Wed Oct 30 15:59:05 2019 +1100
+commit 59d6dba437fe2ad345a0f30a0808636d33d1282d
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Wed Oct 30 06:25:46 2019 -0700
 
-    Bundles missing demo particles (#3934)
-    
-    * Bundles missing demo particles
-    
-    Bundles RenderNotification and AndroidAutofill particle definitions into
-    the Android demo app. As far as I know, these are the only particles
-    that are actually used.
-    
-    (App is currently broken so it's hard to know...)
-    
-    Bundled assets in the apk now looks like this:
-    
-    ```
-    $ unzip -l bazel-bin/javaharness/java/arcs/android/demo/demo.apk
-    Archive:  bazel-bin/javaharness/java/arcs/android/demo/demo.apk
-      Length      Date    Time    Name
-    ---------  ---------- -----   ----
-    [...]
-          297  2010-01-01 00:00   assets/arcs/demo_manifest_bundle.arcs
-         1342  2010-01-01 00:00   assets/arcs/index.html
-         1030  2010-01-01 00:00   assets/arcs/particles/PipeApps/AndroidAutofill.arcs
-          150  2010-01-01 00:00   assets/arcs/particles/PipeApps/RenderNotification.arcs
-           64  2010-01-01 00:00   assets/arcs/particles/PipeApps/schemas/IncomingEntity.arcs
-           97  2010-01-01 00:00   assets/arcs/particles/PipeApps/schemas/Person.arcs
-         1655  2010-01-01 00:00   assets/arcs/particles/PipeApps/source/DummyAutofillResponder.js
-         1399  2010-01-01 00:00   assets/arcs/particles/PipeApps/source/RenderNotification.js
-      1813402  2010-01-01 00:00   assets/arcs/shell.js
-       516152  2010-01-01 00:00   assets/arcs/worker.js
-    [...]
-    ---------                     -------
-      2676237                     28 files
-    ```
-    
-    You should be able to load the root manifest at
-    `file://android_assets/arcs/demo_manifest_bundle.arcs`
-    
-    * Fix broken parse test
-    
-    (It's ok for some particles to not have impl files)
+    A test for alias + extend in schemas (#3887)
