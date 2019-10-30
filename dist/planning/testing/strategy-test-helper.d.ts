@@ -8,7 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { Arc } from '../../runtime/arc.js';
-import { Loader } from '../../runtime/loader.js';
+import { Loader } from '../../platform/loader.js';
 import { Manifest } from '../../runtime/manifest.js';
 import { Id } from '../../runtime/id.js';
 export declare class StrategyTestHelper {

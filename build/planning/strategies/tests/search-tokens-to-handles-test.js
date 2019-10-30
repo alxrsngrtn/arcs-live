@@ -8,7 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { assert } from '../../../platform/chai-web.js';
-import { Loader } from '../../../runtime/loader.js';
+import { Loader } from '../../../platform/loader.js';
 import { Manifest } from '../../../runtime/manifest.js';
 import { SearchTokensToHandles } from '../../strategies/search-tokens-to-handles.js';
 import { StrategyTestHelper } from '../../testing/strategy-test-helper.js';

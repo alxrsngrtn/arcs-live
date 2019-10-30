@@ -14,7 +14,7 @@ import { RuntimeCacheService } from './runtime-cache.js';
 import { ArcId } from './id.js';
 import { PecFactory } from './particle-execution-context.js';
 import { SlotComposer } from './slot-composer.js';
-import { Loader } from './loader.js';
+import { Loader } from '../platform/loader.js';
 import { StorageProviderFactory } from './storage/storage-provider-factory.js';
 import { ArcInspectorFactory } from './arc-inspector.js';
 import { VolatileMemory } from './storageNG/drivers/volatile.js';

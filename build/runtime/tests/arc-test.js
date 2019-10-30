@@ -12,7 +12,7 @@ import '../storage/pouchdb/pouch-db-provider.js';
 import { assert } from '../../platform/chai-web.js';
 import { Arc } from '../arc.js';
 import { Id, ArcId, IdGenerator } from '../id.js';
-import { Loader } from '../loader.js';
+import { Loader } from '../../platform/loader.js';
 import { Manifest } from '../manifest.js';
 import { StorageProviderBase } from '../storage/storage-provider-base.js';
 import { CallbackTracker } from '../testing/callback-tracker.js';

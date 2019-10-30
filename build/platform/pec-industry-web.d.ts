@@ -7,5 +7,4 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-declare const pecIndustry: (loader: any) => (id: any) => MessagePort;
-export { pecIndustry as PecIndustry };
+export declare const pecIndustry: (loader: any) => (id: any) => MessagePort;

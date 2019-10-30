@@ -10,25 +10,18 @@
 /// <reference types="node" />
 import { UiParticleBase } from './ui-particle-base.js';
 import { Handle } from './handle.js';
-import { Runnable, Dictionary } from './hot.js';
-declare type AnyModel = Dictionary<any>;
+import { Runnable } from './hot.js';
 export interface UiStatefulParticle extends UiParticleBase {
     _invalidate(): void;
-    _setState(state: AnyModel): boolean | undefined;
-    _setProps(props: AnyModel): boolean | undefined;
-    _setProperty(name: string, model: AnyModel): any;
-    _debounce(key: any, idleThenFunc: any, delay: any): any;
-    _state: AnyModel;
-    _props: AnyModel;
 }
-declare const UiStatefulParticle: typeof UiParticleBase;
 export interface UiParticle extends UiStatefulParticle {
 }
+declare const UiParticle_base: any;
 /**
  * Particle that interoperates with DOM and uses a simple state system
  * to handle updates.
  */
-export declare class UiParticle extends UiStatefulParticle {
+export declare class UiParticle extends UiParticle_base {
     /**
      * Override if necessary, to do things when props change.
      * Avoid if possible, use `update` instead.
@@ -51,8 +44,8 @@ export declare class UiParticle extends UiStatefulParticle {
     * Syntactic sugar: `this.state = {state}` is equivalent to `this.setState(state)`.
     * This is a merge, not an assignment.
     */
-    state: Dictionary<any>;
-    readonly props: Dictionary<any>;
+    state: any;
+    readonly props: any;
     _shouldUpdate(): boolean;
     _update(...args: any[]): void;
     _async(fn: any): NodeJS.Timeout;

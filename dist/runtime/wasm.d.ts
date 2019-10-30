@@ -15,7 +15,7 @@ import { Particle } from './particle.js';
 import { Handle } from './handle.js';
 import { Content } from './slot-consumer.js';
 import { Dictionary } from './hot.js';
-import { Loader } from './loader.js';
+import { Loader } from '../platform/loader.js';
 import { PECInnerPort } from './api-channel.js';
 import { ParticleExecutionContext } from './particle-execution-context.js';
 export declare class EntityPackager {

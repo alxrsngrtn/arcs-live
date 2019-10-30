@@ -8,9 +8,9 @@
  * http://polymer.github.io/PATENTS.txt
  */
 const WORKER_PATH = `https://$build/worker.js`;
-const pecIndustry = loader => {
+export const pecIndustry = loader => {
     // worker paths are relative to worker location, remap urls from there to here
-    const remap = _expandUrls(loader._urlMap);
+    const remap = expandUrls(loader.urlMap);
     // get real path from meta path
     const workerUrl = loader.resolve(WORKER_PATH);
     // provision (cached) Blob url (async, same workerBlobUrl is captured in both closures)
@@ -27,7 +27,7 @@ const pecIndustry = loader => {
         return channel.port2;
     };
 };
-const _expandUrls = urlMap => {
+const expandUrls = urlMap => {
     const remap = {};
     const { origin, pathname } = window.location;
     const transform = (path) => {
@@ -51,5 +51,4 @@ const _expandUrls = urlMap => {
     });
     return remap;
 };
-export { pecIndustry as PecIndustry };
 //# sourceMappingURL=pec-industry-web.js.map

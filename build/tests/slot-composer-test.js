@@ -205,18 +205,18 @@ recipe
           return class extends DomParticle {
             async setHandles(handles) {
               super.setHandles(handles);
-  
+
               const innerArc = await this.constructInnerArc();
               const hostedSlotId = await innerArc.createSlot(this, 'root');
-        
+
               innerArc.loadRecipe(\`
                 particle A in 'A.js'
                   consume content
                     provide detail
-                
+
                 particle B in 'B.js'
                   consume detail
-                
+
                 recipe
                   slot '\` + hostedSlotId + \`' as hosted
                   A
@@ -226,23 +226,23 @@ recipe
                     consume detail as detail
               \`);
             }
-        
+
             renderHostedSlot(slotName, hostedSlotId, content) {
               this.setState(content);
             }
-        
+
             shouldRender() {
               return Boolean(this.state.template);
             }
-        
+
             getTemplate() {
               return '<div>intercepted-template' + this.state.template + '</div>';
             }
-        
+
             getTemplateName() {
               return this.state.templateName + '/intercepted';
             }
-        
+
             render() {
               return Object.assign({}, this.state.model, {a: this.state.model.a + '/intercepted-model'});
             }

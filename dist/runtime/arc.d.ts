@@ -9,7 +9,7 @@
  */
 import { ArcInspector, ArcInspectorFactory } from './arc-inspector.js';
 import { Id, IdGenerator } from './id.js';
-import { Loader } from './loader.js';
+import { Loader } from '../platform/loader.js';
 import { Runnable } from './hot.js';
 import { Manifest } from './manifest.js';
 import { MessagePort } from './message-channel.js';

@@ -7,7 +7,7 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { Loader } from '../loader.js';
+import { Loader } from '../../platform/loader.js';
 import { Dictionary } from '../hot.js';
 /**
  * A Loader initialized with a per-path canned responses.

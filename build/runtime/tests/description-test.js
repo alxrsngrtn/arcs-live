@@ -11,7 +11,7 @@ import { assert } from '../../platform/chai-web.js';
 import { Arc } from '../arc.js';
 import { DescriptionDomFormatter } from '../description-dom-formatter.js';
 import { Description } from '../description.js';
-import { Loader } from '../loader.js';
+import { Loader } from '../../platform/loader.js';
 import { Manifest } from '../manifest.js';
 import { Relevance } from '../relevance.js';
 import { FakeSlotComposer } from '../testing/fake-slot-composer.js';

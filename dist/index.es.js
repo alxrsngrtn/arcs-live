@@ -4,8 +4,8 @@ import firebase$1 from 'firebase/app';
 import 'firebase/database';
 import 'firebase/storage';
 import fetch from 'node-fetch';
-import fs from 'fs';
 import vm from 'vm';
+import fs from 'fs';
 import idb from 'idb';
 import rs from 'jsrsasign';
 import WebCrypto from 'node-webcrypto-ossl';
@@ -27770,7 +27770,7 @@ class ParticleExecutionContext {
         assert(spec.name.length > 0);
         let container = this.wasmContainers[spec.implFile];
         if (!container) {
-            const buffer = await this.loader.loadWasmBinary(spec);
+            const buffer = await this.loader.loadBinaryResource(spec.implFile);
             if (!buffer || buffer.byteLength === 0) {
                 throw new Error(`Failed to load wasm binary '${spec.implFile}'`);
             }
@@ -29157,15 +29157,12 @@ ${this.activeRecipe.toString()}`;
         return info;
     }
     async _provisionSpecUrl(spec) {
-        if (!spec.implBlobUrl) {
-            // if supported, construct spec.implBlobUrl for spec.implFile
-            if (this.loader && this.loader['provisionObjectUrl']) {
-                const url = await this.loader['provisionObjectUrl'](spec.implFile);
+        // if supported, construct spec.implBlobUrl for spec.implFile
+        if (spec.implFile && !spec.implBlobUrl) {
+            if (this.loader) {
+                const url = await this.loader.provisionObjectUrl(spec.implFile);
                 if (url) {
                     spec.setImplBlobUrl(url);
-                }
-                else {
-                    throw new Error(`Expected url for ${spec.implFile} but got ${url}`);
                 }
             }
         }
@@ -30620,16 +30617,13 @@ class UiParticleBase extends Particle$1 {
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-// create actual class via mixin
-// tslint:disable-next-line: variable-name
-const UiStatefulParticle = XenStateMixin(UiParticleBase);
 /**
  * Particle that interoperates with DOM and uses a simple state system
  * to handle updates.
  */
-// TODO(sjmiles): this is really `UiStatefulParticle` but it's
-// used so often, we went with the simpler name
-class UiParticle extends UiStatefulParticle {
+// TODO(sjmiles): seems like this is really `UiStatefulParticle` but it's
+// used so often, I went with the simpler name
+class UiParticle extends XenStateMixin(UiParticleBase) {
     /**
      * Override if necessary, to do things when props change.
      * Avoid if possible, use `update` instead.
@@ -30750,7 +30744,7 @@ class UiParticle extends UiStatefulParticle {
             state[subkey] = null;
         };
         // TODO(sjmiles): rewrite Xen debounce so caller has idle control
-        this._debounce(key, idleThenFunc, delay);
+        super._debounce(key, idleThenFunc, delay);
     }
 }
 
@@ -30763,13 +30757,350 @@ class UiParticle extends UiStatefulParticle {
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-const html = (strings, ...values) => (strings[0] + values.map((v, i) => v + strings[i + 1]).join('')).trim();
-class Loader {
-    path(fileName) {
-        return fileName.replace(/[/][^/]+$/, '/');
+/**
+ * Particle that does transformation.
+ */
+class UiTransformationParticle extends UiParticle {
+    getTemplate(slotName) {
+        // TODO: add support for multiple slots.
+        return this.state.template;
     }
+    getTemplateName(slotName) {
+        // TODO: add support for multiple slots.
+        return this.state.templateName;
+    }
+    render(props, state) {
+        return state.renderModel;
+    }
+    shouldRender(props, state) {
+        return Boolean((state.template || state.templateName) && state.renderModel);
+    }
+    // Helper methods that may be reused in transformation particles to combine hosted content.
+    static propsToItems(propsValues) {
+        return propsValues ? propsValues.map(e => ({ subId: Entity.id(e), ...e })) : [];
+    }
+}
+
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class UiMultiplexerParticle extends UiTransformationParticle {
+    async setHandles(handles) {
+        this.plexeds = [];
+        const arc = await this.constructInnerArc();
+        const listHandleName = 'list';
+        const particleHandleName = 'hostedParticle';
+        const particleHandle = handles.get(particleHandleName);
+        let hostedParticle = null;
+        let otherMappedHandles = [];
+        let otherConnections = [];
+        if (particleHandle) {
+            hostedParticle = await particleHandle['get']();
+            if (hostedParticle) {
+                ({ otherMappedHandles, otherConnections } =
+                    await this._mapParticleConnections(listHandleName, particleHandleName, hostedParticle, handles, arc));
+            }
+        }
+        this.setState({
+            arc,
+            type: handles.get(listHandleName).type,
+            hostedParticle,
+            otherMappedHandles,
+            otherConnections
+        });
+        await super.setHandles(handles);
+    }
+    async update({ list }, { arc, type, hostedParticle, otherMappedHandles, otherConnections }, oldProps, oldState) {
+        //console.warn(`[${this.spec.name}]::update`, list, arc);
+        if (!list || !arc) {
+            return;
+        }
+        if (oldProps.list === list && oldState.arc === arc) {
+            return;
+        }
+        if (list.length > 0) {
+            this.relevance = 0.1;
+        }
+        // TODO(sjmiles): needs safety for re-entrant update
+        //const slotIds = [];
+        for (const [index, item] of this.getListEntries(list)) {
+            //const id = await this.updateEntry(index, item, {arc, type, hostedParticle, otherConnections, otherMappedHandles});
+            //slotIds.push(id);
+            await this.updateEntry(index, item, { arc, type, hostedParticle, otherConnections, otherMappedHandles });
+        }
+        //console.warn('m-d-p', slotIds);
+        // clear data from unused particles/handles
+        for (let i = list.length, plexed; (plexed = this.plexeds[i]); i++) {
+            plexed.then(plexed => plexed.handle['clear']());
+        }
+    }
+    async updateEntry(index, item, { hostedParticle, arc, type, otherConnections, otherMappedHandles }) {
+        if (!hostedParticle && !item.renderParticleSpec) {
+            // If we're muxing on behalf of an item with an embedded recipe, the
+            // hosted particle should be retrievable from the item itself. Else we
+            // just skip this item.
+            return;
+        }
+        //console.log(`RenderEx:updateEntry: %c[${index}]`, 'color: #A00; font-weight: bold;');
+        // Map innerArc/slot by index. Index maps closely to rendering contexts.
+        // Rendering contexts are expensive, we want maximal coherence.
+        const plexed = await this.requirePlexed(index, item, { hostedParticle, arc, type, otherConnections, otherMappedHandles });
+        // TODO(sjmiles): work out a proper cast (and conditional), or fix upstream type
+        plexed.handle['set'](item);
+        return plexed.slotId;
+    }
+    async requirePlexed(index, item, { arc, type, hostedParticle, otherConnections, otherMappedHandles }) {
+        let promise = this.plexeds[index];
+        if (!promise) {
+            // eslint-disable-next-line no-async-promise-executor
+            promise = new Promise(async (resolve) => {
+                const handle = await this.acquireItemHandle(index, { arc, item, type });
+                const hosting = await this.resolveHosting(item, { arc, hostedParticle, otherConnections, otherMappedHandles });
+                const result = { arc, handle, hosting, slotId: null };
+                result.slotId = await this.createInnards(item, result);
+                resolve(result);
+            });
+            this.plexeds[index] = promise;
+        }
+        return await promise;
+    }
+    async resolveHosting(item, { arc, hostedParticle, otherConnections, otherMappedHandles }) {
+        return hostedParticle ?
+            { hostedParticle, otherConnections, otherMappedHandles }
+            : await this.resolveHostedParticle(item, arc);
+    }
+    async acquireItemHandle(index, { arc, item, type }) {
+        const handlePromise = arc.createHandle(type.getContainedType(), `item${index}`);
+        return await handlePromise;
+    }
+    async resolveHostedParticle(item, arc) {
+        const hostedParticle = ParticleSpec.fromLiteral(JSON.parse(item.renderParticleSpec));
+        // Re-map compatible handles and compute the connections specific
+        // to this item's render particle.
+        const listHandleName = 'list';
+        const particleHandleName = 'renderParticle';
+        const { otherConnections, otherMappedHandles } = await this._mapParticleConnections(listHandleName, particleHandleName, hostedParticle, this.handles, arc);
+        return { otherConnections, otherMappedHandles, hostedParticle };
+    }
+    async _mapParticleConnections(listHandleName, particleHandleName, hostedParticle, handles, arc) {
+        const otherMappedHandles = [];
+        const otherConnections = [];
+        let index = 2;
+        const skipConnectionNames = [listHandleName, particleHandleName];
+        for (const [connectionName, otherHandle] of handles) {
+            if (!skipConnectionNames.includes(connectionName)) {
+                // TODO(wkorman): For items with embedded recipes we may need a map
+                // (perhaps id to index) to make sure we don't map a handle into the inner
+                // arc multiple times unnecessarily.
+                // TODO(lindner): type erasure to avoid mismatch of Store vs Handle in arc.mapHandle
+                // tslint:disable-next-line: no-any
+                const otherHandleStore = otherHandle.storage;
+                otherMappedHandles.push(`use '${await arc.mapHandle(otherHandleStore)}' as v${index}`);
+                //
+                const hostedOtherConnection = hostedParticle.handleConnections.find(conn => conn.isCompatibleType(otherHandle.type));
+                if (hostedOtherConnection) {
+                    otherConnections.push(`${hostedOtherConnection.name} = v${index++}`);
+                    // TODO(wkorman): For items with embedded recipes where we may have a
+                    // different particle rendering each item, we need to track
+                    // |connByHostedConn| keyed on the particle type.
+                    //this._connByHostedConn.set(hostedOtherConnection.name, connectionName);
+                }
+            }
+        }
+        return { otherMappedHandles, otherConnections };
+    }
+    async createInnards(item, { arc, handle, hosting: { hostedParticle, otherMappedHandles, otherConnections } }) {
+        const hostedSlotName = [...hostedParticle.slotConnections.keys()][0];
+        const slotName = [...this.spec.slotConnections.values()][0].name;
+        const slotId = await arc.createSlot(this, slotName, handle._id);
+        if (slotId) {
+            try {
+                const recipe = this.constructInnerRecipe(hostedParticle, item, handle, { name: hostedSlotName, id: slotId }, { connections: otherConnections, handles: otherMappedHandles });
+                await arc.loadRecipe(recipe);
+            }
+            catch (e) {
+                console.warn(e);
+            }
+        }
+        return slotId;
+    }
+    // Called with the list of items and by default returns the direct result of
+    // `Array.entries()`. Subclasses can override this method to alter the item
+    // order or otherwise permute the items as desired before their slots are
+    // created and contents are rendered.
+    getListEntries(list) {
+        return list.entries();
+    }
+}
+
+/**
+ * @license
+ * Copyright 2019 Google LLC.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+// no-op html tagged template literal useful for hinting code-tools (e.g. highlighters)
+// about html content in strings. e.g. html`<span>this is html</span>`
+const html = (strings, ...values) => (strings[0] + values.map((v, i) => v + strings[i + 1]).join('')).trim();
+
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+// TODO(wkorman): Consider outputting preamble in the specified color via ANSI escape codes.
+const logFactory = (preamble, color, log = 'log') => {
+    return console[log].bind(console, `(${preamble})`);
+};
+
+/**
+ * @license
+ * Copyright 2019 Google LLC.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+const getGlobal = () => {
+    if (typeof self !== 'undefined') {
+        return self;
+    }
+    if (typeof window !== 'undefined') {
+        return window;
+    }
+    if (typeof global !== 'undefined') {
+        return global;
+    }
+    throw new Error('unable to locate global object');
+};
+const getLogLevel = () => {
+    // acquire global scope
+    const g = getGlobal();
+    // use specified logLevel otherwise 0
+    return ('logLevel' in g) ? g['logLevel'] : 0;
+};
+console.log(`log-factory: binding logFactory to level [${getLogLevel()}]`);
+const stubFactory = () => () => { };
+const logsFactory = (preamble, color = '') => {
+    const level = getLogLevel();
+    const logs = {};
+    ['log', 'warn', 'error', 'group', 'groupCollapsed', 'groupEnd'].
+        forEach(log => logs[log] = (level > 0 ? logFactory(preamble, color, log) : stubFactory));
+    return logs;
+};
+
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+const { warn } = logsFactory('Loader', 'green');
+const isString = s => (typeof s === 'string');
+const isSchemaOrgUrl = (s) => /\/\/schema.org\//.test(s);
+// a qualified url is an absolute path with `https` protocol
+const isQualifiedUrl = (s) => /^https?:\/\//.test(s);
+/**
+ * Key public API:
+ *   async loadResource(file: string): Promise<string>
+ *   async loadBinaryResource(file: string): Promise<ArrayBuffer>
+ *   async loadParticleClass(spec: ParticleSpec): Promise<typeof Particle>
+ */
+class LoaderBase {
+    constructor(urlMap = {}, staticMap = {}) {
+        this.urlMap = urlMap;
+        this.staticMap = staticMap;
+    }
+    setParticleExecutionContext(pec) {
+        this.pec = pec;
+    }
+    flushCaches() {
+        // as needed
+    }
+    // TODO(sjmiles): XXX and XXXBinary methods are forked for type-safety (is there a way to be more DRY?)
+    async loadResource(file) {
+        const content = this.loadStatic(file);
+        if (content) {
+            return content;
+        }
+        const path = this.resolve(file);
+        if (isQualifiedUrl(path)) {
+            return this.loadUrl(path);
+        }
+        return this.loadFile(path);
+    }
+    async loadBinaryResource(file) {
+        const content = this.loadStaticBinary(file);
+        if (content) {
+            return content;
+        }
+        const path = this.resolve(file);
+        if (isQualifiedUrl(path)) {
+            return this.loadBinaryUrl(path);
+        }
+        return this.loadBinaryFile(path);
+    }
+    loadStatic(path) {
+        const content = this.staticMap[path];
+        if (content && !isString(content)) {
+            throw new Error('Cannot load static binary content as string');
+        }
+        return content;
+    }
+    loadStaticBinary(path) {
+        const content = this.staticMap[path];
+        if (content) {
+            if (content instanceof ArrayBuffer) {
+                return content;
+            }
+            throw new Error('Cannot load static string content as binary');
+        }
+        return null;
+    }
+    async loadUrl(url) {
+        if (isSchemaOrgUrl(url)) {
+            return this.loadSchemaOrgUrl(url);
+        }
+        return this.fetchString(url);
+    }
+    async fetchString(url) {
+        const res = await fetch(url);
+        if (res.ok) {
+            return res.text();
+        }
+        return Promise.reject(new Error(`HTTP ${res.status}: ${res.statusText}`));
+    }
+    async loadBinaryUrl(url) {
+        return this.fetchBuffer(url);
+    }
+    async fetchBuffer(url) {
+        const res = await fetch(url);
+        if (res.ok) {
+            return res.arrayBuffer();
+        }
+        return Promise.reject(new Error(`HTTP ${res.status}: ${res.statusText} for ${url}`));
+    }
+    //
+    // TODO(sjmiles): public because it's used in manifest.ts, can we simplify?
     join(prefix, path) {
-        if (/^https?:\/\//.test(path)) {
+        if (isQualifiedUrl(path)) {
             return path;
         }
         // TODO: replace this with something that isn't hacky
@@ -30780,63 +31111,88 @@ class Loader {
         path = this.normalizeDots(`${prefix}${path}`);
         return path;
     }
+    // TODO(sjmiles): public because it's used in manifest.ts, can we simplify?
+    path(fileName) {
+        return fileName.replace(/[/][^/]+$/, '/');
+    }
     // convert `././foo/bar/../baz` to `./foo/baz`
     normalizeDots(path) {
+        path = path || '';
         // only unix slashes
         path = path.replace(/\\/g, '/');
         // remove './'
         path = path.replace(/\/\.\//g, '/');
         // remove 'foo/..'
         const norm = s => s.replace(/(?:^|\/)[^./]*\/\.\./g, '');
+        // keep removing `<name>/..` until there are no more
         for (let n = norm(path); n !== path; path = n, n = norm(path))
             ;
         // remove '//' except after `:`
         path = path.replace(/([^:])(\/\/)/g, '$1/');
         return path;
     }
-    async loadResource(file) {
-        if (/^https?:\/\//.test(file)) {
-            return this._loadURL(file);
-        }
-        return this.loadFile(file, 'utf-8');
-    }
-    async loadWasmBinary(spec) {
-        // TODO: use spec.implBlobUrl if present?
-        this.mapParticleUrl(spec.implFile);
-        const target = this.resolve(spec.implFile);
-        if (/^https?:\/\//.test(target)) {
-            return fetch(target).then(res => res.arrayBuffer());
-        }
-        else {
-            return this.loadFile(target);
-        }
-    }
-    mapParticleUrl(path) { }
     resolve(path) {
-        return path;
+        const resolved = this.resolvePath(path);
+        const compact = this.normalizeDots(resolved);
+        return compact;
     }
-    async loadFile(file, encoding) {
-        return new Promise((resolve, reject) => {
-            fs.readFile(file, { encoding }, (err, data) => {
-                if (err) {
-                    reject(err);
-                }
-                else {
-                    resolve(encoding ? data : data.buffer);
-                }
-            });
-        });
-    }
-    async _loadURL(url) {
-        const fetcher = (url) => fetch(url).then(async (res) => res.ok ? res.text() : Promise.reject(new Error(`HTTP ${res.status}: ${res.statusText}`)));
-        if (/\/\/schema.org\//.test(url)) {
-            if (url.endsWith('/Thing')) {
-                return fetcher('https://schema.org/Product.jsonld').then(data => JsonldToManifest.convert(data, { '@id': 'schema:Thing' }));
+    resolvePath(path) {
+        let resolved = path;
+        // TODO(sjmiles): inefficient
+        // find longest key in urlMap that is a prefix of path
+        const macro = this.findUrlMapMacro(path);
+        if (macro) {
+            const config = this.urlMap[macro];
+            if (isString(config)) {
+                resolved = `${config}${path.slice(macro.length)}`;
             }
-            return fetcher(url + '.jsonld').then(data => JsonldToManifest.convert(data));
+            else {
+                resolved = this.resolveConfiguredPath(path, macro, config);
+            }
         }
-        return fetcher(url);
+        return resolved;
     }
+    findUrlMapMacro(path) {
+        // TODO(sjmiles): inefficient
+        // find longest key in urlMap that is a prefix of path
+        return Object.keys(this.urlMap).sort((a, b) => b.length - a.length).find(k => isString(path) && (path.slice(0, k.length) === k));
+    }
+    resolveConfiguredPath(path, macro, config) {
+        return [
+            config.root,
+            (path.match(config.buildOutputRegex) ? config.buildDir : ''),
+            (config.path || ''),
+            path.slice(macro.length)
+        ].join('');
+    }
+    mapParticleUrl(path) {
+        if (!path) {
+            return undefined;
+        }
+        const resolved = this.resolve(path);
+        const parts = resolved.split('/');
+        parts.pop();
+        const folder = parts.join('/');
+        this.urlMap['$here'] = folder;
+        this.urlMap['$module'] = folder;
+    }
+    async loadSchemaOrgUrl(url) {
+        let href = `${url}.jsonld`;
+        let opts = null;
+        if (url.endsWith('/Thing')) {
+            href = 'https://schema.org/Product.jsonld';
+            opts = { '@id': 'schema:Thing' };
+        }
+        const data = await this.fetchString(href);
+        return JsonldToManifest.convert(data, opts);
+    }
+    async provisionObjectUrl(fileName) {
+        // no facility for this by default
+        return null;
+    }
+    //
+    // Below here invoked from inside isolation scope (e.g. Worker)
+    //
     /**
      * Returns a particle class implementation by loading and executing
      * the code defined by a particle.  In the following example `x.js`
@@ -30847,20 +31203,86 @@ class Loader {
      * ```
      */
     async loadParticleClass(spec) {
-        const clazz = await this.requireParticle(spec.implFile);
-        clazz.spec = spec;
-        return clazz;
+        let particleClass = null;
+        const userClass = await this.requireParticle(spec.implFile || '', spec.implBlobUrl);
+        if (!userClass) {
+            warn(`[${spec.implFile}]::defineParticle() returned no particle.`);
+        }
+        else {
+            particleClass = userClass;
+            particleClass.spec = spec;
+        }
+        return particleClass;
     }
     /**
-     * Loads a particle class from the given filename by loading the
-     * script contained in `fileName` and executing it as a script.
-     *
-     * Protected for use in tests.
+     * executes the defineParticle() code and returns the results which should be a class definition.
      */
-    async requireParticle(fileName) {
-        if (fileName === null)
-            fileName = '';
-        const src = await this.loadResource(fileName);
+    unwrapParticle(particleWrapper, log) {
+        assert(this.pec);
+        return particleWrapper({
+            // Particle base
+            Particle: Particle$1,
+            // Dom-flavored Particles (deprecated?)
+            DomParticle,
+            MultiplexerDomParticle,
+            TransformationDomParticle,
+            // Ui-flavored Particles
+            UiParticle,
+            UiMultiplexerParticle,
+            // Aliases
+            ReactiveParticle: UiParticle,
+            SimpleParticle: UiParticle,
+            // utilities
+            Reference: ClientReference.newClientReference(this.pec),
+            resolver: this.resolve.bind(this),
+            log: log || (() => { }),
+            html
+        });
+    }
+    provisionLogger(fileName) {
+        return logsFactory(fileName.split('/').pop(), '#1faa00').log;
+    }
+}
+
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class Loader extends LoaderBase {
+    clone() {
+        return new Loader(this.urlMap);
+    }
+    async loadFile(path) {
+        return this.loadFileData(path, 'utf-8');
+    }
+    async loadBinaryFile(path) {
+        return this.loadFileData(path);
+    }
+    async loadFileData(path, encoding) {
+        return new Promise((resolve, reject) => {
+            fs.readFile(path, encoding, (err, data) => {
+                if (err) {
+                    reject(err);
+                }
+                else {
+                    resolve(data);
+                }
+            });
+        });
+    }
+    async requireParticle(fileName, blobUrl) {
+        // inject path to this particle into the UrlMap,
+        // allows Foo particle to invoke `importScripts(resolver('$here/othermodule.js'))`
+        this.mapParticleUrl(fileName);
+        // resolve path
+        const path = this.resolve(fileName);
+        // get source code
+        const src = await this.loadResource(blobUrl || path);
         // Note. This is not real isolation.
         const script = new vm.Script(src, { filename: fileName, displayErrors: true });
         const result = [];
@@ -30875,29 +31297,10 @@ class Loader {
             importScripts: s => null //console.log(`(skipping browser-space import for [${s}])`)
         };
         script.runInNewContext(self, { filename: fileName, displayErrors: true });
-        assert(result.length > 0 && typeof result[0] === 'function', `Error while instantiating particle implementation from ${fileName}`);
-        return this.unwrapParticle(result[0]);
-    }
-    setParticleExecutionContext(pec) {
-        this.pec = pec;
-    }
-    /**
-     * executes the defineParticle() code and returns the results which should be a class definition.
-     */
-    unwrapParticle(particleWrapper) {
-        assert(this.pec);
-        return particleWrapper({
-            Particle: Particle$1,
-            DomParticle,
-            SimpleParticle: UiParticle,
-            TransformationDomParticle,
-            MultiplexerDomParticle,
-            Reference: ClientReference.newClientReference(this.pec),
-            html
-        });
-    }
-    clone() {
-        return new Loader();
+        const wrapper = result[0];
+        assert(typeof wrapper === 'function', `Error while instantiating particle implementation from ${fileName}`);
+        // unwrap particle wrapper
+        return this.unwrapParticle(wrapper, this.provisionLogger(fileName));
     }
 }
 
@@ -33337,291 +33740,6 @@ class DevtoolsConnection {
 
 /**
  * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-/**
- * Particle that does transformation.
- */
-class UiTransformationParticle extends UiParticle {
-    getTemplate(slotName) {
-        // TODO: add support for multiple slots.
-        return this.state.template;
-    }
-    getTemplateName(slotName) {
-        // TODO: add support for multiple slots.
-        return this.state.templateName;
-    }
-    render(props, state) {
-        return state.renderModel;
-    }
-    shouldRender(props, state) {
-        return Boolean((state.template || state.templateName) && state.renderModel);
-    }
-    // Helper methods that may be reused in transformation particles to combine hosted content.
-    static propsToItems(propsValues) {
-        return propsValues ? propsValues.map(e => ({ subId: Entity.id(e), ...e })) : [];
-    }
-}
-
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-class UiMultiplexerParticle extends UiTransformationParticle {
-    async setHandles(handles) {
-        this.plexeds = [];
-        const arc = await this.constructInnerArc();
-        const listHandleName = 'list';
-        const particleHandleName = 'hostedParticle';
-        const particleHandle = handles.get(particleHandleName);
-        let hostedParticle = null;
-        let otherMappedHandles = [];
-        let otherConnections = [];
-        if (particleHandle) {
-            hostedParticle = await particleHandle['get']();
-            if (hostedParticle) {
-                ({ otherMappedHandles, otherConnections } =
-                    await this._mapParticleConnections(listHandleName, particleHandleName, hostedParticle, handles, arc));
-            }
-        }
-        this.setState({
-            arc,
-            type: handles.get(listHandleName).type,
-            hostedParticle,
-            otherMappedHandles,
-            otherConnections
-        });
-        await super.setHandles(handles);
-    }
-    async update({ list }, { arc, type, hostedParticle, otherMappedHandles, otherConnections }, oldProps, oldState) {
-        //console.warn(`[${this.spec.name}]::update`, list, arc);
-        if (!list || !arc) {
-            return;
-        }
-        if (oldProps.list === list && oldState.arc === arc) {
-            return;
-        }
-        if (list.length > 0) {
-            this.relevance = 0.1;
-        }
-        // TODO(sjmiles): needs safety for re-entrant update
-        //const slotIds = [];
-        for (const [index, item] of this.getListEntries(list)) {
-            //const id = await this.updateEntry(index, item, {arc, type, hostedParticle, otherConnections, otherMappedHandles});
-            //slotIds.push(id);
-            await this.updateEntry(index, item, { arc, type, hostedParticle, otherConnections, otherMappedHandles });
-        }
-        //console.warn('m-d-p', slotIds);
-        // clear data from unused particles/handles
-        for (let i = list.length, plexed; (plexed = this.plexeds[i]); i++) {
-            plexed.then(plexed => plexed.handle['clear']());
-        }
-    }
-    async updateEntry(index, item, { hostedParticle, arc, type, otherConnections, otherMappedHandles }) {
-        if (!hostedParticle && !item.renderParticleSpec) {
-            // If we're muxing on behalf of an item with an embedded recipe, the
-            // hosted particle should be retrievable from the item itself. Else we
-            // just skip this item.
-            return;
-        }
-        //console.log(`RenderEx:updateEntry: %c[${index}]`, 'color: #A00; font-weight: bold;');
-        // Map innerArc/slot by index. Index maps closely to rendering contexts.
-        // Rendering contexts are expensive, we want maximal coherence.
-        const plexed = await this.requirePlexed(index, item, { hostedParticle, arc, type, otherConnections, otherMappedHandles });
-        // TODO(sjmiles): work out a proper cast (and conditional), or fix upstream type
-        plexed.handle['set'](item);
-        return plexed.slotId;
-    }
-    async requirePlexed(index, item, { arc, type, hostedParticle, otherConnections, otherMappedHandles }) {
-        let promise = this.plexeds[index];
-        if (!promise) {
-            // eslint-disable-next-line no-async-promise-executor
-            promise = new Promise(async (resolve) => {
-                const handle = await this.acquireItemHandle(index, { arc, item, type });
-                const hosting = await this.resolveHosting(item, { arc, hostedParticle, otherConnections, otherMappedHandles });
-                const result = { arc, handle, hosting, slotId: null };
-                result.slotId = await this.createInnards(item, result);
-                resolve(result);
-            });
-            this.plexeds[index] = promise;
-        }
-        return await promise;
-    }
-    async resolveHosting(item, { arc, hostedParticle, otherConnections, otherMappedHandles }) {
-        return hostedParticle ?
-            { hostedParticle, otherConnections, otherMappedHandles }
-            : await this.resolveHostedParticle(item, arc);
-    }
-    async acquireItemHandle(index, { arc, item, type }) {
-        const handlePromise = arc.createHandle(type.getContainedType(), `item${index}`);
-        return await handlePromise;
-    }
-    async resolveHostedParticle(item, arc) {
-        const hostedParticle = ParticleSpec.fromLiteral(JSON.parse(item.renderParticleSpec));
-        // Re-map compatible handles and compute the connections specific
-        // to this item's render particle.
-        const listHandleName = 'list';
-        const particleHandleName = 'renderParticle';
-        const { otherConnections, otherMappedHandles } = await this._mapParticleConnections(listHandleName, particleHandleName, hostedParticle, this.handles, arc);
-        return { otherConnections, otherMappedHandles, hostedParticle };
-    }
-    async _mapParticleConnections(listHandleName, particleHandleName, hostedParticle, handles, arc) {
-        const otherMappedHandles = [];
-        const otherConnections = [];
-        let index = 2;
-        const skipConnectionNames = [listHandleName, particleHandleName];
-        for (const [connectionName, otherHandle] of handles) {
-            if (!skipConnectionNames.includes(connectionName)) {
-                // TODO(wkorman): For items with embedded recipes we may need a map
-                // (perhaps id to index) to make sure we don't map a handle into the inner
-                // arc multiple times unnecessarily.
-                // TODO(lindner): type erasure to avoid mismatch of Store vs Handle in arc.mapHandle
-                // tslint:disable-next-line: no-any
-                const otherHandleStore = otherHandle.storage;
-                otherMappedHandles.push(`use '${await arc.mapHandle(otherHandleStore)}' as v${index}`);
-                //
-                const hostedOtherConnection = hostedParticle.handleConnections.find(conn => conn.isCompatibleType(otherHandle.type));
-                if (hostedOtherConnection) {
-                    otherConnections.push(`${hostedOtherConnection.name} = v${index++}`);
-                    // TODO(wkorman): For items with embedded recipes where we may have a
-                    // different particle rendering each item, we need to track
-                    // |connByHostedConn| keyed on the particle type.
-                    //this._connByHostedConn.set(hostedOtherConnection.name, connectionName);
-                }
-            }
-        }
-        return { otherMappedHandles, otherConnections };
-    }
-    async createInnards(item, { arc, handle, hosting: { hostedParticle, otherMappedHandles, otherConnections } }) {
-        const hostedSlotName = [...hostedParticle.slotConnections.keys()][0];
-        const slotName = [...this.spec.slotConnections.values()][0].name;
-        const slotId = await arc.createSlot(this, slotName, handle._id);
-        if (slotId) {
-            try {
-                const recipe = this.constructInnerRecipe(hostedParticle, item, handle, { name: hostedSlotName, id: slotId }, { connections: otherConnections, handles: otherMappedHandles });
-                await arc.loadRecipe(recipe);
-            }
-            catch (e) {
-                console.warn(e);
-            }
-        }
-        return slotId;
-    }
-    // Called with the list of items and by default returns the direct result of
-    // `Array.entries()`. Subclasses can override this method to alter the item
-    // order or otherwise permute the items as desired before their slots are
-    // created and contents are rendered.
-    getListEntries(list) {
-        return list.entries();
-    }
-}
-
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-const html$1 = (strings, ...values) => (strings[0] + values.map((v, i) => v + strings[i + 1]).join('')).trim();
-class PlatformLoaderBase extends Loader {
-    constructor(urlMap) {
-        super();
-        this._urlMap = urlMap || {};
-    }
-    async loadResource(name) {
-        const path = this.resolve(name);
-        return super.loadResource(path);
-    }
-    resolve(path) {
-        let url = null;
-        // TODO(sjmiles): inefficient!
-        const macro = Object.keys(this._urlMap).sort((a, b) => b.length - a.length).find(k => path.slice(0, k.length) === k);
-        if (macro) {
-            const config = this._urlMap[macro];
-            if (typeof config === 'string') {
-                url = config + path.slice(macro.length);
-            }
-            else {
-                url = config.root
-                    + (path.match(config.buildOutputRegex) ? config.buildDir : '')
-                    + (config.path || '')
-                    + path.slice(macro.length);
-            }
-        }
-        url = this.normalizeDots(url || path);
-        return url;
-    }
-    mapParticleUrl(path) {
-        if (!path) {
-            return undefined;
-        }
-        const resolved = this.resolve(path);
-        const parts = resolved.split('/');
-        const suffix = parts.pop();
-        const folder = parts.join('/');
-        if (!suffix.endsWith('.wasm')) {
-            const name = suffix.split('.').shift();
-            this._urlMap[name] = folder;
-        }
-        this._urlMap['$here'] = folder;
-        this._urlMap['$module'] = folder;
-    }
-    unwrapParticle(particleWrapper, log) {
-        return particleWrapper({
-            // Particle base
-            Particle: Particle$1,
-            // Dom-flavored Particles (deprecated?)
-            DomParticle,
-            MultiplexerDomParticle,
-            TransformationDomParticle,
-            // Ui-flavored Particles
-            UiParticle,
-            UiMultiplexerParticle,
-            // Aliasing
-            ReactiveParticle: UiParticle,
-            SimpleParticle: UiParticle,
-            // utilities
-            resolver: this.resolve.bind(this),
-            log: log || (() => { }),
-            html: html$1
-        });
-    }
-}
-
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-class PlatformLoader extends PlatformLoaderBase {
-    async requireParticle(fileName) {
-        const path = this.resolve(fileName);
-        // inject path to this particle into the UrlMap,
-        // allows "foo.js" particle to invoke `importScripts(resolver('foo/othermodule.js'))`
-        this.mapParticleUrl(path);
-        return super.requireParticle(path);
-    }
-}
-
-/**
- * @license
  * Copyright 2019 Google LLC.
  * This code may only be used under the BSD style license found at
  * http://polymer.github.io/LICENSE.txt
@@ -34026,57 +34144,6 @@ function init() {
     };
 }
 init();
-
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-// TODO(wkorman): Consider outputting preamble in the specified color via ANSI escape codes.
-const logFactory = (preamble, color, log = 'log') => {
-    return console[log].bind(console, `(${preamble})`);
-};
-
-/**
- * @license
- * Copyright 2019 Google LLC.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-const getGlobal = () => {
-    if (typeof self !== 'undefined') {
-        return self;
-    }
-    if (typeof window !== 'undefined') {
-        return window;
-    }
-    if (typeof global !== 'undefined') {
-        return global;
-    }
-    throw new Error('unable to locate global object');
-};
-const getLogLevel = () => {
-    // acquire global scope
-    const g = getGlobal();
-    // use specified logLevel otherwise 0
-    return ('logLevel' in g) ? g['logLevel'] : 0;
-};
-console.log(`log-factory: binding logFactory to level [${getLogLevel()}]`);
-const stubFactory = () => () => { };
-const logsFactory = (preamble, color = '') => {
-    const level = getLogLevel();
-    const logs = {};
-    ['log', 'warn', 'error', 'group', 'groupCollapsed', 'groupEnd'].
-        forEach(log => logs[log] = (level > 0 ? logFactory(preamble, color, log) : stubFactory));
-    return logs;
-};
 
 /**
  * @license
@@ -36648,7 +36715,7 @@ class Planner {
         let relevance = undefined;
         let description = null;
         if (this._shouldSpeculate(plan)) {
-            log(`speculatively executing [${plan.name}]`);
+            //log(`speculatively executing [${plan.name}]`);
             const result = await this.speculator.speculate(this.arc, plan, hash);
             if (!result) {
                 return undefined;
@@ -36656,7 +36723,7 @@ class Planner {
             const speculativeArc = result.speculativeArc;
             relevance = result.relevance;
             description = await Description.create(speculativeArc, relevance);
-            log(`[${plan.name}] => [${description.getRecipeSuggestion()}]`);
+            //log(`[${plan.name}] => [${description.getRecipeSuggestion()}]`);
         }
         else {
             const speculativeArc = await arc.cloneForSpeculativeExecution();
@@ -38759,7 +38826,7 @@ class DevtoolsArcInspector {
  */
 
 const log$1 = console.log.bind(console);
-const warn = console.warn.bind(console);
+const warn$1 = console.warn.bind(console);
 const env = {};
 
 const createPathMap = root => ({
@@ -38776,7 +38843,7 @@ const createPathMap = root => ({
 
 const init$1 = (root, urls) => {
   const map = Object.assign(Utils.createPathMap(root), urls);
-  env.loader = new PlatformLoader(map);
+  env.loader = new Loader(map);
   env.pecFactory = pecIndustry(env.loader);
   return env;
 };
@@ -38820,7 +38887,7 @@ const resolve = async (arc, recipe) =>{
       //  normalize(plan);
       //}
       if (!plan || !plan.isResolved()) {
-        warn('failed to resolve:\n', (plan || recipe).toString({showUnresolved: true}));
+        warn$1('failed to resolve:\n', (plan || recipe).toString({showUnresolved: true}));
         //log(arc.context, arc, arc.context.storeTags);
         plan = null;
       }
@@ -38834,7 +38901,7 @@ const normalize = async (recipe) =>{
   if (isNormalized(recipe) || recipe.normalize({errors})) {
     return true;
   }
-  warn('failed to normalize:\n', errors, recipe.toString());
+  warn$1('failed to normalize:\n', errors, recipe.toString());
   //warn('failed to normalize:\n', recipe.toString());
   return false;
 };
@@ -38928,7 +38995,7 @@ class SyntheticStores {
  * http://polymer.github.io/PATENTS.txt
  */
 
-const {log: log$2, warn: warn$1, error: error$1} = logsFactory('ArcHost', '#cade57');
+const {log: log$2, warn: warn$2, error: error$1} = logsFactory('ArcHost', '#cade57');
 
 class ArcHost {
   constructor(context, storage, composer, portFactories) {
@@ -39122,7 +39189,7 @@ const Const = {
  * http://polymer.github.io/PATENTS.txt
  */
 
-const {log: log$3, warn: warn$2} = logsFactory('UserArcs', '#4f0433');
+const {log: log$3, warn: warn$3} = logsFactory('UserArcs', '#4f0433');
 
 class UserArcs {
   constructor(storage, userid) {
@@ -39179,7 +39246,7 @@ class UserArcs {
       log$3(`marshalled arcsStore for [${userid}]`);
       return store;
     }
-    warn$2(`failed to marshal arcsStore for [${userid}][${storage}]`);
+    warn$3(`failed to marshal arcsStore for [${userid}][${storage}]`);
   }
   async foundArcsStore(store) {
     log$3('foundArcsStore', Boolean(store));
@@ -39201,7 +39268,7 @@ class UserArcs {
  * http://polymer.github.io/PATENTS.txt
  */
 
-const {log: log$4, warn: warn$3, error: error$2} = logsFactory('SingleUserContext', '#f2ce14');
+const {log: log$4, warn: warn$4, error: error$2} = logsFactory('SingleUserContext', '#f2ce14');
 
 // SoloContext (?)
 const SingleUserContext = class {
@@ -39266,7 +39333,7 @@ const SingleUserContext = class {
       if (store) {
         await this.observeStore(store, key, info => this.onArcStoreChanged(key, info));
       } else {
-        warn$3(`failed to get SyntheticStore for arc at [${this.storage}, ${key}]\nhttps://github.com/PolymerLabs/arcs/issues/2304`);
+        warn$4(`failed to get SyntheticStore for arc at [${this.storage}, ${key}]\nhttps://github.com/PolymerLabs/arcs/issues/2304`);
       }
     //}
   }
@@ -39491,7 +39558,7 @@ const SingleUserContext = class {
  * http://polymer.github.io/PATENTS.txt
  */
 
-const {log: log$5, warn: warn$4} = logsFactory('UserContext', '#4f0433');
+const {log: log$5, warn: warn$5} = logsFactory('UserContext', '#4f0433');
 
 class UserContext {
   constructor() {
@@ -40439,7 +40506,7 @@ class DevtoolsPlannerInspector {
  * http://polymer.github.io/PATENTS.txt
  */
 
-const {log: log$7, warn: warn$5} = logsFactory('UserPlanner', '#4f0433');
+const {log: log$7, warn: warn$6} = logsFactory('UserPlanner', '#4f0433');
 
 class UserPlanner {
   constructor(userid, hostFactory, options) {
@@ -40459,7 +40526,7 @@ class UserPlanner {
   }
   async addArc(key) {
     if (this.runners[key]) {
-      warn$5(`marshalArc: already marshaled [${key}]`);
+      warn$6(`marshalArc: already marshaled [${key}]`);
       return;
     }
     this.runners[key] = true;
@@ -40471,7 +40538,7 @@ class UserPlanner {
       const planificator = await this.createPlanificator(this.userid, key, arc);
       this.runners[key] = {host, arc, planificator};
     } catch (x) {
-      warn$5(`marshalArc [${key}] failed: `, x);
+      warn$6(`marshalArc [${key}] failed: `, x);
       //
     }
   }

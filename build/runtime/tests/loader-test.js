@@ -8,7 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { assert } from '../../platform/chai-web.js';
-import { Loader } from '../loader.js';
+import { Loader } from '../../platform/loader.js';
 import { Manifest } from '../manifest.js';
 import { Particle } from '../particle.js';
 describe('loader', () => {

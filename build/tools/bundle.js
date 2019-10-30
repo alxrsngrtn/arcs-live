@@ -10,7 +10,7 @@
 import fs from 'fs';
 import path from 'path';
 import JSZip from 'jszip';
-import { Loader } from '../runtime/loader.js';
+import { Loader } from '../platform/loader.js';
 import { Manifest } from '../runtime/manifest.js';
 /**
  * @param entryPoints array of paths to Arc manifests to bundle, e.g. ['./feature/awesome.recipes']

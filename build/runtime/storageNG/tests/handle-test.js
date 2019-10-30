@@ -8,6 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { assert } from '../../../platform/chai-web.js';
+import { Loader } from '../../../platform/loader.js';
 import { CollectionOpTypes } from '../../crdt/crdt-collection.js';
 import { SingletonOpTypes } from '../../crdt/crdt-singleton.js';
 import { IdGenerator } from '../../id.js';
@@ -16,7 +17,6 @@ import { handleNGFor } from '../handle.js';
 import { StorageProxy } from '../storage-proxy.js';
 import { ProxyMessageType } from '../store.js';
 import { MockParticle, MockStore } from '../testing/test-storage.js';
-import { Loader } from '../../loader.js';
 import { Manifest } from '../../manifest.js';
 import { Entity } from '../../entity.js';
 async function getCollectionHandle(primitiveType, particle) {

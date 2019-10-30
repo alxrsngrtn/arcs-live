@@ -1,5 +1,95 @@
-commit 95a772b186478ec4e5eaf2767ea2f08ae832d8b8
-Author: Jason Feinstein <jwf@google.com>
-Date:   Wed Oct 30 15:32:49 2019 -0700
+commit e94ea120d5920cf628382556c7ad611612f459b8
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Wed Oct 30 16:00:08 2019 -0700
 
-    Create Kotlin Codestyle file for IntelliJ/Android Studio (#3940)
+    Loader refactor (#3845)
+    
+    * loader refactors
+    
+    * wip
+    
+    * make tslint happy
+    
+    * gitignore docs/
+    
+    * more loader work
+    
+    * rename test spec
+    
+    * support 'volatile' storage type
+    
+    * merge @piotrswigon's loader config patch
+    
+    * move `loader.ts` to `platform/`, change many paths
+    
+    * remove class name weirdness
+    
+    * plumb static resource support into loader
+    
+    * wip
+    
+    * windows bazel hax
+    
+    * BlobUrls not working for .wasm data
+    
+    * turn Tutorial/Kotlin back on in canonical.manifest
+    
+    * fix loader path
+    
+    * remove severity check
+    
+    * more loader factoring
+    
+    * use modern loader import
+    
+    * fix lint errors
+    
+    * revert build scripts
+    
+    * cleanup and slight refactoring
+    
+    * remove custom loader
+    
+    * clean up
+    
+    * cleanup
+    
+    * more lint fixes
+    
+    * have travis do bazel build *before* tests, enable wasm test
+    
+    * blind attempt to fix test
+    
+    * avoid improper schema warning (1/1e4)
+    
+    * reduce logging in Travis until I can determine why logLevel isn't working
+    
+    * remove out-of-scope changes to streamline PR
+    
+    * remove experimental code
+    
+    * undo unnecessary changes
+    
+    * revert travis.yml
+    
+    * revert travis.yml
+    
+    * revert web-shell
+    
+    * revert Events.arcs
+    
+    * fix explanation of mapParticleUrl usage
+    
+    * undo changes to .travis.yml
+    
+    * undo changes to .travis.yml
+    
+    * repairing merge damage
+    
+    * provide no-op impl of provisionObjectUrl, so all loader's have this method
+    
+    * do not try to process falsey fileName
+    
+    * remove loader feature test, test for truthy spec.implFile
+    
+    * fix conditional

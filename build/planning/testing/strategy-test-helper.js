@@ -9,7 +9,7 @@
  */
 import { assert } from '../../platform/chai-web.js';
 import { Arc } from '../../runtime/arc.js';
-import { Loader } from '../../runtime/loader.js';
+import { Loader } from '../../platform/loader.js';
 import { FakeSlotComposer } from '../../runtime/testing/fake-slot-composer.js';
 import { RecipeIndex } from '../recipe-index.js';
 import { ArcId } from '../../runtime/id.js';

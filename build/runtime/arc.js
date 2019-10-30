@@ -389,15 +389,12 @@ ${this.activeRecipe.toString()}`;
         return info;
     }
     async _provisionSpecUrl(spec) {
-        if (!spec.implBlobUrl) {
-            // if supported, construct spec.implBlobUrl for spec.implFile
-            if (this.loader && this.loader['provisionObjectUrl']) {
-                const url = await this.loader['provisionObjectUrl'](spec.implFile);
+        // if supported, construct spec.implBlobUrl for spec.implFile
+        if (spec.implFile && !spec.implBlobUrl) {
+            if (this.loader) {
+                const url = await this.loader.provisionObjectUrl(spec.implFile);
                 if (url) {
                     spec.setImplBlobUrl(url);
-                }
-                else {
-                    throw new Error(`Expected url for ${spec.implFile} but got ${url}`);
                 }
             }
         }

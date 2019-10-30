@@ -9,7 +9,7 @@
  */
 import { Handle } from './handle.js';
 import { Id, IdGenerator } from './id.js';
-import { Loader } from './loader.js';
+import { Loader } from '../platform/loader.js';
 import { Particle, Capabilities } from './particle.js';
 import { StorageProxy } from './storage-proxy.js';
 import { StorageProxy as StorageProxyNG } from './storageNG/storage-proxy.js';

@@ -10,7 +10,7 @@
 import { assert } from '../../../platform/chai-web.js';
 import { Recipe } from '../../../runtime/recipe/recipe.js';
 import { Search } from '../../../runtime/recipe/search.js';
-import { Loader } from '../../../runtime/loader.js';
+import { Loader } from '../../../platform/loader.js';
 import { Manifest } from '../../../runtime/manifest.js';
 import { Suggestion } from '../../plan/suggestion.js';
 describe('suggestion', () => {

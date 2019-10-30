@@ -9,7 +9,7 @@
  */
 import { Id, IdGenerator } from './id.js';
 import { InterfaceInfo } from './interface-info.js';
-import { Loader } from './loader.js';
+import { Loader } from '../platform/loader.js';
 import { ManifestMeta } from './manifest-meta.js';
 import * as AstNode from './manifest-ast-nodes.js';
 import { ParticleSpec } from './particle-spec.js';

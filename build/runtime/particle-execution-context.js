@@ -308,7 +308,7 @@ export class ParticleExecutionContext {
         assert(spec.name.length > 0);
         let container = this.wasmContainers[spec.implFile];
         if (!container) {
-            const buffer = await this.loader.loadWasmBinary(spec);
+            const buffer = await this.loader.loadBinaryResource(spec.implFile);
             if (!buffer || buffer.byteLength === 0) {
                 throw new Error(`Failed to load wasm binary '${spec.implFile}'`);
             }

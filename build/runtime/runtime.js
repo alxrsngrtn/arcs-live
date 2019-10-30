@@ -13,7 +13,7 @@ import { Manifest } from './manifest.js';
 import { Arc } from './arc.js';
 import { RuntimeCacheService } from './runtime-cache.js';
 import { IdGenerator } from './id.js';
-import { Loader } from './loader.js';
+import { Loader } from '../platform/loader.js';
 import { FakeSlotComposer } from './testing/fake-slot-composer.js';
 import { VolatileMemory } from './storageNG/drivers/volatile.js';
 // To start with, this class will simply hide the runtime classes that are

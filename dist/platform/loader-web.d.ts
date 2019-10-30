@@ -7,14 +7,13 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { PlatformLoaderBase } from './loader-platform.js';
-import { ParticleSpec } from '../runtime/particle-spec.js';
-export declare class PlatformLoader extends PlatformLoaderBase {
+import { LoaderBase } from './loader-base.js';
+export declare class Loader extends LoaderBase {
+    clone(): Loader;
     flushCaches(): void;
-    loadResource(url: string): Promise<string>;
+    loadFile(path: string): Promise<string>;
+    loadBinaryFile(path: string): Promise<ArrayBuffer>;
     provisionObjectUrl(fileName: string): Promise<string>;
-    loadParticleClass(spec: ParticleSpec): Promise<any>;
-    requireParticle(unresolvedPath: string, blobUrl?: any): Promise<any>;
-    loadWrappedParticle(url: string, path?: string): any;
-    provisionLogger(fileName: string): Function;
+    requireParticle(unresolvedPath: string, blobUrl: string): Promise<any>;
+    private loadWrappedParticle;
 }

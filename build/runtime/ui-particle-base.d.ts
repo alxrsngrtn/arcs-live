@@ -18,7 +18,6 @@ export declare type RenderModel = object;
  * Particle that can render and process events.
  */
 export declare class UiParticleBase extends Particle {
-    private currentSlotName;
     /**
      * Override if necessary, to modify superclass config.
      */

@@ -7,49 +7,47 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { PlatformLoaderBase } from './loader-platform.js';
 import { logsFactory } from './logs-factory.js';
-const { log, warn, error } = logsFactory('loader-web', 'green');
-export class PlatformLoader extends PlatformLoaderBase {
+import { LoaderBase } from './loader-base.js';
+const { warn } = logsFactory('loader-web', 'green');
+export class Loader extends LoaderBase {
+    clone() {
+        return new Loader(this.urlMap);
+    }
     flushCaches() {
         // punt object urls?
     }
-    async loadResource(url) {
-        // subclass impl differentiates paths and URLs,
-        // for browser env we can feed both kinds into _loadURL
-        return super._loadURL(this.resolve(url));
+    async loadFile(path) {
+        return this.loadUrl(path);
+    }
+    async loadBinaryFile(path) {
+        return this.loadBinaryUrl(path);
     }
     async provisionObjectUrl(fileName) {
-        const raw = await this.loadResource(fileName);
-        const path = this.resolve(fileName);
-        const code = `${raw}\n//# sourceURL=${path}`;
-        return URL.createObjectURL(new Blob([code], { type: 'application/javascript' }));
-    }
-    // Below here invoked from inside Worker
-    async loadParticleClass(spec) {
-        const clazz = await this.requireParticle(spec.implFile, spec.implBlobUrl);
-        if (clazz) {
-            clazz.spec = spec;
+        // TODO(sjmiles): BLOB Urls don't work for binary content (.wasm), mime-type?
+        if (!fileName || fileName.endsWith('.wasm')) {
+            return null;
         }
         else {
-            warn(`[${spec.implFile}]::defineParticle() returned no particle.`);
+            const raw = await this.loadResource(fileName);
+            const path = this.resolve(fileName);
+            const code = `${raw}\n//# sourceURL=${path}`;
+            return URL.createObjectURL(new Blob([code], { type: 'application/javascript' }));
         }
-        return clazz;
     }
     async requireParticle(unresolvedPath, blobUrl) {
         // inject path to this particle into the UrlMap,
-        // allows "foo.js" particle to invoke "importScripts(resolver('foo/othermodule.js'))"
+        // allows Foo particle to invoke `importScripts(resolver('$here/othermodule.js'))`
         this.mapParticleUrl(unresolvedPath);
         // resolve path
         const resolvedPath = this.resolve(unresolvedPath);
-        // resolved target
+        // resolve target
         const url = blobUrl || resolvedPath;
         // load wrapped particle
         const wrapper = this.loadWrappedParticle(url, resolvedPath);
         // unwrap particle wrapper, if we have one
         if (wrapper) {
-            const logger = this.provisionLogger(unresolvedPath);
-            return this.unwrapParticle(wrapper, logger);
+            return this.unwrapParticle(wrapper, this.provisionLogger(unresolvedPath));
         }
     }
     loadWrappedParticle(url, path) {
@@ -58,7 +56,7 @@ export class PlatformLoader extends PlatformLoaderBase {
         // of self.defineParticle because we share this
         // scope with other particles
         // TODO fix usage of quoted property
-        self['defineParticle'] = (particleWrapper) => {
+        self['defineParticle'] = particleWrapper => {
             if (result) {
                 warn('multiple particles not supported, last particle wins');
             }
@@ -78,9 +76,6 @@ export class PlatformLoader extends PlatformLoaderBase {
             delete self['defineParticle'];
         }
         return result;
-    }
-    provisionLogger(fileName) {
-        return logsFactory(fileName.split('/').pop(), '#1faa00').log;
     }
 }
 //# sourceMappingURL=loader-web.js.map

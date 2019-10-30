@@ -12,7 +12,7 @@ import { StubLoader } from '../runtime/testing/stub-loader.js';
 import { Manifest } from '../runtime/manifest.js';
 import { Arc } from '../runtime/arc.js';
 import { ArcId } from '../runtime/id.js';
-import { Loader } from '../runtime/loader.js';
+import { Loader } from '../platform/loader.js';
 import { FakeSlotComposer } from '../runtime/testing/fake-slot-composer.js';
 import { FakePecFactory } from '../runtime/fake-pec-factory.js';
 import * as util from '../runtime/testing/test-util.js';
@@ -25,9 +25,9 @@ class StubWasmLoader extends Loader {
     resolve(path) {
         return (path[0] === '$') ? `RESOLVED(${path})` : path;
     }
-    async loadWasmBinary(spec) {
+    async loadBinaryResource(path) {
         const file = this.reloaded ? 'wasm-particle-new.wasm' : 'wasm-particle-old.wasm';
-        return super.loadWasmBinary({ implFile: `src/tests/source/${file}` });
+        return super.loadBinaryResource(`src/tests/source/${file}`);
     }
     clone() {
         return this;
