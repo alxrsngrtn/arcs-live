@@ -16,9 +16,9 @@ declare class FlagDefaults {
 export declare class Flags extends FlagDefaults {
     /** Resets flags. To be called in test teardown methods. */
     static reset(): void;
-    static withPreSlandlesSyntax<T>(f: () => Promise<T>): () => Promise<T>;
-    static withPostSlandlesSyntax<T>(f: () => Promise<T>): () => Promise<T>;
-    static withNewStorageStack<T>(f: () => Promise<T>): () => Promise<T>;
-    static withFlags<T>(args: Partial<typeof FlagDefaults>, f: () => Promise<T>): () => Promise<T>;
+    static withPreSlandlesSyntax<T, Args extends any[]>(f: (...args: Args) => Promise<T>): (...args: Args) => Promise<T>;
+    static withPostSlandlesSyntax<T, Args extends any[]>(f: (...args: Args) => Promise<T>): (...args: Args) => Promise<T>;
+    static withNewStorageStack<T, Args extends any[]>(f: (...args: Args) => Promise<T>): (...args: Args) => Promise<T>;
+    static withFlags<T, Args extends any[]>(flagsSettings: Partial<typeof FlagDefaults>, f: (...args: Args) => Promise<T>): (...args: Args) => Promise<T>;
 }
 export {};

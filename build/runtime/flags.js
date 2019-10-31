@@ -22,22 +22,26 @@ export class Flags extends FlagDefaults {
     static reset() {
         Object.assign(Flags, FlagDefaults);
     }
+    // tslint:disable-next-line: no-any
     static withPreSlandlesSyntax(f) {
         return Flags.withFlags({ parseBothSyntaxes: false, defaultToPreSlandlesSyntax: true }, f);
     }
+    // tslint:disable-next-line: no-any
     static withPostSlandlesSyntax(f) {
         return Flags.withFlags({ parseBothSyntaxes: false, defaultToPreSlandlesSyntax: false }, f);
     }
+    // tslint:disable-next-line: no-any
     static withNewStorageStack(f) {
         return Flags.withFlags({ useNewStorageStack: true }, f);
     }
     // For testing with a different set of flags to the default.
-    static withFlags(args, f) {
-        return async () => {
-            Object.assign(Flags, args);
+    // tslint:disable-next-line: no-any
+    static withFlags(flagsSettings, f) {
+        return async (...args) => {
+            Object.assign(Flags, flagsSettings);
             let res;
             try {
-                res = await f();
+                res = await f(...args);
             }
             finally {
                 Flags.reset();

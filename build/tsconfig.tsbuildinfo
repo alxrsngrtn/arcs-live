@@ -170,8 +170,8 @@
         "signature": "3343b37a02fb1d5d29e95c4cf938a395120f1a62789b455bfacba67c4b7154c7"
       },
       "../src/runtime/flags.ts": {
-        "version": "27252752697c253f1da3753824c9af6de4b6c21135b0c6e9e33eeebe598cb51d",
-        "signature": "967755b2e36b81cd6719dfb2aef71140c3d592f73c109b239b460f50d96618ef"
+        "version": "1eaec7d23ed41e0feeeb144eee8e0f02befdb5639f9a4b4b4a4ed3aa3295e495",
+        "signature": "cde3a8142aea5554c820343332e9427349d3176c57670a169ded82164ea45a2c"
       },
       "../src/runtime/recipe/connection-constraint.ts": {
         "version": "d12b30c7bf2e9e3ae287d894ebc07256461733e331350454b08e14fc44ecdafe",
@@ -598,7 +598,7 @@
         "signature": "8ef9453dcbfa29ffef1fd28d215625bdb2730644a74ff977494d36c9c2f4f86f"
       },
       "../src/runtime/manifest.ts": {
-        "version": "c74556e4324fbe812bef22d1203f508896325ca1f25c590b7bde574c27a535b4",
+        "version": "7b0a09122ead06ec152a3e0d2a536e52cf42524222876679f1501821bb4a15f7",
         "signature": "7b1417edf9d8cf1c90c0ab22f8974af8e131089a17120ebee4625b754852211a"
       },
       "../src/platform/atob-web.ts": {
@@ -2415,6 +2415,10 @@
       "../src/runtime/tests/arc-test.ts": {
         "version": "b0b5536b2c0e14a74f01d803335e6be3e4c9eca597e6cc0170f7c2b13b0118db",
         "signature": "600636836c17982e77369e742e2b185b3a695f0407d06b57f41cbf45b0a11d8b"
+      },
+      "../src/runtime/tests/arcfmt-test.ts": {
+        "version": "70c1aec8d664f11f0e36495dd674f1f10136f6ca595e17c062a923e65266c47b",
+        "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "../src/runtime/tests/bimap-test.ts": {
         "version": "5962d247329ac2691e7b8af527fafc460efbf9fea55ae68f130cda3cfd5805ba",
@@ -7711,6 +7715,13 @@
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.2/util.d.ts"
       ],
+      "../src/runtime/tests/arcfmt-test.ts": [
+        "../src/runtime/flags.ts",
+        "../src/runtime/manifest.ts",
+        "../src/platform/chai-web.d.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
       "../src/runtime/tests/bimap-test.ts": [
         "../src/platform/chai-web.d.ts",
         "../src/runtime/bimap.ts",
@@ -12475,6 +12486,7 @@
       "../src/runtime/tests/akms-test.ts",
       "../src/runtime/tests/api-channel-test.ts",
       "../src/runtime/tests/arc-test.ts",
+      "../src/runtime/tests/arcfmt-test.ts",
       "../src/runtime/tests/bimap-test.ts",
       "../src/runtime/tests/bytes-test.ts",
       "../src/runtime/tests/data-layer-test.ts",

@@ -4501,22 +4501,26 @@ class Flags extends FlagDefaults {
     static reset() {
         Object.assign(Flags, FlagDefaults);
     }
+    // tslint:disable-next-line: no-any
     static withPreSlandlesSyntax(f) {
         return Flags.withFlags({ parseBothSyntaxes: false, defaultToPreSlandlesSyntax: true }, f);
     }
+    // tslint:disable-next-line: no-any
     static withPostSlandlesSyntax(f) {
         return Flags.withFlags({ parseBothSyntaxes: false, defaultToPreSlandlesSyntax: false }, f);
     }
+    // tslint:disable-next-line: no-any
     static withNewStorageStack(f) {
         return Flags.withFlags({ useNewStorageStack: true }, f);
     }
     // For testing with a different set of flags to the default.
-    static withFlags(args, f) {
-        return async () => {
-            Object.assign(Flags, args);
+    // tslint:disable-next-line: no-any
+    static withFlags(flagsSettings, f) {
+        return async (...args) => {
+            Object.assign(Flags, flagsSettings);
             let res;
             try {
-                res = await f();
+                res = await f(...args);
             }
             finally {
                 Flags.reset();
@@ -24994,12 +24998,12 @@ ${e.message}
             // when constructing manifest stores.
             await processItems('meta', meta => manifest.applyMeta(meta.items));
             // similarly, resources may be referenced from other parts of the manifest.
-            await processItems('resource', item => this._processResource(manifest, item));
-            await processItems('schema', item => this._processSchema(manifest, item));
-            await processItems('interface', item => this._processInterface(manifest, item));
-            await processItems('particle', item => this._processParticle(manifest, item, loader));
-            await processItems('store', item => this._processStore(manifest, item, loader));
-            await processItems('recipe', item => this._processRecipe(manifest, item));
+            await processItems('resource', item => Manifest._processResource(manifest, item));
+            await processItems('schema', item => Manifest._processSchema(manifest, item));
+            await processItems('interface', item => Manifest._processInterface(manifest, item));
+            await processItems('particle', item => Manifest._processParticle(manifest, item, loader));
+            await processItems('store', item => Manifest._processStore(manifest, item, loader));
+            await processItems('recipe', item => Manifest._processRecipe(manifest, item));
         }
         catch (e) {
             dumpErrors(manifest);
@@ -25242,7 +25246,7 @@ ${e.message}
         if (recipeItem.verbs) {
             recipe.verbs = recipeItem.verbs;
         }
-        this._buildRecipe(manifest, recipe, recipeItem.items);
+        Manifest._buildRecipe(manifest, recipe, recipeItem.items);
     }
     static _buildRecipe(manifest, recipe, recipeItems) {
         const items = {
@@ -25580,7 +25584,7 @@ ${e.message}
         if (items.require) {
             for (const item of items.require) {
                 const requireSection = recipe.newRequireSection();
-                this._buildRecipe(manifest, requireSection, item.items);
+                Manifest._buildRecipe(manifest, requireSection, item.items);
             }
         }
     }
