@@ -1,95 +1,23 @@
-commit e94ea120d5920cf628382556c7ad611612f459b8
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Wed Oct 30 16:00:08 2019 -0700
+commit 8c1ffcaf67af4eeabd88b64f9590213a130226b1
+Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
+Date:   Thu Oct 31 12:35:33 2019 +1100
 
-    Loader refactor (#3845)
+    Add --incompatible_depset_is_not_iterable=false flag to javaharness .bazelproject file (#3943)
     
-    * loader refactors
+    This fixes an error when you try to sync in Android Studio.
     
-    * wip
-    
-    * make tslint happy
-    
-    * gitignore docs/
-    
-    * more loader work
-    
-    * rename test spec
-    
-    * support 'volatile' storage type
-    
-    * merge @piotrswigon's loader config patch
-    
-    * move `loader.ts` to `platform/`, change many paths
-    
-    * remove class name weirdness
-    
-    * plumb static resource support into loader
-    
-    * wip
-    
-    * windows bazel hax
-    
-    * BlobUrls not working for .wasm data
-    
-    * turn Tutorial/Kotlin back on in canonical.manifest
-    
-    * fix loader path
-    
-    * remove severity check
-    
-    * more loader factoring
-    
-    * use modern loader import
-    
-    * fix lint errors
-    
-    * revert build scripts
-    
-    * cleanup and slight refactoring
-    
-    * remove custom loader
-    
-    * clean up
-    
-    * cleanup
-    
-    * more lint fixes
-    
-    * have travis do bazel build *before* tests, enable wasm test
-    
-    * blind attempt to fix test
-    
-    * avoid improper schema warning (1/1e4)
-    
-    * reduce logging in Travis until I can determine why logLevel isn't working
-    
-    * remove out-of-scope changes to streamline PR
-    
-    * remove experimental code
-    
-    * undo unnecessary changes
-    
-    * revert travis.yml
-    
-    * revert travis.yml
-    
-    * revert web-shell
-    
-    * revert Events.arcs
-    
-    * fix explanation of mapParticleUrl usage
-    
-    * undo changes to .travis.yml
-    
-    * undo changes to .travis.yml
-    
-    * repairing merge damage
-    
-    * provide no-op impl of provisionObjectUrl, so all loader's have this method
-    
-    * do not try to process falsey fileName
-    
-    * remove loader feature test, test for truthy spec.implFile
-    
-    * fix conditional
+    ```
+    in @intellij_aspect//:intellij_info_bundled.bzl%intellij_info_aspect aspect on android_binary rule //javaharness/java/arcs/android/demo:demo:
+    Traceback (most recent call last):
+            File "/Users/csilvestrini/dev/arcs/javaharness/java/arcs/android/demo/BUILD", line 9
+                    @intellij_aspect//:intellij_info_bundled.bzl%intellij_info_aspect(...)
+            File "/private/var/tmp/_bazel_csilvestrini/7ad377ede00394dd6a9261e364bb67f4/external/intellij_aspect/intellij_info_bundled.bzl", line 54, in _aspect_impl
+                    intellij_info_aspect_impl(<3 more arguments>)
+            File "/private/var/tmp/_bazel_csilvestrini/7ad377ede00394dd6a9261e364bb67f4/external/intellij_aspect/intellij_info_impl.bzl", line 895, in intellij_info_aspect_impl
+                    collect_android_info(target, <5 more arguments>)
+            File "/private/var/tmp/_bazel_csilvestrini/7ad377ede00394dd6a9261e364bb67f4/external/intellij_aspect/intellij_info_impl.bzl", line 706, in collect_android_info
+                    get_res_artifacts(<2 more arguments>)
+            File "/private/var/tmp/_bazel_csilvestrini/7ad377ede00394dd6a9261e364bb67f4/external/intellij_aspect/intellij_info_impl.bzl", line 118, in get_res_artifacts
+                    for file in resource.files: ...
+    type 'depset' is not iterable. Use the `to_list()` method to get a list. Use --incompatible_depset_is_not_iterable=false to temporarily disable this check.
+    ```
