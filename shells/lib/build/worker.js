@@ -10243,8 +10243,7 @@ class Loader extends _loader_base_js__WEBPACK_IMPORTED_MODULE_1__["LoaderBase"] 
             importScripts(url);
         }
         catch (e) {
-            e.message = `Error loading Particle from '${path}': ${e.message}`;
-            throw e;
+            throw new Error(`Error loading Particle from '${path}': ${e.message}`);
         }
         finally {
             // clean up

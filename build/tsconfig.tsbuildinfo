@@ -498,7 +498,7 @@
         "signature": "158c1d6b17cdb4893bf3495683ee8db6906619488fe539d3fccdd3a47d3b0081"
       },
       "../src/platform/loader-web.ts": {
-        "version": "47925df854de4ee0d09680ea9f5e821d297aac5ce43f68236f07f74902900e84",
+        "version": "0fdb875dbc07efa7ec270098e74c5739662da4d27940f315ce4c4fbcae82eb85",
         "signature": "44148303dcedb930bdcb6bf137a7a45e2b58edb36b3b5e92b57c5f18d678c9af"
       },
       "../src/platform/loader.ts": {

@@ -68,8 +68,7 @@ export class Loader extends LoaderBase {
             importScripts(url);
         }
         catch (e) {
-            e.message = `Error loading Particle from '${path}': ${e.message}`;
-            throw e;
+            throw new Error(`Error loading Particle from '${path}': ${e.message}`);
         }
         finally {
             // clean up
