@@ -482,7 +482,7 @@
         "signature": "cdcb314195e0cde2edea855ec8a740b40fb45756652c0f7fac563b67fe15ae98"
       },
       "../src/runtime/ui-particle.ts": {
-        "version": "91cbd8987e06d785aa9c3163b8890371fa2b0b20a297d26a499d0184493b1af9",
+        "version": "030e1d43c020aca38f9309772d88b0dd4e90d08a48e085bb4a9da82704dfd578",
         "signature": "00ebc835f5a0ad79a982ce1be3cbb6e64ea9b97b2535916cdd1228aa45dcfd00"
       },
       "../src/runtime/ui-transformation-particle.ts": {
@@ -2525,7 +2525,7 @@
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/runtime/tests/schema-test.ts": {
-        "version": "6cb507972095449f28d7de1cc34f09b452a809978639a169263d28a418f3a1b1",
+        "version": "0277860bc3a45dd3d105e25dc44216851b94d9242882265c73514a515c8e135e",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/slot-consumer-test.ts": {

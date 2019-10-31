@@ -1,23 +1,5 @@
-commit 8c1ffcaf67af4eeabd88b64f9590213a130226b1
+commit 4a464d8e16cf66a04222f33c04cc25519568fa74
 Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Thu Oct 31 12:35:33 2019 +1100
+Date:   Thu Oct 31 14:11:40 2019 +1100
 
-    Add --incompatible_depset_is_not_iterable=false flag to javaharness .bazelproject file (#3943)
-    
-    This fixes an error when you try to sync in Android Studio.
-    
-    ```
-    in @intellij_aspect//:intellij_info_bundled.bzl%intellij_info_aspect aspect on android_binary rule //javaharness/java/arcs/android/demo:demo:
-    Traceback (most recent call last):
-            File "/Users/csilvestrini/dev/arcs/javaharness/java/arcs/android/demo/BUILD", line 9
-                    @intellij_aspect//:intellij_info_bundled.bzl%intellij_info_aspect(...)
-            File "/private/var/tmp/_bazel_csilvestrini/7ad377ede00394dd6a9261e364bb67f4/external/intellij_aspect/intellij_info_bundled.bzl", line 54, in _aspect_impl
-                    intellij_info_aspect_impl(<3 more arguments>)
-            File "/private/var/tmp/_bazel_csilvestrini/7ad377ede00394dd6a9261e364bb67f4/external/intellij_aspect/intellij_info_impl.bzl", line 895, in intellij_info_aspect_impl
-                    collect_android_info(target, <5 more arguments>)
-            File "/private/var/tmp/_bazel_csilvestrini/7ad377ede00394dd6a9261e364bb67f4/external/intellij_aspect/intellij_info_impl.bzl", line 706, in collect_android_info
-                    get_res_artifacts(<2 more arguments>)
-            File "/private/var/tmp/_bazel_csilvestrini/7ad377ede00394dd6a9261e364bb67f4/external/intellij_aspect/intellij_info_impl.bzl", line 118, in get_res_artifacts
-                    for file in resource.files: ...
-    type 'depset' is not iterable. Use the `to_list()` method to get a list. Use --incompatible_depset_is_not_iterable=false to temporarily disable this check.
-    ```
+    Fix some trailing whitespace (#3948)
