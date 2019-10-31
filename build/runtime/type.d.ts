@@ -7,9 +7,10 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+import { Dictionary } from './hot.js';
+import { EntityClass } from './entity.js';
 import { Id } from './id.js';
 import { InterfaceInfo, HandleConnection, Slot } from './interface-info.js';
-import { Schema } from './schema.js';
 import { SlotInfo } from './slot-info.js';
 import { ArcInfo } from './synthetic-types.js';
 import { TypeVariableInfo } from './type-variable-info.js';
@@ -19,6 +20,53 @@ import { CRDTCount } from './crdt/crdt-count.js';
 import { CRDTCollection } from './crdt/crdt-collection.js';
 import { CRDTSingleton } from './crdt/crdt-singleton.js';
 import { CollectionHandle, SingletonHandle } from './storageNG/handle.js';
+import { ParticleExecutionContext } from './particle-execution-context.js';
+import { Referenceable } from './crdt/crdt-collection.js';
+export declare class Schema {
+    readonly names: string[];
+    readonly fields: Dictionary<any>;
+    description: Dictionary<string>;
+    isAlias: boolean;
+    constructor(names: string[], fields: Dictionary<any>, description?: any);
+    toLiteral(): {
+        names: string[];
+        fields: {};
+        description: Dictionary<string>;
+    };
+    static fromLiteral(data?: {
+        fields: {};
+        names: any[];
+        description: {};
+    }): Schema;
+    readonly name: string;
+    static typesEqual(fieldType1: any, fieldType2: any): boolean;
+    static _typeString(type: any): string;
+    static union(schema1: Schema, schema2: Schema): Schema | null;
+    static intersect(schema1: Schema, schema2: Schema): Schema;
+    equals(otherSchema: Schema): boolean;
+    isMoreSpecificThan(otherSchema: Schema): boolean;
+    readonly type: Type;
+    entityClass(context?: ParticleExecutionContext | null): EntityClass;
+    crdtConstructor<S extends Dictionary<Referenceable>, C extends Dictionary<Referenceable>>(): {
+        new (): {
+            model: import("./crdt/crdt-entity.js").EntityInternalModel<S, C>;
+            merge(other: import("./crdt/crdt-entity.js").EntityData<S, C>): {
+                modelChange: import("./crdt/crdt.js").CRDTChange<import("./crdt/crdt-entity.js").CRDTEntityTypeRecord<S, C>>;
+                otherChange: import("./crdt/crdt.js").CRDTChange<import("./crdt/crdt-entity.js").CRDTEntityTypeRecord<S, C>>;
+            };
+            applyOperation(op: import("./crdt/crdt-entity.js").EntityOperation<S, C>): boolean;
+            getData(): import("./crdt/crdt-entity.js").EntityData<S, C>;
+            getParticleView(): {
+                singletons: S;
+                collections: { [P in keyof C]: Set<C[P]>; };
+            };
+        };
+    };
+    toInlineSchemaString(options?: {
+        hideFields?: boolean;
+    }): string;
+    toManifestString(): string;
+}
 export interface TypeLiteral extends Literal {
     tag: string;
     data?: any;
@@ -110,17 +158,17 @@ export declare class EntityType extends Type {
     toPrettyString(): string;
     crdtInstanceConstructor(): {
         new (): {
-            model: import("./crdt/crdt-entity.js").EntityInternalModel<import("./hot.js").Dictionary<import("./crdt/crdt-collection.js").Referenceable>, import("./hot.js").Dictionary<import("./crdt/crdt-collection.js").Referenceable>>;
-            merge(other: import("./crdt/crdt-entity.js").EntityData<import("./hot.js").Dictionary<import("./crdt/crdt-collection.js").Referenceable>, import("./hot.js").Dictionary<import("./crdt/crdt-collection.js").Referenceable>>): {
-                modelChange: import("./crdt/crdt.js").CRDTChange<import("./crdt/crdt-entity.js").CRDTEntityTypeRecord<import("./hot.js").Dictionary<import("./crdt/crdt-collection.js").Referenceable>, import("./hot.js").Dictionary<import("./crdt/crdt-collection.js").Referenceable>>>;
-                otherChange: import("./crdt/crdt.js").CRDTChange<import("./crdt/crdt-entity.js").CRDTEntityTypeRecord<import("./hot.js").Dictionary<import("./crdt/crdt-collection.js").Referenceable>, import("./hot.js").Dictionary<import("./crdt/crdt-collection.js").Referenceable>>>;
+            model: import("./crdt/crdt-entity.js").EntityInternalModel<Dictionary<Referenceable>, Dictionary<Referenceable>>;
+            merge(other: import("./crdt/crdt-entity.js").EntityData<Dictionary<Referenceable>, Dictionary<Referenceable>>): {
+                modelChange: import("./crdt/crdt.js").CRDTChange<import("./crdt/crdt-entity.js").CRDTEntityTypeRecord<Dictionary<Referenceable>, Dictionary<Referenceable>>>;
+                otherChange: import("./crdt/crdt.js").CRDTChange<import("./crdt/crdt-entity.js").CRDTEntityTypeRecord<Dictionary<Referenceable>, Dictionary<Referenceable>>>;
             };
-            applyOperation(op: import("./crdt/crdt-entity.js").EntityOperation<import("./hot.js").Dictionary<import("./crdt/crdt-collection.js").Referenceable>, import("./hot.js").Dictionary<import("./crdt/crdt-collection.js").Referenceable>>): boolean;
-            getData(): import("./crdt/crdt-entity.js").EntityData<import("./hot.js").Dictionary<import("./crdt/crdt-collection.js").Referenceable>, import("./hot.js").Dictionary<import("./crdt/crdt-collection.js").Referenceable>>;
+            applyOperation(op: import("./crdt/crdt-entity.js").EntityOperation<Dictionary<Referenceable>, Dictionary<Referenceable>>): boolean;
+            getData(): import("./crdt/crdt-entity.js").EntityData<Dictionary<Referenceable>, Dictionary<Referenceable>>;
             getParticleView(): {
-                singletons: import("./hot.js").Dictionary<import("./crdt/crdt-collection.js").Referenceable>;
+                singletons: Dictionary<Referenceable>;
                 collections: {
-                    [x: string]: Set<import("./crdt/crdt-collection.js").Referenceable>;
+                    [x: string]: Set<Referenceable>;
                 };
             };
         };

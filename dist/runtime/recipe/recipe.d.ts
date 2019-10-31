@@ -9,7 +9,7 @@
  */
 import { Modality } from '../modality.js';
 import { HandleConnectionSpec } from '../particle-spec.js';
-import { Type } from '../type.js';
+import { Schema, Type } from '../type.js';
 import { ConnectionConstraint, EndPoint } from './connection-constraint.js';
 import { Direction } from '../manifest-ast-nodes.js';
 import { HandleConnection } from './handle-connection.js';
@@ -20,7 +20,6 @@ import { SlotConnection } from './slot-connection.js';
 import { Slot } from './slot.js';
 import { Cloneable } from './walker.js';
 import { Dictionary } from '../hot.js';
-import { Schema } from '../schema.js';
 import { TypeVariableInfo } from '../type-variable-info.js';
 export declare type RecipeComponent = Particle | Handle | HandleConnection | Slot | SlotConnection | EndPoint;
 export declare type CloneMap = Map<RecipeComponent, RecipeComponent>;

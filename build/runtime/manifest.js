@@ -21,9 +21,8 @@ import { RecipeUtil, connectionMatchesHandleDirection } from './recipe/recipe-ut
 import { Recipe, RequireSection } from './recipe/recipe.js';
 import { Search } from './recipe/search.js';
 import { TypeChecker } from './recipe/type-checker.js';
-import { Schema } from './schema.js';
 import { StorageProviderFactory } from './storage/storage-provider-factory.js';
-import { BigCollectionType, CollectionType, EntityType, InterfaceType, ReferenceType, SlotType, Type, TypeVariable, SingletonType } from './type.js';
+import { Schema, BigCollectionType, CollectionType, EntityType, InterfaceType, ReferenceType, SlotType, Type, TypeVariable, SingletonType } from './type.js';
 import { ClaimIsTag } from './particle-claim.js';
 import { StorageStub } from './storage-stub.js';
 import { Flags } from './flags.js';

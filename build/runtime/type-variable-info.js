@@ -8,8 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { assert } from '../platform/assert-web.js';
-import { Schema } from './schema.js';
-import { EntityType, SlotType, Type, TypeVariable } from './type.js';
+import { Schema, EntityType, SlotType, Type, TypeVariable } from './type.js';
 export class TypeVariableInfo {
     constructor(name, canWriteSuperset, canReadSubset) {
         this.name = name;

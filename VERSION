@@ -1,22 +1,9 @@
-commit 5952389bf1ae3433db3348bf3acd811d44b08b44
-Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Thu Oct 31 14:34:17 2019 +1100
+commit f528e50613941c2de65fa750eb4b35b8e5055f6a
+Author: raulverag <42563960+raulverag@users.noreply.github.com>
+Date:   Thu Oct 31 14:36:06 2019 +1100
 
-    Adds `external` keyword to particle defn syntax (#3947)
+    Move Schema into type.js to break circular dependency (#3949)
     
-    * Adds `external` keyword to particle defn syntax
+    * Move Schema into type.js to break circluar dependency
     
-    This indicates that the particle is not instantiable, and does not have an impl file. Used for Android particles.
-    
-    Formerly we would say:
-    ```
-    particle Foo in 'path/to/nowhere.java'
-    ```
-    and it would magically work because it ends with .java (the file doesn't even have to exist).
-    
-    Now we can say:
-    ```
-    external particle Foo
-    ```
-    
-    * Review comments
+    * Update type.ts

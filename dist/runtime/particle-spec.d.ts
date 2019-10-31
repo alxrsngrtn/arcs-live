@@ -9,9 +9,8 @@
  */
 import { Modality } from './modality.js';
 import { Direction, ParticleClaimStatement, ParticleCheckStatement } from './manifest-ast-nodes.js';
-import { Schema } from './schema.js';
 import { TypeVariableInfo } from './type-variable-info.js';
-import { InterfaceType, Type, TypeLiteral } from './type.js';
+import { Schema, InterfaceType, Type, TypeLiteral } from './type.js';
 import { Literal } from './hot.js';
 import { Check } from './particle-check.js';
 import { ParticleClaim, Claim } from './particle-claim.js';

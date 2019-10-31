@@ -77,556 +77,6 @@ Modality.domTouch = new Modality(false, [Modality.Name.DomTouch]);
 Modality.voice = new Modality(false, [Modality.Name.Voice]);
 Modality.vr = new Modality(false, [Modality.Name.Vr]);
 
-/**
- * A base token interface for the `kind` and `location` entries. This creates
- * a TypeScript Discriminated Union for most tokens.
- */
-function preSlandlesDirectionToDirection(direction, isOptional = false) {
-    // TODO(jopra): Remove after syntax unification.
-    // Use switch for totality checking.
-    const opt = isOptional ? '?' : '';
-    switch (direction) {
-        case 'in':
-            return `reads${opt}`;
-        case 'out':
-            return `writes${opt}`;
-        case 'inout':
-            return `reads${opt} writes${opt}`;
-        case '`consume':
-            return `\`consumes${opt}`;
-        case '`provide':
-            return `\`provides${opt}`;
-        case 'host':
-            return `hosts${opt}`;
-        case 'any':
-            return `any${opt}`;
-        default:
-            // Catch nulls and unsafe values from javascript.
-            throw new Error(`Bad pre slandles direction ${direction}`);
-    }
-}
-function directionToPreSlandlesDirection(direction) {
-    // TODO(jopra): Remove after syntax unification.
-    // Use switch for totality checking.
-    switch (direction) {
-        case 'reads':
-            return 'in';
-        case 'writes':
-            return 'out';
-        case 'reads writes':
-            return 'inout';
-        case '`consumes':
-            return '`consume';
-        case '`provides':
-            return '`provide';
-        case 'hosts':
-            return 'host';
-        case 'any':
-            return 'any';
-        default:
-            // Catch nulls and unsafe values from javascript.
-            throw new Error(`Bad direction ${direction}`);
-    }
-}
-function arrowToDirection(arrow) {
-    // TODO(jopra): Remove after syntax unification.
-    // Use switch for totality checking.
-    switch (arrow) {
-        case '->':
-            return 'out';
-        case '<-':
-            return 'in';
-        case '<->':
-            return 'inout';
-        case '`consume':
-            return '`consume';
-        case '`provide':
-            return '`provide';
-        case '=':
-            return 'any';
-        default:
-            // Catch nulls and unsafe values from javascript.
-            throw new Error(`Bad arrow ${arrow}`);
-    }
-}
-function directionToArrow(dir) {
-    // TODO(jopra): Remove after syntax unification.
-    switch (dir) {
-        case 'in':
-            return '<-';
-        case 'out':
-            return '->';
-        case 'inout':
-            return '<->';
-        case 'host':
-            return '=';
-        case '`consume':
-            return '`consume';
-        case '`provide':
-            return '`provide';
-        case 'any':
-            return '=';
-        default:
-            throw new Error(`Unexpected direction ${dir}`);
-    }
-}
-
-/**
- * @license
- * Copyright 2019 Google LLC.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-/** Arcs runtime flags. */
-class FlagDefaults {
-}
-FlagDefaults.useNewStorageStack = false;
-// Enables the parsing of both pre and post slandles (unified) syntaxes.
-// Preslandles syntax is to be deprecated.
-FlagDefaults.parseBothSyntaxes = false;
-// Use pre slandles syntax for parsing and toString by default.
-// If parseBothSyntaxes is off, this will set which syntax is enabled.
-FlagDefaults.defaultToPreSlandlesSyntax = true;
-class Flags extends FlagDefaults {
-    /** Resets flags. To be called in test teardown methods. */
-    static reset() {
-        Object.assign(Flags, FlagDefaults);
-    }
-    static withPreSlandlesSyntax(f) {
-        return Flags.withFlags({ parseBothSyntaxes: false, defaultToPreSlandlesSyntax: true }, f);
-    }
-    static withPostSlandlesSyntax(f) {
-        return Flags.withFlags({ parseBothSyntaxes: false, defaultToPreSlandlesSyntax: false }, f);
-    }
-    static withNewStorageStack(f) {
-        return Flags.withFlags({ useNewStorageStack: true }, f);
-    }
-    // For testing with a different set of flags to the default.
-    static withFlags(args, f) {
-        return async () => {
-            Object.assign(Flags, args);
-            let res;
-            try {
-                res = await f();
-            }
-            finally {
-                Flags.reset();
-            }
-            return res;
-        };
-    }
-}
-/** Initialize flags to their default value */
-Flags.reset();
-
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-function _typeFromLiteral(member) {
-    return Type.fromLiteral(member);
-}
-function _typeVarOrStringFromLiteral(member) {
-    if (typeof member === 'object') {
-        return _typeFromLiteral(member);
-    }
-    return member;
-}
-function _HandleConnectionFromLiteral({ type, name, direction }) {
-    return {
-        type: type ? _typeFromLiteral(type) : undefined,
-        name: name ? _typeVarOrStringFromLiteral(name) : undefined,
-        direction: direction || 'any'
-    };
-}
-function _SlotFromLiteral({ name, direction, isRequired, isSet }) {
-    return {
-        name: name ? _typeVarOrStringFromLiteral(name) : undefined,
-        direction, isRequired, isSet
-    };
-}
-function _typeToLiteral(member) {
-    return member.toLiteral();
-}
-function _typeVarOrStringToLiteral(member) {
-    if (member instanceof TypeVariable) {
-        return member.toLiteral();
-    }
-    return member;
-}
-function _HandleConnectionToLiteral({ type, name, direction }) {
-    return {
-        type: type && _typeToLiteral(type),
-        name: name && _typeVarOrStringToLiteral(name),
-        direction
-    };
-}
-function _SlotToLiteral({ name, direction, isRequired, isSet }) {
-    return {
-        name: name && _typeVarOrStringToLiteral(name),
-        direction,
-        isRequired,
-        isSet
-    };
-}
-const handleConnectionFields = ['type', 'name', 'direction'];
-const slotFields = ['name', 'direction', 'isRequired', 'isSet'];
-class InterfaceInfo {
-    constructor(name, handleConnections, slots) {
-        assert(name);
-        assert(handleConnections !== undefined);
-        assert(slots !== undefined);
-        this.name = name;
-        this.handleConnections = handleConnections;
-        this.slots = slots;
-        this.typeVars = [];
-        for (const handleConnection of handleConnections) {
-            for (const field of handleConnectionFields) {
-                if (InterfaceInfo.isTypeVar(handleConnection[field])) {
-                    this.typeVars.push({ object: handleConnection, field });
-                }
-            }
-        }
-        for (const slot of slots) {
-            for (const field of slotFields) {
-                if (InterfaceInfo.isTypeVar(slot[field])) {
-                    this.typeVars.push({ object: slot, field });
-                }
-            }
-        }
-    }
-    toPrettyString() {
-        return 'InterfaceInfo';
-    }
-    mergeTypeVariablesByName(variableMap) {
-        this.typeVars.forEach(({ object, field }) => object[field] = object[field].mergeTypeVariablesByName(variableMap));
-    }
-    get canReadSubset() {
-        return this._cloneAndUpdate(typeVar => typeVar.canReadSubset);
-    }
-    get canWriteSuperset() {
-        return this._cloneAndUpdate(typeVar => typeVar.canWriteSuperset);
-    }
-    isMoreSpecificThan(other) {
-        if (this.handleConnections.length !== other.handleConnections.length ||
-            this.slots.length !== other.slots.length) {
-            return false;
-        }
-        // TODO: should probably confirm that handleConnections and slots actually match.
-        for (let i = 0; i < this.typeVars.length; i++) {
-            const thisTypeVar = this.typeVars[i];
-            const otherTypeVar = other.typeVars[i];
-            if (!thisTypeVar.object[thisTypeVar.field].isMoreSpecificThan(otherTypeVar.object[otherTypeVar.field])) {
-                return false;
-            }
-        }
-        return true;
-    }
-    _applyExistenceTypeTest(test) {
-        for (const typeRef of this.typeVars) {
-            if (test(typeRef.object[typeRef.field])) {
-                return true;
-            }
-        }
-        return false;
-    }
-    _handleConnectionsToManifestString() {
-        return this.handleConnections
-            .map(h => {
-            if (Flags.defaultToPreSlandlesSyntax) {
-                return `  ${h.direction || 'any'} ${h.type.toString()} ${h.name ? h.name : '*'}`;
-            }
-            else {
-                const nameStr = h.name ? `${h.name}: ` : '';
-                const direction = preSlandlesDirectionToDirection(h.direction || 'any');
-                return `  ${nameStr}${direction} ${h.type.toString()}`;
-            }
-        }).join('\n');
-    }
-    _slotsToManifestString() {
-        // TODO deal with isRequired
-        return this.slots
-            .map(slot => {
-            if (Flags.defaultToPreSlandlesSyntax) {
-                return `  ${slot.isRequired ? 'must ' : ''}${slot.direction} ${slot.isSet ? 'set of ' : ''}${slot.name || ''}`;
-            }
-            else {
-                const nameStr = slot.name ? `${slot.name}: ` : '';
-                return `  ${nameStr}${slot.direction}s${slot.isRequired ? '' : '?'} ${slot.isSet ? '[Slot]' : 'Slot'}`;
-            }
-        })
-            .join('\n');
-    }
-    // TODO: Include name as a property of the interface and normalize this to just toString()
-    toString() {
-        return `interface ${this.name}
-${this._handleConnectionsToManifestString()}
-${this._slotsToManifestString()}`;
-    }
-    static fromLiteral(data) {
-        const handleConnections = data.handleConnections.map(_HandleConnectionFromLiteral);
-        const slots = data.slots.map(_SlotFromLiteral);
-        return new InterfaceInfo(data.name, handleConnections, slots);
-    }
-    toLiteral() {
-        const handleConnections = this.handleConnections.map(_HandleConnectionToLiteral);
-        const slots = this.slots.map(_SlotToLiteral);
-        return { name: this.name, handleConnections, slots };
-    }
-    clone(variableMap) {
-        const handleConnections = this.handleConnections.map(({ name, direction, type }) => ({ name, direction, type: type ? type.clone(variableMap) : undefined }));
-        const slots = this.slots.map(({ name, direction, isRequired, isSet }) => ({ name, direction, isRequired, isSet }));
-        return new InterfaceInfo(this.name, handleConnections, slots);
-    }
-    cloneWithResolutions(variableMap) {
-        return this._cloneWithResolutions(variableMap);
-    }
-    _cloneWithResolutions(variableMap) {
-        const handleConnections = this.handleConnections.map(({ name, direction, type }) => ({ name, direction, type: type ? type._cloneWithResolutions(variableMap) : undefined }));
-        const slots = this.slots.map(({ name, direction, isRequired, isSet }) => ({ name, direction, isRequired, isSet }));
-        return new InterfaceInfo(this.name, handleConnections, slots);
-    }
-    canEnsureResolved() {
-        for (const typeVar of this.typeVars) {
-            if (!typeVar.object[typeVar.field].canEnsureResolved()) {
-                return false;
-            }
-        }
-        return true;
-    }
-    maybeEnsureResolved() {
-        for (const typeVar of this.typeVars) {
-            let variable = typeVar.object[typeVar.field];
-            variable = variable.clone(new Map());
-            if (!variable.maybeEnsureResolved())
-                return false;
-        }
-        for (const typeVar of this.typeVars) {
-            typeVar.object[typeVar.field].maybeEnsureResolved();
-        }
-        return true;
-    }
-    tryMergeTypeVariablesWith(other) {
-        // Type variable enabled slot matching will Just Work when we
-        // unify slots and handleConnections.
-        if (!this._equalItems(other.slots, this.slots, this._equalSlot)) {
-            return null;
-        }
-        if (other.handleConnections.length !== this.handleConnections.length) {
-            return null;
-        }
-        const handleConnections = new Set(this.handleConnections);
-        const otherHandleConnections = new Set(other.handleConnections);
-        const handleConnectionMap = new Map();
-        let sizeCheck = handleConnections.size;
-        while (handleConnections.size > 0) {
-            const handleConnectionMatches = [...handleConnections.values()].map(handleConnection => ({ handleConnection, match: [...otherHandleConnections.values()].filter(otherHandleConnection => this._equalHandleConnection(handleConnection, otherHandleConnection)) }));
-            for (const handleConnectionMatch of handleConnectionMatches) {
-                // no match!
-                if (handleConnectionMatch.match.length === 0) {
-                    return null;
-                }
-                if (handleConnectionMatch.match.length === 1) {
-                    handleConnectionMap.set(handleConnectionMatch.handleConnection, handleConnectionMatch.match[0]);
-                    otherHandleConnections.delete(handleConnectionMatch.match[0]);
-                    handleConnections.delete(handleConnectionMatch.handleConnection);
-                }
-            }
-            // no progress!
-            if (handleConnections.size === sizeCheck) {
-                return null;
-            }
-            sizeCheck = handleConnections.size;
-        }
-        const handleConnectionList = [];
-        for (const handleConnection of this.handleConnections) {
-            const otherHandleConnection = handleConnectionMap.get(handleConnection);
-            let resultType;
-            if (handleConnection.type.hasVariable || otherHandleConnection.type.hasVariable) {
-                resultType = TypeChecker._tryMergeTypeVariable(handleConnection.type, otherHandleConnection.type);
-                if (!resultType) {
-                    return null;
-                }
-            }
-            else {
-                resultType = handleConnection.type || otherHandleConnection.type;
-            }
-            handleConnectionList.push({ name: handleConnection.name || otherHandleConnection.name, direction: handleConnection.direction || otherHandleConnection.direction, type: resultType });
-        }
-        const slots = this.slots.map(({ name, direction, isRequired, isSet }) => ({ name, direction, isRequired, isSet }));
-        return new InterfaceInfo(this.name, handleConnectionList, slots);
-    }
-    resolvedType() {
-        return this._cloneAndUpdate(typeVar => typeVar.resolvedType());
-    }
-    equals(other) {
-        if (this.handleConnections.length !== other.handleConnections.length) {
-            return false;
-        }
-        // TODO: this isn't quite right as it doesn't deal with duplicates properly
-        if (!this._equalItems(other.handleConnections, this.handleConnections, this._equalHandleConnection)) {
-            return false;
-        }
-        if (!this._equalItems(other.slots, this.slots, this._equalSlot)) {
-            return false;
-        }
-        return true;
-    }
-    _equalHandleConnection(handleConnection, otherHandleConnection) {
-        return handleConnection.name === otherHandleConnection.name
-            && handleConnection.direction === otherHandleConnection.direction
-            && TypeChecker.compareTypes({ type: handleConnection.type }, { type: otherHandleConnection.type });
-    }
-    _equalSlot(slot, otherSlot) {
-        return slot.name === otherSlot.name && slot.direction === otherSlot.direction && slot.isRequired === otherSlot.isRequired && slot.isSet === otherSlot.isSet;
-    }
-    _equalItems(otherItems, items, compareItem) {
-        for (const otherItem of otherItems) {
-            let exists = false;
-            for (const item of items) {
-                if (compareItem(item, otherItem)) {
-                    exists = true;
-                    break;
-                }
-            }
-            if (!exists) {
-                return false;
-            }
-        }
-        return true;
-    }
-    _cloneAndUpdate(update) {
-        const copy = this.clone(new Map());
-        copy.typeVars.forEach(typeVar => InterfaceInfo._updateTypeVar(typeVar, update));
-        return copy;
-    }
-    static _updateTypeVar(typeVar, update) {
-        typeVar.object[typeVar.field] = update(typeVar.object[typeVar.field]);
-    }
-    static isTypeVar(reference) {
-        return reference instanceof TypeVariable || reference instanceof Type && reference.hasVariable;
-    }
-    static mustMatch(reference) {
-        return !(reference == undefined || InterfaceInfo.isTypeVar(reference));
-    }
-    static handleConnectionsMatch(interfaceHandleConnection, particleHandleConnection) {
-        if (InterfaceInfo.mustMatch(interfaceHandleConnection.name) &&
-            interfaceHandleConnection.name !== particleHandleConnection.name) {
-            return false;
-        }
-        // TODO: FIXME direction subsetting?
-        if (InterfaceInfo.mustMatch(interfaceHandleConnection.direction)
-            && interfaceHandleConnection.direction !== 'any'
-            && particleHandleConnection.direction !== 'any'
-            && interfaceHandleConnection.direction !== particleHandleConnection.direction) {
-            return false;
-        }
-        if (interfaceHandleConnection.type == undefined) {
-            return true;
-        }
-        const [left, right] = Type.unwrapPair(interfaceHandleConnection.type, particleHandleConnection.type);
-        if (left instanceof TypeVariable) {
-            return [{ var: left, value: right, direction: interfaceHandleConnection.direction }];
-        }
-        else {
-            return TypeChecker.compareTypes({ type: left }, { type: right });
-        }
-    }
-    static slotsMatch(interfaceSlot, particleSlot) {
-        if (InterfaceInfo.mustMatch(interfaceSlot.name) &&
-            interfaceSlot.name !== particleSlot.name) {
-            return false;
-        }
-        if (InterfaceInfo.mustMatch(interfaceSlot.direction) &&
-            interfaceSlot.direction !== particleSlot.direction) {
-            return false;
-        }
-        if (InterfaceInfo.mustMatch(interfaceSlot.isRequired) &&
-            interfaceSlot.isRequired !== particleSlot.isRequired) {
-            return false;
-        }
-        if (InterfaceInfo.mustMatch(interfaceSlot.isSet) &&
-            interfaceSlot.isSet !== particleSlot.isSet) {
-            return false;
-        }
-        return true;
-    }
-    particleMatches(particleSpec) {
-        const interfaceInfo = this.cloneWithResolutions(new Map());
-        return interfaceInfo.restrictType(particleSpec) !== false;
-    }
-    restrictType(particleSpec) {
-        return this._restrictThis(particleSpec);
-    }
-    _restrictThis(particleSpec) {
-        const handleConnectionMatches = this.handleConnections.map(h => particleSpec.handleConnections.map(c => ({ match: c, result: InterfaceInfo.handleConnectionsMatch(h, c) }))
-            .filter(a => a.result !== false));
-        const particleSlots = [];
-        particleSpec.slotConnections.forEach(consumedSlot => {
-            particleSlots.push({ name: consumedSlot.name, direction: 'consume', isRequired: consumedSlot.isRequired, isSet: consumedSlot.isSet });
-            consumedSlot.provideSlotConnections.forEach(providedSlot => {
-                particleSlots.push({ name: providedSlot.name, direction: 'provide', isRequired: false, isSet: providedSlot.isSet });
-            });
-        });
-        const slotsThatMatch = this.slots.map(slot => particleSlots.filter(particleSlot => InterfaceInfo.slotsMatch(slot, particleSlot)));
-        const slotMatches = slotsThatMatch.map(matchList => matchList.map(slot => ({ match: slot, result: true })));
-        // TODO: this probably doesn't deal with multiple match options.
-        function choose(list, exclusions) {
-            if (list.length === 0) {
-                return [];
-            }
-            const thisLevel = list.pop();
-            for (const connection of thisLevel) {
-                if (exclusions.includes(connection.match)) {
-                    continue;
-                }
-                const newExclusions = exclusions.slice();
-                newExclusions.push(connection.match);
-                const constraints = choose(list, newExclusions);
-                if (constraints !== false) {
-                    if (typeof connection.result === 'boolean') {
-                        return constraints;
-                    }
-                    return constraints.concat(connection.result);
-                }
-            }
-            return false;
-        }
-        const handleConnectionOptions = choose(handleConnectionMatches, []);
-        const slotOptions = choose(slotMatches, []);
-        if (handleConnectionOptions === false || slotOptions === false) {
-            return false;
-        }
-        for (const constraint of handleConnectionOptions) {
-            if (!constraint.var.variable.resolution) {
-                constraint.var.variable.resolution = constraint.value;
-            }
-            else if (constraint.var.variable.resolution instanceof TypeVariable) {
-                // TODO(shans): revisit how this should be done,
-                // consider reusing tryMergeTypeVariablesWith(other).
-                if (!TypeChecker.processTypeList(constraint.var, [{
-                        type: constraint.value, direction: constraint.direction
-                    }]))
-                    return false;
-            }
-            else {
-                if (!TypeChecker.compareTypes({ type: constraint.var.variable.resolution }, { type: constraint.value })) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-}
-
 /** An exception that is to be propagated back to the host. */
 class PropagatedException extends Error {
     constructor(cause, method, particleId, particleName) {
@@ -4934,6 +4384,151 @@ function sanitizeEntry(type, value, name, context) {
 }
 
 /**
+ * A base token interface for the `kind` and `location` entries. This creates
+ * a TypeScript Discriminated Union for most tokens.
+ */
+function preSlandlesDirectionToDirection(direction, isOptional = false) {
+    // TODO(jopra): Remove after syntax unification.
+    // Use switch for totality checking.
+    const opt = isOptional ? '?' : '';
+    switch (direction) {
+        case 'in':
+            return `reads${opt}`;
+        case 'out':
+            return `writes${opt}`;
+        case 'inout':
+            return `reads${opt} writes${opt}`;
+        case '`consume':
+            return `\`consumes${opt}`;
+        case '`provide':
+            return `\`provides${opt}`;
+        case 'host':
+            return `hosts${opt}`;
+        case 'any':
+            return `any${opt}`;
+        default:
+            // Catch nulls and unsafe values from javascript.
+            throw new Error(`Bad pre slandles direction ${direction}`);
+    }
+}
+function directionToPreSlandlesDirection(direction) {
+    // TODO(jopra): Remove after syntax unification.
+    // Use switch for totality checking.
+    switch (direction) {
+        case 'reads':
+            return 'in';
+        case 'writes':
+            return 'out';
+        case 'reads writes':
+            return 'inout';
+        case '`consumes':
+            return '`consume';
+        case '`provides':
+            return '`provide';
+        case 'hosts':
+            return 'host';
+        case 'any':
+            return 'any';
+        default:
+            // Catch nulls and unsafe values from javascript.
+            throw new Error(`Bad direction ${direction}`);
+    }
+}
+function arrowToDirection(arrow) {
+    // TODO(jopra): Remove after syntax unification.
+    // Use switch for totality checking.
+    switch (arrow) {
+        case '->':
+            return 'out';
+        case '<-':
+            return 'in';
+        case '<->':
+            return 'inout';
+        case '`consume':
+            return '`consume';
+        case '`provide':
+            return '`provide';
+        case '=':
+            return 'any';
+        default:
+            // Catch nulls and unsafe values from javascript.
+            throw new Error(`Bad arrow ${arrow}`);
+    }
+}
+function directionToArrow(dir) {
+    // TODO(jopra): Remove after syntax unification.
+    switch (dir) {
+        case 'in':
+            return '<-';
+        case 'out':
+            return '->';
+        case 'inout':
+            return '<->';
+        case 'host':
+            return '=';
+        case '`consume':
+            return '`consume';
+        case '`provide':
+            return '`provide';
+        case 'any':
+            return '=';
+        default:
+            throw new Error(`Unexpected direction ${dir}`);
+    }
+}
+
+/**
+ * @license
+ * Copyright 2019 Google LLC.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+/** Arcs runtime flags. */
+class FlagDefaults {
+}
+FlagDefaults.useNewStorageStack = false;
+// Enables the parsing of both pre and post slandles (unified) syntaxes.
+// Preslandles syntax is to be deprecated.
+FlagDefaults.parseBothSyntaxes = false;
+// Use pre slandles syntax for parsing and toString by default.
+// If parseBothSyntaxes is off, this will set which syntax is enabled.
+FlagDefaults.defaultToPreSlandlesSyntax = true;
+class Flags extends FlagDefaults {
+    /** Resets flags. To be called in test teardown methods. */
+    static reset() {
+        Object.assign(Flags, FlagDefaults);
+    }
+    static withPreSlandlesSyntax(f) {
+        return Flags.withFlags({ parseBothSyntaxes: false, defaultToPreSlandlesSyntax: true }, f);
+    }
+    static withPostSlandlesSyntax(f) {
+        return Flags.withFlags({ parseBothSyntaxes: false, defaultToPreSlandlesSyntax: false }, f);
+    }
+    static withNewStorageStack(f) {
+        return Flags.withFlags({ useNewStorageStack: true }, f);
+    }
+    // For testing with a different set of flags to the default.
+    static withFlags(args, f) {
+        return async () => {
+            Object.assign(Flags, args);
+            let res;
+            try {
+                res = await f();
+            }
+            finally {
+                Flags.reset();
+            }
+            return res;
+        };
+    }
+}
+/** Initialize flags to their default value */
+Flags.reset();
+
+/**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
  * This code may only be used under the BSD style license found at
@@ -4942,191 +4537,399 @@ function sanitizeEntry(type, value, name, context) {
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-class Schema {
-    // For convenience, primitive field types can be specified as {name: 'Type'}
-    // in `fields`; the constructor will convert these to the correct schema form.
-    // tslint:disable-next-line: no-any
-    constructor(names, fields, description) {
-        this.description = {};
-        this.names = names;
-        this.fields = {};
-        for (const [name, field] of Object.entries(fields)) {
-            if (typeof (field) === 'string') {
-                this.fields[name] = { kind: 'schema-primitive', type: field };
-            }
-            else {
-                this.fields[name] = field;
-            }
-        }
-        if (description) {
-            description.description.forEach(desc => this.description[desc.name] = desc.pattern || desc.patterns[0]);
-        }
+function _typeFromLiteral(member) {
+    return Type.fromLiteral(member);
+}
+function _typeVarOrStringFromLiteral(member) {
+    if (typeof member === 'object') {
+        return _typeFromLiteral(member);
     }
-    toLiteral() {
-        const fields = {};
-        const updateField = field => {
-            if (field.kind === 'schema-reference') {
-                const schema = field.schema;
-                return { kind: 'schema-reference', schema: { kind: schema.kind, model: schema.model.toLiteral() } };
-            }
-            else if (field.kind === 'schema-collection') {
-                return { kind: 'schema-collection', schema: updateField(field.schema) };
-            }
-            else {
-                return field;
-            }
-        };
-        for (const key of Object.keys(this.fields)) {
-            fields[key] = updateField(this.fields[key]);
-        }
-        return { names: this.names, fields, description: this.description };
+    return member;
+}
+function _HandleConnectionFromLiteral({ type, name, direction }) {
+    return {
+        type: type ? _typeFromLiteral(type) : undefined,
+        name: name ? _typeVarOrStringFromLiteral(name) : undefined,
+        direction: direction || 'any'
+    };
+}
+function _SlotFromLiteral({ name, direction, isRequired, isSet }) {
+    return {
+        name: name ? _typeVarOrStringFromLiteral(name) : undefined,
+        direction, isRequired, isSet
+    };
+}
+function _typeToLiteral(member) {
+    return member.toLiteral();
+}
+function _typeVarOrStringToLiteral(member) {
+    if (member instanceof TypeVariable) {
+        return member.toLiteral();
     }
-    static fromLiteral(data = { fields: {}, names: [], description: {} }) {
-        const fields = {};
-        const updateField = field => {
-            if (field.kind === 'schema-reference') {
-                const schema = field.schema;
-                return { kind: 'schema-reference', schema: { kind: schema.kind, model: Type.fromLiteral(schema.model) } };
-            }
-            else if (field.kind === 'schema-collection') {
-                return { kind: 'schema-collection', schema: updateField(field.schema) };
-            }
-            else {
-                return field;
-            }
-        };
-        for (const key of Object.keys(data.fields)) {
-            fields[key] = updateField(data.fields[key]);
-        }
-        const result = new Schema(data.names, fields);
-        result.description = data.description || {};
-        return result;
-    }
-    // TODO: This should only be an ident used in manifest parsing.
-    get name() {
-        return this.names[0];
-    }
-    static typesEqual(fieldType1, fieldType2) {
-        // TODO: structural check instead of stringification.
-        return Schema._typeString(fieldType1) === Schema._typeString(fieldType2);
-    }
-    static _typeString(type) {
-        switch (type.kind) {
-            case 'schema-primitive':
-                return type.type;
-            case 'schema-union':
-                return `(${type.types.map(t => t.type).join(' or ')})`;
-            case 'schema-tuple':
-                return `(${type.types.map(t => t.type).join(', ')})`;
-            case 'schema-reference':
-                return `Reference<${Schema._typeString(type.schema)}>`;
-            case 'type-name':
-            case 'schema-inline':
-                return type.model.entitySchema.toInlineSchemaString();
-            case 'schema-collection':
-                return `[${Schema._typeString(type.schema)}]`;
-            default:
-                throw new Error(`Unknown type kind ${type.kind} in schema ${this.name}`);
-        }
-    }
-    static union(schema1, schema2) {
-        const names = [...new Set([...schema1.names, ...schema2.names])];
-        const fields = {};
-        for (const [field, type] of [...Object.entries(schema1.fields), ...Object.entries(schema2.fields)]) {
-            if (fields[field]) {
-                if (!Schema.typesEqual(fields[field], type)) {
-                    return null;
+    return member;
+}
+function _HandleConnectionToLiteral({ type, name, direction }) {
+    return {
+        type: type && _typeToLiteral(type),
+        name: name && _typeVarOrStringToLiteral(name),
+        direction
+    };
+}
+function _SlotToLiteral({ name, direction, isRequired, isSet }) {
+    return {
+        name: name && _typeVarOrStringToLiteral(name),
+        direction,
+        isRequired,
+        isSet
+    };
+}
+const handleConnectionFields = ['type', 'name', 'direction'];
+const slotFields = ['name', 'direction', 'isRequired', 'isSet'];
+class InterfaceInfo {
+    constructor(name, handleConnections, slots) {
+        assert(name);
+        assert(handleConnections !== undefined);
+        assert(slots !== undefined);
+        this.name = name;
+        this.handleConnections = handleConnections;
+        this.slots = slots;
+        this.typeVars = [];
+        for (const handleConnection of handleConnections) {
+            for (const field of handleConnectionFields) {
+                if (InterfaceInfo.isTypeVar(handleConnection[field])) {
+                    this.typeVars.push({ object: handleConnection, field });
                 }
             }
-            else {
-                fields[field] = type;
+        }
+        for (const slot of slots) {
+            for (const field of slotFields) {
+                if (InterfaceInfo.isTypeVar(slot[field])) {
+                    this.typeVars.push({ object: slot, field });
+                }
             }
         }
-        return new Schema(names, fields);
     }
-    static intersect(schema1, schema2) {
-        const names = [...schema1.names].filter(name => schema2.names.includes(name));
-        const fields = {};
-        for (const [field, type] of Object.entries(schema1.fields)) {
-            const otherType = schema2.fields[field];
-            if (otherType && Schema.typesEqual(type, otherType)) {
-                fields[field] = type;
-            }
-        }
-        return new Schema(names, fields);
+    toPrettyString() {
+        return 'InterfaceInfo';
     }
-    equals(otherSchema) {
-        return this === otherSchema || (this.name === otherSchema.name
-            // TODO: Check equality without calling contains.
-            && this.isMoreSpecificThan(otherSchema)
-            && otherSchema.isMoreSpecificThan(this));
+    mergeTypeVariablesByName(variableMap) {
+        this.typeVars.forEach(({ object, field }) => object[field] = object[field].mergeTypeVariablesByName(variableMap));
     }
-    isMoreSpecificThan(otherSchema) {
-        const names = new Set(this.names);
-        for (const name of otherSchema.names) {
-            if (!names.has(name)) {
-                return false;
-            }
+    get canReadSubset() {
+        return this._cloneAndUpdate(typeVar => typeVar.canReadSubset);
+    }
+    get canWriteSuperset() {
+        return this._cloneAndUpdate(typeVar => typeVar.canWriteSuperset);
+    }
+    isMoreSpecificThan(other) {
+        if (this.handleConnections.length !== other.handleConnections.length ||
+            this.slots.length !== other.slots.length) {
+            return false;
         }
-        const fields = {};
-        for (const [name, type] of Object.entries(this.fields)) {
-            fields[name] = type;
-        }
-        for (const [name, type] of Object.entries(otherSchema.fields)) {
-            if (fields[name] == undefined) {
-                return false;
-            }
-            if (!Schema.typesEqual(fields[name], type)) {
+        // TODO: should probably confirm that handleConnections and slots actually match.
+        for (let i = 0; i < this.typeVars.length; i++) {
+            const thisTypeVar = this.typeVars[i];
+            const otherTypeVar = other.typeVars[i];
+            if (!thisTypeVar.object[thisTypeVar.field].isMoreSpecificThan(otherTypeVar.object[otherTypeVar.field])) {
                 return false;
             }
         }
         return true;
     }
-    get type() {
-        return new EntityType(this);
-    }
-    entityClass(context = null) {
-        return Entity.createEntityClass(this, context);
-    }
-    crdtConstructor() {
-        const singletons = {};
-        const collections = {};
-        // TODO(shans) do this properly
-        for (const [field, { type }] of Object.entries(this.fields)) {
-            if (type === 'Text') {
-                singletons[field] = new CRDTSingleton();
-            }
-            else if (type === 'Number') {
-                singletons[field] = new CRDTSingleton();
-            }
-            else {
-                throw new Error(`Big Scary Exception: entity field ${field} of type ${type} doesn't yet have a CRDT mapping implemented`);
+    _applyExistenceTypeTest(test) {
+        for (const typeRef of this.typeVars) {
+            if (test(typeRef.object[typeRef.field])) {
+                return true;
             }
         }
-        return class EntityCRDT extends CRDTEntity {
-            constructor() {
-                super(singletons, collections);
+        return false;
+    }
+    _handleConnectionsToManifestString() {
+        return this.handleConnections
+            .map(h => {
+            if (Flags.defaultToPreSlandlesSyntax) {
+                return `  ${h.direction || 'any'} ${h.type.toString()} ${h.name ? h.name : '*'}`;
             }
-        };
+            else {
+                const nameStr = h.name ? `${h.name}: ` : '';
+                const direction = preSlandlesDirectionToDirection(h.direction || 'any');
+                return `  ${nameStr}${direction} ${h.type.toString()}`;
+            }
+        }).join('\n');
     }
-    toInlineSchemaString(options) {
-        const names = this.names.join(' ') || '*';
-        const fields = Object.entries(this.fields).map(([name, type]) => `${Schema._typeString(type)} ${name}`).join(', ');
-        return `${names} {${fields.length > 0 && options && options.hideFields ? '...' : fields}}`;
+    _slotsToManifestString() {
+        // TODO deal with isRequired
+        return this.slots
+            .map(slot => {
+            if (Flags.defaultToPreSlandlesSyntax) {
+                return `  ${slot.isRequired ? 'must ' : ''}${slot.direction} ${slot.isSet ? 'set of ' : ''}${slot.name || ''}`;
+            }
+            else {
+                const nameStr = slot.name ? `${slot.name}: ` : '';
+                return `  ${nameStr}${slot.direction}s${slot.isRequired ? '' : '?'} ${slot.isSet ? '[Slot]' : 'Slot'}`;
+            }
+        })
+            .join('\n');
     }
-    toManifestString() {
-        const results = [];
-        results.push(`schema ${this.names.join(' ')}`);
-        results.push(...Object.entries(this.fields).map(([name, type]) => `  ${Schema._typeString(type)} ${name}`));
-        if (Object.keys(this.description).length > 0) {
-            results.push(`  description \`${this.description.pattern}\``);
-            for (const name of Object.keys(this.description)) {
-                if (name !== 'pattern') {
-                    results.push(`    ${name} \`${this.description[name]}\``);
+    // TODO: Include name as a property of the interface and normalize this to just toString()
+    toString() {
+        return `interface ${this.name}
+${this._handleConnectionsToManifestString()}
+${this._slotsToManifestString()}`;
+    }
+    static fromLiteral(data) {
+        const handleConnections = data.handleConnections.map(_HandleConnectionFromLiteral);
+        const slots = data.slots.map(_SlotFromLiteral);
+        return new InterfaceInfo(data.name, handleConnections, slots);
+    }
+    toLiteral() {
+        const handleConnections = this.handleConnections.map(_HandleConnectionToLiteral);
+        const slots = this.slots.map(_SlotToLiteral);
+        return { name: this.name, handleConnections, slots };
+    }
+    clone(variableMap) {
+        const handleConnections = this.handleConnections.map(({ name, direction, type }) => ({ name, direction, type: type ? type.clone(variableMap) : undefined }));
+        const slots = this.slots.map(({ name, direction, isRequired, isSet }) => ({ name, direction, isRequired, isSet }));
+        return new InterfaceInfo(this.name, handleConnections, slots);
+    }
+    cloneWithResolutions(variableMap) {
+        return this._cloneWithResolutions(variableMap);
+    }
+    _cloneWithResolutions(variableMap) {
+        const handleConnections = this.handleConnections.map(({ name, direction, type }) => ({ name, direction, type: type ? type._cloneWithResolutions(variableMap) : undefined }));
+        const slots = this.slots.map(({ name, direction, isRequired, isSet }) => ({ name, direction, isRequired, isSet }));
+        return new InterfaceInfo(this.name, handleConnections, slots);
+    }
+    canEnsureResolved() {
+        for (const typeVar of this.typeVars) {
+            if (!typeVar.object[typeVar.field].canEnsureResolved()) {
+                return false;
+            }
+        }
+        return true;
+    }
+    maybeEnsureResolved() {
+        for (const typeVar of this.typeVars) {
+            let variable = typeVar.object[typeVar.field];
+            variable = variable.clone(new Map());
+            if (!variable.maybeEnsureResolved())
+                return false;
+        }
+        for (const typeVar of this.typeVars) {
+            typeVar.object[typeVar.field].maybeEnsureResolved();
+        }
+        return true;
+    }
+    tryMergeTypeVariablesWith(other) {
+        // Type variable enabled slot matching will Just Work when we
+        // unify slots and handleConnections.
+        if (!this._equalItems(other.slots, this.slots, this._equalSlot)) {
+            return null;
+        }
+        if (other.handleConnections.length !== this.handleConnections.length) {
+            return null;
+        }
+        const handleConnections = new Set(this.handleConnections);
+        const otherHandleConnections = new Set(other.handleConnections);
+        const handleConnectionMap = new Map();
+        let sizeCheck = handleConnections.size;
+        while (handleConnections.size > 0) {
+            const handleConnectionMatches = [...handleConnections.values()].map(handleConnection => ({ handleConnection, match: [...otherHandleConnections.values()].filter(otherHandleConnection => this._equalHandleConnection(handleConnection, otherHandleConnection)) }));
+            for (const handleConnectionMatch of handleConnectionMatches) {
+                // no match!
+                if (handleConnectionMatch.match.length === 0) {
+                    return null;
+                }
+                if (handleConnectionMatch.match.length === 1) {
+                    handleConnectionMap.set(handleConnectionMatch.handleConnection, handleConnectionMatch.match[0]);
+                    otherHandleConnections.delete(handleConnectionMatch.match[0]);
+                    handleConnections.delete(handleConnectionMatch.handleConnection);
+                }
+            }
+            // no progress!
+            if (handleConnections.size === sizeCheck) {
+                return null;
+            }
+            sizeCheck = handleConnections.size;
+        }
+        const handleConnectionList = [];
+        for (const handleConnection of this.handleConnections) {
+            const otherHandleConnection = handleConnectionMap.get(handleConnection);
+            let resultType;
+            if (handleConnection.type.hasVariable || otherHandleConnection.type.hasVariable) {
+                resultType = TypeChecker._tryMergeTypeVariable(handleConnection.type, otherHandleConnection.type);
+                if (!resultType) {
+                    return null;
+                }
+            }
+            else {
+                resultType = handleConnection.type || otherHandleConnection.type;
+            }
+            handleConnectionList.push({ name: handleConnection.name || otherHandleConnection.name, direction: handleConnection.direction || otherHandleConnection.direction, type: resultType });
+        }
+        const slots = this.slots.map(({ name, direction, isRequired, isSet }) => ({ name, direction, isRequired, isSet }));
+        return new InterfaceInfo(this.name, handleConnectionList, slots);
+    }
+    resolvedType() {
+        return this._cloneAndUpdate(typeVar => typeVar.resolvedType());
+    }
+    equals(other) {
+        if (this.handleConnections.length !== other.handleConnections.length) {
+            return false;
+        }
+        // TODO: this isn't quite right as it doesn't deal with duplicates properly
+        if (!this._equalItems(other.handleConnections, this.handleConnections, this._equalHandleConnection)) {
+            return false;
+        }
+        if (!this._equalItems(other.slots, this.slots, this._equalSlot)) {
+            return false;
+        }
+        return true;
+    }
+    _equalHandleConnection(handleConnection, otherHandleConnection) {
+        return handleConnection.name === otherHandleConnection.name
+            && handleConnection.direction === otherHandleConnection.direction
+            && TypeChecker.compareTypes({ type: handleConnection.type }, { type: otherHandleConnection.type });
+    }
+    _equalSlot(slot, otherSlot) {
+        return slot.name === otherSlot.name && slot.direction === otherSlot.direction && slot.isRequired === otherSlot.isRequired && slot.isSet === otherSlot.isSet;
+    }
+    _equalItems(otherItems, items, compareItem) {
+        for (const otherItem of otherItems) {
+            let exists = false;
+            for (const item of items) {
+                if (compareItem(item, otherItem)) {
+                    exists = true;
+                    break;
+                }
+            }
+            if (!exists) {
+                return false;
+            }
+        }
+        return true;
+    }
+    _cloneAndUpdate(update) {
+        const copy = this.clone(new Map());
+        copy.typeVars.forEach(typeVar => InterfaceInfo._updateTypeVar(typeVar, update));
+        return copy;
+    }
+    static _updateTypeVar(typeVar, update) {
+        typeVar.object[typeVar.field] = update(typeVar.object[typeVar.field]);
+    }
+    static isTypeVar(reference) {
+        return reference instanceof TypeVariable || reference instanceof Type && reference.hasVariable;
+    }
+    static mustMatch(reference) {
+        return !(reference == undefined || InterfaceInfo.isTypeVar(reference));
+    }
+    static handleConnectionsMatch(interfaceHandleConnection, particleHandleConnection) {
+        if (InterfaceInfo.mustMatch(interfaceHandleConnection.name) &&
+            interfaceHandleConnection.name !== particleHandleConnection.name) {
+            return false;
+        }
+        // TODO: FIXME direction subsetting?
+        if (InterfaceInfo.mustMatch(interfaceHandleConnection.direction)
+            && interfaceHandleConnection.direction !== 'any'
+            && particleHandleConnection.direction !== 'any'
+            && interfaceHandleConnection.direction !== particleHandleConnection.direction) {
+            return false;
+        }
+        if (interfaceHandleConnection.type == undefined) {
+            return true;
+        }
+        const [left, right] = Type.unwrapPair(interfaceHandleConnection.type, particleHandleConnection.type);
+        if (left instanceof TypeVariable) {
+            return [{ var: left, value: right, direction: interfaceHandleConnection.direction }];
+        }
+        else {
+            return TypeChecker.compareTypes({ type: left }, { type: right });
+        }
+    }
+    static slotsMatch(interfaceSlot, particleSlot) {
+        if (InterfaceInfo.mustMatch(interfaceSlot.name) &&
+            interfaceSlot.name !== particleSlot.name) {
+            return false;
+        }
+        if (InterfaceInfo.mustMatch(interfaceSlot.direction) &&
+            interfaceSlot.direction !== particleSlot.direction) {
+            return false;
+        }
+        if (InterfaceInfo.mustMatch(interfaceSlot.isRequired) &&
+            interfaceSlot.isRequired !== particleSlot.isRequired) {
+            return false;
+        }
+        if (InterfaceInfo.mustMatch(interfaceSlot.isSet) &&
+            interfaceSlot.isSet !== particleSlot.isSet) {
+            return false;
+        }
+        return true;
+    }
+    particleMatches(particleSpec) {
+        const interfaceInfo = this.cloneWithResolutions(new Map());
+        return interfaceInfo.restrictType(particleSpec) !== false;
+    }
+    restrictType(particleSpec) {
+        return this._restrictThis(particleSpec);
+    }
+    _restrictThis(particleSpec) {
+        const handleConnectionMatches = this.handleConnections.map(h => particleSpec.handleConnections.map(c => ({ match: c, result: InterfaceInfo.handleConnectionsMatch(h, c) }))
+            .filter(a => a.result !== false));
+        const particleSlots = [];
+        particleSpec.slotConnections.forEach(consumedSlot => {
+            particleSlots.push({ name: consumedSlot.name, direction: 'consume', isRequired: consumedSlot.isRequired, isSet: consumedSlot.isSet });
+            consumedSlot.provideSlotConnections.forEach(providedSlot => {
+                particleSlots.push({ name: providedSlot.name, direction: 'provide', isRequired: false, isSet: providedSlot.isSet });
+            });
+        });
+        const slotsThatMatch = this.slots.map(slot => particleSlots.filter(particleSlot => InterfaceInfo.slotsMatch(slot, particleSlot)));
+        const slotMatches = slotsThatMatch.map(matchList => matchList.map(slot => ({ match: slot, result: true })));
+        // TODO: this probably doesn't deal with multiple match options.
+        function choose(list, exclusions) {
+            if (list.length === 0) {
+                return [];
+            }
+            const thisLevel = list.pop();
+            for (const connection of thisLevel) {
+                if (exclusions.includes(connection.match)) {
+                    continue;
+                }
+                const newExclusions = exclusions.slice();
+                newExclusions.push(connection.match);
+                const constraints = choose(list, newExclusions);
+                if (constraints !== false) {
+                    if (typeof connection.result === 'boolean') {
+                        return constraints;
+                    }
+                    return constraints.concat(connection.result);
+                }
+            }
+            return false;
+        }
+        const handleConnectionOptions = choose(handleConnectionMatches, []);
+        const slotOptions = choose(slotMatches, []);
+        if (handleConnectionOptions === false || slotOptions === false) {
+            return false;
+        }
+        for (const constraint of handleConnectionOptions) {
+            if (!constraint.var.variable.resolution) {
+                constraint.var.variable.resolution = constraint.value;
+            }
+            else if (constraint.var.variable.resolution instanceof TypeVariable) {
+                // TODO(shans): revisit how this should be done,
+                // consider reusing tryMergeTypeVariablesWith(other).
+                if (!TypeChecker.processTypeList(constraint.var, [{
+                        type: constraint.value, direction: constraint.direction
+                    }]))
+                    return false;
+            }
+            else {
+                if (!TypeChecker.compareTypes({ type: constraint.var.variable.resolution }, { type: constraint.value })) {
+                    return false;
                 }
             }
         }
-        return results.join('\n');
+        return true;
     }
 }
 
@@ -5400,6 +5203,193 @@ var CountOpTypes;
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+class Schema {
+    // For convenience, primitive field types can be specified as {name: 'Type'}
+    // in `fields`; the constructor will convert these to the correct schema form.
+    // tslint:disable-next-line: no-any
+    constructor(names, fields, description) {
+        this.description = {};
+        this.names = names;
+        this.fields = {};
+        for (const [name, field] of Object.entries(fields)) {
+            if (typeof (field) === 'string') {
+                this.fields[name] = { kind: 'schema-primitive', type: field };
+            }
+            else {
+                this.fields[name] = field;
+            }
+        }
+        if (description) {
+            description.description.forEach(desc => this.description[desc.name] = desc.pattern || desc.patterns[0]);
+        }
+    }
+    toLiteral() {
+        const fields = {};
+        const updateField = field => {
+            if (field.kind === 'schema-reference') {
+                const schema = field.schema;
+                return { kind: 'schema-reference', schema: { kind: schema.kind, model: schema.model.toLiteral() } };
+            }
+            else if (field.kind === 'schema-collection') {
+                return { kind: 'schema-collection', schema: updateField(field.schema) };
+            }
+            else {
+                return field;
+            }
+        };
+        for (const key of Object.keys(this.fields)) {
+            fields[key] = updateField(this.fields[key]);
+        }
+        return { names: this.names, fields, description: this.description };
+    }
+    static fromLiteral(data = { fields: {}, names: [], description: {} }) {
+        const fields = {};
+        const updateField = field => {
+            if (field.kind === 'schema-reference') {
+                const schema = field.schema;
+                return { kind: 'schema-reference', schema: { kind: schema.kind, model: Type.fromLiteral(schema.model) } };
+            }
+            else if (field.kind === 'schema-collection') {
+                return { kind: 'schema-collection', schema: updateField(field.schema) };
+            }
+            else {
+                return field;
+            }
+        };
+        for (const key of Object.keys(data.fields)) {
+            fields[key] = updateField(data.fields[key]);
+        }
+        const result = new Schema(data.names, fields);
+        result.description = data.description || {};
+        return result;
+    }
+    // TODO(cypher1): This should only be an ident used in manifest parsing.
+    get name() {
+        return this.names[0];
+    }
+    static typesEqual(fieldType1, fieldType2) {
+        // TODO(cypher1): structural check instead of stringification.
+        return Schema._typeString(fieldType1) === Schema._typeString(fieldType2);
+    }
+    static _typeString(type) {
+        switch (type.kind) {
+            case 'schema-primitive':
+                return type.type;
+            case 'schema-union':
+                return `(${type.types.map(t => t.type).join(' or ')})`;
+            case 'schema-tuple':
+                return `(${type.types.map(t => t.type).join(', ')})`;
+            case 'schema-reference':
+                return `Reference<${Schema._typeString(type.schema)}>`;
+            case 'type-name':
+            case 'schema-inline':
+                return type.model.entitySchema.toInlineSchemaString();
+            case 'schema-collection':
+                return `[${Schema._typeString(type.schema)}]`;
+            default:
+                throw new Error(`Unknown type kind ${type.kind} in schema ${this.name}`);
+        }
+    }
+    static union(schema1, schema2) {
+        const names = [...new Set([...schema1.names, ...schema2.names])];
+        const fields = {};
+        for (const [field, type] of [...Object.entries(schema1.fields), ...Object.entries(schema2.fields)]) {
+            if (fields[field]) {
+                if (!Schema.typesEqual(fields[field], type)) {
+                    return null;
+                }
+            }
+            else {
+                fields[field] = type;
+            }
+        }
+        return new Schema(names, fields);
+    }
+    static intersect(schema1, schema2) {
+        const names = [...schema1.names].filter(name => schema2.names.includes(name));
+        const fields = {};
+        for (const [field, type] of Object.entries(schema1.fields)) {
+            const otherType = schema2.fields[field];
+            if (otherType && Schema.typesEqual(type, otherType)) {
+                fields[field] = type;
+            }
+        }
+        return new Schema(names, fields);
+    }
+    equals(otherSchema) {
+        return this === otherSchema || (this.name === otherSchema.name
+            // TODO(cypher1): Check equality without calling contains.
+            && this.isMoreSpecificThan(otherSchema)
+            && otherSchema.isMoreSpecificThan(this));
+    }
+    isMoreSpecificThan(otherSchema) {
+        const names = new Set(this.names);
+        for (const name of otherSchema.names) {
+            if (!names.has(name)) {
+                return false;
+            }
+        }
+        const fields = {};
+        for (const [name, type] of Object.entries(this.fields)) {
+            fields[name] = type;
+        }
+        for (const [name, type] of Object.entries(otherSchema.fields)) {
+            if (fields[name] == undefined) {
+                return false;
+            }
+            if (!Schema.typesEqual(fields[name], type)) {
+                return false;
+            }
+        }
+        return true;
+    }
+    get type() {
+        return new EntityType(this);
+    }
+    entityClass(context = null) {
+        return Entity.createEntityClass(this, context);
+    }
+    crdtConstructor() {
+        const singletons = {};
+        const collections = {};
+        // TODO(shans) do this properly
+        for (const [field, { type }] of Object.entries(this.fields)) {
+            if (type === 'Text') {
+                singletons[field] = new CRDTSingleton();
+            }
+            else if (type === 'Number') {
+                singletons[field] = new CRDTSingleton();
+            }
+            else {
+                throw new Error(`Big Scary Exception: entity field ${field} of type ${type} doesn't yet have a CRDT mapping implemented`);
+            }
+        }
+        return class EntityCRDT extends CRDTEntity {
+            constructor() {
+                super(singletons, collections);
+            }
+        };
+    }
+    toInlineSchemaString(options) {
+        const names = this.names.join(' ') || '*';
+        const fields = Object.entries(this.fields).map(([name, type]) => `${Schema._typeString(type)} ${name}`).join(', ');
+        return `${names} {${fields.length > 0 && options && options.hideFields ? '...' : fields}}`;
+    }
+    toManifestString() {
+        const results = [];
+        results.push(`schema ${this.names.join(' ')}`);
+        results.push(...Object.entries(this.fields).map(([name, type]) => `  ${Schema._typeString(type)} ${name}`));
+        if (Object.keys(this.description).length > 0) {
+            results.push(`  description \`${this.description.pattern}\``);
+            for (const name of Object.keys(this.description)) {
+                if (name !== 'pattern') {
+                    results.push(`    ${name} \`${this.description[name]}\``);
+                }
+            }
+        }
+        return results.join('\n');
+    }
+}
 class Type {
     constructor(tag) {
         this.tag = tag;
