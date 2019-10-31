@@ -1,9 +1,9 @@
-commit f528e50613941c2de65fa750eb4b35b8e5055f6a
-Author: raulverag <42563960+raulverag@users.noreply.github.com>
-Date:   Thu Oct 31 14:36:06 2019 +1100
+commit 05ec8bcdb5ec4cdaec57d510b1e839163db90287
+Author: Joshua Pratt <jp10010101010000@gmail.com>
+Date:   Thu Oct 31 20:33:03 2019 +1000
 
-    Move Schema into type.js to break circular dependency (#3949)
+    Unified types syntax (using TS + kotlin style) (#3936)
     
-    * Move Schema into type.js to break circluar dependency
+    * Test and comment changes
     
-    * Update type.ts
+    * Changes for typescript & kotlin style schemas

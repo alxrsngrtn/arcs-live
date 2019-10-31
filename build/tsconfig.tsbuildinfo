@@ -546,8 +546,8 @@
         "signature": "50f22c6414d93bc2b5f52da8ecccca67927c7b89aabb4e86903900a576ab1356"
       },
       "../src/runtime/type.ts": {
-        "version": "d0ee630bec354e0ed7b1b03334461671727ec65c6b2aa79efbbe95a9abb5e354",
-        "signature": "650c2f2df65b561942df2c97820538cf233e0a4cc221fcdec37f9365c95a158c"
+        "version": "68b1483c6cb6357f71f56ef66f0b4beeef8c846a18589e7c676357ab3208a13a",
+        "signature": "32054ba588c5e86e983ac1ecaf3e28097be0c9014f941762bf711ca8012f1425"
       },
       "../src/runtime/recipe/type-checker.ts": {
         "version": "6f6f9dc80da70896907b888ce5fd1b8fecfb1a4b6eeda87068aefbda529766b9",
@@ -570,7 +570,7 @@
         "signature": "308e3982e144d10b2802bb065474b0d055282ebde874d0fd7067cfa71d279f12"
       },
       "../src/gen/runtime/manifest-parser.ts": {
-        "version": "ebf3f815860eba9234028961bd50ea5b046cca16ca46e09c8efe8461fa400a8d",
+        "version": "c2edffc8abd648580d872c92b20990b88bd3be041c896a28b4489b7b73180c51",
         "signature": "ff2c763c7895327196fd3eb358dcc775b25f27bdae513079cc287433af262427"
       },
       "../src/runtime/manifest-meta.ts": {
@@ -682,7 +682,7 @@
         "signature": "aa657cc3c9324f71d7c84ac68f4e20b1eedea2e1e8b93efd81051208cf69c5f6"
       },
       "../src/dataflow/analysis/tests/analysis-test.ts": {
-        "version": "a8df78049f4d78b83edcbc7fa490d58d4fdd9ad5df0d918956f6fd2c7f6f7d6e",
+        "version": "040b3e4a604a05a94b445251bea9854d8583fee11ccd723a6819a23339c0ba28",
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
       },
       "../src/dataflow/analysis/tests/deep-set-test.ts": {
@@ -1334,7 +1334,7 @@
         "signature": "70ec31185ba202997da2613e9400fff44ef0abf3c22f4794f67d658fe0c909b2"
       },
       "../src/planning/tests/planner-test.ts": {
-        "version": "22e316b994db86deba4c7c7316af0c36d4b6762a321b3139b0b764f8e06502a1",
+        "version": "0a6c610eded5a1e8f06206e1e55dbf5f78063ed59c4b9dbc2d571fd28035de8b",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/testing/manifest-integration-test-setup.ts": {
@@ -2445,7 +2445,7 @@
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/runtime/tests/interface-info-test.ts": {
-        "version": "9f2446cd588acbbb033c9db86288ae5500ff6321641310345bf05a710ae69921",
+        "version": "8a2ce0dbf01cfa77c3eb90178289726e3ac5d3dbf668405fd8c173e54cd8dd17",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/json-id-to-manifest-test.ts": {
@@ -2461,7 +2461,7 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/manifest-test.ts": {
-        "version": "6d5755b942538f1a19c8673c38b54f09b14d8e15b75e5eaab79ceaa884694677",
+        "version": "89fc864cfa7db934535f820a86b66b4e791187c290313f6c208c3c98b5b8ab96",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/multiplexer-test.ts": {
@@ -2549,7 +2549,7 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/type-test.ts": {
-        "version": "353fb48d0d03226228a411cf75dd3490daed45a881071588477937899cdceb7c",
+        "version": "66edb8c2c7aa6a020f024be180610799d3597c59602fa750047d9d8688a8f99e",
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/runtime/tests/volatile-storage-test.ts": {
@@ -4040,6 +4040,7 @@
         "../src/runtime/crdt/crdt-entity.ts",
         "../src/runtime/storageNG/handle.ts",
         "../src/runtime/particle-execution-context.ts",
+        "../src/runtime/flags.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.2/util.d.ts"
       ],

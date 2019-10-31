@@ -2036,6 +2036,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _crdt_crdt_singleton_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(22);
 /* harmony import */ var _crdt_crdt_entity_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(31);
 /* harmony import */ var _storageNG_handle_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(19);
+/* harmony import */ var _flags_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(37);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -2045,6 +2046,7 @@ __webpack_require__.r(__webpack_exports__);
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+
 
 
 
@@ -2169,8 +2171,8 @@ class Schema {
         return new Schema(names, fields);
     }
     equals(otherSchema) {
+        // TODO(cypher1): Check equality without calling contains.
         return this === otherSchema || (this.name === otherSchema.name
-            // TODO(cypher1): Check equality without calling contains.
             && this.isMoreSpecificThan(otherSchema)
             && otherSchema.isMoreSpecificThan(this));
     }
@@ -2222,15 +2224,24 @@ class Schema {
             }
         };
     }
+    // TODO(jopra): Enforce that 'type' of a field is a Type.
+    // tslint:disable-next-line: no-any
+    static fieldToString([name, type]) {
+        const typeStr = Schema._typeString(type);
+        if (_flags_js__WEBPACK_IMPORTED_MODULE_10__["Flags"].defaultToPreSlandlesSyntax) {
+            return `${typeStr} ${name}`;
+        }
+        return `${name}: ${typeStr}`;
+    }
     toInlineSchemaString(options) {
         const names = this.names.join(' ') || '*';
-        const fields = Object.entries(this.fields).map(([name, type]) => `${Schema._typeString(type)} ${name}`).join(', ');
+        const fields = Object.entries(this.fields).map(Schema.fieldToString).join(', ');
         return `${names} {${fields.length > 0 && options && options.hideFields ? '...' : fields}}`;
     }
     toManifestString() {
         const results = [];
         results.push(`schema ${this.names.join(' ')}`);
-        results.push(...Object.entries(this.fields).map(([name, type]) => `  ${Schema._typeString(type)} ${name}`));
+        results.push(...Object.entries(this.fields).map(f => `  ${Schema.fieldToString(f)}`));
         if (Object.keys(this.description).length > 0) {
             results.push(`  description \`${this.description.pattern}\``);
             for (const name of Object.keys(this.description)) {

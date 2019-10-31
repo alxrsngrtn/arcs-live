@@ -258,7 +258,7 @@ describe('types', () => {
             const variable = TypeVariable.make('a', null, null);
             const iface = InterfaceType.make('i', [{ type: entity, name: 'foo' }, { type: variable }], [{ name: 'x', direction: 'consume' }]);
             assert.strictEqual(iface.interfaceInfo.toString(), `interface i
-  foo: any Foo {Text value}
+  foo: any Foo {value: Text}
   any ~a
   x: consumes? Slot`);
         }));

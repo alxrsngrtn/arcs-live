@@ -17,6 +17,7 @@ import { CRDTCollection } from './crdt/crdt-collection.js';
 import { CRDTSingleton } from './crdt/crdt-singleton.js';
 import { CRDTEntity } from './crdt/crdt-entity.js';
 import { CollectionHandle, SingletonHandle } from './storageNG/handle.js';
+import { Flags } from './flags.js';
 export class Schema {
     // For convenience, primitive field types can be specified as {name: 'Type'}
     // in `fields`; the constructor will convert these to the correct schema form.
@@ -131,8 +132,8 @@ export class Schema {
         return new Schema(names, fields);
     }
     equals(otherSchema) {
+        // TODO(cypher1): Check equality without calling contains.
         return this === otherSchema || (this.name === otherSchema.name
-            // TODO(cypher1): Check equality without calling contains.
             && this.isMoreSpecificThan(otherSchema)
             && otherSchema.isMoreSpecificThan(this));
     }
@@ -184,15 +185,24 @@ export class Schema {
             }
         };
     }
+    // TODO(jopra): Enforce that 'type' of a field is a Type.
+    // tslint:disable-next-line: no-any
+    static fieldToString([name, type]) {
+        const typeStr = Schema._typeString(type);
+        if (Flags.defaultToPreSlandlesSyntax) {
+            return `${typeStr} ${name}`;
+        }
+        return `${name}: ${typeStr}`;
+    }
     toInlineSchemaString(options) {
         const names = this.names.join(' ') || '*';
-        const fields = Object.entries(this.fields).map(([name, type]) => `${Schema._typeString(type)} ${name}`).join(', ');
+        const fields = Object.entries(this.fields).map(Schema.fieldToString).join(', ');
         return `${names} {${fields.length > 0 && options && options.hideFields ? '...' : fields}}`;
     }
     toManifestString() {
         const results = [];
         results.push(`schema ${this.names.join(' ')}`);
-        results.push(...Object.entries(this.fields).map(([name, type]) => `  ${Schema._typeString(type)} ${name}`));
+        results.push(...Object.entries(this.fields).map(f => `  ${Schema.fieldToString(f)}`));
         if (Object.keys(this.description).length > 0) {
             results.push(`  description \`${this.description.pattern}\``);
             for (const name of Object.keys(this.description)) {

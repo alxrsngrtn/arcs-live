@@ -5317,8 +5317,8 @@ class Schema {
         return new Schema(names, fields);
     }
     equals(otherSchema) {
+        // TODO(cypher1): Check equality without calling contains.
         return this === otherSchema || (this.name === otherSchema.name
-            // TODO(cypher1): Check equality without calling contains.
             && this.isMoreSpecificThan(otherSchema)
             && otherSchema.isMoreSpecificThan(this));
     }
@@ -5370,15 +5370,24 @@ class Schema {
             }
         };
     }
+    // TODO(jopra): Enforce that 'type' of a field is a Type.
+    // tslint:disable-next-line: no-any
+    static fieldToString([name, type]) {
+        const typeStr = Schema._typeString(type);
+        if (Flags.defaultToPreSlandlesSyntax) {
+            return `${typeStr} ${name}`;
+        }
+        return `${name}: ${typeStr}`;
+    }
     toInlineSchemaString(options) {
         const names = this.names.join(' ') || '*';
-        const fields = Object.entries(this.fields).map(([name, type]) => `${Schema._typeString(type)} ${name}`).join(', ');
+        const fields = Object.entries(this.fields).map(Schema.fieldToString).join(', ');
         return `${names} {${fields.length > 0 && options && options.hideFields ? '...' : fields}}`;
     }
     toManifestString() {
         const results = [];
         results.push(`schema ${this.names.join(' ')}`);
-        results.push(...Object.entries(this.fields).map(([name, type]) => `  ${Schema._typeString(type)} ${name}`));
+        results.push(...Object.entries(this.fields).map(f => `  ${Schema.fieldToString(f)}`));
         if (Object.keys(this.description).length > 0) {
             results.push(`  description \`${this.description.pattern}\``);
             for (const name of Object.keys(this.description)) {
@@ -8839,11 +8848,22 @@ function peg$parse(input, options) {
             fields: optional(fields, fields => [fields[0], ...fields[1].map(tail => tail[2])], []),
         });
     };
-    const peg$c295 = function (type, name) {
+    const peg$c295 = function (preSlandlesType, name, type) {
+        if (type && preSlandlesType) {
+            error('cannot provide a type using both preslandles syntax and unification syntax for SchemaInlineField.');
+        }
+        if (preSlandlesType) {
+            requireUsePreSlandleSyntax();
+            type = optional(preSlandlesType, ty => ty[0], null);
+        }
+        else if (type) {
+            requireUsePostSlandleSyntax();
+            type = optional(type, ty => ty[2], null);
+        }
         return toAstNode({
             kind: 'schema-inline-field',
             name,
-            type: optional(type, type => type[0], null),
+            type
         });
     };
     const peg$c296 = "schema";
@@ -8877,12 +8897,12 @@ function peg$parse(input, options) {
     const peg$c305 = function (first, rest) {
         return [first, ...(rest.map(item => item[3]))];
     };
-    const peg$c306 = function (type, name) {
-        return toAstNode({
-            kind: 'schema-field',
-            type,
-            name,
-        });
+    const peg$c306 = function (field) {
+        if (!field.type) {
+            expected('a type (required for schema fields)');
+        }
+        field.kind = 'schema-field';
+        return toAstNode(field);
     };
     const peg$c307 = function (schema) {
         return toAstNode({
@@ -17744,7 +17764,7 @@ function peg$parse(input, options) {
         return s0;
     }
     function peg$parseSchemaInlineField() {
-        let s0, s1, s2, s3;
+        let s0, s1, s2, s3, s4, s5, s6;
         s0 = peg$currPos;
         s1 = peg$currPos;
         s2 = peg$parseSchemaType();
@@ -17769,9 +17789,54 @@ function peg$parse(input, options) {
         if (s1 !== peg$FAILED) {
             s2 = peg$parsefieldName();
             if (s2 !== peg$FAILED) {
-                peg$savedPos = s0;
-                s1 = peg$c295(s1, s2);
-                s0 = s1;
+                s3 = peg$currPos;
+                if (input.charCodeAt(peg$currPos) === 58) {
+                    s4 = peg$c79;
+                    peg$currPos++;
+                }
+                else {
+                    s4 = peg$FAILED;
+                    if (peg$silentFails === 0) {
+                        peg$fail(peg$c80);
+                    }
+                }
+                if (s4 !== peg$FAILED) {
+                    s5 = peg$parsewhiteSpace();
+                    if (s5 === peg$FAILED) {
+                        s5 = null;
+                    }
+                    if (s5 !== peg$FAILED) {
+                        s6 = peg$parseSchemaType();
+                        if (s6 !== peg$FAILED) {
+                            s4 = [s4, s5, s6];
+                            s3 = s4;
+                        }
+                        else {
+                            peg$currPos = s3;
+                            s3 = peg$FAILED;
+                        }
+                    }
+                    else {
+                        peg$currPos = s3;
+                        s3 = peg$FAILED;
+                    }
+                }
+                else {
+                    peg$currPos = s3;
+                    s3 = peg$FAILED;
+                }
+                if (s3 === peg$FAILED) {
+                    s3 = null;
+                }
+                if (s3 !== peg$FAILED) {
+                    peg$savedPos = s0;
+                    s1 = peg$c295(s1, s2, s3);
+                    s0 = s1;
+                }
+                else {
+                    peg$currPos = s0;
+                    s0 = peg$FAILED;
+                }
             }
             else {
                 peg$currPos = s0;
@@ -18248,29 +18313,15 @@ function peg$parse(input, options) {
         return s0;
     }
     function peg$parseSchemaField() {
-        let s0, s1, s2, s3, s4;
+        let s0, s1, s2;
         s0 = peg$currPos;
-        s1 = peg$parseSchemaType();
+        s1 = peg$parseSchemaInlineField();
         if (s1 !== peg$FAILED) {
-            s2 = peg$parsewhiteSpace();
+            s2 = peg$parseeolWhiteSpace();
             if (s2 !== peg$FAILED) {
-                s3 = peg$parsefieldName();
-                if (s3 !== peg$FAILED) {
-                    s4 = peg$parseeolWhiteSpace();
-                    if (s4 !== peg$FAILED) {
-                        peg$savedPos = s0;
-                        s1 = peg$c306(s1, s3);
-                        s0 = s1;
-                    }
-                    else {
-                        peg$currPos = s0;
-                        s0 = peg$FAILED;
-                    }
-                }
-                else {
-                    peg$currPos = s0;
-                    s0 = peg$FAILED;
-                }
+                peg$savedPos = s0;
+                s1 = peg$c306(s1);
+                s0 = s1;
             }
             else {
                 peg$currPos = s0;

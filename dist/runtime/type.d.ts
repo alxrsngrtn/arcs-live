@@ -62,6 +62,7 @@ export declare class Schema {
             };
         };
     };
+    static fieldToString([name, type]: [string, any]): string;
     toInlineSchemaString(options?: {
         hideFields?: boolean;
     }): string;
