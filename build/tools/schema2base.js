@@ -36,6 +36,9 @@ export class Schema2Base {
             return;
         }
         const manifest = await Utils.parse(`import '${src}'`);
+        if (manifest.errors.length) {
+            return;
+        }
         const classes = this.processManifest(manifest);
         if (classes.length === 0) {
             console.warn(`Could not find any particle connections with schemas in '${src}'`);
@@ -75,7 +78,7 @@ export class Schema2Base {
                             break;
                         case 'schema-reference':
                             // TODO: this will be changed to its own method in a follow-up CL
-                            generator.processField(field, 'R', inherited, node.refs[field].name);
+                            generator.processField(field, 'R', inherited, node.refs.get(field).name);
                             break;
                         default:
                             console.log(`Schema type for field '${field}' is not yet supported:`);

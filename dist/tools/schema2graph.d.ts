@@ -9,7 +9,6 @@
  */
 import { Schema } from '../runtime/type.js';
 import { ParticleSpec } from '../runtime/particle-spec.js';
-import { Dictionary } from '../runtime/hot.js';
 export declare class SchemaNode {
     schema: Schema;
     name: string;
@@ -19,10 +18,7 @@ export declare class SchemaNode {
     children: SchemaNode[];
     sharesParent: boolean;
     extras: string[];
-    refs: Dictionary<{
-        name: string;
-        node: SchemaNode;
-    }>;
+    refs: Map<string, SchemaNode>;
     constructor(schema: Schema, name: string);
 }
 export declare class SchemaGraph {
@@ -33,7 +29,6 @@ export declare class SchemaGraph {
     constructor(particleSpec: ParticleSpec);
     private createNodes;
     private process;
-    private typeName;
     private upperFirst;
     walk(): IterableIterator<SchemaNode>;
 }

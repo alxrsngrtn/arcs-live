@@ -1,5 +1,5 @@
-commit 09fde0f8e23a5db5c5a41139206a973bc21178c3
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Thu Oct 31 14:07:03 2019 -0700
+commit d410e65bfa32ef3653b900e1a3341c99cbd53896
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Fri Nov 1 08:35:59 2019 +1100
 
-    fix loader-web exception throwing (#3952)
+    schema2pkg: all nested ref schemas need to be aliased appropriately (#3919)
