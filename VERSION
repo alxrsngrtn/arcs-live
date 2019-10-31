@@ -1,5 +1,5 @@
-commit d410e65bfa32ef3653b900e1a3341c99cbd53896
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Fri Nov 1 08:35:59 2019 +1100
+commit b6a8d5e2c1d1e7ac8f9bdd3d9f1279ea338ba13d
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Thu Oct 31 14:45:49 2019 -0700
 
-    schema2pkg: all nested ref schemas need to be aliased appropriately (#3919)
+    Allows specifying builtOutputRegex with a string (#3953)

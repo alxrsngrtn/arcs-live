@@ -494,8 +494,8 @@
         "signature": "f6a6a5cb6af33958926701844e0c5b72b33c23bafc13eb41ad96b42693654e6d"
       },
       "../src/platform/loader-base.ts": {
-        "version": "88564b04662408409b87bfb1ffe8924e2956b03b14202a616d9b0066319565f6",
-        "signature": "158c1d6b17cdb4893bf3495683ee8db6906619488fe539d3fccdd3a47d3b0081"
+        "version": "ee0207d38148373c73548ff76c4c22d261ddd24d5c6c2343b15ed0049fb72c1c",
+        "signature": "d54354336a1622eb3ea17867ca5b6a86c2f627b9af9f491e5aecc1dfcf85882b"
       },
       "../src/platform/loader-web.ts": {
         "version": "0fdb875dbc07efa7ec270098e74c5739662da4d27940f315ce4c4fbcae82eb85",
@@ -2257,7 +2257,7 @@
         "signature": "9d9ae4264cf03748fbb1058f3e3e34de786e0509a9c9d119e53cd91d90ce34ff"
       },
       "../src/platform/tests/loader-test.ts": {
-        "version": "9e2c18495ddfeaba2264bdbadaa1d8dd3e89ee7ee4aaa3ff404e19e6bfc3799d",
+        "version": "5da63120d3934203d7d55cdb8956deca07bab6550eca63d198e32777ff3e5ecb",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/keymgmt/base64.ts": {
@@ -3861,6 +3861,7 @@
         "../src/runtime/ui-multiplexer-particle.ts",
         "../src/runtime/html.ts",
         "../src/platform/logs-factory.ts",
+        "../src/runtime/hot.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.2/util.d.ts"
       ],
@@ -9264,6 +9265,7 @@
       "../src/platform/loader-base.ts": [
         "../src/runtime/particle-execution-context.ts",
         "../src/runtime/particle-spec.ts",
+        "../src/runtime/hot.ts",
         "../src/runtime/particle.ts"
       ],
       "../src/platform/loader-web.ts": [

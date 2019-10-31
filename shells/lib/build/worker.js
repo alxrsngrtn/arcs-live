@@ -10379,6 +10379,7 @@ class LoaderBase {
     constructor(urlMap = {}, staticMap = {}) {
         this.urlMap = urlMap;
         this.staticMap = staticMap;
+        this.compileRegExp(urlMap);
     }
     setParticleExecutionContext(pec) {
         this.pec = pec;
@@ -10512,7 +10513,7 @@ class LoaderBase {
     resolveConfiguredPath(path, macro, config) {
         return [
             config.root,
-            (path.match(config.buildOutputRegex) ? config.buildDir : ''),
+            (path.match(config.compiledRegex) ? config.buildDir : ''),
             (config.path || ''),
             path.slice(macro.length)
         ].join('');
@@ -10593,6 +10594,13 @@ class LoaderBase {
     }
     provisionLogger(fileName) {
         return Object(_platform_logs_factory_js__WEBPACK_IMPORTED_MODULE_11__["logsFactory"])(fileName.split('/').pop(), '#1faa00').log;
+    }
+    compileRegExp(urlMap) {
+        for (const config of Object.values(urlMap)) {
+            if (typeof config === 'string')
+                continue;
+            config.compiledRegex = RegExp(config.buildOutputRegex);
+        }
     }
 }
 //# sourceMappingURL=loader-base.js.map

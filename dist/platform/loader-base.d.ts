@@ -1,15 +1,15 @@
 import { ParticleExecutionContext } from '../runtime/particle-execution-context.js';
 import { ParticleSpec } from '../runtime/particle-spec.js';
 import { Particle } from '../runtime/particle.js';
+import { Dictionary } from '../runtime/hot.js';
 declare type ParticleCtor = typeof Particle;
-interface UrlMap {
-    [macro: string]: string | {
-        root: string;
-        path?: string;
-        buildDir: string;
-        buildOutputRegex: RegExp;
-    };
-}
+declare type UrlMap = Dictionary<string | {
+    root: string;
+    path?: string;
+    buildDir: string;
+    buildOutputRegex: string;
+    compiledRegex?: RegExp;
+}>;
 /**
  * Key public API:
  *   async loadResource(file: string): Promise<string>
@@ -20,7 +20,7 @@ export declare abstract class LoaderBase {
     pec?: ParticleExecutionContext;
     protected readonly urlMap: UrlMap;
     protected readonly staticMap: {};
-    constructor(urlMap?: {}, staticMap?: {});
+    constructor(urlMap?: UrlMap, staticMap?: {});
     setParticleExecutionContext(pec: ParticleExecutionContext): void;
     flushCaches(): void;
     loadResource(file: string): Promise<string>;
@@ -70,5 +70,6 @@ export declare abstract class LoaderBase {
      */
     protected unwrapParticle(particleWrapper: any, log?: any): any;
     protected provisionLogger(fileName: string): Function;
+    private compileRegExp;
 }
 export {};

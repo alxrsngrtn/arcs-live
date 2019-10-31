@@ -113,6 +113,7 @@
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="loaderbase.html#compileregexp" class="tsd-kind-icon">compile<wbr>Reg<wbr>Exp</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected"><a href="loaderbase.html#fetchbuffer" class="tsd-kind-icon">fetch<wbr>Buffer</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected"><a href="loaderbase.html#fetchstring" class="tsd-kind-icon">fetch<wbr>String</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="loaderbase.html#findurlmapmacro" class="tsd-kind-icon">find<wbr>Url<wbr>Map<wbr>Macro</a></li>
@@ -150,19 +151,19 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Loader<wbr>Base<span class="tsd-signature-symbol">(</span>urlMap<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">__type</span>, staticMap<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">__type</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="loaderbase.html" class="tsd-signature-type">LoaderBase</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Loader<wbr>Base<span class="tsd-signature-symbol">(</span>urlMap<span class="tsd-signature-symbol">?: </span><a href="../globals.html#urlmap" class="tsd-signature-type">UrlMap</a>, staticMap<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">__type</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="loaderbase.html" class="tsd-signature-type">LoaderBase</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/d410e65/src/platform/loader-base.ts#L53">src/platform/loader-base.ts:53</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b6a8d5e/src/platform/loader-base.ts#L53">src/platform/loader-base.ts:53</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> urlMap: <span class="tsd-signature-type">__type</span><span class="tsd-signature-symbol"> =&nbsp;{}</span></h5>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> urlMap: <a href="../globals.html#urlmap" class="tsd-signature-type">UrlMap</a><span class="tsd-signature-symbol"> =&nbsp;{}</span></h5>
 								</li>
 								<li>
 									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> staticMap: <span class="tsd-signature-type">__type</span><span class="tsd-signature-symbol"> =&nbsp;{}</span></h5>
@@ -181,7 +182,7 @@
 					<div class="tsd-signature tsd-kind-icon">pec<span class="tsd-signature-symbol">:</span> <a href="particleexecutioncontext.html" class="tsd-signature-type">ParticleExecutionContext</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/d410e65/src/platform/loader-base.ts#L51">src/platform/loader-base.ts:51</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b6a8d5e/src/platform/loader-base.ts#L51">src/platform/loader-base.ts:51</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -191,23 +192,46 @@
 					<div class="tsd-signature tsd-kind-icon">static<wbr>Map<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">__type</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/d410e65/src/platform/loader-base.ts#L53">src/platform/loader-base.ts:53</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b6a8d5e/src/platform/loader-base.ts#L53">src/platform/loader-base.ts:53</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-protected">
 					<a name="urlmap" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagProtected">Protected</span> url<wbr>Map</h3>
-					<div class="tsd-signature tsd-kind-icon">url<wbr>Map<span class="tsd-signature-symbol">:</span> <a href="../interfaces/urlmap.html" class="tsd-signature-type">UrlMap</a></div>
+					<div class="tsd-signature tsd-kind-icon">url<wbr>Map<span class="tsd-signature-symbol">:</span> <a href="../globals.html#urlmap" class="tsd-signature-type">UrlMap</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/d410e65/src/platform/loader-base.ts#L52">src/platform/loader-base.ts:52</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b6a8d5e/src/platform/loader-base.ts#L52">src/platform/loader-base.ts:52</a></li>
 						</ul>
 					</aside>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
+					<a name="compileregexp" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> compile<wbr>Reg<wbr>Exp</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">compile<wbr>Reg<wbr>Exp<span class="tsd-signature-symbol">(</span>urlMap<span class="tsd-signature-symbol">: </span><a href="../globals.html#urlmap" class="tsd-signature-type">UrlMap</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b6a8d5e/src/platform/loader-base.ts#L284">src/platform/loader-base.ts:284</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>urlMap: <a href="../globals.html#urlmap" class="tsd-signature-type">UrlMap</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-protected">
 					<a name="fetchbuffer" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagProtected">Protected</span> fetch<wbr>Buffer</h3>
@@ -218,7 +242,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/d410e65/src/platform/loader-base.ts#L120">src/platform/loader-base.ts:120</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b6a8d5e/src/platform/loader-base.ts#L121">src/platform/loader-base.ts:121</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -241,7 +265,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/d410e65/src/platform/loader-base.ts#L110">src/platform/loader-base.ts:110</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b6a8d5e/src/platform/loader-base.ts#L111">src/platform/loader-base.ts:111</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -264,7 +288,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/d410e65/src/platform/loader-base.ts#L185">src/platform/loader-base.ts:185</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b6a8d5e/src/platform/loader-base.ts#L186">src/platform/loader-base.ts:186</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -287,7 +311,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/d410e65/src/platform/loader-base.ts#L61">src/platform/loader-base.ts:61</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b6a8d5e/src/platform/loader-base.ts#L62">src/platform/loader-base.ts:62</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -304,7 +328,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/d410e65/src/platform/loader-base.ts#L134">src/platform/loader-base.ts:134</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b6a8d5e/src/platform/loader-base.ts#L135">src/platform/loader-base.ts:135</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -330,7 +354,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/d410e65/src/platform/loader-base.ts#L131">src/platform/loader-base.ts:131</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b6a8d5e/src/platform/loader-base.ts#L132">src/platform/loader-base.ts:132</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -353,7 +377,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/d410e65/src/platform/loader-base.ts#L76">src/platform/loader-base.ts:76</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b6a8d5e/src/platform/loader-base.ts#L77">src/platform/loader-base.ts:77</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -376,7 +400,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/d410e65/src/platform/loader-base.ts#L117">src/platform/loader-base.ts:117</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b6a8d5e/src/platform/loader-base.ts#L118">src/platform/loader-base.ts:118</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -399,7 +423,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/d410e65/src/platform/loader-base.ts#L130">src/platform/loader-base.ts:130</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b6a8d5e/src/platform/loader-base.ts#L131">src/platform/loader-base.ts:131</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -427,7 +451,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/d410e65/src/platform/loader-base.ts#L235">src/platform/loader-base.ts:235</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b6a8d5e/src/platform/loader-base.ts#L236">src/platform/loader-base.ts:236</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -458,7 +482,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/d410e65/src/platform/loader-base.ts#L65">src/platform/loader-base.ts:65</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b6a8d5e/src/platform/loader-base.ts#L66">src/platform/loader-base.ts:66</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -481,7 +505,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/d410e65/src/platform/loader-base.ts#L209">src/platform/loader-base.ts:209</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b6a8d5e/src/platform/loader-base.ts#L210">src/platform/loader-base.ts:210</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -504,7 +528,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/d410e65/src/platform/loader-base.ts#L87">src/platform/loader-base.ts:87</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b6a8d5e/src/platform/loader-base.ts#L88">src/platform/loader-base.ts:88</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -527,7 +551,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/d410e65/src/platform/loader-base.ts#L94">src/platform/loader-base.ts:94</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b6a8d5e/src/platform/loader-base.ts#L95">src/platform/loader-base.ts:95</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -550,7 +574,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/d410e65/src/platform/loader-base.ts#L104">src/platform/loader-base.ts:104</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b6a8d5e/src/platform/loader-base.ts#L105">src/platform/loader-base.ts:105</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -573,7 +597,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/d410e65/src/platform/loader-base.ts#L198">src/platform/loader-base.ts:198</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b6a8d5e/src/platform/loader-base.ts#L199">src/platform/loader-base.ts:199</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -596,7 +620,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/d410e65/src/platform/loader-base.ts#L151">src/platform/loader-base.ts:151</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b6a8d5e/src/platform/loader-base.ts#L152">src/platform/loader-base.ts:152</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -619,7 +643,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/d410e65/src/platform/loader-base.ts#L147">src/platform/loader-base.ts:147</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b6a8d5e/src/platform/loader-base.ts#L148">src/platform/loader-base.ts:148</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -642,7 +666,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/d410e65/src/platform/loader-base.ts#L280">src/platform/loader-base.ts:280</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b6a8d5e/src/platform/loader-base.ts#L281">src/platform/loader-base.ts:281</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -665,7 +689,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/d410e65/src/platform/loader-base.ts#L219">src/platform/loader-base.ts:219</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b6a8d5e/src/platform/loader-base.ts#L220">src/platform/loader-base.ts:220</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -688,7 +712,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/d410e65/src/platform/loader-base.ts#L254">src/platform/loader-base.ts:254</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b6a8d5e/src/platform/loader-base.ts#L255">src/platform/loader-base.ts:255</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -722,7 +746,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/d410e65/src/platform/loader-base.ts#L165">src/platform/loader-base.ts:165</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b6a8d5e/src/platform/loader-base.ts#L166">src/platform/loader-base.ts:166</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -745,7 +769,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/d410e65/src/platform/loader-base.ts#L190">src/platform/loader-base.ts:190</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b6a8d5e/src/platform/loader-base.ts#L191">src/platform/loader-base.ts:191</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -774,7 +798,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/d410e65/src/platform/loader-base.ts#L170">src/platform/loader-base.ts:170</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b6a8d5e/src/platform/loader-base.ts#L171">src/platform/loader-base.ts:171</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -797,7 +821,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/d410e65/src/platform/loader-base.ts#L58">src/platform/loader-base.ts:58</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b6a8d5e/src/platform/loader-base.ts#L59">src/platform/loader-base.ts:59</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -820,7 +844,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/d410e65/src/platform/loader-base.ts#L258">src/platform/loader-base.ts:258</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b6a8d5e/src/platform/loader-base.ts#L259">src/platform/loader-base.ts:259</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -869,6 +893,9 @@
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-protected">
 								<a href="loaderbase.html#urlmap" class="tsd-kind-icon">url<wbr>Map</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+								<a href="loaderbase.html#compileregexp" class="tsd-kind-icon">compile<wbr>Reg<wbr>Exp</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-protected">
 								<a href="loaderbase.html#fetchbuffer" class="tsd-kind-icon">fetch<wbr>Buffer</a>
