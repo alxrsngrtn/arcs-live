@@ -1,5 +1,8 @@
-commit 4a464d8e16cf66a04222f33c04cc25519568fa74
+commit f1f059e4877e0961b2da98e717589323fa17783d
 Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Thu Oct 31 14:11:40 2019 +1100
+Date:   Thu Oct 31 14:16:10 2019 +1100
 
-    Fix some trailing whitespace (#3948)
+    Delete oldData field from onHandleUpdate (#3850)
+    
+    This was unused, and is incompatible with the new storage proxy
+    structure.

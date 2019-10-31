@@ -84,7 +84,6 @@ export class StorageProxy {
         return version;
     }
     async applyOp(op) {
-        const oldData = this.crdt.getParticleView();
         if (!this.crdt.applyOperation(op)) {
             return false;
         }
@@ -93,7 +92,7 @@ export class StorageProxy {
             operations: [op],
         };
         await this.store.onProxyMessage(message);
-        this.notifyUpdate(op, oldData);
+        this.notifyUpdate(op);
         return true;
     }
     async getParticleView() {
@@ -125,7 +124,6 @@ export class StorageProxy {
                 if (!this.keepSynced) {
                     return false;
                 }
-                let oldData = this.crdt.getParticleView();
                 for (const op of message.operations) {
                     if (!this.crdt.applyOperation(op)) {
                         // If we cannot cleanly apply ops, sync the whole model.
@@ -133,8 +131,7 @@ export class StorageProxy {
                         await this.notifyDesync();
                         return this.requestSynchronization();
                     }
-                    this.notifyUpdate(op, oldData);
-                    oldData = this.crdt.getParticleView();
+                    this.notifyUpdate(op);
                 }
                 // If we have consumed all operations, we've caught up.
                 this.synchronized = true;
@@ -148,11 +145,11 @@ export class StorageProxy {
         }
         return true;
     }
-    notifyUpdate(operation, oldData) {
+    notifyUpdate(operation) {
         const version = this.versionCopy();
         for (const handle of this.handles) {
             if (handle.options.notifyUpdate) {
-                this.scheduler.enqueue(handle.particle, handle, { type: HandleMessageType.Update, op: operation, oldData, version });
+                this.scheduler.enqueue(handle.particle, handle, { type: HandleMessageType.Update, op: operation, version });
             }
             else if (handle.options.keepSynced) {
                 // keepSynced but not notifyUpdate, notify of the new model.
@@ -205,7 +202,7 @@ export class NoOpStorageProxy extends StorageProxy {
     async onMessage(message) {
         return new Promise(resolve => { });
     }
-    notifyUpdate(operation, oldData) { }
+    notifyUpdate(operation) { }
     notifySync() { }
     notifyDesync() { }
     async requestSynchronization() {
@@ -292,7 +289,7 @@ export class StorageProxyScheduler {
                 await handle.onDesync();
                 break;
             case HandleMessageType.Update:
-                handle.onUpdate(update.op, update.oldData, update.version);
+                handle.onUpdate(update.op, update.version);
                 break;
             default:
                 console.error('Ignoring unknown update', update);

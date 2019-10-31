@@ -101,8 +101,8 @@ export class MockHandle extends Handle {
     onSync() {
         this.onSyncCalled = true;
     }
-    onUpdate(op, oldData, version) {
-        this.lastUpdate = [op, oldData, version];
+    onUpdate(op, version) {
+        this.lastUpdate = [op, version];
     }
 }
 export class MockStorageDriverProvider {

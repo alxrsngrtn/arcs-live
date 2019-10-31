@@ -120,7 +120,7 @@ describe('CollectionHandle', async () => {
             actor: 'actor',
             clock: { 'actor': 1 }
         };
-        await handle.onUpdate(op, new Set(), { 'actor': 1, 'other': 2 });
+        await handle.onUpdate(op, { 'actor': 1, 'other': 2 });
         assert.equal(Entity.id(particle.lastUpdate.removed), 'id');
         assert.isFalse(particle.lastUpdate.originator);
     });
@@ -134,7 +134,7 @@ describe('CollectionHandle', async () => {
             oldClock: { 'actor': 1 },
             newClock: { 'actor': 1 }
         };
-        await handle.onUpdate(op, new Set(), { 'actor': 1, 'other': 2 });
+        await handle.onUpdate(op, { 'actor': 1, 'other': 2 });
         assert.isTrue(particle.onSyncCalled);
     });
     it('stores new version map', async () => {
@@ -205,8 +205,8 @@ describe('SingletonHandle', async () => {
             actor: 'actor',
             clock: { 'actor': 1 }
         };
-        await handle.onUpdate(op, { id: 'old', rawData: {} }, { 'actor': 1, 'other': 2 });
-        assert.deepEqual(particle.lastUpdate, { data: {}, oldData: { id: 'old', rawData: {} }, originator: false });
+        await handle.onUpdate(op, { 'actor': 1, 'other': 2 });
+        assert.deepEqual(particle.lastUpdate, { data: {}, originator: false });
         assert.equal(Entity.id(particle.lastUpdate.data), 'id');
     });
     it('stores new version map', async () => {

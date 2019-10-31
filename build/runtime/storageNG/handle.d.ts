@@ -47,7 +47,7 @@ export declare abstract class Handle<StorageType extends CRDTTypeRecord> {
         notifyDesync?: boolean;
     }): void;
     protected reportUserExceptionInHost(exception: Error, particle: Particle, method: string): void;
-    abstract onUpdate(update: StorageType['operation'], oldData: StorageType['consumerType'], version: VersionMap): void;
+    abstract onUpdate(update: StorageType['operation'], version: VersionMap): void;
     abstract onSync(): void;
     onDesync(): Promise<void>;
     disable(particle?: Particle): void;
@@ -79,7 +79,7 @@ export declare class CollectionHandle<T extends Entity> extends PreEntityMutatio
     clear(): Promise<boolean>;
     toList(): Promise<T[]>;
     private toCRDTList;
-    onUpdate(op: CollectionOperation<SerializedEntity>, oldData: Set<SerializedEntity>, version: VersionMap): Promise<void>;
+    onUpdate(op: CollectionOperation<SerializedEntity>, version: VersionMap): Promise<void>;
     onSync(): Promise<void>;
 }
 /**
@@ -89,7 +89,7 @@ export declare class SingletonHandle<T extends Entity> extends PreEntityMutation
     set(entity: T): Promise<boolean>;
     clear(): Promise<boolean>;
     get(): Promise<T>;
-    onUpdate(op: SingletonOperation<SerializedEntity>, oldData: SerializedEntity, version: VersionMap): Promise<void>;
+    onUpdate(op: SingletonOperation<SerializedEntity>, version: VersionMap): Promise<void>;
     onSync(): Promise<void>;
 }
 export declare function handleNGFor<T extends CRDTTypeRecord>(key: string, storageProxy: StorageProxy<T>, idGenerator: IdGenerator, particle: Particle, canRead: boolean, canWrite: boolean, name?: string): Handle<T>;

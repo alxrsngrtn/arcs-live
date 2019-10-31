@@ -122,9 +122,6 @@ class TestParticle {
         if ('data' in update) {
             details += this._toString(update.data);
         }
-        if ('oldData' in update && update.oldData !== null) {
-            details += `:(was:${this._toString(update.oldData)})`;
-        }
         if ('added' in update) {
             details += '+' + this._toString(update.added);
         }
@@ -280,7 +277,7 @@ describe('storage-proxy', () => {
         await engine.verify('onHandleUpdate:P1:foo:oh', 'onHandleUpdate:P1:bar:+[hai]');
         fooStore.clear();
         barStore.remove('i1');
-        await engine.verify('onHandleUpdate:P1:foo:(null):(was:oh)', 'onHandleUpdate:P1:bar:-[hai]');
+        await engine.verify('onHandleUpdate:P1:foo:(null)', 'onHandleUpdate:P1:bar:-[hai]');
     });
     it('notifies for updates to initially populated handles', async () => {
         const engine = new TestEngine('arc-id');
@@ -301,10 +298,10 @@ describe('storage-proxy', () => {
         await engine.verify('InitializeProxy:foo', 'SynchronizeProxy:foo', 'InitializeProxy:bar', 'SynchronizeProxy:bar', 'onHandleSync:P1:foo:well', 'onHandleSync:P1:bar:[hi|there]');
         fooStore.set(engine.newEntity('gday'));
         barStore.store('i3', engine.newEntity('mate'));
-        await engine.verify('onHandleUpdate:P1:foo:gday:(was:well)', 'onHandleUpdate:P1:bar:+[mate]');
+        await engine.verify('onHandleUpdate:P1:foo:gday', 'onHandleUpdate:P1:bar:+[mate]');
         fooStore.clear();
         barStore.remove('i2');
-        await engine.verify('onHandleUpdate:P1:foo:(null):(was:gday)', 'onHandleUpdate:P1:bar:-[there]');
+        await engine.verify('onHandleUpdate:P1:foo:(null)', 'onHandleUpdate:P1:bar:-[there]');
     });
     it('handles dropped updates on a Singleton with immediate resync', async () => {
         const engine = new TestEngine('arc-id');
@@ -535,7 +532,7 @@ describe('storage-proxy', () => {
         // Write to handle modifies the model directly, dispatches update and store write.
         const changed = engine.newEntity('changed');
         await fooHandle.set(changed);
-        await engine.verifySubsequence('onHandleUpdate:P1:foo:changed:(was:start)');
+        await engine.verifySubsequence('onHandleUpdate:P1:foo:changed');
         await engine.verify('HandleSet:foo:changed');
         // Read the handle again; the read should still be able to complete locally.
         await fooHandle.get();
@@ -549,7 +546,7 @@ describe('storage-proxy', () => {
         await engine.verify();
         // Subsequent updates should be visible in the handle.
         fooStore.set(engine.newEntity('subsequent'));
-        await engine.verify('onHandleUpdate:P1:foo:subsequent:(was:changed)');
+        await engine.verify('onHandleUpdate:P1:foo:subsequent');
     });
     it('multiple particles observing one proxy', async () => {
         const engine = new TestEngine('arc-id');
@@ -593,13 +590,13 @@ describe('storage-proxy', () => {
         fooProxy.register(particle2, fooHandle2);
         await engine.verify('InitializeProxy:foo', 'SynchronizeProxy:foo', 'onHandleSync:P1:foo:Huey', 'onHandleSync:P2:foo:Huey');
         fooStore.set(engine.newEntity('Dewey'));
-        await engine.verify('onHandleUpdate:P1:foo:Dewey:(was:Huey)', 'onHandleUpdate:P2:foo:Dewey:(was:Huey)');
+        await engine.verify('onHandleUpdate:P1:foo:Dewey', 'onHandleUpdate:P2:foo:Dewey');
         const particle3 = engine.newParticle();
         const fooHandle3 = engine.newHandle(fooStore, fooProxy, particle3, CAN_READ, CAN_WRITE);
         fooProxy.register(particle3, fooHandle3);
         await engine.verify('onHandleSync:P3:foo:Dewey');
         fooStore.set(engine.newEntity('Louie'));
-        await engine.verify('onHandleUpdate:P1:foo:Louie:(was:Dewey)', 'onHandleUpdate:P2:foo:Louie:(was:Dewey)', 'onHandleUpdate:P3:foo:Louie:(was:Dewey)');
+        await engine.verify('onHandleUpdate:P1:foo:Louie', 'onHandleUpdate:P2:foo:Louie', 'onHandleUpdate:P3:foo:Louie');
     });
     it('multiple particles with different handle configurations', async () => {
         const engine = new TestEngine('arc-id');

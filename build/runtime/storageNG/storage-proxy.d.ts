@@ -8,7 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { PropagatedException } from '../arc-exceptions.js';
-import { CRDTConsumerType, CRDTOperation, CRDTTypeRecord, VersionMap } from '../crdt/crdt.js';
+import { CRDTOperation, CRDTTypeRecord, VersionMap } from '../crdt/crdt.js';
 import { Particle } from '../particle.js';
 import { ParticleExecutionContext } from '../particle-execution-context.js';
 import { Type } from '../type.js';
@@ -39,7 +39,7 @@ export declare class StorageProxy<T extends CRDTTypeRecord> {
     applyOp(op: CRDTOperation): Promise<boolean>;
     getParticleView(): Promise<[T['consumerType'], VersionMap]>;
     onMessage(message: ProxyMessage<T>): Promise<boolean>;
-    protected notifyUpdate(operation: CRDTOperation, oldData: CRDTConsumerType): void;
+    protected notifyUpdate(operation: CRDTOperation): void;
     protected notifySync(): void;
     protected notifyDesync(): void;
     protected requestSynchronization(): Promise<boolean>;
@@ -55,7 +55,7 @@ export declare class NoOpStorageProxy<T extends CRDTTypeRecord> extends StorageP
     getParticleView(): Promise<[T['consumerType'], VersionMap]>;
     getData(): Promise<T['data']>;
     onMessage(message: ProxyMessage<T>): Promise<boolean>;
-    protected notifyUpdate(operation: CRDTOperation, oldData: CRDTConsumerType): void;
+    protected notifyUpdate(operation: CRDTOperation): void;
     protected notifySync(): void;
     protected notifyDesync(): void;
     protected requestSynchronization(): Promise<boolean>;
@@ -72,7 +72,6 @@ declare type Event = {
 } | {
     type: HandleMessageType.Update;
     op: CRDTOperation;
-    oldData: CRDTConsumerType;
     version: VersionMap;
 };
 export declare class StorageProxyScheduler<T extends CRDTTypeRecord> {

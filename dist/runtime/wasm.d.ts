@@ -72,7 +72,6 @@ export declare class WasmParticle extends Particle {
     onHandleSync(handle: Handle, model: any): Promise<void>;
     onHandleUpdate(handle: Handle, update: {
         data?: any;
-        oldData?: any;
         added?: any;
         removed?: any;
         originator?: any;

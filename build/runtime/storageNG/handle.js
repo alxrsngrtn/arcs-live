@@ -163,7 +163,7 @@ export class CollectionHandle extends PreEntityMutationHandle {
         this.clock = versionMap;
         return [...set];
     }
-    async onUpdate(op, oldData, version) {
+    async onUpdate(op, version) {
         this.clock = version;
         // FastForward cannot be expressed in terms of ordered added/removed, so pass a full model to
         // the particle.
@@ -216,10 +216,10 @@ export class SingletonHandle extends PreEntityMutationHandle {
         this.clock = versionMap;
         return value == null ? null : this.deserialize(value);
     }
-    async onUpdate(op, oldData, version) {
+    async onUpdate(op, version) {
         this.clock = version;
         // Pass the change up to the particle.
-        const update = { oldData, originator: (this.key === op.actor) };
+        const update = { originator: (this.key === op.actor) };
         if (op.type === SingletonOpTypes.Set) {
             update.data = this.deserialize(op.value);
         }

@@ -4360,8 +4360,7 @@ class Singleton extends HandleOld {
                 return;
             case 'update': {
                 const data = this._restore(details.data);
-                const oldData = this._restore(details.oldData);
-                await particle.callOnHandleUpdate(this, { data, oldData }, e => this.reportUserExceptionInHost(e, particle, 'onHandleUpdate'));
+                await particle.callOnHandleUpdate(this, { data }, e => this.reportUserExceptionInHost(e, particle, 'onHandleUpdate'));
                 return;
             }
             case 'desync':
@@ -5073,9 +5072,8 @@ class SingletonProxy extends StorageProxy {
             }
             return null;
         }
-        const oldData = this.model;
         this.model = update.data;
-        return { ...update, oldData };
+        return { ...update };
     }
     // Read ops: if we're synchronized we can just return the local copy of the data.
     // Otherwise, send a request to the backing store.
@@ -5105,12 +5103,11 @@ class SingletonProxy extends StorageProxy {
         else {
             barrier = null;
         }
-        const oldData = this.model;
         // TODO: is this already a clone?
         this.model = JSON.parse(JSON.stringify(entity));
         this.barrier = barrier;
         this.port.HandleSet(this, entity, particleId, barrier);
-        const update = { originatorId: particleId, data: entity, oldData };
+        const update = { originatorId: particleId, data: entity };
         this._notify('update', update, options => options.notifyUpdate);
         return Promise.resolve();
     }
@@ -5119,11 +5116,10 @@ class SingletonProxy extends StorageProxy {
             return Promise.resolve();
         }
         const barrier = this.generateBarrier();
-        const oldData = this.model;
         this.model = null;
         this.barrier = barrier;
         this.port.HandleClear(this, particleId, barrier);
-        const update = { originatorId: particleId, data: null, oldData };
+        const update = { originatorId: particleId, data: null };
         this._notify('update', update, options => options.notifyUpdate);
         return Promise.resolve();
     }
@@ -5814,7 +5810,7 @@ class CollectionHandle extends PreEntityMutationHandle {
         this.clock = versionMap;
         return [...set];
     }
-    async onUpdate(op, oldData, version) {
+    async onUpdate(op, version) {
         this.clock = version;
         // FastForward cannot be expressed in terms of ordered added/removed, so pass a full model to
         // the particle.
@@ -5867,10 +5863,10 @@ class SingletonHandle extends PreEntityMutationHandle {
         this.clock = versionMap;
         return value == null ? null : this.deserialize(value);
     }
-    async onUpdate(op, oldData, version) {
+    async onUpdate(op, version) {
         this.clock = version;
         // Pass the change up to the particle.
-        const update = { oldData, originator: (this.key === op.actor) };
+        const update = { originator: (this.key === op.actor) };
         if (op.type === _crdt_crdt_singleton_js__WEBPACK_IMPORTED_MODULE_3__["SingletonOpTypes"].Set) {
             update.data = this.deserialize(op.value);
         }
@@ -6377,7 +6373,6 @@ class StorageProxy {
         return version;
     }
     async applyOp(op) {
-        const oldData = this.crdt.getParticleView();
         if (!this.crdt.applyOperation(op)) {
             return false;
         }
@@ -6386,7 +6381,7 @@ class StorageProxy {
             operations: [op],
         };
         await this.store.onProxyMessage(message);
-        this.notifyUpdate(op, oldData);
+        this.notifyUpdate(op);
         return true;
     }
     async getParticleView() {
@@ -6418,7 +6413,6 @@ class StorageProxy {
                 if (!this.keepSynced) {
                     return false;
                 }
-                let oldData = this.crdt.getParticleView();
                 for (const op of message.operations) {
                     if (!this.crdt.applyOperation(op)) {
                         // If we cannot cleanly apply ops, sync the whole model.
@@ -6426,8 +6420,7 @@ class StorageProxy {
                         await this.notifyDesync();
                         return this.requestSynchronization();
                     }
-                    this.notifyUpdate(op, oldData);
-                    oldData = this.crdt.getParticleView();
+                    this.notifyUpdate(op);
                 }
                 // If we have consumed all operations, we've caught up.
                 this.synchronized = true;
@@ -6441,11 +6434,11 @@ class StorageProxy {
         }
         return true;
     }
-    notifyUpdate(operation, oldData) {
+    notifyUpdate(operation) {
         const version = this.versionCopy();
         for (const handle of this.handles) {
             if (handle.options.notifyUpdate) {
-                this.scheduler.enqueue(handle.particle, handle, { type: HandleMessageType.Update, op: operation, oldData, version });
+                this.scheduler.enqueue(handle.particle, handle, { type: HandleMessageType.Update, op: operation, version });
             }
             else if (handle.options.keepSynced) {
                 // keepSynced but not notifyUpdate, notify of the new model.
@@ -6498,7 +6491,7 @@ class NoOpStorageProxy extends StorageProxy {
     async onMessage(message) {
         return new Promise(resolve => { });
     }
-    notifyUpdate(operation, oldData) { }
+    notifyUpdate(operation) { }
     notifySync() { }
     notifyDesync() { }
     async requestSynchronization() {
@@ -6585,7 +6578,7 @@ class StorageProxyScheduler {
                 await handle.onDesync();
                 break;
             case HandleMessageType.Update:
-                handle.onUpdate(update.op, update.oldData, update.version);
+                handle.onUpdate(update.op, update.version);
                 break;
             default:
                 console.error('Ignoring unknown update', update);
@@ -9930,7 +9923,6 @@ class Particle {
      * @param handle The Handle instance that was updated.
      * @param update An object containing one of the following fields:
      *  - data: The full Entity for a Singleton-backed Handle.
-     *  - oldData: The previous value of a Singleton before it was updated.
      *  - added: An Array of Entities added to a Collection-backed Handle.
      *  - removed: An Array of Entities removed from a Collection-backed Handle.
      *  - originator: whether the update originated from this particle.
