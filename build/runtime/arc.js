@@ -375,7 +375,7 @@ ${this.activeRecipe.toString()}`;
         const info = { spec: recipeParticle.spec, stores: new Map() };
         this.loadedParticleInfo.set(recipeParticle.id.toString(), info);
         // if supported, provide particle caching via a BlobUrl representing spec.implFile
-        if (!recipeParticle.isJavaParticle()) {
+        if (!recipeParticle.isExternalParticle()) {
             await this._provisionSpecUrl(recipeParticle.spec);
         }
         for (const [name, connection] of Object.entries(recipeParticle.connections)) {

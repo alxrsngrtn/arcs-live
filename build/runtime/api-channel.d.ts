@@ -52,7 +52,7 @@ export declare class APIPort {
     close(): void;
     _processMessage(e: any): Promise<void>;
     send(name: string, args: {}): Promise<void>;
-    supportsJavaParticle(): boolean;
+    supportsExternalParticle(): boolean;
 }
 export declare abstract class PECOuterPort extends APIPort {
     constructor(messagePort: MessagePort, arc: Arc);

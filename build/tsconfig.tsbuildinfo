@@ -222,8 +222,8 @@
         "signature": "0f5b3d55c7475fcb3d44c4fb6f71c0e361e99ed2b67b27a737725b855e3b55a4"
       },
       "../src/runtime/recipe/particle.ts": {
-        "version": "d59abe2584891cb75136b755565125036db53f1c61f799cbf09646a6ebc72d5f",
-        "signature": "48ee89089870cafcf1aff05b59507df345d7ae92c362b9abe5af551ef7d98327"
+        "version": "f3cac24432edd41d0d49105df5d74222b410dfc5970d1a24ea8996c31d016245",
+        "signature": "23e03dc1b6e3a05bcadce21d59d81c88ba52dacf3051cc7f6c17762d16dde976"
       },
       "../src/runtime/arc-inspector.ts": {
         "version": "af56b00f105d68627aa7f31296b602c5a8cab02865ada00685baa5932a7a4144",
@@ -434,7 +434,7 @@
         "signature": "a37f1b0347d4dae7a16754e444957d55c425434f5abe1347c1617e7381a9bb2a"
       },
       "../src/runtime/particle-execution-host.ts": {
-        "version": "b9b577ce2042bf87fba0f4db6d40ce81e6bbc379cee22b3ad83e517db6092b18",
+        "version": "85c532fe485abb7e998b2350f1b04db3d39f6658a7603d4c2df631b956fdcca5",
         "signature": "dc42231353b6ad064a437e7e876d93e5743063e9acbc58645392d4d4ffad4d61"
       },
       "../src/runtime/slot-consumer.ts": {
@@ -518,12 +518,12 @@
         "signature": "83e1cf700a82b34d08bc32d26ffb4ea1176d588c1b51928651708e3055b239a6"
       },
       "../src/runtime/arc.ts": {
-        "version": "14ee85f8d310ba9d846e9a7587c40afbcf18191d7ac82f9e6301f785c6b0a212",
+        "version": "6df7888a2f45dbb416d7973e17e13b1e1c5d5c889d8da08c9613c9162345eece",
         "signature": "6b77b33dab1e42c6a9a24691a3175f5a41964fc09f643dcbbdd2a6bc07f3ee3a"
       },
       "../src/runtime/api-channel.ts": {
-        "version": "71a28513d8bf33e0d40da5618c6fa87ed5cd74e4b9aee7e960188183eff567e9",
-        "signature": "6fed45ef60b7afe58b7e14e84f6a09f826a5fad87cd98b1be37b245ed8d42507"
+        "version": "327820c5faf9f760f6e6b4dce168067d8bc46d06551c65e9004b38365362b827",
+        "signature": "bf252ed91231f958fec3a70288c21024ecfa39551fe7943c0ef2e824410069dc"
       },
       "../src/runtime/bimap.ts": {
         "version": "4ea68f15eecc1ed8295ce03350a14f625818d1cf137e38686781de48dc4e97e6",
@@ -562,19 +562,19 @@
         "signature": "5f81ab9527a7fce014911edd1abd6e86326348360a48f3344bb9eabb33b7753e"
       },
       "../src/runtime/particle-spec.ts": {
-        "version": "9977921735e9885184c00253fda59330001963e1d210dda8e1efd611a7d2f45b",
-        "signature": "fed6d96abcedd4c828945e67e59023b905dffeae5a63c6d2f15163b0b72b3e8b"
+        "version": "00ad1caa76da97a0311a40e5822282a320a34458ed6b23ba967c441e8c6851ac",
+        "signature": "9c9407f1a7b3451c5c2d7d9cab3a7be0864dcd5e35ee845631c2d3ee876c72d9"
       },
       "../src/runtime/particle-claim.ts": {
         "version": "a93ee9f35301cacbe3a63d18349700aff89f16ec14fbd833024138660c28aa31",
         "signature": "75bc5f22059210323a192a97ea60f029862fe72a4f9e10e3b6dc71c02539198b"
       },
       "../src/runtime/manifest-ast-nodes.ts": {
-        "version": "aefd2decf5aff3d880d520ced28d1334fc4b7181efca4c59866d47bf4509d66a",
-        "signature": "fa7c93280edeaf2f3ff9804b9d2c09945d9aef0311766490f6e8f1f46bc47c95"
+        "version": "6322256f7eef862e06acada83cb710735f495536940419eecf1411289c982948",
+        "signature": "308e3982e144d10b2802bb065474b0d055282ebde874d0fd7067cfa71d279f12"
       },
       "../src/gen/runtime/manifest-parser.ts": {
-        "version": "dc729c37b8bf02dc00bed2dd735011a17d59660990b7bc38a738e22980183cf4",
+        "version": "ebf3f815860eba9234028961bd50ea5b046cca16ca46e09c8efe8461fa400a8d",
         "signature": "ff2c763c7895327196fd3eb358dcc775b25f27bdae513079cc287433af262427"
       },
       "../src/runtime/manifest-meta.ts": {
@@ -902,7 +902,7 @@
         "signature": "0c6e757e9d0682b57b757909dd3a76c1d8243d044fbae0c9cae850be614637b7"
       },
       "../src/devtools-connector/tests/devtools-arc-inspector-test.ts": {
-        "version": "73109e312bab195467f4da335b9b61711d47882f9596bd6b79b2e74f451d294a",
+        "version": "d7e62e9eac9110e724244c3437b8478f502a331b7d9a679a54372cdca6661bc9",
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/planning/plan/plan-producer.ts": {
@@ -2465,7 +2465,7 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/manifest-test.ts": {
-        "version": "d8d666fd3223f68f6905490a8a2f27caf30402f1f26185bbbcb76f9516ece1ab",
+        "version": "4187f5a3d61c6fb209fe4746e2c542259c5d640e29c10a8d351a5e4d3cffa309",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/multiplexer-test.ts": {
@@ -2489,7 +2489,7 @@
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/runtime/tests/particle-interface-loading-test.ts": {
-        "version": "a5fe061a4ef4083fe21cfd0b8f1fbed833c93bc305aa50e71de7ff7c01b7dca6",
+        "version": "fa2c2f8b19dcc4ddbb50565e5837d40cb47c9fd57887c278938c133c1961a1d5",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/particle-interface-loading-with-slots-test.ts": {
@@ -2713,7 +2713,7 @@
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "../src/tools/manifest-checker.ts": {
-        "version": "693226c84e261ca6e769d39f44a2c2ea51490a1ca26d8db5e4357c25170abd48",
+        "version": "1fbd4f413b4cf8974b4ef38413dc287c64b3e1e3d5fc4a06be411a5c1e61bac5",
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "../src/tools/schema2graph.ts": {

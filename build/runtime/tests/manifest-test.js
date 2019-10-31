@@ -1871,7 +1871,7 @@ resource SomeName
         const schema = checkDefined(recipe.particles[0].connections.bar.type.getEntitySchema());
         const innerSchema = schema.fields.foo.schema.model.getEntitySchema();
         verifyPrimitiveType(innerSchema.fields.far, 'Text');
-        assert.strictEqual(manifest.particles[0].toString(), `particle P in 'null'
+        assert.strictEqual(manifest.particles[0].toString(), `particle P
   bar: reads Bar {Reference<Foo {Text far}> foo}
   modality dom`);
     }));
@@ -1892,7 +1892,7 @@ resource SomeName
         const schema = checkDefined(recipe.particles[0].connections.bar.type.getEntitySchema());
         const innerSchema = schema.fields.foo.schema.model.getEntitySchema();
         verifyPrimitiveType(innerSchema.fields.far, 'Text');
-        assert.strictEqual(manifest.particles[0].toString(), `particle P in 'null'
+        assert.strictEqual(manifest.particles[0].toString(), `particle P
   in Bar {Reference<Foo {Text far}> foo} bar
   modality dom`);
     }));
@@ -1912,7 +1912,7 @@ resource SomeName
         const schema = recipe.particles[0].connections.bar.type.getEntitySchema();
         const innerSchema = schema.fields.foo.schema.model.getEntitySchema();
         verifyPrimitiveType(innerSchema.fields.far, 'Text');
-        assert.strictEqual(manifest.particles[0].toString(), `particle P in 'null'
+        assert.strictEqual(manifest.particles[0].toString(), `particle P
   bar: reads Bar {Reference<Foo {Text far}> foo}
   modality dom`);
     }));
@@ -1932,7 +1932,7 @@ resource SomeName
         const schema = recipe.particles[0].connections.bar.type.getEntitySchema();
         const innerSchema = schema.fields.foo.schema.model.getEntitySchema();
         verifyPrimitiveType(innerSchema.fields.far, 'Text');
-        assert.strictEqual(manifest.particles[0].toString(), `particle P in 'null'
+        assert.strictEqual(manifest.particles[0].toString(), `particle P
   in Bar {Reference<Foo {Text far}> foo} bar
   modality dom`);
     }));
@@ -1953,7 +1953,7 @@ resource SomeName
         const schema = recipe.particles[0].connections.bar.type.getEntitySchema();
         const innerSchema = schema.fields.foo.schema.schema.model.getEntitySchema();
         verifyPrimitiveType(innerSchema.fields.far, 'Text');
-        assert.strictEqual(manifest.particles[0].toString(), `particle P in 'null'
+        assert.strictEqual(manifest.particles[0].toString(), `particle P
   bar: reads Bar {[Reference<Foo {Text far}>] foo}
   modality dom`);
     }));
@@ -1974,7 +1974,7 @@ resource SomeName
         const schema = recipe.particles[0].connections.bar.type.getEntitySchema();
         const innerSchema = schema.fields.foo.schema.schema.model.getEntitySchema();
         verifyPrimitiveType(innerSchema.fields.far, 'Text');
-        assert.strictEqual(manifest.particles[0].toString(), `particle P in 'null'
+        assert.strictEqual(manifest.particles[0].toString(), `particle P
   in Bar {[Reference<Foo {Text far}>] foo} bar
   modality dom`);
     }));
@@ -1993,7 +1993,7 @@ resource SomeName
         const schema = recipe.particles[0].connections.bar.type.getEntitySchema();
         const innerSchema = schema.fields.foo.schema.schema.model.getEntitySchema();
         verifyPrimitiveType(innerSchema.fields.far, 'Text');
-        assert.strictEqual(manifest.particles[0].toString(), `particle P in 'null'
+        assert.strictEqual(manifest.particles[0].toString(), `particle P
   bar: reads Bar {[Reference<Foo {Text far}>] foo}
   modality dom`);
     }));
@@ -2012,7 +2012,7 @@ resource SomeName
         const schema = recipe.particles[0].connections.bar.type.getEntitySchema();
         const innerSchema = schema.fields.foo.schema.schema.model.getEntitySchema();
         verifyPrimitiveType(innerSchema.fields.far, 'Text');
-        assert.strictEqual(manifest.particles[0].toString(), `particle P in 'null'
+        assert.strictEqual(manifest.particles[0].toString(), `particle P
   in Bar {[Reference<Foo {Text far}>] foo} bar
   modality dom`);
     }));
@@ -3039,6 +3039,28 @@ particle A
         assert.lengthOf(manifest.errors, 1);
         assert.equal(manifest.errors[0].key, 'externalSchemas');
     });
+    it('SLANDLES SYNTAX can round-trip external particles', Flags.withPostSlandlesSyntax(async () => {
+        const manifestString = `external particle TestParticle
+  input: reads [Product {}]
+  modality dom`;
+        const manifest = await Manifest.parse(manifestString);
+        assert.lengthOf(manifest.particles, 1);
+        const particle = manifest.particles[0];
+        assert.isTrue(particle.external);
+        assert.isNull(particle.implFile);
+        assert.strictEqual(manifestString, particle.toString());
+    }));
+    it('can round-trip external particles', Flags.withPreSlandlesSyntax(async () => {
+        const manifestString = `external particle TestParticle
+  in [Product {}] input
+  modality dom`;
+        const manifest = await Manifest.parse(manifestString);
+        assert.lengthOf(manifest.particles, 1);
+        const particle = manifest.particles[0];
+        assert.isTrue(particle.external);
+        assert.isNull(particle.implFile);
+        assert.strictEqual(manifestString, particle.toString());
+    }));
 });
 describe('Manifest storage migration', () => {
     async function parseStoreFromManifest() {

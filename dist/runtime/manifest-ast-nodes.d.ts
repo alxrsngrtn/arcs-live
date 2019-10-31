@@ -136,6 +136,7 @@ export declare type MetaItem = MetaStorageKey | MetaName;
 export interface Particle extends BaseNode {
     kind: 'particle';
     name: string;
+    external?: boolean;
     implFile?: string;
     verbs?: VerbList;
     args?: ParticleHandleConnection[];

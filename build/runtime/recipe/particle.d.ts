@@ -71,6 +71,6 @@ export declare class Particle implements Comparable<Particle> {
     addSlotConnectionAsCopy(name: string): SlotConnection;
     removeSlotConnection(slotConnection: SlotConnection): void;
     remove(): void;
-    isJavaParticle(): boolean;
+    isExternalParticle(): boolean;
     toString(options?: ToStringOptions, nameMap?: Map<RecipeComponent, string>): string;
 }

@@ -1,8 +1,22 @@
-commit f1f059e4877e0961b2da98e717589323fa17783d
+commit 5952389bf1ae3433db3348bf3acd811d44b08b44
 Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Thu Oct 31 14:16:10 2019 +1100
+Date:   Thu Oct 31 14:34:17 2019 +1100
 
-    Delete oldData field from onHandleUpdate (#3850)
+    Adds `external` keyword to particle defn syntax (#3947)
     
-    This was unused, and is incompatible with the new storage proxy
-    structure.
+    * Adds `external` keyword to particle defn syntax
+    
+    This indicates that the particle is not instantiable, and does not have an impl file. Used for Android particles.
+    
+    Formerly we would say:
+    ```
+    particle Foo in 'path/to/nowhere.java'
+    ```
+    and it would magically work because it ends with .java (the file doesn't even have to exist).
+    
+    Now we can say:
+    ```
+    external particle Foo
+    ```
+    
+    * Review comments

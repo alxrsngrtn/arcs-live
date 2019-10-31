@@ -57,6 +57,7 @@ describe('DevtoolsArcInspector', () => {
             spec: {
                 name: 'P',
                 description: {},
+                external: false,
                 implFile: 'p.js',
                 modality: ['dom'],
                 slotConnections: [],

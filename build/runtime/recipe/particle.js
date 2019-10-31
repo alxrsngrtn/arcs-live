@@ -334,8 +334,8 @@ export class Particle {
     remove() {
         this.recipe.removeParticle(this);
     }
-    isJavaParticle() {
-        return this.spec && (this.spec.implFile || '').endsWith('java');
+    isExternalParticle() {
+        return this.spec && this.spec.external;
     }
     toString(options = {}, nameMap) {
         let result = [];

@@ -86,6 +86,7 @@ export interface SerializedParticleSpec extends Literal {
     description: {
         pattern?: string;
     };
+    external: boolean;
     implFile: string;
     implBlobUrl: string | null;
     modality: string[];
@@ -99,6 +100,7 @@ export declare class ParticleSpec {
     verbs: string[];
     handleConnectionMap: Map<string, HandleConnectionSpec>;
     pattern: string;
+    external: boolean;
     implFile: string;
     implBlobUrl: string | null;
     modality: Modality;

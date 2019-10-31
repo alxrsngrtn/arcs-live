@@ -773,7 +773,7 @@ class APIPort {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this['before' + e.data.messageType] !== undefined);
         const count = this.messageCount++;
         if (this.inspector) {
-            this.inspector.pecMessage('on' + e.data.messageType, e.data.messageBody, count, this.supportsJavaParticle() ? /* android */ 'a' : /* web */ 'w', this._port['pecId'], e.data.stack);
+            this.inspector.pecMessage('on' + e.data.messageType, e.data.messageBody, count, this.supportsExternalParticle() ? /* android */ 'a' : /* web */ 'w', this._port['pecId'], e.data.stack);
         }
         this['before' + e.data.messageType](e.data.messageBody);
     }
@@ -781,11 +781,11 @@ class APIPort {
         const call = { messageType: name, messageBody: args, stack: this.attachStack ? new Error().stack : undefined };
         const count = this.messageCount++;
         if (this.inspector) {
-            this.inspector.pecMessage(name, args, count, this.supportsJavaParticle() ? /* android */ 'a' : /* web */ 'w', this._port['pecId'] || '', new Error().stack || '');
+            this.inspector.pecMessage(name, args, count, this.supportsExternalParticle() ? /* android */ 'a' : /* web */ 'w', this._port['pecId'] || '', new Error().stack || '');
         }
         await this._port.postMessage(call);
     }
-    supportsJavaParticle() {
+    supportsExternalParticle() {
         // TODO: improve heuristics.
         return Object.getPrototypeOf(this._port.constructor).name === 'MessagePort';
     }
@@ -1341,6 +1341,7 @@ class ParticleSpec {
         this.handleConnectionMap.forEach((connectionSpec, name) => {
             connectionSpec.pattern = model.description[name];
         });
+        this.external = model.external;
         this.implFile = model.implFile;
         this.implBlobUrl = model.implBlobUrl;
         this.modality = model.modality ? _modality_js__WEBPACK_IMPORTED_MODULE_1__["Modality"].create(model.modality) : _modality_js__WEBPACK_IMPORTED_MODULE_1__["Modality"].all;
@@ -1416,16 +1417,16 @@ class ParticleSpec {
         this.model.implBlobUrl = this.implBlobUrl = url;
     }
     toLiteral() {
-        const { args, name, verbs, description, implFile, implBlobUrl, modality, slotConnections, trustClaims, trustChecks } = this.model;
+        const { args, name, verbs, description, external, implFile, implBlobUrl, modality, slotConnections, trustClaims, trustChecks } = this.model;
         const connectionToLiteral = ({ type, direction, name, isOptional, dependentConnections }) => ({ type: asTypeLiteral(type), direction, name, isOptional, dependentConnections: dependentConnections.map(connectionToLiteral) });
         const argsLiteral = args.map(a => connectionToLiteral(a));
-        return { args: argsLiteral, name, verbs, description, implFile, implBlobUrl, modality, slotConnections, trustClaims, trustChecks };
+        return { args: argsLiteral, name, verbs, description, external, implFile, implBlobUrl, modality, slotConnections, trustClaims, trustChecks };
     }
     static fromLiteral(literal) {
-        let { args, name, verbs, description, implFile, implBlobUrl, modality, slotConnections, trustClaims, trustChecks } = literal;
+        let { args, name, verbs, description, external, implFile, implBlobUrl, modality, slotConnections, trustClaims, trustChecks } = literal;
         const connectionFromLiteral = ({ type, direction, name, isOptional, dependentConnections }) => ({ type: asType(type), direction, name, isOptional, dependentConnections: dependentConnections ? dependentConnections.map(connectionFromLiteral) : [] });
         args = args.map(connectionFromLiteral);
-        return new ParticleSpec({ args, name, verbs: verbs || [], description, implFile, implBlobUrl, modality, slotConnections, trustClaims, trustChecks });
+        return new ParticleSpec({ args, name, verbs: verbs || [], description, external, implFile, implBlobUrl, modality, slotConnections, trustClaims, trustChecks });
     }
     // Note: this method shouldn't be called directly.
     clone() {
@@ -1460,7 +1461,15 @@ class ParticleSpec {
         if (this.verbs.length > 0) {
             verbs = ' ' + this.verbs.map(verb => `&${verb}`).join(' ');
         }
-        results.push(`particle ${this.name}${verbs} in '${this.implFile}'`.trim());
+        let line = '';
+        if (this.external) {
+            line += 'external ';
+        }
+        line += `particle ${this.name}${verbs}`;
+        if (this.implFile) {
+            line += ` in '${this.implFile}'`;
+        }
+        results.push(line);
         const indent = '  ';
         const writeConnection = (connection, indent) => {
             const tags = connection.tags.map((tag) => ` #${tag}`).join('');

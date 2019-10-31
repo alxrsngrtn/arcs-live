@@ -145,6 +145,7 @@ export class ParticleSpec {
         this.handleConnectionMap.forEach((connectionSpec, name) => {
             connectionSpec.pattern = model.description[name];
         });
+        this.external = model.external;
         this.implFile = model.implFile;
         this.implBlobUrl = model.implBlobUrl;
         this.modality = model.modality ? Modality.create(model.modality) : Modality.all;
@@ -220,16 +221,16 @@ export class ParticleSpec {
         this.model.implBlobUrl = this.implBlobUrl = url;
     }
     toLiteral() {
-        const { args, name, verbs, description, implFile, implBlobUrl, modality, slotConnections, trustClaims, trustChecks } = this.model;
+        const { args, name, verbs, description, external, implFile, implBlobUrl, modality, slotConnections, trustClaims, trustChecks } = this.model;
         const connectionToLiteral = ({ type, direction, name, isOptional, dependentConnections }) => ({ type: asTypeLiteral(type), direction, name, isOptional, dependentConnections: dependentConnections.map(connectionToLiteral) });
         const argsLiteral = args.map(a => connectionToLiteral(a));
-        return { args: argsLiteral, name, verbs, description, implFile, implBlobUrl, modality, slotConnections, trustClaims, trustChecks };
+        return { args: argsLiteral, name, verbs, description, external, implFile, implBlobUrl, modality, slotConnections, trustClaims, trustChecks };
     }
     static fromLiteral(literal) {
-        let { args, name, verbs, description, implFile, implBlobUrl, modality, slotConnections, trustClaims, trustChecks } = literal;
+        let { args, name, verbs, description, external, implFile, implBlobUrl, modality, slotConnections, trustClaims, trustChecks } = literal;
         const connectionFromLiteral = ({ type, direction, name, isOptional, dependentConnections }) => ({ type: asType(type), direction, name, isOptional, dependentConnections: dependentConnections ? dependentConnections.map(connectionFromLiteral) : [] });
         args = args.map(connectionFromLiteral);
-        return new ParticleSpec({ args, name, verbs: verbs || [], description, implFile, implBlobUrl, modality, slotConnections, trustClaims, trustChecks });
+        return new ParticleSpec({ args, name, verbs: verbs || [], description, external, implFile, implBlobUrl, modality, slotConnections, trustClaims, trustChecks });
     }
     // Note: this method shouldn't be called directly.
     clone() {
@@ -264,7 +265,15 @@ export class ParticleSpec {
         if (this.verbs.length > 0) {
             verbs = ' ' + this.verbs.map(verb => `&${verb}`).join(' ');
         }
-        results.push(`particle ${this.name}${verbs} in '${this.implFile}'`.trim());
+        let line = '';
+        if (this.external) {
+            line += 'external ';
+        }
+        line += `particle ${this.name}${verbs}`;
+        if (this.implFile) {
+            line += ` in '${this.implFile}'`;
+        }
+        results.push(line);
         const indent = '  ';
         const writeConnection = (connection, indent) => {
             const tags = connection.tags.map((tag) => ` #${tag}`).join('');
