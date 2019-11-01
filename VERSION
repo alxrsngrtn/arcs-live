@@ -1,5 +1,5 @@
-commit d2ec10e1bb01787468c453b70407e241a309ee49
+commit cb1e9be790a791c79f4330516650b51ba5471d0a
 Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Fri Nov 1 15:20:31 2019 +1000
+Date:   Fri Nov 1 15:20:41 2019 +1000
 
-    Introduce a 'quite' to testFlags (mirroring globalFlags) so that tests can suppress warnings (#3966)
+    Fix floating promise in language server (#3964)
