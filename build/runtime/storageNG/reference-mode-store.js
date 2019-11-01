@@ -15,6 +15,7 @@ import { CRDTEntity } from '../crdt/crdt-entity.js';
 import { DirectStore } from './direct-store.js';
 import { StorageKey } from './storage-key.js';
 import { CollectionType, ReferenceType } from '../type.js';
+import { noAwait } from '../util.js';
 export class ReferenceCollection extends CRDTCollection {
 }
 export class ReferenceSingleton extends CRDTSingleton {
@@ -513,7 +514,7 @@ export class ReferenceModeStore extends ActiveStore {
      */
     async send(message) {
         for (const key of this.callbacks.keys()) {
-            void this.callbacks.get(key)({ ...message, id: key });
+            noAwait(this.callbacks.get(key)({ ...message, id: key }));
         }
     }
     /**
@@ -525,7 +526,7 @@ export class ReferenceModeStore extends ActiveStore {
             if (key === notTo) {
                 continue;
             }
-            void this.callbacks.get(key)({ ...message, id: key });
+            noAwait(this.callbacks.get(key)({ ...message, id: key }));
         }
     }
     /**

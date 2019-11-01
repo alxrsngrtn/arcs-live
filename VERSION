@@ -1,5 +1,7 @@
-commit cb1e9be790a791c79f4330516650b51ba5471d0a
-Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Fri Nov 1 15:20:41 2019 +1000
+commit 44f17497ea91e2caa70be912ff4eca575a117339
+Author: ianull <ianchang@google.com>
+Date:   Fri Nov 1 13:34:31 2019 -0700
 
-    Fix floating promise in language server (#3964)
+    Fix Travis failure on c++ wasm (#3978)
+    
+    API signature was changed from pointer to lvalue reference.

@@ -318,7 +318,7 @@
         "signature": "362ce6c9e7048d0c4a97f29c27b27de7ee17135bff0ff20885eadaaa0cc569ed"
       },
       "../src/runtime/storageNG/reference-mode-store.ts": {
-        "version": "3db672f1c7b3cfa8920b8764cd8d0833e0ad0eeb21e80d3bcc77851da87c95f3",
+        "version": "2a3772bc1887a65a4e2df2f22b8cece769a37bdda147fd2ea37e112ed122efbf",
         "signature": "3ba8aa48c6451b7a3113c1099a03b7dfe298bc45ba5029fc83e82e4adb58e242"
       },
       "../src/runtime/storageNG/store.ts": {
@@ -2732,8 +2732,8 @@
         "version": "67f3cb8c6b8090ea4772be78ce401af574d11d071489f40d7f52042baec5d2fd",
         "signature": "5b4ab1b3ee04aa06b7ed036714edd3ff58e3134f5f506943be302ec9b2000f41"
       },
-      "../src/tools/schema2packager.ts": {
-        "version": "ee9af152799f45ed0bb76a1aa246ae5428f12d75adc26cdce52bc9f9ca974f71",
+      "../src/tools/schema2wasm.ts": {
+        "version": "238ff1ee0098f532b4a1a27b844424e00ce8fb42ac3c3cbcdc5228baf5a971d8",
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
       },
       "../node_modules/@types/range-parser/index.d.ts": {
@@ -3404,6 +3404,7 @@
         "../src/runtime/hot.ts",
         "../src/runtime/arc-exceptions.ts",
         "../src/runtime/storageNG/store.ts",
+        "../src/runtime/util.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.2/util.d.ts"
       ],
@@ -8452,7 +8453,7 @@
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.2/util.d.ts"
       ],
-      "../src/tools/schema2packager.ts": [
+      "../src/tools/schema2wasm.ts": [
         "../node_modules/@types/minimist/index.d.ts",
         "../src/tools/schema2cpp.ts",
         "../src/tools/schema2kotlin.ts",
@@ -12575,7 +12576,7 @@
       "../src/tools/schema2base.ts",
       "../src/tools/schema2cpp.ts",
       "../src/tools/schema2kotlin.ts",
-      "../src/tools/schema2packager.ts",
+      "../src/tools/schema2wasm.ts",
       "../node_modules/@types/range-parser/index.d.ts",
       "../node_modules/@types/express-serve-static-core/index.d.ts",
       "../node_modules/@types/mime/index.d.ts",

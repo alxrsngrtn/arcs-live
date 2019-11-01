@@ -6613,6 +6613,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _direct_store_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(27);
 /* harmony import */ var _storage_key_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(32);
 /* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(8);
+/* harmony import */ var _util_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(28);
 /**
  * @license
  * Copyright (c) 2019 Google Inc. All rights reserved.
@@ -6622,6 +6623,7 @@ __webpack_require__.r(__webpack_exports__);
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+
 
 
 
@@ -7128,7 +7130,7 @@ class ReferenceModeStore extends _store_interface_js__WEBPACK_IMPORTED_MODULE_2_
      */
     async send(message) {
         for (const key of this.callbacks.keys()) {
-            void this.callbacks.get(key)({ ...message, id: key });
+            Object(_util_js__WEBPACK_IMPORTED_MODULE_8__["noAwait"])(this.callbacks.get(key)({ ...message, id: key }));
         }
     }
     /**
@@ -7140,7 +7142,7 @@ class ReferenceModeStore extends _store_interface_js__WEBPACK_IMPORTED_MODULE_2_
             if (key === notTo) {
                 continue;
             }
-            void this.callbacks.get(key)({ ...message, id: key });
+            Object(_util_js__WEBPACK_IMPORTED_MODULE_8__["noAwait"])(this.callbacks.get(key)({ ...message, id: key }));
         }
     }
     /**

@@ -2612,7 +2612,7 @@ class ReferenceModeStore extends ActiveStore {
      */
     async send(message) {
         for (const key of this.callbacks.keys()) {
-            void this.callbacks.get(key)({ ...message, id: key });
+            noAwait(this.callbacks.get(key)({ ...message, id: key }));
         }
     }
     /**
@@ -2624,7 +2624,7 @@ class ReferenceModeStore extends ActiveStore {
             if (key === notTo) {
                 continue;
             }
-            void this.callbacks.get(key)({ ...message, id: key });
+            noAwait(this.callbacks.get(key)({ ...message, id: key }));
         }
     }
     /**

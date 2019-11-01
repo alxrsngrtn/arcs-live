@@ -65,7 +65,7 @@ const steps = {
     unit: [unit],
     health: [health],
     bundle: runScriptSteps('bundle'),
-    schema2pkg: runScriptSteps('schema2pkg'),
+    schema2wasm: runScriptSteps('schema2wasm'),
     devServer: [peg, build, devServer],
     flowcheck: runScriptSteps('flowcheck'),
     run: [peg, build, runScript],
@@ -84,7 +84,7 @@ const scripts = {
      * file(s). e.g. ./tools/sigh flowcheck particles/Dataflow/Dataflow.recipe
      */
     flowcheck: 'build/dataflow/cli/flowcheck.js',
-    schema2pkg: 'build/tools/schema2packager.js',
+    schema2wasm: 'build/tools/schema2wasm.js',
     manifestChecker: 'build/tools/manifest-checker.js',
 };
 const eslintCache = '.eslint_sigh_cache';
