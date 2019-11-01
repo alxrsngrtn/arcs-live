@@ -578,7 +578,7 @@
         "signature": "308e3982e144d10b2802bb065474b0d055282ebde874d0fd7067cfa71d279f12"
       },
       "../src/gen/runtime/manifest-parser.ts": {
-        "version": "c2edffc8abd648580d872c92b20990b88bd3be041c896a28b4489b7b73180c51",
+        "version": "c83c0b0974eaff5e8587a918502cce5bdb0a31cd7acee046f8a1842bd9fd5d82",
         "signature": "ff2c763c7895327196fd3eb358dcc775b25f27bdae513079cc287433af262427"
       },
       "../src/runtime/manifest-meta.ts": {
