@@ -1,17 +1,8 @@
-commit b0f522d101fd708a82580344ee371c4f225fc132
-Author: Alex Rosengarten <alxr@google.com>
-Date:   Thu Oct 31 18:57:01 2019 -0700
+commit d00b33710dabdc5eddbfdf74725088078ab82052
+Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
+Date:   Fri Nov 1 14:20:37 2019 +1100
 
-    Kotlin / Wasm build fixes (#3959)
+    Make the pipe-shell deploy script quieter (#3917)
     
-    * Proper use of Deprecated annotation
-    
-    * Nullable dictionary
-    
-    * Fixed name collision conflict; reverted 'with' approach
-    
-    * Nullable String in Map
-    
-    * Handling nullable entity fields
-    
-    * visibility defaulting to None
+    Should now only output on errors. Useful for keeping noise out of our
+    bazel builds.
