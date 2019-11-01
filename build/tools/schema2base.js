@@ -65,20 +65,19 @@ export class Schema2Base {
                     const inherited = !node.extras.includes(field);
                     switch (this.typeSummary(descriptor)) {
                         case 'schema-primitive:Text':
-                            generator.processField(field, 'T', inherited, null);
+                            generator.addField(field, 'T', inherited);
                             break;
                         case 'schema-primitive:URL':
-                            generator.processField(field, 'U', inherited, null);
+                            generator.addField(field, 'U', inherited);
                             break;
                         case 'schema-primitive:Number':
-                            generator.processField(field, 'N', inherited, null);
+                            generator.addField(field, 'N', inherited);
                             break;
                         case 'schema-primitive:Boolean':
-                            generator.processField(field, 'B', inherited, null);
+                            generator.addField(field, 'B', inherited);
                             break;
                         case 'schema-reference':
-                            // TODO: this will be changed to its own method in a follow-up CL
-                            generator.processField(field, 'R', inherited, node.refs.get(field).name);
+                            generator.addReference(field, inherited, node.refs.get(field).name);
                             break;
                         default:
                             console.log(`Schema type for field '${field}' is not yet supported:`);

@@ -1,8 +1,12 @@
-commit d00b33710dabdc5eddbfdf74725088078ab82052
-Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Fri Nov 1 14:20:37 2019 +1100
+commit 71a98a8ffc2312397e0d84a41b927f9fd5d232c3
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Fri Nov 1 16:06:57 2019 +1100
 
-    Make the pipe-shell deploy script quieter (#3917)
+    Wasm: support reference-typed fields in schemas (runtime and C++) (#3965)
     
-    Should now only output on errors. Useful for keeping noise out of our
-    bazel builds.
+    * Wasm: support reference-typed fields in schemas (runtime and C++)
+    
+    This doesn't address writing to reference-typed handles or binding to
+    newly minted entities; TBD in a later CL.
+    
+    * Fix updated test in Kotlin

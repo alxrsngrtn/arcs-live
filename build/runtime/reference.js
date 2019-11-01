@@ -57,6 +57,13 @@ export class Reference {
     dataClone() {
         return { storageKey: this.storageKey, id: this.id };
     }
+    // Called by WasmParticle to retrieve the entity for a reference held in a wasm module.
+    static async retrieve(pec, id, storageKey, entityType) {
+        const proxy = await pec.getStorageProxy(storageKey, entityType);
+        // tslint:disable-next-line: no-any
+        const handle = unifiedHandleFor({ proxy, idGenerator: pec.idGenerator });
+        return await handle.get(id);
+    }
 }
 /** A subclass of Reference that clients can create. */
 export class ClientReference extends Reference {

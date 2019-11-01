@@ -477,7 +477,7 @@ class ParticleExecutionContext {
             if (!buffer || buffer.byteLength === 0) {
                 throw new Error(`Failed to load wasm binary '${spec.implFile}'`);
             }
-            container = new _wasm_js__WEBPACK_IMPORTED_MODULE_6__["WasmContainer"](this.loader, this.apiPort);
+            container = new _wasm_js__WEBPACK_IMPORTED_MODULE_6__["WasmContainer"](this, this.loader, this.apiPort);
             await container.initialize(buffer);
             this.wasmContainers[spec.implFile] = container;
         }
@@ -3431,6 +3431,13 @@ class Reference {
     }
     dataClone() {
         return { storageKey: this.storageKey, id: this.id };
+    }
+    // Called by WasmParticle to retrieve the entity for a reference held in a wasm module.
+    static async retrieve(pec, id, storageKey, entityType) {
+        const proxy = await pec.getStorageProxy(storageKey, entityType);
+        // tslint:disable-next-line: no-any
+        const handle = Object(_handle_js__WEBPACK_IMPORTED_MODULE_1__["unifiedHandleFor"])({ proxy, idGenerator: pec.idGenerator });
+        return await handle.get(id);
     }
 }
 /** A subclass of Reference that clients can create. */
@@ -9055,7 +9062,7 @@ class SlotProxy {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EntityPackager", function() { return EntityPackager; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "StringEncoder", function() { return StringEncoder; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "StringDecoder", function() { return StringDecoder; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "WasmContainer", function() { return WasmContainer; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "WasmParticle", function() { return WasmParticle; });
@@ -9084,20 +9091,19 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-// Encodes/decodes the wire format for transferring entities over the wasm boundary.
+// Encoders/decoders for the wire format for transferring entities over the wasm boundary.
 // Note that entities must have an id before serializing for use in a wasm particle.
 //
-//  <singleton> = <id-length>:<id>|<name>:<value>|<name>:<value>| ... |
+//  <singleton> = <id-length>:<id>|<field-name>:<value>|<field-name>:<value>| ... |
 //  <value> depends on the field type:
 //    Text         T<length>:<text>
 //    URL          U<length>:<text>
 //    Number       N<number>:
 //    Boolean      B<zero-or-one>
+//    Reference    R<length>:<id>|<length>:<storage-key>|<type-index>:
 //    Dictionary   D<length>:<dictionary format>
 //
 //  <collection> = <num-entities>:<length>:<encoded><length>:<encoded> ...
-//
-//  <reference> = <length>:<id>|<length>:<storage-key>|
 //
 // The encoder classes also supports two "Dictionary" formats of key:value string pairs.
 //
@@ -9109,58 +9115,27 @@ __webpack_require__.r(__webpack_exports__);
 // Examples:
 //   Singleton:   4:id05|txt:T3:abc|lnk:U10:http://def|num:N37:|flg:B1|
 //   Collection:  3:29:4:id12|txt:T4:qwer|num:N9.2:|18:6:id2670|num:N-7:|15:5:id501|flg:B0|
-//   Reference:   5:id461|65:volatile://!684596363489092:example^^volatile-Result {Text value}|
-//
-class EntityPackager {
-    constructor(handle) {
-        // TODO(shans): fail if the handle doesn't have collection or singleton of entity type.
-        const schema = handle['entityClass'].schema;
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(schema.names.length > 0, 'At least one schema name is required for entity packaging');
-        let refType = null;
-        if (handle.type instanceof _type_js__WEBPACK_IMPORTED_MODULE_3__["ReferenceType"]) {
-            refType = handle.type;
-        }
-        else if (handle.type.getContainedType() instanceof _type_js__WEBPACK_IMPORTED_MODULE_3__["ReferenceType"]) {
-            refType = handle.type.getContainedType();
-        }
-        this.encoder = new StringEncoder(schema);
-        this.decoder = new StringDecoder(schema, refType, handle.storage.pec);
-    }
-    encodeSingleton(entity) {
-        return this.encoder.encodeSingleton(entity);
-    }
-    encodeCollection(entities) {
-        return this.encoder.encodeCollection(entities);
-    }
-    decodeSingleton(str) {
-        return this.decoder.decodeSingleton(str);
-    }
-}
-function encodeStr(str) {
-    return str.length + ':' + str;
-}
 class StringEncoder {
-    constructor(schema) {
+    constructor(schema, typeMap) {
         this.schema = schema;
+        this.typeMap = typeMap;
     }
-    encodeSingleton(entity) {
-        if (entity instanceof _reference_js__WEBPACK_IMPORTED_MODULE_2__["Reference"]) {
-            const { id, storageKey } = entity.dataClone();
-            return encodeStr(id) + '|' + encodeStr(storageKey) + '|';
+    static create(type, typeMap) {
+        if (type instanceof _type_js__WEBPACK_IMPORTED_MODULE_3__["CollectionType"]) {
+            type = type.getContainedType();
         }
-        else {
-            const id = _entity_js__WEBPACK_IMPORTED_MODULE_1__["Entity"].id(entity);
-            let encoded = encodeStr(id) + '|';
-            for (const [name, value] of Object.entries(entity)) {
-                encoded += this.encodeField(this.schema.fields[name], name, value);
-            }
-            return encoded;
+        if (type instanceof _type_js__WEBPACK_IMPORTED_MODULE_3__["EntityType"]) {
+            return new EntityEncoder(type.getEntitySchema(), typeMap);
         }
+        if (type instanceof _type_js__WEBPACK_IMPORTED_MODULE_3__["ReferenceType"]) {
+            return new ReferenceEncoder(type.getEntitySchema(), typeMap);
+        }
+        throw new Error(`Unsupported type for StringEncoder: ${type}`);
     }
     encodeCollection(entities) {
         let encoded = entities.length + ':';
         for (const entity of entities) {
-            encoded += encodeStr(this.encodeSingleton(entity));
+            encoded += StringEncoder.encodeStr(this.encodeSingleton(entity));
         }
         return encoded;
     }
@@ -9168,7 +9143,7 @@ class StringEncoder {
         const entries = Object.entries(dict);
         let encoded = entries.length + ':';
         for (const [key, value] of entries) {
-            encoded += encodeStr(key) + encodeStr(value);
+            encoded += StringEncoder.encodeStr(key) + StringEncoder.encodeStr(value);
         }
         return encoded;
     }
@@ -9176,20 +9151,32 @@ class StringEncoder {
         switch (field.kind) {
             case 'schema-primitive':
                 return name + ':' + field.type.substr(0, 1) + this.encodeValue(field.type, value) + '|';
+            case 'schema-reference':
+                return name + ':R' + this.encodeReference(value) + '|';
             case 'schema-collection':
             case 'schema-union':
             case 'schema-tuple':
-            case 'schema-reference':
                 throw new Error(`'${field.kind}' not yet supported for entity packaging`);
             default:
                 throw new Error(`Unknown field kind '${field.kind}' in schema`);
         }
     }
+    encodeReference(ref) {
+        const entityType = ref.type.referredType;
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(entityType instanceof _type_js__WEBPACK_IMPORTED_MODULE_3__["EntityType"]);
+        let index = this.typeMap.getR(entityType);
+        if (!index) {
+            index = this.typeMap.size + 1; // avoid index 0
+            this.typeMap.set(index, entityType);
+        }
+        const { id, storageKey } = ref.dataClone();
+        return StringEncoder.encodeStr(id) + '|' + StringEncoder.encodeStr(storageKey) + '|' + index + ':';
+    }
     encodeValue(type, value) {
         switch (type) {
             case 'Text':
             case 'URL':
-                return encodeStr(value);
+                return StringEncoder.encodeStr(value);
             case 'Number':
                 return value + ':';
             case 'Boolean':
@@ -9201,56 +9188,67 @@ class StringEncoder {
                 throw new Error(`Unknown primitive value type '${type}' in schema`);
         }
     }
+    static encodeStr(str) {
+        return str.length + ':' + str;
+    }
+}
+class EntityEncoder extends StringEncoder {
+    encodeSingleton(entity) {
+        if (!(entity instanceof _entity_js__WEBPACK_IMPORTED_MODULE_1__["Entity"])) {
+            throw new Error(`non-Entity passed to EntityEncoder: ${entity}`);
+        }
+        const id = _entity_js__WEBPACK_IMPORTED_MODULE_1__["Entity"].id(entity);
+        let encoded = StringEncoder.encodeStr(id) + '|';
+        for (const [name, value] of Object.entries(entity)) {
+            encoded += this.encodeField(this.schema.fields[name], name, value);
+        }
+        return encoded;
+    }
+}
+class ReferenceEncoder extends StringEncoder {
+    encodeSingleton(ref) {
+        if (!(ref instanceof _reference_js__WEBPACK_IMPORTED_MODULE_2__["Reference"])) {
+            throw new Error(`non-Reference passed to EntityEncoder: ${ref}`);
+        }
+        return this.encodeReference(ref) + '|';
+    }
 }
 class StringDecoder {
-    constructor(schema = null, referenceType = null, pec = null) {
+    constructor(schema, typeMap, pec) {
         this.schema = schema;
-        this.referenceType = referenceType;
+        this.typeMap = typeMap;
         this.pec = pec;
     }
-    decodeSingleton(str) {
-        this.str = str;
-        const len = Number(this.upTo(':'));
-        const id = this.chomp(len);
-        this.validate('|');
-        if (this.referenceType) {
-            const keyLen = Number(this.upTo(':'));
-            const storageKey = this.chomp(keyLen);
-            this.validate('|');
-            return new _reference_js__WEBPACK_IMPORTED_MODULE_2__["Reference"]({ id, storageKey }, this.referenceType, this.pec);
+    static create(type, typeMap, pec) {
+        if (type instanceof _type_js__WEBPACK_IMPORTED_MODULE_3__["CollectionType"]) {
+            type = type.getContainedType();
         }
-        else {
-            const data = {};
-            while (this.str.length > 0) {
-                const name = this.upTo(':');
-                const typeChar = this.chomp(1);
-                data[name] = this.decodeValue(typeChar);
-                this.validate('|');
-            }
-            const entity = new (this.schema.entityClass())(data);
-            if (id !== '') {
-                _entity_js__WEBPACK_IMPORTED_MODULE_1__["Entity"].identify(entity, id);
-            }
-            return entity;
+        if (type instanceof _type_js__WEBPACK_IMPORTED_MODULE_3__["EntityType"]) {
+            return new EntityDecoder(type.getEntitySchema(), typeMap, pec);
         }
+        if (type instanceof _type_js__WEBPACK_IMPORTED_MODULE_3__["ReferenceType"]) {
+            return new ReferenceDecoder(type.getEntitySchema(), typeMap, pec);
+        }
+        throw new Error(`Unsupported type for StringDecoder: ${type}`);
     }
-    decodeDictionary(str) {
-        this.str = str;
+    static decodeDictionary(str) {
+        const decoder = new EntityDecoder(null, null, null);
+        decoder.str = str;
         const dict = {};
-        let num = Number(this.upTo(':'));
+        let num = Number(decoder.upTo(':'));
         while (num--) {
-            const klen = Number(this.upTo(':'));
-            const key = this.chomp(klen);
+            const klen = Number(decoder.upTo(':'));
+            const key = decoder.chomp(klen);
             // TODO(sjmiles): be backward compatible with encoders that only encode string values
-            const typeChar = this.chomp(1);
+            const typeChar = decoder.chomp(1);
             // if typeChar is a digit, it's part of a length specifier
             if (typeChar >= '0' && typeChar <= '9') {
-                const vlen = Number(`${typeChar}${this.upTo(':')}`);
-                dict[key] = this.chomp(vlen);
+                const vlen = Number(`${typeChar}${decoder.upTo(':')}`);
+                dict[key] = decoder.chomp(vlen);
             }
-            // otherwise typeChar is value-type specifier
             else {
-                dict[key] = this.decodeValue(typeChar);
+                // otherwise typeChar is value-type specifier
+                dict[key] = decoder.decodeValue(typeChar);
             }
         }
         return dict;
@@ -9288,14 +9286,55 @@ class StringDecoder {
                 return Number(this.upTo(':'));
             case 'B':
                 return Boolean(this.chomp(1) === '1');
+            case 'R':
+                return this.decodeReference();
             case 'D': {
                 const len = Number(this.upTo(':'));
                 const dictionary = this.chomp(len);
-                return this.decodeDictionary(dictionary);
+                return StringDecoder.decodeDictionary(dictionary);
             }
             default:
                 throw new Error(`Packaged entity decoding fail: unknown or unsupported primitive value type '${typeChar}'`);
         }
+    }
+    decodeReference() {
+        const ilen = Number(this.upTo(':'));
+        const id = this.chomp(ilen);
+        this.validate('|');
+        const klen = Number(this.upTo(':'));
+        const storageKey = this.chomp(klen);
+        this.validate('|');
+        const typeIndex = Number(this.upTo(':'));
+        const entityType = this.typeMap.getL(typeIndex);
+        if (!entityType) {
+            throw new Error(`Packaged entity decoding fail: invalid type index ${typeIndex} for reference '${id}|${storageKey}'`);
+        }
+        return new _reference_js__WEBPACK_IMPORTED_MODULE_2__["Reference"]({ id, storageKey }, new _type_js__WEBPACK_IMPORTED_MODULE_3__["ReferenceType"](entityType), this.pec);
+    }
+}
+class EntityDecoder extends StringDecoder {
+    decodeSingleton(str) {
+        this.str = str;
+        const len = Number(this.upTo(':'));
+        const id = this.chomp(len);
+        this.validate('|');
+        const data = {};
+        while (this.str.length > 0) {
+            const name = this.upTo(':');
+            const typeChar = this.chomp(1);
+            data[name] = this.decodeValue(typeChar);
+            this.validate('|');
+        }
+        const entity = new (this.schema.entityClass())(data);
+        if (id !== '') {
+            _entity_js__WEBPACK_IMPORTED_MODULE_1__["Entity"].identify(entity, id);
+        }
+        return entity;
+    }
+}
+class ReferenceDecoder extends StringDecoder {
+    decodeSingleton(str) {
+        return this.decodeReference();
     }
 }
 class EmscriptenWasmDriver {
@@ -9458,8 +9497,9 @@ class KotlinWasmDriver {
 }
 // Holds an instance of a running wasm module, which may contain multiple particles.
 class WasmContainer {
-    constructor(loader, apiPort) {
+    constructor(pec, loader, apiPort) {
         this.particleMap = new Map();
+        this.pec = pec;
         this.loader = loader;
         this.apiPort = apiPort;
     }
@@ -9473,14 +9513,14 @@ class WasmContainer {
             abort: () => { throw new Error('Abort!'); },
             // Inner particle API
             // TODO: guard against null/empty args from the wasm side
-            _singletonSet: (p, handle, entity) => this.getParticle(p).singletonSet(handle, entity),
-            _singletonClear: (p, handle) => this.getParticle(p).singletonClear(handle),
-            _collectionStore: (p, handle, entity) => this.getParticle(p).collectionStore(handle, entity),
-            _collectionRemove: (p, handle, entity) => this.getParticle(p).collectionRemove(handle, entity),
-            _collectionClear: (p, handle) => this.getParticle(p).collectionClear(handle),
+            _singletonSet: (p, h, entity) => this.getParticle(p).singletonSet(h, entity),
+            _singletonClear: (p, h) => this.getParticle(p).singletonClear(h),
+            _collectionStore: (p, h, entity) => this.getParticle(p).collectionStore(h, entity),
+            _collectionRemove: (p, h, entity) => this.getParticle(p).collectionRemove(h, entity),
+            _collectionClear: (p, h) => this.getParticle(p).collectionClear(h),
             _onRenderOutput: (p, template, model) => this.getParticle(p).onRenderOutput(template, model),
-            _dereference: (p, handle, refId, continuationId) => this.getParticle(p).dereference(handle, refId, continuationId),
-            _render: (p, slotName, template, model) => this.getParticle(p).renderImpl(slotName, template, model),
+            _dereference: (p, id, key, typeIndex, cid) => this.getParticle(p).dereference(id, key, typeIndex, cid),
+            _render: (p, slot, template, model) => this.getParticle(p).renderImpl(slot, template, model),
             _serviceRequest: (p, call, args, tag) => this.getParticle(p).serviceRequest(call, args, tag),
             _resolveUrl: (url) => this.resolve(url),
         };
@@ -9534,7 +9574,10 @@ class WasmParticle extends _particle_js__WEBPACK_IMPORTED_MODULE_4__["Particle"]
     constructor(id, container) {
         super();
         this.handleMap = new _bimap_js__WEBPACK_IMPORTED_MODULE_7__["BiMap"]();
-        this.converters = new Map();
+        this.encoders = new Map();
+        this.decoders = new Map();
+        // Map of type indexes given to wasm code to the EntityTypes used by Reference values.
+        this.typeMap = new _bimap_js__WEBPACK_IMPORTED_MODULE_7__["BiMap"]();
         this.id = id;
         this.container = container;
         this.exports = container.exports;
@@ -9570,7 +9613,6 @@ class WasmParticle extends _particle_js__WEBPACK_IMPORTED_MODULE_4__["Particle"]
                 throw new Error(`Wasm particle failed to connect handle '${name}'`);
             }
             this.handleMap.set(handle, wasmHandle);
-            this.converters.set(handle, new EntityPackager(handle));
         }
         this.exports._init(this.innerParticle);
     }
@@ -9580,18 +9622,14 @@ class WasmParticle extends _particle_js__WEBPACK_IMPORTED_MODULE_4__["Particle"]
             this.exports._syncHandle(this.innerParticle, wasmHandle, 0);
             return;
         }
-        const converter = this.converters.get(handle);
-        if (!converter) {
-            throw new Error('cannot find handle ' + handle.name);
-        }
-        let encoded;
+        const encoder = this.getEncoder(handle.type);
+        let p;
         if (handle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_5__["Singleton"]) {
-            encoded = converter.encodeSingleton(model);
+            p = this.container.store(encoder.encodeSingleton(model));
         }
         else {
-            encoded = converter.encodeCollection(model);
+            p = this.container.store(encoder.encodeCollection(model));
         }
-        const p = this.container.store(encoded);
         this.exports._syncHandle(this.innerParticle, wasmHandle, p);
         this.container.free(p);
     }
@@ -9601,20 +9639,17 @@ class WasmParticle extends _particle_js__WEBPACK_IMPORTED_MODULE_4__["Particle"]
             return;
         }
         const wasmHandle = this.handleMap.getL(handle);
-        const converter = this.converters.get(handle);
-        if (!converter) {
-            throw new Error('cannot find handle ' + handle.name);
-        }
+        const encoder = this.getEncoder(handle.type);
         let p1 = 0;
         let p2 = 0;
         if (handle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_5__["Singleton"]) {
             if (update.data) {
-                p1 = this.container.store(converter.encodeSingleton(update.data));
+                p1 = this.container.store(encoder.encodeSingleton(update.data));
             }
         }
         else {
-            p1 = this.container.store(converter.encodeCollection(update.added || []));
-            p2 = this.container.store(converter.encodeCollection(update.removed || []));
+            p1 = this.container.store(encoder.encodeCollection(update.added || []));
+            p2 = this.container.store(encoder.encodeCollection(update.removed || []));
         }
         this.exports._updateHandle(this.innerParticle, wasmHandle, p1, p2);
         this.container.free(p1, p2);
@@ -9633,7 +9668,8 @@ class WasmParticle extends _particle_js__WEBPACK_IMPORTED_MODULE_4__["Particle"]
     // returns 0 (nulltpr).
     singletonSet(wasmHandle, entityPtr) {
         const singleton = this.getHandle(wasmHandle);
-        const entity = this.decodeEntity(singleton, entityPtr);
+        const decoder = this.getDecoder(singleton.type);
+        const entity = decoder.decodeSingleton(this.container.read(entityPtr));
         const p = this.ensureIdentified(entity, singleton);
         void singleton.set(entity);
         return p;
@@ -9647,44 +9683,48 @@ class WasmParticle extends _particle_js__WEBPACK_IMPORTED_MODULE_4__["Particle"]
     // returns 0 (nulltpr).
     collectionStore(wasmHandle, entityPtr) {
         const collection = this.getHandle(wasmHandle);
-        const entity = this.decodeEntity(collection, entityPtr);
+        const decoder = this.getDecoder(collection.type);
+        const entity = decoder.decodeSingleton(this.container.read(entityPtr));
         const p = this.ensureIdentified(entity, collection);
         void collection.store(entity);
         return p;
     }
     collectionRemove(wasmHandle, entityPtr) {
         const collection = this.getHandle(wasmHandle);
-        void collection.remove(this.decodeEntity(collection, entityPtr));
+        const decoder = this.getDecoder(collection.type);
+        const entity = decoder.decodeSingleton(this.container.read(entityPtr));
+        void collection.remove(entity);
     }
     collectionClear(wasmHandle) {
         const collection = this.getHandle(wasmHandle);
         void collection.clear();
     }
-    // Called by particles to retrieve the entity held by a reference-typed handle.
-    async dereference(wasmHandle, refIdPtr, continuationId) {
-        const handle = this.getHandle(wasmHandle);
-        const converter = this.converters.get(handle);
-        if (!converter) {
-            throw new Error('cannot find handle ' + handle.name);
-        }
-        const refId = this.container.read(refIdPtr);
-        let ref;
-        if (handle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_5__["Singleton"]) {
-            ref = await handle.get();
-        }
-        else if (handle instanceof _handle_js__WEBPACK_IMPORTED_MODULE_5__["Collection"]) {
-            ref = await handle.get(refId);
-        }
-        else {
-            throw new Error(`wasm particle '${this.spec.name}' dereferenced an unsupported handle type ${handle._id}`);
-        }
-        let p = 0;
-        if (ref) {
-            const entity = await ref.dereference();
-            p = this.container.store(converter.encodeSingleton(entity));
-        }
+    // Retrieves the entity held by a reference.
+    async dereference(idPtr, keyPtr, typeIndex, continuationId) {
+        const id = this.container.read(idPtr);
+        const storageKey = this.container.read(keyPtr);
+        const entityType = this.typeMap.getL(typeIndex);
+        const encoder = this.getEncoder(entityType);
+        const entity = await _reference_js__WEBPACK_IMPORTED_MODULE_2__["Reference"].retrieve(this.container.pec, id, storageKey, entityType);
+        const p = this.container.store(encoder.encodeSingleton(entity));
         this.exports._dereferenceResponse(this.innerParticle, continuationId, p);
         this.container.free(p);
+    }
+    getEncoder(type) {
+        let encoder = this.encoders.get(type);
+        if (!encoder) {
+            encoder = StringEncoder.create(type, this.typeMap);
+            this.encoders.set(type, encoder);
+        }
+        return encoder;
+    }
+    getDecoder(type) {
+        let decoder = this.decoders.get(type);
+        if (!decoder) {
+            decoder = StringDecoder.create(type, this.typeMap, this.container.pec);
+            this.decoders.set(type, decoder);
+        }
+        return decoder;
     }
     getHandle(wasmHandle) {
         const handle = this.handleMap.getR(wasmHandle);
@@ -9695,10 +9735,6 @@ class WasmParticle extends _particle_js__WEBPACK_IMPORTED_MODULE_4__["Particle"]
             throw err;
         }
         return handle;
-    }
-    decodeEntity(handle, entityPtr) {
-        const converter = this.converters.get(handle);
-        return converter.decodeSingleton(this.container.read(entityPtr));
     }
     ensureIdentified(entity, handle) {
         let p = 0;
@@ -9718,7 +9754,7 @@ class WasmParticle extends _particle_js__WEBPACK_IMPORTED_MODULE_4__["Particle"]
     onRenderOutput(templatePtr, modelPtr) {
         const content = { templateName: 'default' };
         content.template = this.container.read(templatePtr);
-        content.model = new StringDecoder().decodeDictionary(this.container.read(modelPtr));
+        content.model = StringDecoder.decodeDictionary(this.container.read(modelPtr));
         this.output(content);
     }
     /**
@@ -9754,7 +9790,7 @@ class WasmParticle extends _particle_js__WEBPACK_IMPORTED_MODULE_4__["Particle"]
                 slot.requestedContentTypes.add('template');
             }
             if (modelPtr) {
-                content.model = new StringDecoder().decodeDictionary(this.container.read(modelPtr));
+                content.model = StringDecoder.decodeDictionary(this.container.read(modelPtr));
                 slot.requestedContentTypes.add('model');
             }
             slot.render(content);
@@ -9764,7 +9800,7 @@ class WasmParticle extends _particle_js__WEBPACK_IMPORTED_MODULE_4__["Particle"]
     // tag to disambiguate different requests to the same service call.
     async serviceRequest(callPtr, argsPtr, tagPtr) {
         const call = this.container.read(callPtr);
-        const args = new StringDecoder().decodeDictionary(this.container.read(argsPtr));
+        const args = StringDecoder.decodeDictionary(this.container.read(argsPtr));
         const tag = this.container.read(tagPtr);
         // tslint:disable-next-line: no-any
         const response = await this.service({ call, ...args });

@@ -60,16 +60,15 @@ class KotlinGenerator {
         this.encode = [];
         this.decode = [];
     }
-    processField(field, typeChar, inherited, refName) {
-        if (typeChar === 'R') {
-            console.log('TODO: support reference types in kotlin');
-            process.exit(1);
-        }
+    addField(field, typeChar, inherited) {
         const { type, decodeFn } = typeMap[typeChar];
         const fixed = field + (keywords.includes(field) ? '_' : '');
         this.fields.push(`var ${fixed}: ${type} = null`);
         this.decode.push(`"${field}" -> {`, `  decoder.validate("${typeChar}")`, `  this.${fixed} = decoder.${decodeFn}`, `}`);
         this.encode.push(`${fixed}?.let { encoder.encode("${field}:${typeChar}", it) }`);
+    }
+    addReference(field, inherited, refName) {
+        throw new Error('TODO: support reference types in kotlin');
     }
     generate(fieldCount) {
         const { name, aliases } = this.node;

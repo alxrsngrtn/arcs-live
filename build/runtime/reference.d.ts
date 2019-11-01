@@ -9,7 +9,7 @@
  */
 import { Collection, Storable } from './handle.js';
 import { ParticleExecutionContext } from './particle-execution-context.js';
-import { ReferenceType } from './type.js';
+import { ReferenceType, EntityType } from './type.js';
 import { Entity } from './entity.js';
 import { SerializedEntity } from './storage-proxy.js';
 import { SYMBOL_INTERNALS } from './symbols.js';
@@ -35,6 +35,7 @@ export declare class Reference implements Storable {
         storageKey: string;
         id: string;
     };
+    static retrieve(pec: ParticleExecutionContext, id: string, storageKey: string, entityType: EntityType): Promise<any>;
 }
 /** A subclass of Reference that clients can create. */
 export declare abstract class ClientReference extends Reference {

@@ -458,8 +458,8 @@
         "signature": "11c88ff3740d83ca50c6840ab7a4bf97757db9087c477b3e1d86757c6d73c4b7"
       },
       "../src/runtime/reference.ts": {
-        "version": "6784e79599d41e1345b897bb695d0684816bb90e7834f37aae8b5e4af8650188",
-        "signature": "71a6fd8fa6a0dc868c027a8aede92f8713bd94525a1c9319cd8f8df427fc5f77"
+        "version": "33f3c67f638ad3942056e326e13c783195a04040b9dddd76bab845b09d479329",
+        "signature": "072f4c0932f4478694a5d9e2736f2ca9b5bb4a6d83dfc35e845e37551437be98"
       },
       "../modalities/dom/components/xen/xen-state.d.ts": {
         "version": "f61bb0ebc59780a5d2461fc7c65d2150be526cd048fcead3167d2d4bc9db106f",
@@ -538,11 +538,11 @@
         "signature": "6420107fe36d8b724e5a0940cb27dede6859620715eae6d0702d4f648d655002"
       },
       "../src/runtime/wasm.ts": {
-        "version": "459928cd00294cfa2b50e26231deacb0bb928f6fe43235ec1e11c0261fc238e0",
-        "signature": "2e63a717bdbb30e2715fdac0742a3cff097e886eba56b9bcfc2fd79d9a25c4dd"
+        "version": "4d76ee807af9b00f36ab2bfbccaa74f997b6afafc389cfff847a49c1e29102e2",
+        "signature": "05094d9a4741e9be8dcd1761221300db22c66e021ec99ce6d4a3ce93827f2d2e"
       },
       "../src/runtime/particle-execution-context.ts": {
-        "version": "5bc600faec650d2bb4e274dd9ff41b98cb300bddddc2c4858e7d8c907dbdf212",
+        "version": "6e34cef0c2785ed793038a50beb7d710bc788677d6cc2867578346fec5a16679",
         "signature": "aa2070c4ebbed9e996428b0d9b7c98a0207a675e2be89f80ecdd9362c863a63b"
       },
       "../src/runtime/entity.ts": {
@@ -606,7 +606,7 @@
         "signature": "8ef9453dcbfa29ffef1fd28d215625bdb2730644a74ff977494d36c9c2f4f86f"
       },
       "../src/runtime/manifest.ts": {
-        "version": "7b0a09122ead06ec152a3e0d2a536e52cf42524222876679f1501821bb4a15f7",
+        "version": "b0467ab0fc82c4573219af6f3e005b78a9d0ba359fc514cc4ed9fb5d9dfdbb85",
         "signature": "7b1417edf9d8cf1c90c0ab22f8974af8e131089a17120ebee4625b754852211a"
       },
       "../src/platform/atob-web.ts": {
@@ -2564,13 +2564,9 @@
         "version": "0dbde3ae1754969ec3bd2f6074741bad81c35ad91f3631dcc49142d91df6be57",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
-      "../src/runtime/tests/wasm-decoder-test.ts": {
-        "version": "0ef4c3997cc88ac71af202553d076c80ee238334c26883905488f9483815337b",
-        "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
-      },
       "../src/runtime/tests/wasm-test.ts": {
-        "version": "ccbc1c8cb33b8faf61653606c1451aa3ae29e756b21034e942a0284a9fd95f73",
-        "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
+        "version": "920562af4389b4cc4c7dab7dc0ea30237cfacb075139beb61964599e1f55f1e6",
+        "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
       },
       "../src/runtime/tests/recipe/comparable-test.ts": {
         "version": "75ba3bd093768181ce0756322139ebccc43610407eb314b72fdeb8f08e635617",
@@ -2725,15 +2721,15 @@
         "signature": "54bea7260038f77cf18244c93dedf8ba14f829f7d7244c719effd9d1dbd83fda"
       },
       "../src/tools/schema2base.ts": {
-        "version": "378ffc787e60bee0f032b18f1184d1c5ca3e15a9c5156559f6fbdee18ca96e8e",
-        "signature": "e15623b4ccebc40e83dc88b55d3b5a0db0a9506b8b4c02805a5b00426b16357d"
+        "version": "bf83cdb42ea82b5ed08b9ea2abec88513cbcee20afe1914eec35d1135aaba4d5",
+        "signature": "cb384929e4815b2b0d193c04e8e0ed1c0dc26b5d1f141646506a2c033f7c0134"
       },
       "../src/tools/schema2cpp.ts": {
-        "version": "ce6b17538663c607983d1346aa062a94b6cb13786511dbee5ae121d0ad2692a7",
+        "version": "cd8c81ef2a13292ab905833ba5d8478e399f116f821986df610a0eed076c7b6e",
         "signature": "83ab8b3321d362bae33fceaeeec77280d5c39ff040d6517f45f04e715a036daa"
       },
       "../src/tools/schema2kotlin.ts": {
-        "version": "0576f075c03e1b63d12cfc2d7b8588bd89e801e09ad9aff92d5ed2ec9672928e",
+        "version": "67f3cb8c6b8090ea4772be78ce401af574d11d071489f40d7f52042baec5d2fd",
         "signature": "5b4ab1b3ee04aa06b7ed036714edd3ff58e3134f5f506943be302ec9b2000f41"
       },
       "../src/tools/schema2packager.ts": {
@@ -2797,7 +2793,7 @@
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "../src/tools/tests/schema2base-test.ts": {
-        "version": "b99c56e17ada022a2ccd3a9b786934ebe2addfd108a786142aac37514d341278",
+        "version": "0a937b31d8224837b5563bf5f814182334b84fc89603ee524db27ba83a5f513c",
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
       },
       "../src/tools/tests/schema2cpp-test.ts": {
@@ -2817,7 +2813,7 @@
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/wasm/tests/wasm-api-tests.ts": {
-        "version": "bd20b9e3443a64a14bdfa3e0840f1e3c61de28e93b638c6394d7ac44df3c9fa2",
+        "version": "8a91b965f17155ff6f5de1cdee858b75a9082e5d79b44caf0b076062d9f7b6bb",
         "signature": "a2b75277977abae98ac357640599bb500a2621d1f3cfb443b830e8417680fdfb"
       },
       "../node_modules/@types/long/index.d.ts": {
@@ -3986,6 +3982,7 @@
       ],
       "../src/runtime/wasm.ts": [
         "../src/platform/assert-web.ts",
+        "../src/platform/loader.ts",
         "../src/runtime/entity.ts",
         "../src/runtime/reference.ts",
         "../src/runtime/type.ts",
@@ -3993,7 +3990,6 @@
         "../src/runtime/particle.ts",
         "../src/runtime/slot-consumer.ts",
         "../src/runtime/hot.ts",
-        "../src/platform/loader.ts",
         "../src/runtime/api-channel.ts",
         "../src/runtime/arc-exceptions.ts",
         "../src/runtime/particle-execution-context.ts",
@@ -8118,20 +8114,14 @@
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.2/util.d.ts"
       ],
-      "../src/runtime/tests/wasm-decoder-test.ts": [
-        "../src/platform/chai-web.d.ts",
-        "../src/runtime/wasm.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
       "../src/runtime/tests/wasm-test.ts": [
         "../src/platform/chai-web.d.ts",
-        "../src/runtime/wasm.ts",
         "../src/runtime/manifest.ts",
         "../src/runtime/type.ts",
-        "../src/runtime/reference.ts",
         "../src/runtime/entity.ts",
-        "../src/runtime/handle.ts",
+        "../src/runtime/reference.ts",
+        "../src/runtime/wasm.ts",
+        "../src/runtime/bimap.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.2/util.d.ts"
       ],
@@ -9352,15 +9342,16 @@
         "../src/runtime/handle.ts"
       ],
       "../src/runtime/wasm.ts": [
-        "../src/runtime/handle.ts",
-        "../src/runtime/entity.ts",
         "../src/runtime/type.ts",
-        "../src/runtime/particle-execution-context.ts",
+        "../src/runtime/handle.ts",
         "../src/runtime/hot.ts",
+        "../src/runtime/reference.ts",
+        "../src/runtime/particle-execution-context.ts",
         "../src/platform/loader.ts",
         "../src/runtime/api-channel.ts",
         "../src/runtime/slot-consumer.ts",
-        "../src/runtime/particle.ts"
+        "../src/runtime/particle.ts",
+        "../src/runtime/bimap.ts"
       ],
       "../src/runtime/particle-execution-context.ts": [
         "../src/runtime/id.ts",
@@ -12542,7 +12533,6 @@
       "../src/runtime/tests/type-checker-test.ts",
       "../src/runtime/tests/type-test.ts",
       "../src/runtime/tests/volatile-storage-test.ts",
-      "../src/runtime/tests/wasm-decoder-test.ts",
       "../src/runtime/tests/wasm-test.ts",
       "../src/runtime/tests/recipe/comparable-test.ts",
       "../src/runtime/tests/recipe/particle-test.ts",
