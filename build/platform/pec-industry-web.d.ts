@@ -7,4 +7,5 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-export declare const pecIndustry: (loader: any) => (id: any) => MessagePort;
+import { PecFactory } from '../runtime/particle-execution-context.js';
+export declare const pecIndustry: (loader: any) => PecFactory;

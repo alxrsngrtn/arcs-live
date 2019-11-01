@@ -21,11 +21,11 @@ const keywords = [
     'suspend', 'tailrec', 'vararg', 'field', 'it'
 ];
 const typeMap = {
-    'T': { type: 'String', defaultVal: '""', decodeFn: 'decodeText()' },
-    'U': { type: 'String', defaultVal: '""', decodeFn: 'decodeText()' },
-    'N': { type: 'Double', defaultVal: '0.0', decodeFn: 'decodeNum()' },
-    'B': { type: 'Boolean', defaultVal: 'false', decodeFn: 'decodeBool()' },
-    'R': { type: '', defaultVal: '', decodeFn: '' },
+    'T': { type: 'String?', decodeFn: 'decodeText()' },
+    'U': { type: 'String?', decodeFn: 'decodeText()' },
+    'N': { type: 'Double?', decodeFn: 'decodeNum()' },
+    'B': { type: 'Boolean?', decodeFn: 'decodeBool()' },
+    'R': { type: '', decodeFn: '' },
 };
 export class Schema2Kotlin extends Schema2Base {
     // test-KOTLIN.file_Name.arcs -> TestKotlinFileName.kt
@@ -65,11 +65,11 @@ class KotlinGenerator {
             console.log('TODO: support reference types in kotlin');
             process.exit(1);
         }
-        const { type, defaultVal, decodeFn } = typeMap[typeChar];
+        const { type, decodeFn } = typeMap[typeChar];
         const fixed = field + (keywords.includes(field) ? '_' : '');
-        this.fields.push(`var ${fixed}: ${type} = ${defaultVal}`);
+        this.fields.push(`var ${fixed}: ${type} = null`);
         this.decode.push(`"${field}" -> {`, `  decoder.validate("${typeChar}")`, `  this.${fixed} = decoder.${decodeFn}`, `}`);
-        this.encode.push(`encoder.encode("${field}:${typeChar}", ${fixed})`);
+        this.encode.push(`${fixed}?.let { encoder.encode("${field}:${typeChar}", it) }`);
     }
     generate(fieldCount) {
         const { name, aliases } = this.node;
@@ -86,17 +86,19 @@ ${withFields('data ')}class ${name}(${withFields(`\n  ${this.fields.join(',\n  '
   override fun decodeEntity(encoded: String): ${name}? {
     if (encoded.isEmpty()) return null
     
-    val decoder = StringDecoder(encoded)
+    val decoder = StringDecoder(encoded) 
     internalId = decoder.decodeText()
     decoder.validate("|")
-    ${withFields(`0.until(${fieldCount}).takeWhile { _ -> !decoder.done() }
-     .forEach {
-      val name = decoder.upTo(":")
-      when (name) {
-        ${this.decode.join('\n        ')}
-      }
-      decoder.validate("|")
-     }`)}
+    ${withFields(`  for (_i in 0 until ${fieldCount}) {
+         if (decoder.done()) break 
+         val name = decoder.upTo(":")
+         when (name) {
+           ${this.decode.join('\n           ')}
+         }
+         decoder.validate("|")
+        }
+   `)}
+    
     return this
   }
 

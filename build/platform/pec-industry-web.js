@@ -8,7 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 const WORKER_PATH = `https://$build/worker.js`;
-export const pecIndustry = loader => {
+export const pecIndustry = (loader) => {
     // worker paths are relative to worker location, remap urls from there to here
     const remap = expandUrls(loader.urlMap);
     // get real path from meta path
@@ -17,7 +17,7 @@ export const pecIndustry = loader => {
     let workerBlobUrl;
     loader.provisionObjectUrl(workerUrl).then((url) => workerBlobUrl = url);
     // return a pecfactory
-    return id => {
+    const factory = (id, idGenerator) => {
         if (!workerBlobUrl) {
             console.warn('workerBlob not available, falling back to network URL');
         }
@@ -26,6 +26,9 @@ export const pecIndustry = loader => {
         worker.postMessage({ id: `${id}:inner`, base: remap, logLevel: window['logLevel'] }, [channel.port1]);
         return channel.port2;
     };
+    // TODO(sjmiles): PecFactory type is defined against custom `MessageChannel` and `MessagePort` objects, not the
+    // browser-standard objects used here. We need to clean this up, it's only working de facto.
+    return factory;
 };
 const expandUrls = urlMap => {
     const remap = {};

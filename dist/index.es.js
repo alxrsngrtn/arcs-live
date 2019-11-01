@@ -6072,6 +6072,9 @@ class ReferenceType extends Type {
     toString(options = undefined) {
         return 'Reference<' + this.referredType.toString() + '>';
     }
+    toPrettyString() {
+        return 'Reference to ' + this.referredType.toPrettyString();
+    }
     getEntitySchema() {
         return this.referredType.getEntitySchema();
     }
@@ -29630,6 +29633,1605 @@ class RuntimeCacheService {
 
 /**
  * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+/**
+ * Represents a single slot in the rendering system.
+ */
+class SlotContext {
+    constructor(id, sourceSlotConsumer = null) {
+        this.slotConsumers = [];
+        this.id = id;
+        this.sourceSlotConsumer = sourceSlotConsumer;
+    }
+    addSlotConsumer(slotConsumer) {
+        this.slotConsumers.push(slotConsumer);
+        slotConsumer.slotContext = this;
+    }
+    clearSlotConsumers() {
+        this.slotConsumers.forEach(slotConsumer => slotConsumer.slotContext = null);
+        this.slotConsumers.length = 0;
+    }
+}
+/**
+ * Represents a slot created by a transformation particle in the inner arc.
+ *
+ * Render calls for that slot are routed to the transformation particle,
+ * which receives them as innerArcRender calls.
+ *
+ * TODO:
+ * Today startRender/stopRender calls for particles rendering into this slot are governed by the
+ * availability of the container on the transformation particle. This should be optional and only
+ * used if the purpose of the innerArc is rendering to the outer arc. It should be possible for
+ * the particle which doesn't consume a slot to create an inner arc with hosted slots, which
+ * today is not feasible.
+ */
+class HostedSlotContext extends SlotContext {
+    constructor(id, transformationSlotConsumer, storeId) {
+        super(id, transformationSlotConsumer);
+        this._containerAvailable = false;
+        assert(transformationSlotConsumer);
+        this.storeId = storeId;
+        transformationSlotConsumer.addHostedSlotContexts(this);
+    }
+    onRenderSlot(consumer, content, handler) {
+        this.sourceSlotConsumer.arc.pec.innerArcRender(this.sourceSlotConsumer.consumeConn.particle, this.sourceSlotConsumer.consumeConn.name, this.id, consumer.formatHostedContent(content));
+    }
+    addSlotConsumer(consumer) {
+        super.addSlotConsumer(consumer);
+        if (this.containerAvailable)
+            consumer.startRender();
+    }
+    get containerAvailable() { return this._containerAvailable; }
+    set containerAvailable(containerAvailable) {
+        if (this._containerAvailable === containerAvailable)
+            return;
+        this._containerAvailable = containerAvailable;
+        for (const consumer of this.slotConsumers) {
+            if (containerAvailable) {
+                consumer.startRender();
+            }
+            else {
+                consumer.stopRender();
+            }
+        }
+    }
+}
+/**
+ * Represents a slot provided by a particle through a provide connection or one of the root slots
+ * provided by the shell. Holds container (eg div element) and its additional info.
+ * Must be initialized either with a container (for root slots provided by the shell) or
+ * tuple of sourceSlotConsumer and spec (ProvidedSlotSpec) of the slot.
+ */
+class ProvidedSlotContext extends SlotContext {
+    constructor(id, name, tags, container, spec, sourceSlotConsumer = null) {
+        super(id, sourceSlotConsumer);
+        this.tags = [];
+        assert(Boolean(container) !== Boolean(spec), `Exactly one of either container or slotSpec may be set`);
+        assert(Boolean(spec) === Boolean(spec), `Spec and source slot can only be set together`);
+        this.name = name;
+        this.tags = tags || [];
+        this._container = container;
+        // The context's accompanying ProvidedSlotSpec (see particle-spec.js).
+        // Initialized to a default spec, if the container is one of the shell provided top root-contexts.
+        this.spec = spec || new ProvideSlotConnectionSpec({ name });
+        if (this.sourceSlotConsumer) {
+            this.sourceSlotConsumer.directlyProvidedSlotContexts.push(this);
+        }
+        // The list of handles this context is restricted to.
+        this.handles = this.spec && this.sourceSlotConsumer
+            ? this.spec.handles.map(handle => this.sourceSlotConsumer.consumeConn.particle.connections[handle].handle).filter(a => a !== undefined)
+            : [];
+    }
+    onRenderSlot(consumer, content, handler) {
+        consumer.setContent(content, handler);
+    }
+    get container() {
+        return this._container;
+    }
+    get containerAvailable() {
+        return Boolean(this._container);
+    }
+    static createContextForContainer(id, name, container, tags) {
+        return new ProvidedSlotContext(id, name, tags, container, null);
+    }
+    isSameContainer(container) {
+        if (this.spec.isSet) {
+            if (Boolean(this.container) !== Boolean(container)) {
+                return false;
+            }
+            if (!this.container) {
+                return true;
+            }
+            return Object.keys(this.container).length === Object.keys(container).length &&
+                Object.keys(this.container).every(key => Object.keys(container).some(newKey => newKey === key)) &&
+                Object.values(this.container).every(currentContainer => Object.values(container).some(newContainer => newContainer === currentContainer));
+        }
+        return (!container && !this.container) || (this.container === container);
+    }
+    set container(container) {
+        if (this.isSameContainer(container)) {
+            return;
+        }
+        const originalContainer = this.container;
+        this._container = container;
+        this.slotConsumers.forEach(slotConsumer => slotConsumer.onContainerUpdate(this.container, originalContainer));
+    }
+    addSlotConsumer(slotConsumer) {
+        super.addSlotConsumer(slotConsumer);
+        if (this.container) {
+            slotConsumer.onContainerUpdate(this.container, null);
+        }
+    }
+}
+
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class SlotComposer {
+    /**
+     * |options| must contain:
+     * - modalityName: the UI modality the slot-composer renders to (for example: dom).
+     * - modalityHandler: the handler for UI modality the slot-composer renders to.
+     * - rootContainer: the top level container to be used for slots.
+     * and may contain:
+     * - containerKind: the type of container wrapping each slot-context's container  (for example, div).
+     */
+    constructor(options) {
+        this._consumers = [];
+        this._contexts = [];
+        //    assert(options.modalityHandler && options.modalityHandler.constructor === ModalityHandler,
+        //           `Missing or invalid modality handler: ${options.modalityHandler}`);
+        assert(options.modalityHandler, `Missing or invalid modality handler: ${options.modalityHandler}`);
+        // TODO: Support rootContext for backward compatibility, remove when unused.
+        options.rootContainer = options.rootContainer || options.rootContext || (options.containers || Object).root;
+        assert((options.rootContainer !== undefined)
+            !==
+                (options.noRoot === true), 'Root container is mandatory unless it is explicitly skipped');
+        this._containerKind = options.containerKind;
+        if (options.modalityName) {
+            this.modality = Modality.create([options.modalityName]);
+        }
+        this.modalityHandler = options.modalityHandler;
+        if (options.noRoot) {
+            return;
+        }
+        const containerByName = options.containers
+            || this.modalityHandler.slotConsumerClass.findRootContainers(options.rootContainer) || {};
+        if (Object.keys(containerByName).length === 0) {
+            // fallback to single 'root' slot using the rootContainer.
+            containerByName['root'] = options.rootContainer;
+        }
+        Object.keys(containerByName).forEach(slotName => {
+            this._contexts.push(ProvidedSlotContext.createContextForContainer(`rootslotid-${slotName}`, slotName, containerByName[slotName], [`${slotName}`]));
+        });
+    }
+    get consumers() { return this._consumers; }
+    get containerKind() { return this._containerKind; }
+    getSlotConsumer(particle, slotName) {
+        return this.consumers.find(s => s.consumeConn.particle === particle && s.consumeConn.name === slotName);
+    }
+    findContainerByName(name) {
+        const contexts = this.findContextsByName(name);
+        if (contexts.length === 0) {
+            // TODO this is a no-op, but throwing here breaks tests
+            console.warn(`No containers for '${name}'`);
+        }
+        else if (contexts.length === 1) {
+            return contexts[0].container;
+        }
+        console.warn(`Ambiguous containers for '${name}'`);
+        return undefined;
+    }
+    findContextsByName(name) {
+        const providedSlotContexts = this._contexts.filter(ctx => ctx instanceof ProvidedSlotContext);
+        return providedSlotContexts.filter(ctx => ctx.name === name);
+    }
+    findContextById(slotId) {
+        return this._contexts.find(({ id }) => id === slotId);
+    }
+    createHostedSlot(innerArc, transformationParticle, transformationSlotName, storeId) {
+        const transformationSlotConsumer = this.getSlotConsumer(transformationParticle, transformationSlotName);
+        assert(transformationSlotConsumer, `Transformation particle ${transformationParticle.name} with consumed ${transformationSlotName} not found`);
+        const hostedSlotId = innerArc.generateID('slot').toString();
+        this._contexts.push(new HostedSlotContext(hostedSlotId, transformationSlotConsumer, storeId));
+        return hostedSlotId;
+    }
+    _addSlotConsumer(slot) {
+        slot.startRenderCallback = slot.arc.pec.startRender.bind(slot.arc.pec);
+        slot.stopRenderCallback = slot.arc.pec.stopRender.bind(slot.arc.pec);
+        this._consumers.push(slot);
+    }
+    async initializeRecipe(arc, recipeParticles) {
+        const newConsumers = [];
+        // Create slots for each of the recipe's particles slot connections.
+        recipeParticles.forEach(p => {
+            p.getSlandleConnections().forEach(cs => {
+                if (!cs.targetSlot) {
+                    assert(!cs.getSlotSpec().isRequired, `No target slot for particle's ${p.name} required consumed slot: ${cs.name}.`);
+                    return;
+                }
+                const slotConsumer = new this.modalityHandler.slotConsumerClass(arc, cs, this._containerKind);
+                const providedContexts = slotConsumer.createProvidedContexts();
+                this._contexts = this._contexts.concat(providedContexts);
+                newConsumers.push(slotConsumer);
+            });
+        });
+        // Set context for each of the slots.
+        newConsumers.forEach(consumer => {
+            this._addSlotConsumer(consumer);
+            const context = this.findContextById(consumer.consumeConn.targetSlot.id);
+            assert(context, `No context found for ${consumer.consumeConn.getQualifiedName()}`);
+            context.addSlotConsumer(consumer);
+        });
+        // Calculate the Descriptions only once per-Arc
+        const allArcs = this.consumers.map(consumer => consumer.arc);
+        const uniqueArcs = [...new Set(allArcs).values()];
+        // get arc -> description
+        const descriptions = await Promise.all(uniqueArcs.map(arc => Description.create(arc)));
+        // create a mapping from the zipped uniqueArcs and descriptions
+        const consumerByArc = new Map(descriptions.map((description, index) => [uniqueArcs[index], description]));
+        // ... and apply to each consumer
+        for (const consumer of this.consumers) {
+            consumer.description = consumerByArc.get(consumer.arc);
+        }
+    }
+    renderSlot(particle, slotName, content) {
+        const slotConsumer = this.getSlotConsumer(particle, slotName);
+        assert(slotConsumer, `Cannot find slot (or hosted slot) ${slotName} for particle ${particle.name}`);
+        // Content object as received by the particle execution host is frozen.
+        // SlotComposer attach properties to this object, so we need to clone it at the top level.
+        content = { ...content };
+        slotConsumer.slotContext.onRenderSlot(slotConsumer, content, async (eventlet) => {
+            slotConsumer.arc.pec.sendEvent(particle, slotName, eventlet);
+            // This code is a temporary hack implemented in #2011 which allows to route UI events from
+            // multiplexer to hosted particles. Multiplexer assembles UI from multiple pieces rendered
+            // by hosted particles. Hosted particles can render DOM elements with a key containing a
+            // handle ID of the store, which contains the entity they render. The code below attempts
+            // to find the hosted particle using the store matching the 'key' attribute on the event,
+            // which has been extracted from DOM.
+            // TODO: FIXIT!
+            if (eventlet.data && eventlet.data.key) {
+                // We fire off multiple async operations and don't wait.
+                for (const ctx of slotConsumer.hostedSlotContexts) {
+                    if (!ctx.storeId)
+                        continue;
+                    for (const hostedConsumer of ctx.slotConsumers) {
+                        const store = hostedConsumer.arc.findStoreById(ctx.storeId);
+                        assert(store);
+                        // TODO(shans): clean this up when we have interfaces for Singleton, Collection, etc
+                        // tslint:disable-next-line: no-any
+                        store.get().then(value => {
+                            if (value && (value.id === eventlet.data.key)) {
+                                hostedConsumer.arc.pec.sendEvent(hostedConsumer.consumeConn.particle, hostedConsumer.consumeConn.name, eventlet);
+                            }
+                        });
+                    }
+                }
+            }
+        });
+    }
+    getAvailableContexts() {
+        return this._contexts;
+    }
+    dispose() {
+        this.consumers.forEach(consumer => consumer.dispose());
+        this._contexts.forEach(context => {
+            context.clearSlotConsumers();
+            if (context instanceof ProvidedSlotContext && context.container) {
+                this.modalityHandler.slotConsumerClass.clear(context.container);
+            }
+        });
+        this._contexts = this._contexts.filter(c => !c.sourceSlotConsumer);
+        this._consumers.length = 0;
+    }
+}
+
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class DescriptionDomFormatter extends DescriptionFormatter {
+    constructor() {
+        super(...arguments);
+        this.nextID = 0;
+    }
+    _isSelectedDescription(desc) {
+        return super._isSelectedDescription(desc) || (!!desc.template && !!desc.model);
+    }
+    _combineSelectedDescriptions(selectedDescriptions, options) {
+        const suggestionByParticleDesc = new Map();
+        for (const particleDesc of selectedDescriptions) {
+            if (this.seenParticles.has(particleDesc._particle)) {
+                continue;
+            }
+            let { template, model } = this._retrieveTemplateAndModel(particleDesc, suggestionByParticleDesc.size, options || {});
+            const success = Object.keys(model).map(tokenKey => {
+                const tokens = this._initSubTokens(model[tokenKey], particleDesc);
+                return tokens.map(token => {
+                    const tokenValue = this.tokenToString(token);
+                    if (tokenValue == undefined) {
+                        return false;
+                    }
+                    else if (tokenValue && tokenValue.template && tokenValue.model) {
+                        // Dom token.
+                        template = template.replace(`{{${tokenKey}}}`, tokenValue.template);
+                        delete model[tokenKey];
+                        model = { ...model, ...tokenValue.model };
+                    }
+                    else { // Text token.
+                        // Replace tokenKey, in case multiple selected suggestions use the same key.
+                        const newTokenKey = `${tokenKey}${++this.nextID}`;
+                        template = template.replace(`{{${tokenKey}}}`, `{{${newTokenKey}}}`);
+                        delete model[tokenKey];
+                        model[newTokenKey] = tokenValue;
+                    }
+                    return true;
+                }).every(t => !!t);
+            });
+            if (success.every(s => !!s)) {
+                suggestionByParticleDesc.set(particleDesc, { template, model });
+            }
+        }
+        // Populate suggestions list while maintaining original particles order.
+        const suggestions = [];
+        selectedDescriptions.forEach(desc => {
+            if (suggestionByParticleDesc.has(desc)) {
+                suggestions.push(suggestionByParticleDesc.get(desc));
+            }
+        });
+        if (suggestions.length > 0) {
+            const result = this._joinDescriptions(suggestions);
+            if (!options || !options.skipFormatting) {
+                result.template += '.';
+            }
+            return result;
+        }
+    }
+    _retrieveTemplateAndModel(particleDesc, index, options) {
+        if (particleDesc['_template_'] && particleDesc['_model_']) {
+            return {
+                template: particleDesc['_template_'],
+                model: JSON.parse(particleDesc['_model_'])
+            };
+        }
+        assert(particleDesc.pattern, 'Description must contain template and model, or pattern');
+        let template = '';
+        const model = {};
+        const tokens = this._initTokens(particleDesc.pattern, particleDesc);
+        tokens.forEach((token, i) => {
+            if (token.text) {
+                template = template.concat(`${(index === 0 && i === 0 && !options.skipFormatting) ? token.text[0].toUpperCase() + token.text.slice(1) : token.text}`);
+            }
+            else { // handle or slot handle.
+                const sanitizedFullName = token.fullName.replace(/[.{}_$]/g, '');
+                let attribute = '';
+                // TODO(mmandlis): capitalize the data in the model instead.
+                if (i === 0 && !options.skipFormatting) {
+                    // Capitalize the first letter in the token.
+                    template = template.concat(`<style>
+            [firstletter]::first-letter { text-transform: capitalize; }
+            [firstletter] {display: inline-block}
+            </style>`);
+                    attribute = ' firstletter';
+                }
+                template = template.concat(`<span${attribute}>{{${sanitizedFullName}}}</span>`);
+                model[sanitizedFullName] = token.fullName;
+            }
+        });
+        return { template, model };
+    }
+    _capitalizeAndPunctuate(sentence) {
+        if (typeof sentence === 'string') {
+            return { template: super._capitalizeAndPunctuate(sentence), model: {} };
+        }
+        // Capitalize the first element in the DOM template.
+        const tokens = sentence.template.match(/<[a-zA-Z0-9]+>{{([a-zA-Z0-9]*)}}<\/[a-zA-Z0-9]+>/);
+        if (tokens && tokens.length > 1 && sentence.model[tokens[1]]) {
+            const modelToken = sentence.model[tokens[1]];
+            if (modelToken.length > 0) {
+                sentence.model[tokens[1]] = `${modelToken[0].toUpperCase()}${modelToken.substr(1)}`;
+            }
+        }
+        sentence.template += '.';
+        return sentence;
+    }
+    _joinDescriptions(descs) {
+        // If all tokens are strings, just join them.
+        if (descs.every(desc => typeof desc === 'string')) {
+            return super._joinDescriptions(descs);
+        }
+        const result = { template: '', model: {} };
+        const count = descs.length;
+        descs.forEach((desc, i) => {
+            if (typeof desc === 'string') {
+                desc = { template: desc, model: {} };
+            }
+            result.template += desc.template;
+            result.model = { ...result.model, ...desc.model };
+            let delim;
+            if (i < count - 2) {
+                delim = ', ';
+            }
+            else if (i === count - 2) {
+                delim = ['', '', ' and ', ', and '][Math.min(3, count)];
+            }
+            if (delim) {
+                result.template += delim;
+            }
+        });
+        return result;
+    }
+    _joinTokens(tokens) {
+        // If all tokens are strings, just join them.
+        if (tokens.every(token => typeof token === 'string')) {
+            return super._joinTokens(tokens);
+        }
+        tokens = tokens.map(token => {
+            if (typeof token !== 'object') {
+                return {
+                    template: `<span>{{text${++this.nextID}}}</span>`,
+                    model: { [`text${this.nextID}`]: token }
+                };
+            }
+            return token;
+        });
+        const nonEmptyTokens = tokens.filter(token => token && !!token.template && !!token.model);
+        return {
+            template: nonEmptyTokens.map(token => token.template).join(''),
+            model: nonEmptyTokens.map(token => token.model).reduce((prev, curr) => ({ ...prev, ...curr }), {})
+        };
+    }
+    _combineDescriptionAndValue(token, description, storeValue) {
+        if (!!description.template && !!description.model) {
+            return {
+                template: `${description.template} (${storeValue.template})`,
+                model: { ...description.model, ...storeValue.model }
+            };
+        }
+        const descKey = `${token.handleName}Description${++this.nextID}`;
+        return {
+            template: `<span>{{${descKey}}}</span> (${storeValue.template})`,
+            model: { [descKey]: description, ...storeValue.model }
+        };
+    }
+    _formatEntityProperty(handleName, properties, value) {
+        const key = `${handleName}${properties.join('')}Value${++this.nextID}`;
+        return {
+            template: `<b>{{${key}}}</b>`,
+            model: { [`${key}`]: value }
+        };
+    }
+    _formatCollection(handleName, values) {
+        const handleKey = `${handleName}${++this.nextID}`;
+        if (values[0].rawData.name) {
+            if (values.length > 2) {
+                return {
+                    template: `<b>{{${handleKey}FirstName}}</b> plus <b>{{${handleKey}OtherCount}}</b> other items`,
+                    model: { [`${handleKey}FirstName`]: values[0].rawData.name, [`${handleKey}OtherCount`]: values.length - 1 }
+                };
+            }
+            return {
+                template: values.map((v, i) => `<b>{{${handleKey}${i}}}</b>`).join(', '),
+                model: Object.assign({}, ...values.map((v, i) => ({ [`${handleKey}${i}`]: v.rawData.name })))
+            };
+        }
+        return {
+            template: `<b>{{${handleKey}Length}}</b> items`,
+            model: { [`${handleKey}Length`]: values.length }
+        };
+    }
+    _formatBigCollection(handleName, firstValue) {
+        return {
+            template: `collection of items like {{${handleName}FirstName}}`,
+            model: { [`${handleName}FirstName`]: firstValue.rawData.name }
+        };
+    }
+    _formatSingleton(handleName, value) {
+        const formattedValue = super._formatSingleton(handleName, value);
+        if (formattedValue) {
+            return {
+                template: `<b>{{${handleName}Var}}</b>`,
+                model: { [`${handleName}Var`]: formattedValue }
+            };
+        }
+        return undefined;
+    }
+}
+
+/**
+ * @license
+ * Copyright 2019 Google LLC.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+var IconStyles = `
+  icon {
+    font-family: "Material Icons";
+    font-size: 24px;
+    font-style: normal;
+    -webkit-font-feature-settings: "liga";
+    -webkit-font-smoothing: antialiased;
+    cursor: pointer;
+    user-select: none;
+    flex-shrink: 0;
+    /* partial FOUC prevention */
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    overflow: hidden;
+  }
+  icon[hidden] {
+    /* required because of display rule above,
+    display rule required for overflow: hidden */
+    display: none;
+  }
+`;
+
+/**
+ * @license
+ * Copyright (c) 2016 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+/* Annotator */
+// tree walker that generates arbitrary data using visitor function `cb`
+// `cb` is called as `cb(node, key, notes)`
+// where
+//   `node` is a visited node.
+//   `key` is a handle which identifies the node in a map generated by `Annotator.locateNodes`.
+class Annotator {
+  constructor(cb) {
+    this.cb = cb;
+  }
+  // For subtree at `node`, produce annotation object `notes`.
+  // the content of `notes` is completely determined by the behavior of the
+  // annotator callback function supplied at the constructor.
+  annotate(node, notes, opts) {
+    this.notes = notes;
+    this.opts = opts || 0;
+    this.key = this.opts.key || 0;
+    notes.locator = this._annotateSubtree(node);
+    return notes;
+  }
+  // walking subtree at `node`
+  _annotateSubtree(node) {
+    let childLocators;
+    for (let i = 0, child = node.firstChild, previous = null, neo; child; i++) {
+      // returns a locator only if a node in the subtree requires one
+      const childLocator = this._annotateNode(child);
+      // only when necessary, maintain a sparse array of locators
+      if (childLocator) {
+        (childLocators = childLocators || {})[i] = childLocator;
+      }
+      // `child` may have been evacipated by visitor
+      neo = previous ? previous.nextSibling : node.firstChild;
+      if (neo === child) {
+        previous = child;
+        child = child.nextSibling;
+      } else {
+        child = neo;
+        i--;
+      }
+    }
+    // is falsey unless there was at least one childLocator
+    return childLocators;
+  }
+  _annotateNode(node) {
+    // visit node
+    const key = this.key++;
+    const shouldLocate = this.cb(node, key, this.notes, this.opts);
+    // recurse
+    const locators = this._annotateSubtree(node);
+    if (shouldLocate || locators) {
+      const cl = Object.create(null);
+      cl.key = key;
+      if (locators) {
+        cl.sub = locators;
+      }
+      return cl;
+    }
+  }
+}
+
+const locateNodes = function(root, locator, map) {
+  map = map || [];
+  for (const n in locator) {
+    const loc = locator[n];
+    if (loc) {
+      const node = root.childNodes[n];
+      // TODO(sjmiles): text-nodes sometimes evacipate when stamped, so map to the parentElement instead
+      map[loc.key] = (node.nodeType === Node.TEXT_NODE) ? node.parentElement : node;
+      if (loc.sub) {
+        // recurse
+        locateNodes(node, loc.sub, map);
+      }
+    }
+  }
+  return map;
+};
+
+/* Annotation Producer */
+// must return `true` for any node whose key we wish to track
+const annotatorImpl = function(node, key, notes, opts) {
+  let tracking = false;
+  // hook
+  if (opts.annotator && opts.annotator(node, key, notes, opts)) {
+    tracking = true;
+  }
+  // default
+  switch (node.nodeType) {
+    case Node.DOCUMENT_FRAGMENT_NODE:
+      break;
+    case Node.ELEMENT_NODE:
+      return tracking || annotateElementNode(node, key, notes);
+    case Node.TEXT_NODE:
+      return tracking || annotateTextNode(node, key, notes);
+  }
+  return tracking;
+};
+
+const annotateTextNode = function(node, key, notes) {
+  if (annotateMustache(node, key, notes, 'textContent', node.textContent)) {
+    node.textContent = '';
+    return true;
+  }
+};
+
+const annotateElementNode = function(node, key, notes) {
+  if (node.hasAttributes()) {
+    let noted = false;
+    for (let a$ = node.attributes, i = a$.length - 1, a; i >= 0 && (a = a$[i]); i--) {
+      if (
+        annotateEvent(node, key, notes, a.name, a.value) ||
+        annotateMustache(node, key, notes, a.name, a.value) ||
+        annotateDirective(node, key, notes, a.name, a.value)
+      ) {
+        node.removeAttribute(a.name);
+        noted = true;
+      }
+    }
+    return noted;
+  }
+};
+
+const annotateMustache = function(node, key, notes, property, mustache) {
+  if (mustache.slice(0, 2) === '{{') {
+    if (property === 'class') {
+      property = 'className';
+    }
+    let value = mustache.slice(2, -2);
+    const override = value.split(':');
+    if (override.length === 2) {
+      property = override[0];
+      value = override[1];
+    }
+    takeNote(notes, key, 'mustaches', property, value);
+    if (value[0] === '$') {
+      takeNote(notes, 'xlate', value, true);
+    }
+    return true;
+  }
+};
+
+const annotateEvent = function(node, key, notes, name, value) {
+  if (name.slice(0, 3) === 'on-') {
+    if (value.slice(0, 2) === '{{') {
+      value = value.slice(2, -2);
+      console.warn(
+        `Xen: event handler for '${name}' expressed as a mustache, which is not supported. Using literal value '${value}' instead.`
+      );
+    }
+    takeNote(notes, key, 'events', name.slice(3), value);
+    return true;
+  }
+};
+
+const annotateDirective = function(node, key, notes, name, value) {
+  if (name === 'xen:forward') {
+    takeNote(notes, key, 'events', 'xen:forward', value);
+    return true;
+  }
+};
+
+const takeNote = function(notes, key, group, name, note) {
+  const n$ = notes[key] || (notes[key] = Object.create(null));
+  (n$[group] || (n$[group] = {}))[name] = note;
+};
+
+const annotator = new Annotator(annotatorImpl);
+
+const annotate = function(root, key, opts) {
+  return (root._notes ||
+    (root._notes = annotator.annotate(root.content, {/*ids:{}*/}, key, opts))
+  );
+};
+
+/* Annotation Consumer */
+const mapEvents = function(notes, map, mapper) {
+  // add event listeners
+  for (const key in notes) {
+    const node = map[key];
+    const events = notes[key] && notes[key].events;
+    if (node && events) {
+      for (const name in events) {
+        mapper(node, name, events[name]);
+      }
+    }
+  }
+};
+
+const listen = function(controller, node, eventName, handlerName) {
+  node.addEventListener(eventName, function(e) {
+    if (controller[handlerName]) {
+      return controller[handlerName](e, e.detail);
+    } else if (controller.defaultHandler) {
+      return controller.defaultHandler(handlerName, e);
+    }
+  });
+};
+
+const set$1 = function(notes, map, scope, controller) {
+  if (scope) {
+    for (const key in notes) {
+      const node = map[key];
+      if (node) {
+        // everybody gets a scope
+        node.scope = scope;
+        // now get your regularly scheduled bindings
+        const mustaches = notes[key].mustaches;
+        for (const name in mustaches) {
+          const property = mustaches[name];
+          if (property in scope) {
+            _set(node, name, scope[property], controller);
+          }
+        }
+      }
+    }
+  }
+};
+
+const _set = function(node, property, value, controller) {
+  // TODO(sjmiles): the property conditionals here could be precompiled
+  const modifier = property.slice(-1);
+  if (property === 'style%' || property === 'style' || property === 'xen:style') {
+    if (typeof value === 'string') {
+      node.style.cssText = value;
+    } else {
+      Object.assign(node.style, value);
+    }
+  } else if (modifier == '$') {
+    const n = property.slice(0, -1);
+    if (typeof value === 'boolean' || value === undefined) {
+      setBoolAttribute(node, n, Boolean(value));
+    } else {
+      node.setAttribute(n, value);
+    }
+  } else if (property === 'textContent') {
+    if (value && (value.$template || value.template)) {
+      _setSubTemplate(node, value, controller);
+    } else {
+      node.textContent = (value || '');
+    }
+  } else if (property === 'unsafe-html') {
+    node.innerHTML = value || '';
+  } else if (property === 'value') {
+    // TODO(sjmiles): specifically dirty-check `value` to avoid resetting input elements
+    if (node.value !== value) {
+      node.value = value;
+    }
+  } else {
+    node[property] = value;
+  }
+};
+
+const setBoolAttribute = function(node, attr, state) {
+  node[
+    (state === undefined ? !node.hasAttribute(attr) : state)
+      ? 'setAttribute'
+      : 'removeAttribute'
+  ](attr, '');
+};
+
+const _setSubTemplate = function(node, value, controller) {
+  // TODO(sjmiles): subtemplate iteration ability specially implemented to support arcs (serialization boundary)
+  // TODO(sjmiles): Aim to re-implement as a plugin.
+  let {template, models} = value;
+  if (!template) {
+    const container = node.getRootNode();
+    template = container.querySelector(`template[${value.$template}]`);
+  } else {
+    template = maybeStringToTemplate(template);
+  }
+  _renderSubtemplates(node, controller, template, models);
+};
+
+const _renderSubtemplates = function(container, controller, template, models) {
+  let child = container.firstElementChild;
+  let next;
+  if (template && models) {
+    models && models.forEach((model, i)=>{
+      next = child && child.nextElementSibling;
+      // use existing node if possible
+      if (!child) {
+        const dom = stamp(template).events(controller);
+        child = dom.root.firstElementChild;
+        if (child) {
+          child._subtreeDom = dom;
+          container.appendChild(child);
+          if (!template._shapeWarning && dom.root.firstElementChild) {
+            template._shapeWarning = true;
+            console.warn(`xen-template: subtemplate has multiple root nodes: only the first is used.`, template);
+          }
+        }
+      }
+      if (child) {
+        child._subtreeDom.set(model);
+        child = next;
+      }
+    });
+  }
+  // remove extra nodes
+  while (child) {
+    next = child.nextElementSibling;
+    child.remove();
+    child = next;
+  }
+};
+
+//window.stampCount = 0;
+//window.stampTime = 0;
+
+const stamp = function(template, opts) {
+  //const startTime = performance.now();
+  //window.stampCount++;
+  template = maybeStringToTemplate(template);
+  // construct (or use memoized) notes
+  const notes = annotate(template, opts);
+  // CRITICAL TIMING ISSUE #1:
+  // importNode can have side-effects, like CustomElement callbacks (before we
+  // can do any work on the imported subtree, before we can mapEvents, e.g.).
+  // we could clone into an inert document (say a new template) and process the nodes
+  // before importing if necessary.
+  const root = document.importNode(template.content, true);
+  // templates don't require a single container element, but sometimes they do have one...
+  // capture the fire element, because it's harder to find after we insert the nodes into DOM
+  const firstElement = root.firstElementChild;
+  // map DOM to keys
+  const map = locateNodes(root, notes.locator);
+  // return dom manager
+  const dom = {
+    root,
+    notes,
+    map,
+    firstElement,
+    $(slctr) {
+      return this.root.querySelector(slctr);
+    },
+    set: function(scope) {
+      scope && set$1(notes, map, scope, this.controller);
+      return this;
+    },
+    events: function(controller) {
+      // TODO(sjmiles): originally `controller` was expected to be an Object with event handler
+      // methods on it (typically a custom-element stamping a template).
+      // In Arcs, we want to attach a generic handler (Function) for any event on this node.
+      // Subtemplate stamping gets involved because they need to reuse whichever controller.
+      // I suspect this can be simplified, but right now I'm just making it go.
+      if (controller && typeof controller !== 'function') {
+        controller = listen.bind(this, controller);
+      }
+      this.controller = controller;
+      if (controller) {
+        mapEvents(notes, map, controller);
+      }
+      return this;
+    },
+    // support event-forwarding when stamping descendent template DOM
+    // i.e. for objects (say, elements) that consume templates as input
+    // see also: support for `xen:forward` attribute above
+    forward: function() {
+      mapEvents(notes, map, (node, eventName, handlerName) => {
+        node.addEventListener(eventName, e => {
+          //console.log(`xen::forward: forwarding [${eventName}]`);
+          const wrapper = {eventName, handlerName, detail: e.detail, target: e.target};
+          fire(node, 'xen:forward', wrapper, {bubbles: true});
+        });
+      });
+      return this;
+    },
+    appendTo: function(node) {
+      if (this.root) {
+        // TODO(sjmiles): assumes this.root is a fragment
+        node.appendChild(this.root);
+      } else {
+        console.warn('Xen: cannot appendTo, template stamped no DOM');
+      }
+      // TODO(sjmiles): this.root is no longer a fragment
+      this.root = node;
+      return this;
+    }
+  };
+  //window.stampTime += performance.now() - startTime;
+  return dom;
+};
+
+const fire = (node, eventName, detail, init) => {
+  const eventInit = init || {};
+  eventInit.detail = detail;
+  const event = new CustomEvent(eventName, eventInit);
+  node.dispatchEvent(event);
+  return event.detail;
+};
+
+const maybeStringToTemplate = template => {
+  // TODO(sjmiles): need to memoize this somehow
+  return (typeof template === 'string') ? createTemplate(template) : template;
+};
+
+const createTemplate = innerHTML => {
+  return Object.assign(document.createElement('template'), {innerHTML});
+};
+
+const Template = {
+  createTemplate,
+  setBoolAttribute,
+  stamp,
+  takeNote
+};
+
+/**
+ * @license
+ * Copyright (c) 2019 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class Predicates {
+}
+/** A Predicate that always succeeds */
+Predicates.alwaysTrue = () => true;
+/** A Predicate that always fails */
+Predicates.alwaysFalse = () => false;
+
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class SlotConsumer {
+    constructor(arc, consumeConn, containerKind) {
+        this.directlyProvidedSlotContexts = [];
+        this.hostedSlotContexts = [];
+        // Contains `container` and other modality specific rendering information
+        // (eg for `dom`: model, template for dom renderer) by sub id. Key is `undefined` for singleton slot.
+        this._renderingBySubId = new Map();
+        this.innerContainerBySlotId = {};
+        this.arc = arc;
+        this.consumeConn = consumeConn;
+        this.containerKind = containerKind;
+    }
+    getRendering(subId) {
+        return this._renderingBySubId.get(subId);
+    }
+    get renderings() {
+        return [...this._renderingBySubId.entries()];
+    }
+    addRenderingBySubId(subId, rendering) {
+        this._renderingBySubId.set(subId, rendering);
+    }
+    addHostedSlotContexts(context) {
+        context.containerAvailable = Boolean(this.slotContext && this.slotContext.containerAvailable);
+        this.hostedSlotContexts.push(context);
+    }
+    get allProvidedSlotContexts() {
+        return [...this.generateProvidedContexts()];
+    }
+    findProvidedContext(predicate) {
+        return this.generateProvidedContexts(predicate).next().value;
+    }
+    *generateProvidedContexts(predicate = Predicates.alwaysTrue) {
+        for (const context of this.directlyProvidedSlotContexts) {
+            if (predicate(context))
+                yield context;
+        }
+        for (const hostedContext of this.hostedSlotContexts) {
+            for (const hostedConsumer of hostedContext.slotConsumers) {
+                yield* hostedConsumer.generateProvidedContexts(predicate);
+            }
+        }
+    }
+    onContainerUpdate(newContainer, originalContainer) {
+        assert(this.slotContext instanceof ProvidedSlotContext, 'Container can only be updated in non-hosted context');
+        const context = this.slotContext;
+        if (newContainer !== originalContainer) {
+            const contextContainerBySubId = new Map();
+            if (context && context.spec.isSet) {
+                Object.keys(context.container || {}).forEach(subId => contextContainerBySubId.set(subId, context.container[subId]));
+            }
+            else {
+                contextContainerBySubId.set(undefined, context.container);
+            }
+            for (const [subId, container] of contextContainerBySubId) {
+                if (!this._renderingBySubId.has(subId)) {
+                    this._renderingBySubId.set(subId, {});
+                }
+                const rendering = this.getRendering(subId);
+                if (!rendering.container || !this.isSameContainer(rendering.container, container)) {
+                    if (rendering.container) {
+                        // The rendering already had a container, but it's changed. The original container needs to be cleared.
+                        this.clearContainer(rendering);
+                    }
+                    rendering.container = this.createNewContainer(container, subId);
+                }
+            }
+            for (const [subId, rendering] of this.renderings) {
+                if (!contextContainerBySubId.has(subId)) {
+                    this.deleteContainer(rendering.container);
+                    this._renderingBySubId.delete(subId);
+                }
+            }
+        }
+        if (Boolean(newContainer) !== Boolean(originalContainer)) {
+            if (newContainer) {
+                this.startRender();
+            }
+            else {
+                this.stopRender();
+            }
+        }
+        this.hostedSlotContexts.forEach(ctx => ctx.containerAvailable = Boolean(newContainer));
+    }
+    createProvidedContexts() {
+        assert(this.consumeConn.getSlotSpec(), `Missing consume connection spec`);
+        return this.consumeConn.getSlotSpec().provideSlotConnections.map(spec => new ProvidedSlotContext(this.consumeConn.providedSlots[spec.name].id, spec.name, /* tags=*/ [], /* container= */ null, spec, this));
+    }
+    updateProvidedContexts() {
+        this.allProvidedSlotContexts.forEach(providedContext => {
+            providedContext.container = providedContext.sourceSlotConsumer.getInnerContainer(providedContext.id);
+        });
+    }
+    startRender() {
+        if (this.consumeConn && this.startRenderCallback) {
+            const providedSlots = new Map(this.allProvidedSlotContexts.map(context => [context.name, context.id]));
+            this.startRenderCallback({
+                particle: this.consumeConn.particle,
+                slotName: this.consumeConn.name,
+                providedSlots,
+                contentTypes: this.constructRenderRequest()
+            });
+        }
+    }
+    stopRender() {
+        if (this.consumeConn && this.stopRenderCallback) {
+            this.stopRenderCallback({ particle: this.consumeConn.particle, slotName: this.consumeConn.name });
+        }
+    }
+    setContent(content, handler) {
+        if (content && Object.keys(content).length > 0 && this.description) {
+            content.descriptions = this._populateHandleDescriptions();
+        }
+        this.eventHandler = handler;
+        for (const [subId, rendering] of this.renderings) {
+            this.setContainerContent(rendering, this.formatContent(content, subId), subId);
+        }
+    }
+    _populateHandleDescriptions() {
+        if (!this.consumeConn)
+            return null; // TODO: remove null ability
+        const descriptions = new Map();
+        Object.values(this.consumeConn.particle.connections).forEach(handleConn => {
+            if (handleConn.handle) {
+                descriptions[`${handleConn.name}.description`] =
+                    this.description.getHandleDescription(handleConn.handle).toString();
+            }
+        });
+        return descriptions;
+    }
+    getInnerContainer(slotId) {
+        return this.innerContainerBySlotId[slotId];
+    }
+    _initInnerSlotContainer(slotId, subId, container) {
+        if (subId) {
+            if (!this.innerContainerBySlotId[slotId]) {
+                this.innerContainerBySlotId[slotId] = {};
+            }
+            assert(!this.innerContainerBySlotId[slotId][subId], `Multiple ${slotId}:${subId} inner slots cannot be provided`);
+            this.innerContainerBySlotId[slotId][subId] = container;
+        }
+        else {
+            this.innerContainerBySlotId[slotId] = container;
+        }
+    }
+    _clearInnerSlotContainers(subIds) {
+        subIds.forEach(subId => {
+            if (subId) {
+                Object.values(this.innerContainerBySlotId).forEach(inner => delete inner[subId]);
+            }
+            else {
+                this.innerContainerBySlotId = {};
+            }
+        });
+    }
+    isSameContainer(container, contextContainer) {
+        return (!container && !contextContainer) || (container === contextContainer);
+    }
+    // abstract
+    constructRenderRequest() { return []; }
+    dispose() { }
+    createNewContainer(contextContainer, subId) { return null; }
+    deleteContainer(container) { }
+    clearContainer(rendering) { }
+    setContainerContent(rendering, content, subId) { }
+    formatContent(content, subId) { return null; }
+    formatHostedContent(content) { return null; }
+    static clear(container) { }
+    static findRootContainers(topContainer) { return {}; }
+}
+
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+const templateByName = () => Runtime.getRuntime().getCacheService().getOrCreateCache('templateByName');
+// this style sheet is installed in every particle shadow-root
+let commonStyleTemplate;
+class SlotDomConsumer extends SlotConsumer {
+    constructor(arc, consumeConn, containerKind) {
+        super(arc, consumeConn, containerKind);
+        this._observer = this._initMutationObserver();
+    }
+    constructRenderRequest() {
+        const request = ['model'];
+        const prefixes = [this.templatePrefix];
+        if (!SlotDomConsumer.hasTemplate(prefixes.join('::'))) {
+            request.push('template');
+        }
+        return request;
+    }
+    static hasTemplate(templatePrefix) {
+        return [...templateByName().keys()].find(key => key.startsWith(templatePrefix));
+    }
+    isSameContainer(container, contextContainer) {
+        return container.parentNode === contextContainer;
+    }
+    createNewContainer(contextContainer, subId) {
+        assert(contextContainer, 'contextContainer cannot be null');
+        const newContainer = document.createElement(this.containerKind || 'div');
+        if (this.consumeConn) {
+            newContainer.setAttribute('particle-host', this.consumeConn.getQualifiedName());
+        }
+        contextContainer.appendChild(newContainer);
+        //return newContainer;
+        // TODO(sjmiles): introduce tree scope
+        newContainer.attachShadow({ mode: `open` });
+        return newContainer.shadowRoot;
+    }
+    deleteContainer(container) {
+        // step out of shadowDOM if container is a shadowRoot
+        container = container.host || container;
+        if (container.parentNode) {
+            container.parentNode.removeChild(container);
+        }
+    }
+    formatContent(content, subId) {
+        assert(this.slotContext instanceof ProvidedSlotContext, 'Content formatting can only be done for provided SlotContext');
+        const contextSpec = this.slotContext.spec;
+        const newContent = {};
+        // Format model.
+        if (Object.keys(content).indexOf('model') >= 0) {
+            if (content.model) {
+                let formattedModel;
+                if (contextSpec.isSet && this.consumeConn.getSlotSpec().isSet) {
+                    formattedModel = this._modelForSetSlotConsumedAsSetSlot(content.model, subId);
+                }
+                else if (contextSpec.isSet && !this.consumeConn.getSlotSpec().isSet) {
+                    formattedModel = this._modelForSetSlotConsumedAsSingletonSlot(content.model, subId);
+                }
+                else {
+                    formattedModel = this._modelForSingletonSlot(content.model, subId);
+                }
+                if (!formattedModel)
+                    return undefined;
+                // Merge descriptions into model.
+                newContent.model = { ...formattedModel, ...content.descriptions };
+            }
+            else {
+                newContent.model = undefined;
+            }
+        }
+        // Format template name and template.
+        if (content.templateName) {
+            newContent.templateName = typeof content.templateName === 'string' ? content.templateName : content.templateName[subId];
+            if (content.template) {
+                newContent.template = typeof content.template === 'string' ? content.template : content.template[newContent.templateName];
+            }
+        }
+        return newContent;
+    }
+    _modelForSingletonSlot(model, subId) {
+        assert(!subId, 'subId should be absent for a Singleton Slot');
+        return model;
+    }
+    _modelForSetSlotConsumedAsSetSlot(model, subId) {
+        assert(model.items && model.items.every(item => item.subId), 'model for a Set Slot consumed as a Set Slot needs to have items array, with every element having subId');
+        return model.items.find(item => item.subId === subId);
+    }
+    _modelForSetSlotConsumedAsSingletonSlot(model, subId) {
+        assert(model.subId, 'model for a Set Slot consumed as a Singleton Slot needs to have subId');
+        return subId === model.subId ? model : null;
+    }
+    setContainerContent(rendering, content, subId) {
+        if (!rendering.container) {
+            return;
+        }
+        if (!content || Object.keys(content).length === 0) {
+            this.clearContainer(rendering);
+            rendering.model = null;
+            return;
+        }
+        this._setTemplate(rendering, this.templatePrefix, content.templateName, content.template);
+        rendering.model = content.model;
+        this._onUpdate(rendering);
+    }
+    clearContainer(rendering) {
+        if (rendering.liveDom) {
+            rendering.liveDom.root.textContent = '';
+        }
+        rendering.liveDom = null;
+    }
+    dispose() {
+        if (this._observer) {
+            this._observer.disconnect();
+        }
+        this.renderings.forEach(([subId, { container }]) => this.deleteContainer(container));
+    }
+    static clear(container) {
+        container.textContent = '';
+    }
+    static clearCache() {
+        templateByName().clear();
+    }
+    static findRootContainers(topContainer) {
+        const containerBySlotId = {};
+        Array.from(topContainer.querySelectorAll('[slotid]')).forEach(container => {
+            //assert(this.isDirectInnerSlot(container), 'Unexpected inner slot');
+            const slotId = container.getAttribute('slotid');
+            assert(!containerBySlotId[slotId], `Duplicate root slot ${slotId}`);
+            containerBySlotId[slotId] = container;
+        });
+        return containerBySlotId;
+    }
+    createTemplateElement(template) {
+        return Object.assign(document.createElement('template'), { innerHTML: template });
+    }
+    get templatePrefix() {
+        return this.consumeConn.getQualifiedName();
+    }
+    _setTemplate(rendering, templatePrefix, templateName, template) {
+        if (templateName) {
+            rendering.templateName = [templatePrefix, templateName].filter(s => s).join('::');
+            if (template) {
+                if (templateByName().has(rendering.templateName)) {
+                    // TODO: check whether the new template is different from the one that was previously used.
+                    // Template is being replaced.
+                    this.clearContainer(rendering);
+                }
+                templateByName().set(rendering.templateName, this.createTemplateElement(template));
+            }
+        }
+    }
+    _onUpdate(rendering) {
+        this._observe(rendering.container);
+        if (rendering.templateName) {
+            const template = templateByName().get(rendering.templateName);
+            assert(template, `No template for ${rendering.templateName}`);
+            this._stampTemplate(rendering, template);
+        }
+        this._updateModel(rendering);
+    }
+    _observe(container) {
+        assert(container, 'Cannot observe without a container');
+        if (this._observer) {
+            this._observer.observe(container, {
+                childList: true,
+                subtree: true,
+                attributes: true,
+                attributeFilter: ['subid']
+            });
+        }
+    }
+    _stampTemplate(rendering, template) {
+        if (!rendering.liveDom) {
+            // TODO(sjmiles): normally I would create this template as part of module startup,
+            // but this file is node-test-dependency, and `createTemplate` requires `document`
+            // see https://github.com/PolymerLabs/arcs/issues/2827
+            if (!commonStyleTemplate) {
+                commonStyleTemplate = Template.createTemplate(`<style>${IconStyles}</style>`);
+            }
+            // provision common stylesheet
+            Template.stamp(commonStyleTemplate).appendTo(rendering.container);
+            const mapper = this._eventMapper.bind(this, this.eventHandler);
+            rendering.liveDom = Template
+                .stamp(template)
+                .events(mapper)
+                .appendTo(rendering.container);
+        }
+    }
+    _eventMapper(eventHandler, node, eventName, handlerName) {
+        node.addEventListener(eventName, event => {
+            // TODO(sjmiles): we have an extremely minimalist approach to events here, this is useful IMO for
+            // finding the smallest set of features that we are going to need.
+            // First problem: click event firing multiple times as it bubbles up the tree, minimalist solution
+            // is to enforce a 'first listener' rule by executing `stopPropagation`.
+            event.stopPropagation();
+            // TODO(sjmiles): affordance for forwarded events (events produced by a template that is lexically
+            // scoped to the mapped template [e.g. dom-repeater])
+            if (eventName === 'xen:forward') {
+                node = event.detail.target;
+                handlerName = event.detail.handlerName;
+            }
+            // collate keyboard information
+            const { altKey, ctrlKey, metaKey, shiftKey, code, key, repeat } = event;
+            const detail = {
+                // TODO(sjmiles): `key` is a data-key (as in key-value pair), may be confusing vs keyboard `keys`
+                key: node.key,
+                value: node.value,
+                keys: { altKey, ctrlKey, metaKey, shiftKey, code, key, repeat }
+            };
+            eventHandler({
+                detail,
+                handler: handlerName,
+                // TODO(sjmiles): deprecated
+                data: detail
+            });
+        });
+    }
+    _updateModel(rendering) {
+        if (rendering.liveDom) {
+            rendering.liveDom.set(rendering.model);
+        }
+    }
+    initInnerContainers(container) {
+        Array.from(container.querySelectorAll('[slotid]')).forEach(innerContainer => {
+            if (!this.isDirectInnerSlot(container, innerContainer)) {
+                // Skip inner slots of an inner slot of the given slot.
+                return;
+            }
+            const slotId = this.getNodeValue(innerContainer, 'slotid');
+            const providedContext = this.findProvidedContext(ctx => ctx.id === slotId);
+            if (!providedContext) {
+                console.warn(`Slot ${this.consumeConn.getSlotSpec().name} has unexpected inner slot ${slotId}`);
+                return;
+            }
+            const subId = this.getNodeValue(innerContainer, 'subid');
+            assert(Boolean(subId) === providedContext.spec.isSet, `Sub-id ${subId} for slot ${providedContext.name} doesn't match set spec: ${providedContext.spec.isSet}`);
+            providedContext.sourceSlotConsumer._initInnerSlotContainer(slotId, subId, innerContainer);
+        });
+    }
+    // get a value from node that could be an attribute, if not a property
+    getNodeValue(node, name) {
+        // TODO(sjmiles): remember that attribute names from HTML are lower-case
+        return node[name] || node.getAttribute(name);
+    }
+    isDirectInnerSlot(container, innerContainer) {
+        if (innerContainer === container) {
+            return true;
+        }
+        const parentOf = elt => elt.parentNode;
+        let parentNode = parentOf(innerContainer);
+        while (parentNode) {
+            if (parentNode === container) {
+                return true;
+            }
+            // only some HTMLNodes have `getAttribute` (i.e. HTMLElement)
+            if (parentNode.getAttribute && parentNode.getAttribute('slotid')) {
+                // this is an inner slot of an inner slot.
+                return false;
+            }
+            parentNode = parentOf(parentNode);
+        }
+        // innerContainer won't be a child node of container if the method is triggered
+        // by mutation observer record and innerContainer was removed.
+        return false;
+    }
+    _initMutationObserver() {
+        if (this.consumeConn) {
+            return new MutationObserver(async (records) => {
+                this._observer.disconnect();
+                const updateContainersBySubId = new Map();
+                for (const [subId, { container }] of this.renderings) {
+                    if (records.some(r => this.isDirectInnerSlot(container, r.target))) {
+                        updateContainersBySubId.set(subId, container);
+                    }
+                }
+                const containers = [...updateContainersBySubId.values()];
+                if (containers.length > 0) {
+                    this._clearInnerSlotContainers([...updateContainersBySubId.keys()]);
+                    containers.forEach(container => this.initInnerContainers(container));
+                    this.updateProvidedContexts();
+                    // Reactivate the observer.
+                    containers.forEach(container => this._observe(container));
+                }
+            });
+        }
+        return null;
+    }
+    formatHostedContent(content) {
+        if (content.templateName) {
+            if (typeof content.templateName === 'string') {
+                content.templateName = `${this.consumeConn.getQualifiedName()}::${content.templateName}`;
+            }
+            else {
+                // TODO(mmandlis): add support for hosted particle rendering set slot.
+                throw new Error('TODO: Implement this!');
+            }
+        }
+        return content;
+    }
+}
+
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class HeadlessSlotDomConsumer extends SlotDomConsumer {
+    constructor(arc, consumeConn) {
+        super(arc, consumeConn);
+        this._content = {};
+        this.contentAvailable = new Promise(resolve => this._contentAvailableResolve = resolve);
+    }
+    setContent(content, handler) {
+        super.setContent(content, handler);
+        // Mimics the behaviour of DomSlotConsumer::setContent, where template is only set at first,
+        // and model is overriden every time.
+        if (content) {
+            this._content.templateName = content.templateName;
+            if (content.template) {
+                this._content.template = content.template;
+            }
+            this._content.model = content.model;
+            this._contentAvailableResolve();
+        }
+        else {
+            this._content = {};
+        }
+    }
+    createNewContainer(container, subId) {
+        return container;
+    }
+    isSameContainer(container, contextContainer) {
+        return container === contextContainer;
+    }
+    getInnerContainer(slotId) {
+        const model = Array.from(this.renderings, ([_, { model }]) => model)[0];
+        const providedContext = this.findProvidedContext(ctx => ctx.id === slotId);
+        if (!providedContext) {
+            console.warn(`Cannot find provided spec for ${slotId} in ${this.consumeConn.getQualifiedName()}`);
+            return;
+        }
+        if (providedContext.spec.isSet && model && model.items && model.items.models) {
+            const innerContainers = {};
+            for (const itemModel of model.items.models) {
+                assert(itemModel.id);
+                innerContainers[itemModel.id] = itemModel.id;
+            }
+            return innerContainers;
+        }
+        return slotId;
+    }
+    createTemplateElement(template) {
+        return template;
+    }
+    static findRootContainers(container) {
+        return container;
+    }
+    static clear(container) { }
+    _onUpdate(rendering) { }
+    _stampTemplate(template) { }
+    _initMutationObserver() { return null; }
+    _observe() { }
+}
+
+/**
+ * @license
+ * Copyright (c) 2019 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class ModalityHandler {
+    constructor(slotConsumerClass, descriptionFormatter) {
+        this.slotConsumerClass = slotConsumerClass;
+        this.descriptionFormatter = descriptionFormatter;
+    }
+    static createHeadlessHandler() {
+        return new ModalityHandler(HeadlessSlotDomConsumer);
+    }
+}
+ModalityHandler.headlessHandler = new ModalityHandler(HeadlessSlotDomConsumer);
+ModalityHandler.basicHandler = new ModalityHandler(SlotConsumer, DescriptionFormatter);
+ModalityHandler.domHandler = new ModalityHandler(SlotDomConsumer, DescriptionDomFormatter);
+
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+/**
+ * A helper class for NodeJS tests that mimics SlotComposer without relying on DOM APIs.
+ */
+class FakeSlotComposer extends SlotComposer {
+    constructor(options = {}) {
+        if (options.modalityHandler === undefined) {
+            options.modalityHandler = ModalityHandler.createHeadlessHandler();
+        }
+        super({
+            rootContainer: { 'root': 'root-context' },
+            ...options
+        });
+    }
+    renderSlot(particle, slotName, content) {
+        super.renderSlot(particle, slotName, content);
+        // In production updateProvidedContexts() is done in DOM Mutation Observer.
+        // We don't have it in tests, so we do it here.
+        const slotConsumer = this.getSlotConsumer(particle, slotName);
+        if (slotConsumer)
+            slotConsumer.updateProvidedContexts();
+    }
+    // Accessors for testing.
+    get contexts() {
+        return this._contexts;
+    }
+}
+
+/**
+ * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
  * This code may only be used under the BSD style license found at
  * http://polymer.github.io/LICENSE.txt
@@ -31415,223 +33017,6 @@ class Loader extends LoaderBase {
 
 /**
  * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-class DescriptionDomFormatter extends DescriptionFormatter {
-    constructor() {
-        super(...arguments);
-        this.nextID = 0;
-    }
-    _isSelectedDescription(desc) {
-        return super._isSelectedDescription(desc) || (!!desc.template && !!desc.model);
-    }
-    _combineSelectedDescriptions(selectedDescriptions, options) {
-        const suggestionByParticleDesc = new Map();
-        for (const particleDesc of selectedDescriptions) {
-            if (this.seenParticles.has(particleDesc._particle)) {
-                continue;
-            }
-            let { template, model } = this._retrieveTemplateAndModel(particleDesc, suggestionByParticleDesc.size, options || {});
-            const success = Object.keys(model).map(tokenKey => {
-                const tokens = this._initSubTokens(model[tokenKey], particleDesc);
-                return tokens.map(token => {
-                    const tokenValue = this.tokenToString(token);
-                    if (tokenValue == undefined) {
-                        return false;
-                    }
-                    else if (tokenValue && tokenValue.template && tokenValue.model) {
-                        // Dom token.
-                        template = template.replace(`{{${tokenKey}}}`, tokenValue.template);
-                        delete model[tokenKey];
-                        model = { ...model, ...tokenValue.model };
-                    }
-                    else { // Text token.
-                        // Replace tokenKey, in case multiple selected suggestions use the same key.
-                        const newTokenKey = `${tokenKey}${++this.nextID}`;
-                        template = template.replace(`{{${tokenKey}}}`, `{{${newTokenKey}}}`);
-                        delete model[tokenKey];
-                        model[newTokenKey] = tokenValue;
-                    }
-                    return true;
-                }).every(t => !!t);
-            });
-            if (success.every(s => !!s)) {
-                suggestionByParticleDesc.set(particleDesc, { template, model });
-            }
-        }
-        // Populate suggestions list while maintaining original particles order.
-        const suggestions = [];
-        selectedDescriptions.forEach(desc => {
-            if (suggestionByParticleDesc.has(desc)) {
-                suggestions.push(suggestionByParticleDesc.get(desc));
-            }
-        });
-        if (suggestions.length > 0) {
-            const result = this._joinDescriptions(suggestions);
-            if (!options || !options.skipFormatting) {
-                result.template += '.';
-            }
-            return result;
-        }
-    }
-    _retrieveTemplateAndModel(particleDesc, index, options) {
-        if (particleDesc['_template_'] && particleDesc['_model_']) {
-            return {
-                template: particleDesc['_template_'],
-                model: JSON.parse(particleDesc['_model_'])
-            };
-        }
-        assert(particleDesc.pattern, 'Description must contain template and model, or pattern');
-        let template = '';
-        const model = {};
-        const tokens = this._initTokens(particleDesc.pattern, particleDesc);
-        tokens.forEach((token, i) => {
-            if (token.text) {
-                template = template.concat(`${(index === 0 && i === 0 && !options.skipFormatting) ? token.text[0].toUpperCase() + token.text.slice(1) : token.text}`);
-            }
-            else { // handle or slot handle.
-                const sanitizedFullName = token.fullName.replace(/[.{}_$]/g, '');
-                let attribute = '';
-                // TODO(mmandlis): capitalize the data in the model instead.
-                if (i === 0 && !options.skipFormatting) {
-                    // Capitalize the first letter in the token.
-                    template = template.concat(`<style>
-            [firstletter]::first-letter { text-transform: capitalize; }
-            [firstletter] {display: inline-block}
-            </style>`);
-                    attribute = ' firstletter';
-                }
-                template = template.concat(`<span${attribute}>{{${sanitizedFullName}}}</span>`);
-                model[sanitizedFullName] = token.fullName;
-            }
-        });
-        return { template, model };
-    }
-    _capitalizeAndPunctuate(sentence) {
-        if (typeof sentence === 'string') {
-            return { template: super._capitalizeAndPunctuate(sentence), model: {} };
-        }
-        // Capitalize the first element in the DOM template.
-        const tokens = sentence.template.match(/<[a-zA-Z0-9]+>{{([a-zA-Z0-9]*)}}<\/[a-zA-Z0-9]+>/);
-        if (tokens && tokens.length > 1 && sentence.model[tokens[1]]) {
-            const modelToken = sentence.model[tokens[1]];
-            if (modelToken.length > 0) {
-                sentence.model[tokens[1]] = `${modelToken[0].toUpperCase()}${modelToken.substr(1)}`;
-            }
-        }
-        sentence.template += '.';
-        return sentence;
-    }
-    _joinDescriptions(descs) {
-        // If all tokens are strings, just join them.
-        if (descs.every(desc => typeof desc === 'string')) {
-            return super._joinDescriptions(descs);
-        }
-        const result = { template: '', model: {} };
-        const count = descs.length;
-        descs.forEach((desc, i) => {
-            if (typeof desc === 'string') {
-                desc = { template: desc, model: {} };
-            }
-            result.template += desc.template;
-            result.model = { ...result.model, ...desc.model };
-            let delim;
-            if (i < count - 2) {
-                delim = ', ';
-            }
-            else if (i === count - 2) {
-                delim = ['', '', ' and ', ', and '][Math.min(3, count)];
-            }
-            if (delim) {
-                result.template += delim;
-            }
-        });
-        return result;
-    }
-    _joinTokens(tokens) {
-        // If all tokens are strings, just join them.
-        if (tokens.every(token => typeof token === 'string')) {
-            return super._joinTokens(tokens);
-        }
-        tokens = tokens.map(token => {
-            if (typeof token !== 'object') {
-                return {
-                    template: `<span>{{text${++this.nextID}}}</span>`,
-                    model: { [`text${this.nextID}`]: token }
-                };
-            }
-            return token;
-        });
-        const nonEmptyTokens = tokens.filter(token => token && !!token.template && !!token.model);
-        return {
-            template: nonEmptyTokens.map(token => token.template).join(''),
-            model: nonEmptyTokens.map(token => token.model).reduce((prev, curr) => ({ ...prev, ...curr }), {})
-        };
-    }
-    _combineDescriptionAndValue(token, description, storeValue) {
-        if (!!description.template && !!description.model) {
-            return {
-                template: `${description.template} (${storeValue.template})`,
-                model: { ...description.model, ...storeValue.model }
-            };
-        }
-        const descKey = `${token.handleName}Description${++this.nextID}`;
-        return {
-            template: `<span>{{${descKey}}}</span> (${storeValue.template})`,
-            model: { [descKey]: description, ...storeValue.model }
-        };
-    }
-    _formatEntityProperty(handleName, properties, value) {
-        const key = `${handleName}${properties.join('')}Value${++this.nextID}`;
-        return {
-            template: `<b>{{${key}}}</b>`,
-            model: { [`${key}`]: value }
-        };
-    }
-    _formatCollection(handleName, values) {
-        const handleKey = `${handleName}${++this.nextID}`;
-        if (values[0].rawData.name) {
-            if (values.length > 2) {
-                return {
-                    template: `<b>{{${handleKey}FirstName}}</b> plus <b>{{${handleKey}OtherCount}}</b> other items`,
-                    model: { [`${handleKey}FirstName`]: values[0].rawData.name, [`${handleKey}OtherCount`]: values.length - 1 }
-                };
-            }
-            return {
-                template: values.map((v, i) => `<b>{{${handleKey}${i}}}</b>`).join(', '),
-                model: Object.assign({}, ...values.map((v, i) => ({ [`${handleKey}${i}`]: v.rawData.name })))
-            };
-        }
-        return {
-            template: `<b>{{${handleKey}Length}}</b> items`,
-            model: { [`${handleKey}Length`]: values.length }
-        };
-    }
-    _formatBigCollection(handleName, firstValue) {
-        return {
-            template: `collection of items like {{${handleName}FirstName}}`,
-            model: { [`${handleName}FirstName`]: firstValue.rawData.name }
-        };
-    }
-    _formatSingleton(handleName, value) {
-        const formattedValue = super._formatSingleton(handleName, value);
-        if (formattedValue) {
-            return {
-                template: `<b>{{${handleName}Var}}</b>`,
-                model: { [`${handleName}Var`]: formattedValue }
-            };
-        }
-        return undefined;
-    }
-}
-
-/**
- * @license
  * Copyright 2019 Google LLC.
  * This code may only be used under the BSD style license found at
  * http://polymer.github.io/LICENSE.txt
@@ -31639,460 +33024,13 @@ class DescriptionDomFormatter extends DescriptionFormatter {
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-var IconStyles = `
-  icon {
-    font-family: "Material Icons";
-    font-size: 24px;
-    font-style: normal;
-    -webkit-font-feature-settings: "liga";
-    -webkit-font-smoothing: antialiased;
-    cursor: pointer;
-    user-select: none;
-    flex-shrink: 0;
-    /* partial FOUC prevention */
-    display: inline-block;
-    width: 24px;
-    height: 24px;
-    overflow: hidden;
-  }
-  icon[hidden] {
-    /* required because of display rule above,
-    display rule required for overflow: hidden */
-    display: none;
-  }
-`;
-
-/**
- * @license
- * Copyright (c) 2016 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-/* Annotator */
-// tree walker that generates arbitrary data using visitor function `cb`
-// `cb` is called as `cb(node, key, notes)`
-// where
-//   `node` is a visited node.
-//   `key` is a handle which identifies the node in a map generated by `Annotator.locateNodes`.
-class Annotator {
-  constructor(cb) {
-    this.cb = cb;
-  }
-  // For subtree at `node`, produce annotation object `notes`.
-  // the content of `notes` is completely determined by the behavior of the
-  // annotator callback function supplied at the constructor.
-  annotate(node, notes, opts) {
-    this.notes = notes;
-    this.opts = opts || 0;
-    this.key = this.opts.key || 0;
-    notes.locator = this._annotateSubtree(node);
-    return notes;
-  }
-  // walking subtree at `node`
-  _annotateSubtree(node) {
-    let childLocators;
-    for (let i = 0, child = node.firstChild, previous = null, neo; child; i++) {
-      // returns a locator only if a node in the subtree requires one
-      const childLocator = this._annotateNode(child);
-      // only when necessary, maintain a sparse array of locators
-      if (childLocator) {
-        (childLocators = childLocators || {})[i] = childLocator;
-      }
-      // `child` may have been evacipated by visitor
-      neo = previous ? previous.nextSibling : node.firstChild;
-      if (neo === child) {
-        previous = child;
-        child = child.nextSibling;
-      } else {
-        child = neo;
-        i--;
-      }
-    }
-    // is falsey unless there was at least one childLocator
-    return childLocators;
-  }
-  _annotateNode(node) {
-    // visit node
-    const key = this.key++;
-    const shouldLocate = this.cb(node, key, this.notes, this.opts);
-    // recurse
-    const locators = this._annotateSubtree(node);
-    if (shouldLocate || locators) {
-      const cl = Object.create(null);
-      cl.key = key;
-      if (locators) {
-        cl.sub = locators;
-      }
-      return cl;
-    }
-  }
-}
-
-const locateNodes = function(root, locator, map) {
-  map = map || [];
-  for (const n in locator) {
-    const loc = locator[n];
-    if (loc) {
-      const node = root.childNodes[n];
-      // TODO(sjmiles): text-nodes sometimes evacipate when stamped, so map to the parentElement instead
-      map[loc.key] = (node.nodeType === Node.TEXT_NODE) ? node.parentElement : node;
-      if (loc.sub) {
-        // recurse
-        locateNodes(node, loc.sub, map);
-      }
-    }
-  }
-  return map;
+const pecIndustry = loader => {
+    return (pecId, idGenerator) => {
+        const channel = new MessageChannel();
+        const _throwAway = new ParticleExecutionContext(channel.port1, pecId, idGenerator, loader);
+        return channel.port2;
+    };
 };
-
-/* Annotation Producer */
-// must return `true` for any node whose key we wish to track
-const annotatorImpl = function(node, key, notes, opts) {
-  let tracking = false;
-  // hook
-  if (opts.annotator && opts.annotator(node, key, notes, opts)) {
-    tracking = true;
-  }
-  // default
-  switch (node.nodeType) {
-    case Node.DOCUMENT_FRAGMENT_NODE:
-      break;
-    case Node.ELEMENT_NODE:
-      return tracking || annotateElementNode(node, key, notes);
-    case Node.TEXT_NODE:
-      return tracking || annotateTextNode(node, key, notes);
-  }
-  return tracking;
-};
-
-const annotateTextNode = function(node, key, notes) {
-  if (annotateMustache(node, key, notes, 'textContent', node.textContent)) {
-    node.textContent = '';
-    return true;
-  }
-};
-
-const annotateElementNode = function(node, key, notes) {
-  if (node.hasAttributes()) {
-    let noted = false;
-    for (let a$ = node.attributes, i = a$.length - 1, a; i >= 0 && (a = a$[i]); i--) {
-      if (
-        annotateEvent(node, key, notes, a.name, a.value) ||
-        annotateMustache(node, key, notes, a.name, a.value) ||
-        annotateDirective(node, key, notes, a.name, a.value)
-      ) {
-        node.removeAttribute(a.name);
-        noted = true;
-      }
-    }
-    return noted;
-  }
-};
-
-const annotateMustache = function(node, key, notes, property, mustache) {
-  if (mustache.slice(0, 2) === '{{') {
-    if (property === 'class') {
-      property = 'className';
-    }
-    let value = mustache.slice(2, -2);
-    const override = value.split(':');
-    if (override.length === 2) {
-      property = override[0];
-      value = override[1];
-    }
-    takeNote(notes, key, 'mustaches', property, value);
-    if (value[0] === '$') {
-      takeNote(notes, 'xlate', value, true);
-    }
-    return true;
-  }
-};
-
-const annotateEvent = function(node, key, notes, name, value) {
-  if (name.slice(0, 3) === 'on-') {
-    if (value.slice(0, 2) === '{{') {
-      value = value.slice(2, -2);
-      console.warn(
-        `Xen: event handler for '${name}' expressed as a mustache, which is not supported. Using literal value '${value}' instead.`
-      );
-    }
-    takeNote(notes, key, 'events', name.slice(3), value);
-    return true;
-  }
-};
-
-const annotateDirective = function(node, key, notes, name, value) {
-  if (name === 'xen:forward') {
-    takeNote(notes, key, 'events', 'xen:forward', value);
-    return true;
-  }
-};
-
-const takeNote = function(notes, key, group, name, note) {
-  const n$ = notes[key] || (notes[key] = Object.create(null));
-  (n$[group] || (n$[group] = {}))[name] = note;
-};
-
-const annotator = new Annotator(annotatorImpl);
-
-const annotate = function(root, key, opts) {
-  return (root._notes ||
-    (root._notes = annotator.annotate(root.content, {/*ids:{}*/}, key, opts))
-  );
-};
-
-/* Annotation Consumer */
-const mapEvents = function(notes, map, mapper) {
-  // add event listeners
-  for (const key in notes) {
-    const node = map[key];
-    const events = notes[key] && notes[key].events;
-    if (node && events) {
-      for (const name in events) {
-        mapper(node, name, events[name]);
-      }
-    }
-  }
-};
-
-const listen = function(controller, node, eventName, handlerName) {
-  node.addEventListener(eventName, function(e) {
-    if (controller[handlerName]) {
-      return controller[handlerName](e, e.detail);
-    } else if (controller.defaultHandler) {
-      return controller.defaultHandler(handlerName, e);
-    }
-  });
-};
-
-const set$1 = function(notes, map, scope, controller) {
-  if (scope) {
-    for (const key in notes) {
-      const node = map[key];
-      if (node) {
-        // everybody gets a scope
-        node.scope = scope;
-        // now get your regularly scheduled bindings
-        const mustaches = notes[key].mustaches;
-        for (const name in mustaches) {
-          const property = mustaches[name];
-          if (property in scope) {
-            _set(node, name, scope[property], controller);
-          }
-        }
-      }
-    }
-  }
-};
-
-const _set = function(node, property, value, controller) {
-  // TODO(sjmiles): the property conditionals here could be precompiled
-  const modifier = property.slice(-1);
-  if (property === 'style%' || property === 'style' || property === 'xen:style') {
-    if (typeof value === 'string') {
-      node.style.cssText = value;
-    } else {
-      Object.assign(node.style, value);
-    }
-  } else if (modifier == '$') {
-    const n = property.slice(0, -1);
-    if (typeof value === 'boolean' || value === undefined) {
-      setBoolAttribute(node, n, Boolean(value));
-    } else {
-      node.setAttribute(n, value);
-    }
-  } else if (property === 'textContent') {
-    if (value && (value.$template || value.template)) {
-      _setSubTemplate(node, value, controller);
-    } else {
-      node.textContent = (value || '');
-    }
-  } else if (property === 'unsafe-html') {
-    node.innerHTML = value || '';
-  } else if (property === 'value') {
-    // TODO(sjmiles): specifically dirty-check `value` to avoid resetting input elements
-    if (node.value !== value) {
-      node.value = value;
-    }
-  } else {
-    node[property] = value;
-  }
-};
-
-const setBoolAttribute = function(node, attr, state) {
-  node[
-    (state === undefined ? !node.hasAttribute(attr) : state)
-      ? 'setAttribute'
-      : 'removeAttribute'
-  ](attr, '');
-};
-
-const _setSubTemplate = function(node, value, controller) {
-  // TODO(sjmiles): subtemplate iteration ability specially implemented to support arcs (serialization boundary)
-  // TODO(sjmiles): Aim to re-implement as a plugin.
-  let {template, models} = value;
-  if (!template) {
-    const container = node.getRootNode();
-    template = container.querySelector(`template[${value.$template}]`);
-  } else {
-    template = maybeStringToTemplate(template);
-  }
-  _renderSubtemplates(node, controller, template, models);
-};
-
-const _renderSubtemplates = function(container, controller, template, models) {
-  let child = container.firstElementChild;
-  let next;
-  if (template && models) {
-    models && models.forEach((model, i)=>{
-      next = child && child.nextElementSibling;
-      // use existing node if possible
-      if (!child) {
-        const dom = stamp(template).events(controller);
-        child = dom.root.firstElementChild;
-        if (child) {
-          child._subtreeDom = dom;
-          container.appendChild(child);
-          if (!template._shapeWarning && dom.root.firstElementChild) {
-            template._shapeWarning = true;
-            console.warn(`xen-template: subtemplate has multiple root nodes: only the first is used.`, template);
-          }
-        }
-      }
-      if (child) {
-        child._subtreeDom.set(model);
-        child = next;
-      }
-    });
-  }
-  // remove extra nodes
-  while (child) {
-    next = child.nextElementSibling;
-    child.remove();
-    child = next;
-  }
-};
-
-//window.stampCount = 0;
-//window.stampTime = 0;
-
-const stamp = function(template, opts) {
-  //const startTime = performance.now();
-  //window.stampCount++;
-  template = maybeStringToTemplate(template);
-  // construct (or use memoized) notes
-  const notes = annotate(template, opts);
-  // CRITICAL TIMING ISSUE #1:
-  // importNode can have side-effects, like CustomElement callbacks (before we
-  // can do any work on the imported subtree, before we can mapEvents, e.g.).
-  // we could clone into an inert document (say a new template) and process the nodes
-  // before importing if necessary.
-  const root = document.importNode(template.content, true);
-  // templates don't require a single container element, but sometimes they do have one...
-  // capture the fire element, because it's harder to find after we insert the nodes into DOM
-  const firstElement = root.firstElementChild;
-  // map DOM to keys
-  const map = locateNodes(root, notes.locator);
-  // return dom manager
-  const dom = {
-    root,
-    notes,
-    map,
-    firstElement,
-    $(slctr) {
-      return this.root.querySelector(slctr);
-    },
-    set: function(scope) {
-      scope && set$1(notes, map, scope, this.controller);
-      return this;
-    },
-    events: function(controller) {
-      // TODO(sjmiles): originally `controller` was expected to be an Object with event handler
-      // methods on it (typically a custom-element stamping a template).
-      // In Arcs, we want to attach a generic handler (Function) for any event on this node.
-      // Subtemplate stamping gets involved because they need to reuse whichever controller.
-      // I suspect this can be simplified, but right now I'm just making it go.
-      if (controller && typeof controller !== 'function') {
-        controller = listen.bind(this, controller);
-      }
-      this.controller = controller;
-      if (controller) {
-        mapEvents(notes, map, controller);
-      }
-      return this;
-    },
-    // support event-forwarding when stamping descendent template DOM
-    // i.e. for objects (say, elements) that consume templates as input
-    // see also: support for `xen:forward` attribute above
-    forward: function() {
-      mapEvents(notes, map, (node, eventName, handlerName) => {
-        node.addEventListener(eventName, e => {
-          //console.log(`xen::forward: forwarding [${eventName}]`);
-          const wrapper = {eventName, handlerName, detail: e.detail, target: e.target};
-          fire(node, 'xen:forward', wrapper, {bubbles: true});
-        });
-      });
-      return this;
-    },
-    appendTo: function(node) {
-      if (this.root) {
-        // TODO(sjmiles): assumes this.root is a fragment
-        node.appendChild(this.root);
-      } else {
-        console.warn('Xen: cannot appendTo, template stamped no DOM');
-      }
-      // TODO(sjmiles): this.root is no longer a fragment
-      this.root = node;
-      return this;
-    }
-  };
-  //window.stampTime += performance.now() - startTime;
-  return dom;
-};
-
-const fire = (node, eventName, detail, init) => {
-  const eventInit = init || {};
-  eventInit.detail = detail;
-  const event = new CustomEvent(eventName, eventInit);
-  node.dispatchEvent(event);
-  return event.detail;
-};
-
-const maybeStringToTemplate = template => {
-  // TODO(sjmiles): need to memoize this somehow
-  return (typeof template === 'string') ? createTemplate(template) : template;
-};
-
-const createTemplate = innerHTML => {
-  return Object.assign(document.createElement('template'), {innerHTML});
-};
-
-const Template = {
-  createTemplate,
-  setBoolAttribute,
-  stamp,
-  takeNote
-};
-
-/**
- * @license
- * Copyright (c) 2019 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-class Predicates {
-}
-/** A Predicate that always succeeds */
-Predicates.alwaysTrue = () => true;
-/** A Predicate that always fails */
-Predicates.alwaysFalse = () => false;
 
 /**
  * @license
@@ -32103,932 +33041,16 @@ Predicates.alwaysFalse = () => false;
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-/**
- * Represents a single slot in the rendering system.
- */
-class SlotContext {
-    constructor(id, sourceSlotConsumer = null) {
-        this.slotConsumers = [];
-        this.id = id;
-        this.sourceSlotConsumer = sourceSlotConsumer;
-    }
-    addSlotConsumer(slotConsumer) {
-        this.slotConsumers.push(slotConsumer);
-        slotConsumer.slotContext = this;
-    }
-    clearSlotConsumers() {
-        this.slotConsumers.forEach(slotConsumer => slotConsumer.slotContext = null);
-        this.slotConsumers.length = 0;
-    }
-}
-/**
- * Represents a slot created by a transformation particle in the inner arc.
- *
- * Render calls for that slot are routed to the transformation particle,
- * which receives them as innerArcRender calls.
- *
- * TODO:
- * Today startRender/stopRender calls for particles rendering into this slot are governed by the
- * availability of the container on the transformation particle. This should be optional and only
- * used if the purpose of the innerArc is rendering to the outer arc. It should be possible for
- * the particle which doesn't consume a slot to create an inner arc with hosted slots, which
- * today is not feasible.
- */
-class HostedSlotContext extends SlotContext {
-    constructor(id, transformationSlotConsumer, storeId) {
-        super(id, transformationSlotConsumer);
-        this._containerAvailable = false;
-        assert(transformationSlotConsumer);
-        this.storeId = storeId;
-        transformationSlotConsumer.addHostedSlotContexts(this);
-    }
-    onRenderSlot(consumer, content, handler) {
-        this.sourceSlotConsumer.arc.pec.innerArcRender(this.sourceSlotConsumer.consumeConn.particle, this.sourceSlotConsumer.consumeConn.name, this.id, consumer.formatHostedContent(content));
-    }
-    addSlotConsumer(consumer) {
-        super.addSlotConsumer(consumer);
-        if (this.containerAvailable)
-            consumer.startRender();
-    }
-    get containerAvailable() { return this._containerAvailable; }
-    set containerAvailable(containerAvailable) {
-        if (this._containerAvailable === containerAvailable)
-            return;
-        this._containerAvailable = containerAvailable;
-        for (const consumer of this.slotConsumers) {
-            if (containerAvailable) {
-                consumer.startRender();
-            }
-            else {
-                consumer.stopRender();
-            }
-        }
-    }
-}
-/**
- * Represents a slot provided by a particle through a provide connection or one of the root slots
- * provided by the shell. Holds container (eg div element) and its additional info.
- * Must be initialized either with a container (for root slots provided by the shell) or
- * tuple of sourceSlotConsumer and spec (ProvidedSlotSpec) of the slot.
- */
-class ProvidedSlotContext extends SlotContext {
-    constructor(id, name, tags, container, spec, sourceSlotConsumer = null) {
-        super(id, sourceSlotConsumer);
-        this.tags = [];
-        assert(Boolean(container) !== Boolean(spec), `Exactly one of either container or slotSpec may be set`);
-        assert(Boolean(spec) === Boolean(spec), `Spec and source slot can only be set together`);
-        this.name = name;
-        this.tags = tags || [];
-        this._container = container;
-        // The context's accompanying ProvidedSlotSpec (see particle-spec.js).
-        // Initialized to a default spec, if the container is one of the shell provided top root-contexts.
-        this.spec = spec || new ProvideSlotConnectionSpec({ name });
-        if (this.sourceSlotConsumer) {
-            this.sourceSlotConsumer.directlyProvidedSlotContexts.push(this);
-        }
-        // The list of handles this context is restricted to.
-        this.handles = this.spec && this.sourceSlotConsumer
-            ? this.spec.handles.map(handle => this.sourceSlotConsumer.consumeConn.particle.connections[handle].handle).filter(a => a !== undefined)
-            : [];
-    }
-    onRenderSlot(consumer, content, handler) {
-        consumer.setContent(content, handler);
-    }
-    get container() {
-        return this._container;
-    }
-    get containerAvailable() {
-        return Boolean(this._container);
-    }
-    static createContextForContainer(id, name, container, tags) {
-        return new ProvidedSlotContext(id, name, tags, container, null);
-    }
-    isSameContainer(container) {
-        if (this.spec.isSet) {
-            if (Boolean(this.container) !== Boolean(container)) {
-                return false;
-            }
-            if (!this.container) {
-                return true;
-            }
-            return Object.keys(this.container).length === Object.keys(container).length &&
-                Object.keys(this.container).every(key => Object.keys(container).some(newKey => newKey === key)) &&
-                Object.values(this.container).every(currentContainer => Object.values(container).some(newContainer => newContainer === currentContainer));
-        }
-        return (!container && !this.container) || (this.container === container);
-    }
-    set container(container) {
-        if (this.isSameContainer(container)) {
-            return;
-        }
-        const originalContainer = this.container;
-        this._container = container;
-        this.slotConsumers.forEach(slotConsumer => slotConsumer.onContainerUpdate(this.container, originalContainer));
-    }
-    addSlotConsumer(slotConsumer) {
-        super.addSlotConsumer(slotConsumer);
-        if (this.container) {
-            slotConsumer.onContainerUpdate(this.container, null);
-        }
-    }
-}
-
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-class SlotConsumer {
-    constructor(arc, consumeConn, containerKind) {
-        this.directlyProvidedSlotContexts = [];
-        this.hostedSlotContexts = [];
-        // Contains `container` and other modality specific rendering information
-        // (eg for `dom`: model, template for dom renderer) by sub id. Key is `undefined` for singleton slot.
-        this._renderingBySubId = new Map();
-        this.innerContainerBySlotId = {};
-        this.arc = arc;
-        this.consumeConn = consumeConn;
-        this.containerKind = containerKind;
-    }
-    getRendering(subId) {
-        return this._renderingBySubId.get(subId);
-    }
-    get renderings() {
-        return [...this._renderingBySubId.entries()];
-    }
-    addRenderingBySubId(subId, rendering) {
-        this._renderingBySubId.set(subId, rendering);
-    }
-    addHostedSlotContexts(context) {
-        context.containerAvailable = Boolean(this.slotContext && this.slotContext.containerAvailable);
-        this.hostedSlotContexts.push(context);
-    }
-    get allProvidedSlotContexts() {
-        return [...this.generateProvidedContexts()];
-    }
-    findProvidedContext(predicate) {
-        return this.generateProvidedContexts(predicate).next().value;
-    }
-    *generateProvidedContexts(predicate = Predicates.alwaysTrue) {
-        for (const context of this.directlyProvidedSlotContexts) {
-            if (predicate(context))
-                yield context;
-        }
-        for (const hostedContext of this.hostedSlotContexts) {
-            for (const hostedConsumer of hostedContext.slotConsumers) {
-                yield* hostedConsumer.generateProvidedContexts(predicate);
-            }
-        }
-    }
-    onContainerUpdate(newContainer, originalContainer) {
-        assert(this.slotContext instanceof ProvidedSlotContext, 'Container can only be updated in non-hosted context');
-        const context = this.slotContext;
-        if (newContainer !== originalContainer) {
-            const contextContainerBySubId = new Map();
-            if (context && context.spec.isSet) {
-                Object.keys(context.container || {}).forEach(subId => contextContainerBySubId.set(subId, context.container[subId]));
-            }
-            else {
-                contextContainerBySubId.set(undefined, context.container);
-            }
-            for (const [subId, container] of contextContainerBySubId) {
-                if (!this._renderingBySubId.has(subId)) {
-                    this._renderingBySubId.set(subId, {});
-                }
-                const rendering = this.getRendering(subId);
-                if (!rendering.container || !this.isSameContainer(rendering.container, container)) {
-                    if (rendering.container) {
-                        // The rendering already had a container, but it's changed. The original container needs to be cleared.
-                        this.clearContainer(rendering);
-                    }
-                    rendering.container = this.createNewContainer(container, subId);
-                }
-            }
-            for (const [subId, rendering] of this.renderings) {
-                if (!contextContainerBySubId.has(subId)) {
-                    this.deleteContainer(rendering.container);
-                    this._renderingBySubId.delete(subId);
-                }
-            }
-        }
-        if (Boolean(newContainer) !== Boolean(originalContainer)) {
-            if (newContainer) {
-                this.startRender();
-            }
-            else {
-                this.stopRender();
-            }
-        }
-        this.hostedSlotContexts.forEach(ctx => ctx.containerAvailable = Boolean(newContainer));
-    }
-    createProvidedContexts() {
-        assert(this.consumeConn.getSlotSpec(), `Missing consume connection spec`);
-        return this.consumeConn.getSlotSpec().provideSlotConnections.map(spec => new ProvidedSlotContext(this.consumeConn.providedSlots[spec.name].id, spec.name, /* tags=*/ [], /* container= */ null, spec, this));
-    }
-    updateProvidedContexts() {
-        this.allProvidedSlotContexts.forEach(providedContext => {
-            providedContext.container = providedContext.sourceSlotConsumer.getInnerContainer(providedContext.id);
-        });
-    }
-    startRender() {
-        if (this.consumeConn && this.startRenderCallback) {
-            const providedSlots = new Map(this.allProvidedSlotContexts.map(context => [context.name, context.id]));
-            this.startRenderCallback({
-                particle: this.consumeConn.particle,
-                slotName: this.consumeConn.name,
-                providedSlots,
-                contentTypes: this.constructRenderRequest()
-            });
-        }
-    }
-    stopRender() {
-        if (this.consumeConn && this.stopRenderCallback) {
-            this.stopRenderCallback({ particle: this.consumeConn.particle, slotName: this.consumeConn.name });
-        }
-    }
-    setContent(content, handler) {
-        if (content && Object.keys(content).length > 0 && this.description) {
-            content.descriptions = this._populateHandleDescriptions();
-        }
-        this.eventHandler = handler;
-        for (const [subId, rendering] of this.renderings) {
-            this.setContainerContent(rendering, this.formatContent(content, subId), subId);
-        }
-    }
-    _populateHandleDescriptions() {
-        if (!this.consumeConn)
-            return null; // TODO: remove null ability
-        const descriptions = new Map();
-        Object.values(this.consumeConn.particle.connections).forEach(handleConn => {
-            if (handleConn.handle) {
-                descriptions[`${handleConn.name}.description`] =
-                    this.description.getHandleDescription(handleConn.handle).toString();
-            }
-        });
-        return descriptions;
-    }
-    getInnerContainer(slotId) {
-        return this.innerContainerBySlotId[slotId];
-    }
-    _initInnerSlotContainer(slotId, subId, container) {
-        if (subId) {
-            if (!this.innerContainerBySlotId[slotId]) {
-                this.innerContainerBySlotId[slotId] = {};
-            }
-            assert(!this.innerContainerBySlotId[slotId][subId], `Multiple ${slotId}:${subId} inner slots cannot be provided`);
-            this.innerContainerBySlotId[slotId][subId] = container;
-        }
-        else {
-            this.innerContainerBySlotId[slotId] = container;
-        }
-    }
-    _clearInnerSlotContainers(subIds) {
-        subIds.forEach(subId => {
-            if (subId) {
-                Object.values(this.innerContainerBySlotId).forEach(inner => delete inner[subId]);
-            }
-            else {
-                this.innerContainerBySlotId = {};
-            }
-        });
-    }
-    isSameContainer(container, contextContainer) {
-        return (!container && !contextContainer) || (container === contextContainer);
-    }
-    // abstract
-    constructRenderRequest() { return []; }
-    dispose() { }
-    createNewContainer(contextContainer, subId) { return null; }
-    deleteContainer(container) { }
-    clearContainer(rendering) { }
-    setContainerContent(rendering, content, subId) { }
-    formatContent(content, subId) { return null; }
-    formatHostedContent(content) { return null; }
-    static clear(container) { }
-    static findRootContainers(topContainer) { return {}; }
-}
-
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-const templateByName = () => Runtime.getRuntime().getCacheService().getOrCreateCache('templateByName');
-// this style sheet is installed in every particle shadow-root
-let commonStyleTemplate;
-class SlotDomConsumer extends SlotConsumer {
-    constructor(arc, consumeConn, containerKind) {
-        super(arc, consumeConn, containerKind);
-        this._observer = this._initMutationObserver();
-    }
-    constructRenderRequest() {
-        const request = ['model'];
-        const prefixes = [this.templatePrefix];
-        if (!SlotDomConsumer.hasTemplate(prefixes.join('::'))) {
-            request.push('template');
-        }
-        return request;
-    }
-    static hasTemplate(templatePrefix) {
-        return [...templateByName().keys()].find(key => key.startsWith(templatePrefix));
-    }
-    isSameContainer(container, contextContainer) {
-        return container.parentNode === contextContainer;
-    }
-    createNewContainer(contextContainer, subId) {
-        assert(contextContainer, 'contextContainer cannot be null');
-        const newContainer = document.createElement(this.containerKind || 'div');
-        if (this.consumeConn) {
-            newContainer.setAttribute('particle-host', this.consumeConn.getQualifiedName());
-        }
-        contextContainer.appendChild(newContainer);
-        //return newContainer;
-        // TODO(sjmiles): introduce tree scope
-        newContainer.attachShadow({ mode: `open` });
-        return newContainer.shadowRoot;
-    }
-    deleteContainer(container) {
-        // step out of shadowDOM if container is a shadowRoot
-        container = container.host || container;
-        if (container.parentNode) {
-            container.parentNode.removeChild(container);
-        }
-    }
-    formatContent(content, subId) {
-        assert(this.slotContext instanceof ProvidedSlotContext, 'Content formatting can only be done for provided SlotContext');
-        const contextSpec = this.slotContext.spec;
-        const newContent = {};
-        // Format model.
-        if (Object.keys(content).indexOf('model') >= 0) {
-            if (content.model) {
-                let formattedModel;
-                if (contextSpec.isSet && this.consumeConn.getSlotSpec().isSet) {
-                    formattedModel = this._modelForSetSlotConsumedAsSetSlot(content.model, subId);
-                }
-                else if (contextSpec.isSet && !this.consumeConn.getSlotSpec().isSet) {
-                    formattedModel = this._modelForSetSlotConsumedAsSingletonSlot(content.model, subId);
-                }
-                else {
-                    formattedModel = this._modelForSingletonSlot(content.model, subId);
-                }
-                if (!formattedModel)
-                    return undefined;
-                // Merge descriptions into model.
-                newContent.model = { ...formattedModel, ...content.descriptions };
-            }
-            else {
-                newContent.model = undefined;
-            }
-        }
-        // Format template name and template.
-        if (content.templateName) {
-            newContent.templateName = typeof content.templateName === 'string' ? content.templateName : content.templateName[subId];
-            if (content.template) {
-                newContent.template = typeof content.template === 'string' ? content.template : content.template[newContent.templateName];
-            }
-        }
-        return newContent;
-    }
-    _modelForSingletonSlot(model, subId) {
-        assert(!subId, 'subId should be absent for a Singleton Slot');
-        return model;
-    }
-    _modelForSetSlotConsumedAsSetSlot(model, subId) {
-        assert(model.items && model.items.every(item => item.subId), 'model for a Set Slot consumed as a Set Slot needs to have items array, with every element having subId');
-        return model.items.find(item => item.subId === subId);
-    }
-    _modelForSetSlotConsumedAsSingletonSlot(model, subId) {
-        assert(model.subId, 'model for a Set Slot consumed as a Singleton Slot needs to have subId');
-        return subId === model.subId ? model : null;
-    }
-    setContainerContent(rendering, content, subId) {
-        if (!rendering.container) {
-            return;
-        }
-        if (!content || Object.keys(content).length === 0) {
-            this.clearContainer(rendering);
-            rendering.model = null;
-            return;
-        }
-        this._setTemplate(rendering, this.templatePrefix, content.templateName, content.template);
-        rendering.model = content.model;
-        this._onUpdate(rendering);
-    }
-    clearContainer(rendering) {
-        if (rendering.liveDom) {
-            rendering.liveDom.root.textContent = '';
-        }
-        rendering.liveDom = null;
-    }
-    dispose() {
-        if (this._observer) {
-            this._observer.disconnect();
-        }
-        this.renderings.forEach(([subId, { container }]) => this.deleteContainer(container));
-    }
-    static clear(container) {
-        container.textContent = '';
-    }
-    static clearCache() {
-        templateByName().clear();
-    }
-    static findRootContainers(topContainer) {
-        const containerBySlotId = {};
-        Array.from(topContainer.querySelectorAll('[slotid]')).forEach(container => {
-            //assert(this.isDirectInnerSlot(container), 'Unexpected inner slot');
-            const slotId = container.getAttribute('slotid');
-            assert(!containerBySlotId[slotId], `Duplicate root slot ${slotId}`);
-            containerBySlotId[slotId] = container;
-        });
-        return containerBySlotId;
-    }
-    createTemplateElement(template) {
-        return Object.assign(document.createElement('template'), { innerHTML: template });
-    }
-    get templatePrefix() {
-        return this.consumeConn.getQualifiedName();
-    }
-    _setTemplate(rendering, templatePrefix, templateName, template) {
-        if (templateName) {
-            rendering.templateName = [templatePrefix, templateName].filter(s => s).join('::');
-            if (template) {
-                if (templateByName().has(rendering.templateName)) {
-                    // TODO: check whether the new template is different from the one that was previously used.
-                    // Template is being replaced.
-                    this.clearContainer(rendering);
-                }
-                templateByName().set(rendering.templateName, this.createTemplateElement(template));
-            }
-        }
-    }
-    _onUpdate(rendering) {
-        this._observe(rendering.container);
-        if (rendering.templateName) {
-            const template = templateByName().get(rendering.templateName);
-            assert(template, `No template for ${rendering.templateName}`);
-            this._stampTemplate(rendering, template);
-        }
-        this._updateModel(rendering);
-    }
-    _observe(container) {
-        assert(container, 'Cannot observe without a container');
-        if (this._observer) {
-            this._observer.observe(container, {
-                childList: true,
-                subtree: true,
-                attributes: true,
-                attributeFilter: ['subid']
-            });
-        }
-    }
-    _stampTemplate(rendering, template) {
-        if (!rendering.liveDom) {
-            // TODO(sjmiles): normally I would create this template as part of module startup,
-            // but this file is node-test-dependency, and `createTemplate` requires `document`
-            // see https://github.com/PolymerLabs/arcs/issues/2827
-            if (!commonStyleTemplate) {
-                commonStyleTemplate = Template.createTemplate(`<style>${IconStyles}</style>`);
-            }
-            // provision common stylesheet
-            Template.stamp(commonStyleTemplate).appendTo(rendering.container);
-            const mapper = this._eventMapper.bind(this, this.eventHandler);
-            rendering.liveDom = Template
-                .stamp(template)
-                .events(mapper)
-                .appendTo(rendering.container);
-        }
-    }
-    _eventMapper(eventHandler, node, eventName, handlerName) {
-        node.addEventListener(eventName, event => {
-            // TODO(sjmiles): we have an extremely minimalist approach to events here, this is useful IMO for
-            // finding the smallest set of features that we are going to need.
-            // First problem: click event firing multiple times as it bubbles up the tree, minimalist solution
-            // is to enforce a 'first listener' rule by executing `stopPropagation`.
-            event.stopPropagation();
-            // TODO(sjmiles): affordance for forwarded events (events produced by a template that is lexically
-            // scoped to the mapped template [e.g. dom-repeater])
-            if (eventName === 'xen:forward') {
-                node = event.detail.target;
-                handlerName = event.detail.handlerName;
-            }
-            // collate keyboard information
-            const { altKey, ctrlKey, metaKey, shiftKey, code, key, repeat } = event;
-            const detail = {
-                // TODO(sjmiles): `key` is a data-key (as in key-value pair), may be confusing vs keyboard `keys`
-                key: node.key,
-                value: node.value,
-                keys: { altKey, ctrlKey, metaKey, shiftKey, code, key, repeat }
-            };
-            eventHandler({
-                detail,
-                handler: handlerName,
-                // TODO(sjmiles): deprecated
-                data: detail
-            });
-        });
-    }
-    _updateModel(rendering) {
-        if (rendering.liveDom) {
-            rendering.liveDom.set(rendering.model);
-        }
-    }
-    initInnerContainers(container) {
-        Array.from(container.querySelectorAll('[slotid]')).forEach(innerContainer => {
-            if (!this.isDirectInnerSlot(container, innerContainer)) {
-                // Skip inner slots of an inner slot of the given slot.
-                return;
-            }
-            const slotId = this.getNodeValue(innerContainer, 'slotid');
-            const providedContext = this.findProvidedContext(ctx => ctx.id === slotId);
-            if (!providedContext) {
-                console.warn(`Slot ${this.consumeConn.getSlotSpec().name} has unexpected inner slot ${slotId}`);
-                return;
-            }
-            const subId = this.getNodeValue(innerContainer, 'subid');
-            assert(Boolean(subId) === providedContext.spec.isSet, `Sub-id ${subId} for slot ${providedContext.name} doesn't match set spec: ${providedContext.spec.isSet}`);
-            providedContext.sourceSlotConsumer._initInnerSlotContainer(slotId, subId, innerContainer);
-        });
-    }
-    // get a value from node that could be an attribute, if not a property
-    getNodeValue(node, name) {
-        // TODO(sjmiles): remember that attribute names from HTML are lower-case
-        return node[name] || node.getAttribute(name);
-    }
-    isDirectInnerSlot(container, innerContainer) {
-        if (innerContainer === container) {
-            return true;
-        }
-        const parentOf = elt => elt.parentNode;
-        let parentNode = parentOf(innerContainer);
-        while (parentNode) {
-            if (parentNode === container) {
-                return true;
-            }
-            // only some HTMLNodes have `getAttribute` (i.e. HTMLElement)
-            if (parentNode.getAttribute && parentNode.getAttribute('slotid')) {
-                // this is an inner slot of an inner slot.
-                return false;
-            }
-            parentNode = parentOf(parentNode);
-        }
-        // innerContainer won't be a child node of container if the method is triggered
-        // by mutation observer record and innerContainer was removed.
-        return false;
-    }
-    _initMutationObserver() {
-        if (this.consumeConn) {
-            return new MutationObserver(async (records) => {
-                this._observer.disconnect();
-                const updateContainersBySubId = new Map();
-                for (const [subId, { container }] of this.renderings) {
-                    if (records.some(r => this.isDirectInnerSlot(container, r.target))) {
-                        updateContainersBySubId.set(subId, container);
-                    }
-                }
-                const containers = [...updateContainersBySubId.values()];
-                if (containers.length > 0) {
-                    this._clearInnerSlotContainers([...updateContainersBySubId.keys()]);
-                    containers.forEach(container => this.initInnerContainers(container));
-                    this.updateProvidedContexts();
-                    // Reactivate the observer.
-                    containers.forEach(container => this._observe(container));
-                }
-            });
-        }
-        return null;
-    }
-    formatHostedContent(content) {
-        if (content.templateName) {
-            if (typeof content.templateName === 'string') {
-                content.templateName = `${this.consumeConn.getQualifiedName()}::${content.templateName}`;
-            }
-            else {
-                // TODO(mmandlis): add support for hosted particle rendering set slot.
-                throw new Error('TODO: Implement this!');
-            }
-        }
-        return content;
-    }
-}
-
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-class HeadlessSlotDomConsumer extends SlotDomConsumer {
-    constructor(arc, consumeConn) {
-        super(arc, consumeConn);
-        this._content = {};
-        this.contentAvailable = new Promise(resolve => this._contentAvailableResolve = resolve);
-    }
-    setContent(content, handler) {
-        super.setContent(content, handler);
-        // Mimics the behaviour of DomSlotConsumer::setContent, where template is only set at first,
-        // and model is overriden every time.
-        if (content) {
-            this._content.templateName = content.templateName;
-            if (content.template) {
-                this._content.template = content.template;
-            }
-            this._content.model = content.model;
-            this._contentAvailableResolve();
-        }
-        else {
-            this._content = {};
-        }
-    }
-    createNewContainer(container, subId) {
-        return container;
-    }
-    isSameContainer(container, contextContainer) {
-        return container === contextContainer;
-    }
-    getInnerContainer(slotId) {
-        const model = Array.from(this.renderings, ([_, { model }]) => model)[0];
-        const providedContext = this.findProvidedContext(ctx => ctx.id === slotId);
-        if (!providedContext) {
-            console.warn(`Cannot find provided spec for ${slotId} in ${this.consumeConn.getQualifiedName()}`);
-            return;
-        }
-        if (providedContext.spec.isSet && model && model.items && model.items.models) {
-            const innerContainers = {};
-            for (const itemModel of model.items.models) {
-                assert(itemModel.id);
-                innerContainers[itemModel.id] = itemModel.id;
-            }
-            return innerContainers;
-        }
-        return slotId;
-    }
-    createTemplateElement(template) {
-        return template;
-    }
-    static findRootContainers(container) {
-        return container;
-    }
-    static clear(container) { }
-    _onUpdate(rendering) { }
-    _stampTemplate(template) { }
-    _initMutationObserver() { return null; }
-    _observe() { }
-}
-
-/**
- * @license
- * Copyright (c) 2019 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-class ModalityHandler {
-    constructor(slotConsumerClass, descriptionFormatter) {
-        this.slotConsumerClass = slotConsumerClass;
-        this.descriptionFormatter = descriptionFormatter;
-    }
-    static createHeadlessHandler() {
-        return new ModalityHandler(HeadlessSlotDomConsumer);
-    }
-}
-ModalityHandler.headlessHandler = new ModalityHandler(HeadlessSlotDomConsumer);
-ModalityHandler.basicHandler = new ModalityHandler(SlotConsumer, DescriptionFormatter);
-ModalityHandler.domHandler = new ModalityHandler(SlotDomConsumer, DescriptionDomFormatter);
-
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-class SlotComposer {
-    /**
-     * |options| must contain:
-     * - modalityName: the UI modality the slot-composer renders to (for example: dom).
-     * - modalityHandler: the handler for UI modality the slot-composer renders to.
-     * - rootContainer: the top level container to be used for slots.
-     * and may contain:
-     * - containerKind: the type of container wrapping each slot-context's container  (for example, div).
-     */
-    constructor(options) {
-        this._consumers = [];
-        this._contexts = [];
-        //    assert(options.modalityHandler && options.modalityHandler.constructor === ModalityHandler,
-        //           `Missing or invalid modality handler: ${options.modalityHandler}`);
-        assert(options.modalityHandler, `Missing or invalid modality handler: ${options.modalityHandler}`);
-        // TODO: Support rootContext for backward compatibility, remove when unused.
-        options.rootContainer = options.rootContainer || options.rootContext || (options.containers || Object).root;
-        assert((options.rootContainer !== undefined)
-            !==
-                (options.noRoot === true), 'Root container is mandatory unless it is explicitly skipped');
-        this._containerKind = options.containerKind;
-        if (options.modalityName) {
-            this.modality = Modality.create([options.modalityName]);
-        }
-        this.modalityHandler = options.modalityHandler;
-        if (options.noRoot) {
-            return;
-        }
-        const containerByName = options.containers
-            || this.modalityHandler.slotConsumerClass.findRootContainers(options.rootContainer) || {};
-        if (Object.keys(containerByName).length === 0) {
-            // fallback to single 'root' slot using the rootContainer.
-            containerByName['root'] = options.rootContainer;
-        }
-        Object.keys(containerByName).forEach(slotName => {
-            this._contexts.push(ProvidedSlotContext.createContextForContainer(`rootslotid-${slotName}`, slotName, containerByName[slotName], [`${slotName}`]));
-        });
-    }
-    get consumers() { return this._consumers; }
-    get containerKind() { return this._containerKind; }
-    getSlotConsumer(particle, slotName) {
-        return this.consumers.find(s => s.consumeConn.particle === particle && s.consumeConn.name === slotName);
-    }
-    findContainerByName(name) {
-        const contexts = this.findContextsByName(name);
-        if (contexts.length === 0) {
-            // TODO this is a no-op, but throwing here breaks tests
-            console.warn(`No containers for '${name}'`);
-        }
-        else if (contexts.length === 1) {
-            return contexts[0].container;
-        }
-        console.warn(`Ambiguous containers for '${name}'`);
-        return undefined;
-    }
-    findContextsByName(name) {
-        const providedSlotContexts = this._contexts.filter(ctx => ctx instanceof ProvidedSlotContext);
-        return providedSlotContexts.filter(ctx => ctx.name === name);
-    }
-    findContextById(slotId) {
-        return this._contexts.find(({ id }) => id === slotId);
-    }
-    createHostedSlot(innerArc, transformationParticle, transformationSlotName, storeId) {
-        const transformationSlotConsumer = this.getSlotConsumer(transformationParticle, transformationSlotName);
-        assert(transformationSlotConsumer, `Transformation particle ${transformationParticle.name} with consumed ${transformationSlotName} not found`);
-        const hostedSlotId = innerArc.generateID('slot').toString();
-        this._contexts.push(new HostedSlotContext(hostedSlotId, transformationSlotConsumer, storeId));
-        return hostedSlotId;
-    }
-    _addSlotConsumer(slot) {
-        slot.startRenderCallback = slot.arc.pec.startRender.bind(slot.arc.pec);
-        slot.stopRenderCallback = slot.arc.pec.stopRender.bind(slot.arc.pec);
-        this._consumers.push(slot);
-    }
-    async initializeRecipe(arc, recipeParticles) {
-        const newConsumers = [];
-        // Create slots for each of the recipe's particles slot connections.
-        recipeParticles.forEach(p => {
-            p.getSlandleConnections().forEach(cs => {
-                if (!cs.targetSlot) {
-                    assert(!cs.getSlotSpec().isRequired, `No target slot for particle's ${p.name} required consumed slot: ${cs.name}.`);
-                    return;
-                }
-                const slotConsumer = new this.modalityHandler.slotConsumerClass(arc, cs, this._containerKind);
-                const providedContexts = slotConsumer.createProvidedContexts();
-                this._contexts = this._contexts.concat(providedContexts);
-                newConsumers.push(slotConsumer);
-            });
-        });
-        // Set context for each of the slots.
-        newConsumers.forEach(consumer => {
-            this._addSlotConsumer(consumer);
-            const context = this.findContextById(consumer.consumeConn.targetSlot.id);
-            assert(context, `No context found for ${consumer.consumeConn.getQualifiedName()}`);
-            context.addSlotConsumer(consumer);
-        });
-        // Calculate the Descriptions only once per-Arc
-        const allArcs = this.consumers.map(consumer => consumer.arc);
-        const uniqueArcs = [...new Set(allArcs).values()];
-        // get arc -> description
-        const descriptions = await Promise.all(uniqueArcs.map(arc => Description.create(arc)));
-        // create a mapping from the zipped uniqueArcs and descriptions
-        const consumerByArc = new Map(descriptions.map((description, index) => [uniqueArcs[index], description]));
-        // ... and apply to each consumer
-        for (const consumer of this.consumers) {
-            consumer.description = consumerByArc.get(consumer.arc);
-        }
-    }
-    renderSlot(particle, slotName, content) {
-        const slotConsumer = this.getSlotConsumer(particle, slotName);
-        assert(slotConsumer, `Cannot find slot (or hosted slot) ${slotName} for particle ${particle.name}`);
-        // Content object as received by the particle execution host is frozen.
-        // SlotComposer attach properties to this object, so we need to clone it at the top level.
-        content = { ...content };
-        slotConsumer.slotContext.onRenderSlot(slotConsumer, content, async (eventlet) => {
-            slotConsumer.arc.pec.sendEvent(particle, slotName, eventlet);
-            // This code is a temporary hack implemented in #2011 which allows to route UI events from
-            // multiplexer to hosted particles. Multiplexer assembles UI from multiple pieces rendered
-            // by hosted particles. Hosted particles can render DOM elements with a key containing a
-            // handle ID of the store, which contains the entity they render. The code below attempts
-            // to find the hosted particle using the store matching the 'key' attribute on the event,
-            // which has been extracted from DOM.
-            // TODO: FIXIT!
-            if (eventlet.data && eventlet.data.key) {
-                // We fire off multiple async operations and don't wait.
-                for (const ctx of slotConsumer.hostedSlotContexts) {
-                    if (!ctx.storeId)
-                        continue;
-                    for (const hostedConsumer of ctx.slotConsumers) {
-                        const store = hostedConsumer.arc.findStoreById(ctx.storeId);
-                        assert(store);
-                        // TODO(shans): clean this up when we have interfaces for Singleton, Collection, etc
-                        // tslint:disable-next-line: no-any
-                        store.get().then(value => {
-                            if (value && (value.id === eventlet.data.key)) {
-                                hostedConsumer.arc.pec.sendEvent(hostedConsumer.consumeConn.particle, hostedConsumer.consumeConn.name, eventlet);
-                            }
-                        });
-                    }
-                }
-            }
-        });
-    }
-    getAvailableContexts() {
-        return this._contexts;
-    }
-    dispose() {
-        this.consumers.forEach(consumer => consumer.dispose());
-        this._contexts.forEach(context => {
-            context.clearSlotConsumers();
-            if (context instanceof ProvidedSlotContext && context.container) {
-                this.modalityHandler.slotConsumerClass.clear(context.container);
-            }
-        });
-        this._contexts = this._contexts.filter(c => !c.sourceSlotConsumer);
-        this._consumers.length = 0;
-    }
-}
-
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-/**
- * A helper class for NodeJS tests that mimics SlotComposer without relying on DOM APIs.
- */
-class FakeSlotComposer extends SlotComposer {
-    constructor(options = {}) {
-        if (options.modalityHandler === undefined) {
-            options.modalityHandler = ModalityHandler.createHeadlessHandler();
-        }
-        super({
-            rootContainer: { 'root': 'root-context' },
-            ...options
-        });
-    }
-    renderSlot(particle, slotName, content) {
-        super.renderSlot(particle, slotName, content);
-        // In production updateProvidedContexts() is done in DOM Mutation Observer.
-        // We don't have it in tests, so we do it here.
-        const slotConsumer = this.getSlotConsumer(particle, slotName);
-        if (slotConsumer)
-            slotConsumer.updateProvidedContexts();
-    }
-    // Accessors for testing.
-    get contexts() {
-        return this._contexts;
-    }
-}
-
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
+let runtime = null;
 // To start with, this class will simply hide the runtime classes that are
 // currently imported by ArcsLib.js. Once that refactoring is done, we can
 // think about what the api should actually look like.
 class Runtime {
-    constructor(loader, composerClass, context) {
+    constructor(loader, composerClass, context, pecFactory) {
         this.arcById = new Map();
         this.cacheService = new RuntimeCacheService();
         this.loader = loader;
+        this.pecFactory = pecFactory;
         this.composerClass = composerClass;
         this.context = context || new Manifest({ id: 'manifest:default' });
         this.ramDiskMemory = new VolatileMemory();
@@ -33036,19 +33058,48 @@ class Runtime {
         // user information. One persona per runtime for now.
     }
     static getRuntime() {
-        if (runtime == null) {
+        if (!runtime) {
             runtime = new Runtime();
         }
         return runtime;
     }
     static clearRuntimeForTesting() {
-        if (runtime !== null) {
+        if (runtime) {
             runtime.destroy();
             runtime = null;
         }
     }
     static newForNodeTesting(context) {
         return new Runtime(new Loader(), FakeSlotComposer, context);
+    }
+    /**
+     * `Runtime.getRuntime()` returns the most recently constructed Runtime object (or creates one),
+     * so calling `init` establishes a default environment (capturing the return value is optional).
+     * Systems can use `Runtime.getRuntime()` to access this environment instead of plumbing `runtime`
+     * arguments through numerous functions.
+     * Some static methods on this class automatically use the default environment.
+     */
+    static init(root, urls) {
+        const map = { ...Runtime.mapFromRootPath(root), ...urls };
+        const loader = new Loader(map);
+        const pecFactory = pecIndustry(loader);
+        return new Runtime(loader, SlotComposer, null, pecFactory);
+    }
+    static mapFromRootPath(root) {
+        // TODO(sjmiles): this is a commonly-used map, but it's not generic enough to live here.
+        // Shells that use this default should be provide it to `init` themselves.
+        return {
+            // important: path to `worker.js`
+            'https://$build/': `${root}/shells/lib/build/`,
+            // these are optional (?)
+            'https://$arcs/': `${root}/`,
+            'https://$particles/': {
+                root,
+                path: '/particles/',
+                buildDir: '/bazel-bin',
+                buildOutputRegex: /\.wasm$/.source
+            }
+        };
     }
     getCacheService() {
         return this.cacheService;
@@ -33063,16 +33114,12 @@ class Runtime {
     // Should ids be provided to the Arc constructor, or should they be constructed by the Arc?
     // How best to provide default storage to an arc given whatever we decide?
     newArc(name, storageKeyPrefix, options) {
+        const { loader, context } = this;
         const id = IdGenerator.newSession().newArcId(name);
         const slotComposer = this.composerClass ? new this.composerClass() : null;
-        if (typeof storageKeyPrefix === 'string') {
-            const storageKey = storageKeyPrefix + id.toString();
-            return new Arc({ id, storageKey, loader: this.loader, slotComposer, context: this.context, ...options });
-        }
-        else {
-            const storageKey = storageKeyPrefix(id);
-            return new Arc({ id, storageKey, loader: this.loader, slotComposer, context: this.context, ...options });
-        }
+        const storageKey = (typeof storageKeyPrefix === 'string')
+            ? `${storageKeyPrefix}${id.toString()}` : storageKeyPrefix(id);
+        return new Arc({ id, storageKey, loader, slotComposer, context, ...options });
     }
     // Stuff the shell needs
     /**
@@ -33131,15 +33178,31 @@ class Runtime {
         return Manifest.parse(content, options);
     }
     /**
-     * Load and parse a manifest from a resource (not striclty a file) and return
+     * Load and parse a manifest from a resource (not strictly a file) and return
      * a Manifest object. The loader determines the semantics of the fileName. See
      * the Manifest class for details.
      */
     static async loadManifest(fileName, loader, options) {
         return Manifest.load(fileName, loader, options);
     }
+    // stuff the strategizer needs
+    // stuff from shells/lib/utils
+    // TODO(sjmiles): there is redundancy vs `parse/loadManifest` above, but this is
+    // temporary until we polish the Utils integration.
+    async parse(content, options) {
+        const { loader } = this;
+        // TODO(sjmiles): this method of generating a manifest id is ad-hoc,
+        // maybe should be using one of the id generators, or even better
+        // we could eliminate it if the Manifest object takes care of this.
+        const id = `in-memory-${Math.floor((Math.random() + 1) * 1e6)}.manifest`;
+        // TODO(sjmiles): this is a virtual manifest, the fileName is invented
+        const localOptions = { id, fileName: `./${id}`, loader };
+        return Manifest.parse(content, { ...localOptions, ...options });
+    }
+    static async parse(content, options) {
+        return this.getRuntime().parse(content, options);
+    }
 }
-let runtime = null;
 
 /**
  * Implementation of KeyStorage using a Map, used for testing only.
@@ -33846,23 +33909,6 @@ class DevtoolsConnection {
             channel = new DevtoolsChannel();
     }
 }
-
-/**
- * @license
- * Copyright 2019 Google LLC.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-const pecIndustry = loader => {
-    return (pecId, idGenerator) => {
-        const channel = new MessageChannel();
-        const _throwAway = new ParticleExecutionContext(channel.port1, pecId, idGenerator, loader);
-        return channel.port2;
-    };
-};
 
 /**
  * @license

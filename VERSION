@@ -1,5 +1,17 @@
-commit b6a8d5e2c1d1e7ac8f9bdd3d9f1279ea338ba13d
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Thu Oct 31 14:45:49 2019 -0700
+commit b0f522d101fd708a82580344ee371c4f225fc132
+Author: Alex Rosengarten <alxr@google.com>
+Date:   Thu Oct 31 18:57:01 2019 -0700
 
-    Allows specifying builtOutputRegex with a string (#3953)
+    Kotlin / Wasm build fixes (#3959)
+    
+    * Proper use of Deprecated annotation
+    
+    * Nullable dictionary
+    
+    * Fixed name collision conflict; reverted 'with' approach
+    
+    * Nullable String in Map
+    
+    * Handling nullable entity fields
+    
+    * visibility defaulting to None

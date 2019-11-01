@@ -9,12 +9,12 @@
  */
 import fs from 'fs';
 import path from 'path';
-import { Utils } from '../../shells/lib/utils.js';
+import { Runtime } from '../runtime/runtime.js';
 import { SchemaGraph } from './schema2graph.js';
 export class Schema2Base {
     constructor(opts) {
         this.opts = opts;
-        Utils.init('../..');
+        Runtime.init('../..');
         this.scope = this.opts.package || 'arcs';
     }
     async call() {
@@ -35,7 +35,7 @@ export class Schema2Base {
         if (this.opts.update && fs.existsSync(outPath) && fs.statSync(outPath).mtimeMs > fs.statSync(src).mtimeMs) {
             return;
         }
-        const manifest = await Utils.parse(`import '${src}'`);
+        const manifest = await Runtime.parse(`import '${src}'`);
         if (manifest.errors.length) {
             return;
         }

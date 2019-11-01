@@ -2933,6 +2933,9 @@ class ReferenceType extends Type {
     toString(options = undefined) {
         return 'Reference<' + this.referredType.toString() + '>';
     }
+    toPrettyString() {
+        return 'Reference to ' + this.referredType.toPrettyString();
+    }
     getEntitySchema() {
         return this.referredType.getEntitySchema();
     }

@@ -14,11 +14,11 @@ import { RuntimeCacheService } from './runtime-cache.js';
 import { ArcId } from './id.js';
 import { PecFactory } from './particle-execution-context.js';
 import { SlotComposer } from './slot-composer.js';
-import { Loader } from '../platform/loader.js';
 import { StorageProviderFactory } from './storage/storage-provider-factory.js';
 import { ArcInspectorFactory } from './arc-inspector.js';
 import { VolatileMemory } from './storageNG/drivers/volatile.js';
 import { StorageKey } from './storageNG/storage-key.js';
+import { Loader } from '../platform/loader.js';
 export declare type RuntimeArcOptions = Readonly<{
     pecFactories?: PecFactory[];
     storageProviderFactory?: StorageProviderFactory;
@@ -29,16 +29,35 @@ export declare type RuntimeArcOptions = Readonly<{
     inspectorFactory?: ArcInspectorFactory;
 }>;
 export declare class Runtime {
+    readonly context: Manifest;
+    readonly pecFactory: PecFactory;
     private cacheService;
     private loader;
     private composerClass;
-    readonly context: Manifest;
     private readonly ramDiskMemory;
     readonly arcById: Map<string, Arc>;
     static getRuntime(): Runtime;
     static clearRuntimeForTesting(): void;
     static newForNodeTesting(context?: Manifest): Runtime;
-    constructor(loader?: Loader, composerClass?: new () => SlotComposer, context?: Manifest);
+    /**
+     * `Runtime.getRuntime()` returns the most recently constructed Runtime object (or creates one),
+     * so calling `init` establishes a default environment (capturing the return value is optional).
+     * Systems can use `Runtime.getRuntime()` to access this environment instead of plumbing `runtime`
+     * arguments through numerous functions.
+     * Some static methods on this class automatically use the default environment.
+     */
+    static init(root?: string, urls?: {}): Runtime;
+    static mapFromRootPath(root: string): {
+        'https://$build/': string;
+        'https://$arcs/': string;
+        'https://$particles/': {
+            root: string;
+            path: string;
+            buildDir: string;
+            buildOutputRegex: string;
+        };
+    };
+    constructor(loader?: Loader, composerClass?: typeof SlotComposer, context?: Manifest, pecFactory?: PecFactory);
     getCacheService(): RuntimeCacheService;
     getRamDiskMemory(): VolatileMemory;
     destroy(): void;
@@ -64,9 +83,11 @@ export declare class Runtime {
      */
     static parseManifest(content: string, options?: any): Promise<Manifest>;
     /**
-     * Load and parse a manifest from a resource (not striclty a file) and return
+     * Load and parse a manifest from a resource (not strictly a file) and return
      * a Manifest object. The loader determines the semantics of the fileName. See
      * the Manifest class for details.
      */
     static loadManifest(fileName: any, loader: any, options: any): Promise<Manifest>;
+    parse(content: string, options?: any): Promise<Manifest>;
+    static parse(content: string, options?: any): Promise<Manifest>;
 }
