@@ -1,7 +1,9 @@
-commit 44f17497ea91e2caa70be912ff4eca575a117339
-Author: ianull <ianchang@google.com>
-Date:   Fri Nov 1 13:34:31 2019 -0700
+commit 08259b0b7a5c5c03090d9b76fd8583d1436a293d
+Author: yuangu-google <yuangu@google.com>
+Date:   Fri Nov 1 16:01:04 2019 -0700
 
-    Fix Travis failure on c++ wasm (#3978)
+    Fix dead loop when client and ArcsService are in the same DI scope. (#3982)
     
-    API signature was changed from pointer to lvalue reference.
+    * Fix dead loop when client and ArcsService are in the same Dagger scope.
+    
+    * Adjust order in PecInnerPort
