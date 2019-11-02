@@ -714,7 +714,7 @@
         "signature": "43a5176681925d9f51b139647154e4a52c2eb1b1a64bb428595000952bcbc7f1"
       },
       "../src/dataflow/cli/flowcheck.ts": {
-        "version": "532f2ad924bd1b350b22facae6859063d9ba4fe1abf5ce777d8f38c7b5497aa4",
+        "version": "159656a09d16952adc4389b305a33d1f792497555b3b6153af2354d42a9bb563",
         "signature": "43a5176681925d9f51b139647154e4a52c2eb1b1a64bb428595000952bcbc7f1"
       },
       "../src/devtools-connector/abstract-devtools-channel.ts": {
@@ -4382,6 +4382,7 @@
       "../src/dataflow/cli/flowcheck.ts": [
         "../src/dataflow/analysis/flow-graph.ts",
         "../src/dataflow/analysis/analysis.ts",
+        "../src/runtime/runtime.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.2/util.d.ts"
       ],

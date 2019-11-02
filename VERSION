@@ -1,9 +1,9 @@
-commit 08259b0b7a5c5c03090d9b76fd8583d1436a293d
-Author: yuangu-google <yuangu@google.com>
-Date:   Fri Nov 1 16:01:04 2019 -0700
+commit 7b0c8dd01d1626961906755d95fc4a1a2ff9f0a8
+Author: Ray Cromwell <cromwellian@gmail.com>
+Date:   Fri Nov 1 18:10:37 2019 -0700
 
-    Fix dead loop when client and ArcsService are in the same DI scope. (#3982)
+    Fix flowcheck (#3977)
     
-    * Fix dead loop when client and ArcsService are in the same Dagger scope.
+    * Fix flowcheck to use Runtime.parse
     
-    * Adjust order in PecInnerPort
+    * fix path
