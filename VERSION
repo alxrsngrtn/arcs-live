@@ -1,9 +1,5 @@
-commit 7b0c8dd01d1626961906755d95fc4a1a2ff9f0a8
+commit 548c69cb6cc345f3c0e6cda5d2467b267929b130
 Author: Ray Cromwell <cromwellian@gmail.com>
-Date:   Fri Nov 1 18:10:37 2019 -0700
+Date:   Fri Nov 1 19:20:28 2019 -0700
 
-    Fix flowcheck (#3977)
-    
-    * Fix flowcheck to use Runtime.parse
-    
-    * fix path
+    Add third_party/java/arcs/sdk directory (#3976)
