@@ -550,7 +550,7 @@ const T=Symbol("internals");
  * Code distributed by Google as part of this project is also
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
- */class j{}j.useNewStorageStack=!1,j.parseBothSyntaxes=!1,j.defaultToPreSlandlesSyntax=!0;class $ extends j{static reset(){Object.assign($,j)}static withPreSlandlesSyntax(e){return $.withFlags({parseBothSyntaxes:!1,defaultToPreSlandlesSyntax:!0},e)}static withPostSlandlesSyntax(e){return $.withFlags({parseBothSyntaxes:!1,defaultToPreSlandlesSyntax:!1},e)}static withNewStorageStack(e){return $.withFlags({useNewStorageStack:!0},e)}static withFlags(e,t){return async(...n)=>{let r;Object.assign($,e);try{r=await t(...n)}finally{$.reset()}return r}}}
+ */class j{}j.useNewStorageStack=!1,j.parseBothSyntaxes=!0,j.defaultToPreSlandlesSyntax=!0;class $ extends j{static reset(){Object.assign($,j)}static withPreSlandlesSyntax(e){return $.withFlags({parseBothSyntaxes:!1,defaultToPreSlandlesSyntax:!0},e)}static withPostSlandlesSyntax(e){return $.withFlags({parseBothSyntaxes:!1,defaultToPreSlandlesSyntax:!1},e)}static withNewStorageStack(e){return $.withFlags({useNewStorageStack:!0},e)}static withFlags(e,t){return async(...n)=>{let r;Object.assign($,e);try{r=await t(...n)}finally{$.reset()}return r}}}
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.

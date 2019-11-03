@@ -1,5 +1,5 @@
-commit afb52eee1ba3d712d94ea4c4e1ac4a90782c438b
-Author: Sarah Heimlich <heimlich@google.com>
-Date:   Sat Nov 2 20:38:00 2019 -0700
+commit 84eebc667332f61d43665f70f076382e5b835a35
+Author: Joshua Pratt <jp10010101010000@gmail.com>
+Date:   Mon Nov 4 09:05:04 2019 +1000
 
-    Added Javascript Tutorial 6 Text and updated tutorial 5's arc's manifest file. (#3960)
+    Switch post slandles (unification) syntax on (as alternative, non-default) (#3962)

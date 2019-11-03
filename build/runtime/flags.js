@@ -13,7 +13,7 @@ class FlagDefaults {
 FlagDefaults.useNewStorageStack = false;
 // Enables the parsing of both pre and post slandles (unified) syntaxes.
 // Preslandles syntax is to be deprecated.
-FlagDefaults.parseBothSyntaxes = false;
+FlagDefaults.parseBothSyntaxes = true;
 // Use pre slandles syntax for parsing and toString by default.
 // If parseBothSyntaxes is off, this will set which syntax is enabled.
 FlagDefaults.defaultToPreSlandlesSyntax = true;
