@@ -2777,8 +2777,8 @@
         "signature": "e099641bf2594ccf6b0cad4cf78c2f50d563cd52aa874686bd4a6ba11129176a"
       },
       "../node_modules/chokidar/types/index.d.ts": {
-        "version": "45eefb2c20ee41fa33b9e1cf36a1f42e2bc48dc325f503d3aecbc7ca614f506d",
-        "signature": "45eefb2c20ee41fa33b9e1cf36a1f42e2bc48dc325f503d3aecbc7ca614f506d"
+        "version": "ca7f76d3ea132bde53dca1a0f33cda95397d20c248e452c050773f01504d9802",
+        "signature": "ca7f76d3ea132bde53dca1a0f33cda95397d20c248e452c050773f01504d9802"
       },
       "../src/tools/dev_server/hot-reload-server.ts": {
         "version": "cfc21563183bb89ce966e1b31491f56267800622b5dd5385c8d2653740e18fe9",

@@ -1,5 +1,5 @@
-commit 548c69cb6cc345f3c0e6cda5d2467b267929b130
-Author: Ray Cromwell <cromwellian@gmail.com>
-Date:   Fri Nov 1 19:20:28 2019 -0700
+commit afb52eee1ba3d712d94ea4c4e1ac4a90782c438b
+Author: Sarah Heimlich <heimlich@google.com>
+Date:   Sat Nov 2 20:38:00 2019 -0700
 
-    Add third_party/java/arcs/sdk directory (#3976)
+    Added Javascript Tutorial 6 Text and updated tutorial 5's arc's manifest file. (#3960)
