@@ -1,5 +1,9 @@
-commit 84eebc667332f61d43665f70f076382e5b835a35
+commit 3b0e487172a0d405a0b52a2e88042ab14135d8d6
 Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Mon Nov 4 09:05:04 2019 +1000
+Date:   Mon Nov 4 10:33:37 2019 +1000
 
-    Switch post slandles (unification) syntax on (as alternative, non-default) (#3962)
+    Attempt to cache bazel output on travis (#3972)
+    
+    * Attempt to cache bazel output on travis
+    
+    * Try making use of bazel's own caching
