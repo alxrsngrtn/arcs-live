@@ -1,5 +1,22 @@
-commit e8035626e3cc6777043ac454bf9a33af67d42e0e
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Mon Nov 4 10:15:15 2019 -0800
+commit fe81c945445ddfd124f9cfb768550cd60190096a
+Author: Jason Feinstein <jwf@google.com>
+Date:   Mon Nov 4 10:45:14 2019 -0800
 
-    Make Arcs Service load stuff from the workstation (#3954)
+    Storage utils (#3985)
+    
+    This is a preamble to the implementation of `ReferenceModeStore`, coming soon. Within this PR I implement several utilities which the `ReferenceModeStore` will use:
+    
+    * Message - Defines the different types of messages which the `ReferenceModeStore` will send around to the backing store, container store, and storage proxy. When a message is enqueued into the `MessageQueue`, it is associated with a `CompletableDeferred` that will resolve when it's been dequeued.
+    * MessageQueue - Thread-safe implementation of the `receiveQueue` from `reference-mode-store.ts`.
+    * RefModeCrdtTypes.kt - The `ReferenceModeStore`, being a *store*, needs to support managing `ProxyMessage`s which contain CrdtModel/CrdtOperation changes. To that end, this file defines some Crdt-esque classes so that users of ReferenceModeStore can treat the managed singleton/set as a Crdt.
+    * Reference - The small `Referencable` which will be managed by the `containerStore` component of the `ReferenceModeStore`.
+    * ProxyCallbackManager - A thread-safe manager of `ProxyCallback`s, as the name would imply 😄
+    * SendQueue - Thread safe implementation of reference-mode-store.ts's `enqueueSend`, `enqueueBlockingSend`, etc. behavior.
+    
+    Also, some tweaks were made to existing files:
+    
+    * RawEntity.kt - Made `RawEntity` implement `Referencable`, so it can be used within the `RefModeStoreData`/`RefModeStoreOp` objects.
+    * CrdtEntity.kt - Updated the `CrdtEntity.Data` constructors to support more flexible creation from `RawEntity` objects.
+    * CrdtSet.kt - Mostly indentation, but it does `open` up the `Operation` classes, so they can be extended by the `RefModeStoreOp` classes.
+    * CrdtSingleton.kt - Opens up the `Operation` classes, so they can be extended by `RefModeStoreOp` classes.
+    * HoldQueue.kt - Makes the `enqueue` method a suspend function because of the other changes required to make HoldQueue actually thread-safe.
