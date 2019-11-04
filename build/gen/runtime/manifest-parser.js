@@ -250,7 +250,7 @@ function peg$parse(input, options) {
     const peg$c54 = "*";
     const peg$c55 = peg$literalExpectation("*", false);
     const peg$c56 = function (direction, type, name) {
-        requireUsePreSlandleSyntax();
+        requireUsePreSlandleSyntax(1);
         direction = optional(direction, dir => dir[0], 'any');
         if (direction === 'host') {
             error(`Interface cannot have arguments with a 'host' direction.`);
@@ -263,7 +263,7 @@ function peg$parse(input, options) {
         });
     };
     const peg$c57 = function (name, direction, type) {
-        requireUsePostSlandleSyntax();
+        requireUsePostSlandleSyntax(2);
         name = name || '*';
         if (direction === 'host') {
             error(`Interface cannot have arguments with a 'host' direction.`);
@@ -284,7 +284,7 @@ function peg$parse(input, options) {
     const peg$c64 = "set of";
     const peg$c65 = peg$literalExpectation("set of", false);
     const peg$c66 = function (isRequired, direction, isSet, name) {
-        requireUsePreSlandleSyntax();
+        requireUsePreSlandleSyntax(3);
         return toAstNode({
             kind: 'interface-slot',
             name: optional(name, isRequired => name[1], null),
@@ -300,7 +300,7 @@ function peg$parse(input, options) {
     const peg$c71 = "?";
     const peg$c72 = peg$literalExpectation("?", false);
     const peg$c73 = function (name, direction, isOptional, type) {
-        requireUsePostSlandleSyntax();
+        requireUsePostSlandleSyntax(4);
         let isSet = false;
         if (type) {
             type = type[1]; // remove the whitespace.
@@ -529,7 +529,7 @@ function peg$parse(input, options) {
         return arg;
     };
     const peg$c126 = function (direction, isOptional, type, nametag) {
-        requireUsePreSlandleSyntax();
+        requireUsePreSlandleSyntax(5);
         return toAstNode({
             kind: 'particle-argument',
             direction,
@@ -544,7 +544,7 @@ function peg$parse(input, options) {
         return name;
     };
     const peg$c128 = function (name, direction, isOptional, type, maybeTags) {
-        requireUsePostSlandleSyntax();
+        requireUsePostSlandleSyntax(6);
         return toAstNode({
             kind: 'particle-argument',
             direction,
@@ -572,7 +572,7 @@ function peg$parse(input, options) {
     const peg$c143 = peg$classExpectation([["a", "z"], ["A", "Z"], ["0", "9"]], true, false);
     const peg$c144 = peg$anyExpectation();
     const peg$c145 = function () {
-        requireUsePreSlandleSyntax();
+        requireUsePreSlandleSyntax(7);
         return text();
     };
     const peg$c146 = peg$otherExpectation("a direction (e.g. reads writes, reads, writes, hosts, `consumes, `provides, any')");
@@ -590,7 +590,7 @@ function peg$parse(input, options) {
     const peg$c158 = peg$literalExpectation("`provides", false);
     const peg$c159 = function () {
         // TODO(jopra): Parse optionality properly.
-        requireUsePostSlandleSyntax();
+        requireUsePostSlandleSyntax(8);
         return AstNode.directionToPreSlandlesDirection(text());
     };
     const peg$c160 = peg$otherExpectation("a direction arrow (e.g. <-, ->, <->, =, `consume, `provide)");
@@ -699,7 +699,7 @@ function peg$parse(input, options) {
         });
     };
     const peg$c206 = function (isRequired, isSet, name, tags, items) {
-        requireUsePreSlandleSyntax();
+        requireUsePreSlandleSyntax(9);
         let formFactor = null;
         const provideSlotConnections = [];
         items = optional(items, extractIndented, []);
@@ -737,7 +737,7 @@ function peg$parse(input, options) {
         return type;
     };
     const peg$c209 = function (name, isOptional, type, maybeTags, items) {
-        requireUsePostSlandleSyntax();
+        requireUsePostSlandleSyntax(10);
         const provideSlotConnections = [];
         items = optional(items, extractIndented, []);
         items.forEach(item => {
@@ -794,7 +794,7 @@ function peg$parse(input, options) {
         });
     };
     const peg$c221 = function (isRequired, isSet, name, tags, items) {
-        requireUsePreSlandleSyntax();
+        requireUsePreSlandleSyntax(11);
         let formFactor = null;
         const handles = [];
         items = items ? extractIndented(items) : [];
@@ -820,7 +820,7 @@ function peg$parse(input, options) {
         });
     };
     const peg$c222 = function (name, isOptional, type, maybeTags) {
-        requireUsePostSlandleSyntax();
+        requireUsePostSlandleSyntax(12);
         const provideSlotConnections = [];
         let formFactor = null;
         const handles = [];
@@ -923,7 +923,7 @@ function peg$parse(input, options) {
             }
         }
         return toAstNode({
-            kind: 'particle',
+            kind: 'recipe-particle',
             name: optional(name, name => name[1], null),
             ref,
             connections: handleConnections,
@@ -931,7 +931,7 @@ function peg$parse(input, options) {
         });
     };
     const peg$c235 = function (param, dir, target, dependentConnections) {
-        requireUsePostSlandleSyntax();
+        requireUsePostSlandleSyntax(13);
         return toAstNode({
             kind: 'handle-connection',
             param: param || '*',
@@ -941,7 +941,7 @@ function peg$parse(input, options) {
         });
     };
     const peg$c236 = function (param, dir, target, dependentConnections) {
-        requireUsePreSlandleSyntax();
+        requireUsePreSlandleSyntax(14);
         return toAstNode({
             kind: 'handle-connection',
             param,
@@ -970,7 +970,7 @@ function peg$parse(input, options) {
         });
     };
     const peg$c238 = function (direction, ref, name, dependentSlotConnections) {
-        requireUsePreSlandleSyntax();
+        requireUsePreSlandleSyntax(15);
         return toAstNode({
             kind: 'slot-connection',
             direction,
@@ -981,7 +981,7 @@ function peg$parse(input, options) {
         });
     };
     const peg$c239 = function (param, direction, name, tags, dependentSlotConnections) {
-        requireUsePostSlandleSyntax();
+        requireUsePostSlandleSyntax(16);
         return toAstNode({
             kind: 'slot-connection',
             direction,
@@ -1008,7 +1008,7 @@ function peg$parse(input, options) {
             param: '*',
             tags: [],
         });
-        requireUsePostSlandleSyntax();
+        requireUsePostSlandleSyntax(17);
         return toAstNode({
             kind: 'connection',
             direction,
@@ -1020,7 +1020,7 @@ function peg$parse(input, options) {
         return target;
     };
     const peg$c245 = function (from, direction, to) {
-        requireUsePreSlandleSyntax();
+        requireUsePreSlandleSyntax(18);
         return toAstNode({
             kind: 'connection',
             direction: AstNode.arrowToDirection(direction),
@@ -1100,10 +1100,10 @@ function peg$parse(input, options) {
             error('cannot provide both name and localName for RecipeHandle.');
         }
         if (name) {
-            requireUsePostSlandleSyntax();
+            requireUsePostSlandleSyntax(19);
         }
         if (namePreSlandles) {
-            requireUsePreSlandleSyntax();
+            requireUsePreSlandleSyntax(20);
             name = optional(namePreSlandles, n => n[1], null);
         }
         return toAstNode({
@@ -1197,7 +1197,7 @@ function peg$parse(input, options) {
     const peg$c290 = "slot";
     const peg$c291 = peg$literalExpectation("slot", false);
     const peg$c292 = function (ref, name) {
-        requireUsePreSlandleSyntax();
+        requireUsePreSlandleSyntax(21);
         return toAstNode({
             kind: 'slot',
             ref: optional(ref, ref => ref[1], emptyRef()),
@@ -1205,7 +1205,7 @@ function peg$parse(input, options) {
         });
     };
     const peg$c293 = function (name, ref) {
-        requireUsePostSlandleSyntax();
+        requireUsePostSlandleSyntax(22);
         return toAstNode({
             kind: 'slot',
             ref: optional(ref, ref => ref[1], emptyRef()),
@@ -1224,11 +1224,11 @@ function peg$parse(input, options) {
             error('cannot provide a type using both preslandles syntax and unification syntax for SchemaInlineField.');
         }
         if (preSlandlesType) {
-            requireUsePreSlandleSyntax();
+            requireUsePreSlandleSyntax(23);
             type = optional(preSlandlesType, ty => ty[0], null);
         }
         else if (type) {
-            requireUsePostSlandleSyntax();
+            requireUsePostSlandleSyntax(24);
             type = optional(type, ty => ty[2], null);
         }
         return toAstNode({
@@ -9929,7 +9929,7 @@ function peg$parse(input, options) {
         return s0;
     }
     function peg$parseSchemaInline() {
-        let s0, s1, s2, s3, s4, s5, s6, s7, s8, s9;
+        let s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10;
         s0 = peg$currPos;
         s1 = [];
         s2 = peg$currPos;
@@ -10010,110 +10010,136 @@ function peg$parse(input, options) {
                 }
             }
             if (s2 !== peg$FAILED) {
-                s3 = peg$currPos;
-                s4 = peg$parseSchemaInlineField();
-                if (s4 !== peg$FAILED) {
-                    s5 = [];
-                    s6 = peg$currPos;
-                    if (input.charCodeAt(peg$currPos) === 44) {
-                        s7 = peg$c195;
-                        peg$currPos++;
-                    }
-                    else {
-                        s7 = peg$FAILED;
-                        if (peg$silentFails === 0) {
-                            peg$fail(peg$c196);
-                        }
-                    }
-                    if (s7 !== peg$FAILED) {
-                        s8 = peg$parsewhiteSpace();
-                        if (s8 !== peg$FAILED) {
-                            s9 = peg$parseSchemaInlineField();
-                            if (s9 !== peg$FAILED) {
-                                s7 = [s7, s8, s9];
-                                s6 = s7;
-                            }
-                            else {
-                                peg$currPos = s6;
-                                s6 = peg$FAILED;
-                            }
-                        }
-                        else {
-                            peg$currPos = s6;
-                            s6 = peg$FAILED;
-                        }
-                    }
-                    else {
-                        peg$currPos = s6;
-                        s6 = peg$FAILED;
-                    }
-                    while (s6 !== peg$FAILED) {
-                        s5.push(s6);
-                        s6 = peg$currPos;
-                        if (input.charCodeAt(peg$currPos) === 44) {
-                            s7 = peg$c195;
-                            peg$currPos++;
-                        }
-                        else {
-                            s7 = peg$FAILED;
-                            if (peg$silentFails === 0) {
-                                peg$fail(peg$c196);
-                            }
-                        }
-                        if (s7 !== peg$FAILED) {
-                            s8 = peg$parsewhiteSpace();
-                            if (s8 !== peg$FAILED) {
-                                s9 = peg$parseSchemaInlineField();
-                                if (s9 !== peg$FAILED) {
-                                    s7 = [s7, s8, s9];
-                                    s6 = s7;
-                                }
-                                else {
-                                    peg$currPos = s6;
-                                    s6 = peg$FAILED;
-                                }
-                            }
-                            else {
-                                peg$currPos = s6;
-                                s6 = peg$FAILED;
-                            }
-                        }
-                        else {
-                            peg$currPos = s6;
-                            s6 = peg$FAILED;
-                        }
-                    }
-                    if (s5 !== peg$FAILED) {
-                        s4 = [s4, s5];
-                        s3 = s4;
-                    }
-                    else {
-                        peg$currPos = s3;
-                        s3 = peg$FAILED;
-                    }
-                }
-                else {
-                    peg$currPos = s3;
-                    s3 = peg$FAILED;
-                }
+                s3 = peg$parsewhiteSpace();
                 if (s3 === peg$FAILED) {
                     s3 = null;
                 }
                 if (s3 !== peg$FAILED) {
-                    if (input.charCodeAt(peg$currPos) === 125) {
-                        s4 = peg$c197;
-                        peg$currPos++;
-                    }
-                    else {
-                        s4 = peg$FAILED;
-                        if (peg$silentFails === 0) {
-                            peg$fail(peg$c198);
+                    s4 = peg$currPos;
+                    s5 = peg$parseSchemaInlineField();
+                    if (s5 !== peg$FAILED) {
+                        s6 = [];
+                        s7 = peg$currPos;
+                        if (input.charCodeAt(peg$currPos) === 44) {
+                            s8 = peg$c195;
+                            peg$currPos++;
+                        }
+                        else {
+                            s8 = peg$FAILED;
+                            if (peg$silentFails === 0) {
+                                peg$fail(peg$c196);
+                            }
+                        }
+                        if (s8 !== peg$FAILED) {
+                            s9 = peg$parsewhiteSpace();
+                            if (s9 === peg$FAILED) {
+                                s9 = null;
+                            }
+                            if (s9 !== peg$FAILED) {
+                                s10 = peg$parseSchemaInlineField();
+                                if (s10 !== peg$FAILED) {
+                                    s8 = [s8, s9, s10];
+                                    s7 = s8;
+                                }
+                                else {
+                                    peg$currPos = s7;
+                                    s7 = peg$FAILED;
+                                }
+                            }
+                            else {
+                                peg$currPos = s7;
+                                s7 = peg$FAILED;
+                            }
+                        }
+                        else {
+                            peg$currPos = s7;
+                            s7 = peg$FAILED;
+                        }
+                        while (s7 !== peg$FAILED) {
+                            s6.push(s7);
+                            s7 = peg$currPos;
+                            if (input.charCodeAt(peg$currPos) === 44) {
+                                s8 = peg$c195;
+                                peg$currPos++;
+                            }
+                            else {
+                                s8 = peg$FAILED;
+                                if (peg$silentFails === 0) {
+                                    peg$fail(peg$c196);
+                                }
+                            }
+                            if (s8 !== peg$FAILED) {
+                                s9 = peg$parsewhiteSpace();
+                                if (s9 === peg$FAILED) {
+                                    s9 = null;
+                                }
+                                if (s9 !== peg$FAILED) {
+                                    s10 = peg$parseSchemaInlineField();
+                                    if (s10 !== peg$FAILED) {
+                                        s8 = [s8, s9, s10];
+                                        s7 = s8;
+                                    }
+                                    else {
+                                        peg$currPos = s7;
+                                        s7 = peg$FAILED;
+                                    }
+                                }
+                                else {
+                                    peg$currPos = s7;
+                                    s7 = peg$FAILED;
+                                }
+                            }
+                            else {
+                                peg$currPos = s7;
+                                s7 = peg$FAILED;
+                            }
+                        }
+                        if (s6 !== peg$FAILED) {
+                            s5 = [s5, s6];
+                            s4 = s5;
+                        }
+                        else {
+                            peg$currPos = s4;
+                            s4 = peg$FAILED;
                         }
                     }
+                    else {
+                        peg$currPos = s4;
+                        s4 = peg$FAILED;
+                    }
+                    if (s4 === peg$FAILED) {
+                        s4 = null;
+                    }
                     if (s4 !== peg$FAILED) {
-                        peg$savedPos = s0;
-                        s1 = peg$c294(s1, s3);
-                        s0 = s1;
+                        s5 = peg$parsewhiteSpace();
+                        if (s5 === peg$FAILED) {
+                            s5 = null;
+                        }
+                        if (s5 !== peg$FAILED) {
+                            if (input.charCodeAt(peg$currPos) === 125) {
+                                s6 = peg$c197;
+                                peg$currPos++;
+                            }
+                            else {
+                                s6 = peg$FAILED;
+                                if (peg$silentFails === 0) {
+                                    peg$fail(peg$c198);
+                                }
+                            }
+                            if (s6 !== peg$FAILED) {
+                                peg$savedPos = s0;
+                                s1 = peg$c294(s1, s4);
+                                s0 = s1;
+                            }
+                            else {
+                                peg$currPos = s0;
+                                s0 = peg$FAILED;
+                            }
+                        }
+                        else {
+                            peg$currPos = s0;
+                            s0 = peg$FAILED;
+                        }
                     }
                     else {
                         peg$currPos = s0;
@@ -11635,9 +11661,9 @@ function peg$parse(input, options) {
             if (s1 === peg$FAILED) {
                 s1 = peg$parseDirectionUnified();
                 if (s1 === peg$FAILED) {
-                    s1 = peg$parseSlotDirectionPreSlandle();
+                    s1 = peg$parseSlotDirectionUnified();
                     if (s1 === peg$FAILED) {
-                        s1 = peg$parseSlotDirectionUnified();
+                        s1 = peg$parseSlotDirectionPreSlandle();
                         if (s1 === peg$FAILED) {
                             s1 = peg$parseRecipeHandleFate();
                             if (s1 === peg$FAILED) {
@@ -12785,15 +12811,15 @@ function peg$parse(input, options) {
     function toAstNode(data) {
         return { ...data, location: location() };
     }
-    function requireUsePreSlandleSyntax() {
+    function requireUsePreSlandleSyntax(tag) {
         if (!Flags.parseBothSyntaxes && !Flags.defaultToPreSlandlesSyntax) {
-            error('using pre slandles syntax (disabled by flag)');
+            error(`using pre slandles syntax (disabled by flag) #${tag}`);
         }
         preSlandlesSyntaxLocations.push(location());
     }
-    function requireUsePostSlandleSyntax() {
+    function requireUsePostSlandleSyntax(tag) {
         if (!Flags.parseBothSyntaxes && Flags.defaultToPreSlandlesSyntax) {
-            error('using post slandles syntax (disabled by flag)');
+            error(`using post slandles syntax (disabled by flag) #${tag}`);
         }
     }
     peg$result = peg$startRuleFunction();

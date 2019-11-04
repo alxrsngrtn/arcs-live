@@ -596,7 +596,7 @@ describe('firebase', function () {
             const loader = new StubLoader({
                 manifest: `
           schema Data
-            Text value
+            value: Text
 
           particle P in 'a.js'
             var: reads Data

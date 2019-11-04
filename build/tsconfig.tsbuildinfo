@@ -574,11 +574,11 @@
         "signature": "75bc5f22059210323a192a97ea60f029862fe72a4f9e10e3b6dc71c02539198b"
       },
       "../src/runtime/manifest-ast-nodes.ts": {
-        "version": "6322256f7eef862e06acada83cb710735f495536940419eecf1411289c982948",
-        "signature": "308e3982e144d10b2802bb065474b0d055282ebde874d0fd7067cfa71d279f12"
+        "version": "cb26858b7021f08aa4538eafaf96448f1a896c7c686ef361dd2c52442ccda6f7",
+        "signature": "bed47c6986c96503ca774e24d46fbeae1506232042e45bcfedaf8f84b650551a"
       },
       "../src/gen/runtime/manifest-parser.ts": {
-        "version": "c83c0b0974eaff5e8587a918502cce5bdb0a31cd7acee046f8a1842bd9fd5d82",
+        "version": "7d80a48b64557d366984346b299f5974b3562030dd7daa3a99576f7d87534672",
         "signature": "ff2c763c7895327196fd3eb358dcc775b25f27bdae513079cc287433af262427"
       },
       "../src/runtime/manifest-meta.ts": {
@@ -606,7 +606,7 @@
         "signature": "8ef9453dcbfa29ffef1fd28d215625bdb2730644a74ff977494d36c9c2f4f86f"
       },
       "../src/runtime/manifest.ts": {
-        "version": "b0467ab0fc82c4573219af6f3e005b78a9d0ba359fc514cc4ed9fb5d9dfdbb85",
+        "version": "4e295e04f712ebc0bad47646fec3b49fe081da687471eba3afc915fb206d72f2",
         "signature": "7b1417edf9d8cf1c90c0ab22f8974af8e131089a17120ebee4625b754852211a"
       },
       "../src/platform/atob-web.ts": {
@@ -2325,7 +2325,7 @@
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "../src/runtime/manual_tests/firebase-test.ts": {
-        "version": "f196339c5628edbb32c3e9aa6a0693fc224aadd4aaf5c1c297b306983e19732b",
+        "version": "c85d37da240b3593b896ef7bb65d6cca5d94ee114cfb6473a14176a6a4639360",
         "signature": "a90deb8990f6c2529c493943b6ef82b1212b3e1aae9c096af86b97605eb190c3"
       },
       "../src/runtime/manual_tests/loader-test.ts": {
@@ -2465,11 +2465,11 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/manifest-parser-test.ts": {
-        "version": "914d463afcba4b4c23b32aa748b690ddb58002b33ed06bd0486013bbfab1d577",
+        "version": "949446d9bfb8d006bba9c91d805d34db27a384239481f9b3a188322f7381b1e4",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/manifest-test.ts": {
-        "version": "89fc864cfa7db934535f820a86b66b4e791187c290313f6c208c3c98b5b8ab96",
+        "version": "b441462e7b35f52b89b7e7fa67e4c6731ef201af009428b0a4db0d766c8a042c",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/multiplexer-test.ts": {

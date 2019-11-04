@@ -276,7 +276,7 @@ export interface RecipeNode extends BaseNode {
     triggers?: Triggers;
 }
 export interface RecipeParticle extends BaseNode {
-    kind: 'particle';
+    kind: 'recipe-particle';
     name: string;
     ref: ParticleRef;
     connections: RecipeParticleConnection[];

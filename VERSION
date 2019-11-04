@@ -1,19 +1,9 @@
-commit 6cb742da669133cb977d23e366536a88963b6caa
-Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Mon Nov 4 12:45:23 2019 +1100
+commit 3ad162605f9f53abe677cfc883b55582ff2b572f
+Author: Joshua Pratt <jp10010101010000@gmail.com>
+Date:   Mon Nov 4 14:18:19 2019 +1000
 
-    Change location of generated root manifest (#3967)
+    Ports more manifest tests to unified syntax (#3986)
     
-    * Change location of generated root manifest
+    * Update more manifest tests to use unified syntax
     
-    Root manifest now gets bundled to the same relative path. Extension has
-    also changed to be `<name>.root.arcs` so that it's easier to build regex
-    expressions for.
-    
-    So now the arcs_manifest_bundle build rule at
-    `//javaharness/java/android/arcs/demo:demo_manifest_bundle` generates a
-    root manifest at
-    `bazel-bin/javaharness/java/android/arcs/demo/demo_manifest_bundle.root.arcs`
-    which gets bundled into the android assets folder at `file://android_asset/arcs/javaharness/java/android/arcs/demo/demo_manifest_bundle.root.arcs`
-    
-    * Review comments
+    * Set default syntax on and de-duplicate slandles syntax tests

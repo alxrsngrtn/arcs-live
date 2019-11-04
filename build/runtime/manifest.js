@@ -687,7 +687,7 @@ ${e.message}
             byHandle: new Map(),
             // requireHandles are handles constructed by the 'handle' keyword. This is intended to replace handles.
             requireHandles: recipeItems.filter(item => item.kind === 'requireHandle'),
-            particles: recipeItems.filter(item => item.kind === 'particle'),
+            particles: recipeItems.filter(item => item.kind === 'recipe-particle'),
             byParticle: new Map(),
             slots: recipeItems.filter(item => item.kind === 'slot'),
             bySlot: new Map(),
