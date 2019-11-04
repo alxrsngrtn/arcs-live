@@ -1,9 +1,19 @@
-commit 3b0e487172a0d405a0b52a2e88042ab14135d8d6
-Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Mon Nov 4 10:33:37 2019 +1000
+commit 6cb742da669133cb977d23e366536a88963b6caa
+Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
+Date:   Mon Nov 4 12:45:23 2019 +1100
 
-    Attempt to cache bazel output on travis (#3972)
+    Change location of generated root manifest (#3967)
     
-    * Attempt to cache bazel output on travis
+    * Change location of generated root manifest
     
-    * Try making use of bazel's own caching
+    Root manifest now gets bundled to the same relative path. Extension has
+    also changed to be `<name>.root.arcs` so that it's easier to build regex
+    expressions for.
+    
+    So now the arcs_manifest_bundle build rule at
+    `//javaharness/java/android/arcs/demo:demo_manifest_bundle` generates a
+    root manifest at
+    `bazel-bin/javaharness/java/android/arcs/demo/demo_manifest_bundle.root.arcs`
+    which gets bundled into the android assets folder at `file://android_asset/arcs/javaharness/java/android/arcs/demo/demo_manifest_bundle.root.arcs`
+    
+    * Review comments
