@@ -1,5 +1,7 @@
 /// BareSpecifier=@vaadin/vaadin-themable-mixin/register-styles
 import '../../@polymer/polymer/lib/elements/dom-module.js';
+import { CSSResult } from '../../lit-element/lit-element.js';
+export { css, unsafeCSS } from '../../lit-element/lit-element.js';
 
 let moduleIdIndex = 0;
 // Map of <CSSResult, Polymer.DomModule> pairs.
@@ -62,49 +64,4 @@ export const registerStyles = (themeFor, styles, options) => {
   `;
 
   themeModuleElement.register(themeId);
-};
-
-/* Template literal tags derived from LitElement */
-
-const constructionToken = {};
-
-class CSSResult {
-
-  constructor(cssText, safeToken) {
-    if (safeToken !== constructionToken) {
-      throw new Error('CSSResult is not constructable. Use `unsafeCSS` or `css` instead.');
-    }
-    this.cssText = cssText;
-  }
-
-  toString() {
-    return this.cssText;
-  }
-}
-
-/**
- * Wrap a value for interpolation in a css tagged template literal.
- *
- * This is unsafe because untrusted CSS text can be used to phone home
- * or exfiltrate data to an attacker controlled site. Take care to only use
- * this with trusted input.
- */
-export const unsafeCSS = value => {
-  return new CSSResult(String(value), constructionToken);
-};
-
-const textFromCSSResult = value => {
-  if (value instanceof CSSResult) {
-    return value.cssText;
-  } else if (typeof value === 'number') {
-    return value;
-  } else {
-    throw new Error(`Value passed to 'css' function must be a 'css' function result: ${value}. Use 'unsafeCSS' to pass non-literal values, but
-            take care to ensure page security.`);
-  }
-};
-
-export const css = (strings, ...values) => {
-  const cssText = values.reduce((acc, v, idx) => acc + textFromCSSResult(v) + strings[idx + 1], strings[0]);
-  return new CSSResult(cssText, constructionToken);
 };

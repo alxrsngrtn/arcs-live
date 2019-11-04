@@ -1,5 +1,5 @@
-commit ae509d98c9cb02871ebfee50344e4d73a6c2c31e
-Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Mon Nov 4 15:32:18 2019 +1000
+commit e8035626e3cc6777043ac454bf9a33af67d42e0e
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Mon Nov 4 10:15:15 2019 -0800
 
-    Update flow graph tests to unified syntax (#3988)
+    Make Arcs Service load stuff from the workstation (#3954)

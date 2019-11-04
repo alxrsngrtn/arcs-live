@@ -1,8 +1,8 @@
 {
   "_from": "@vaadin/vaadin-themable-mixin@^1.2.1",
-  "_id": "@vaadin/vaadin-themable-mixin@1.5.1",
+  "_id": "@vaadin/vaadin-themable-mixin@1.5.2",
   "_inBundle": false,
-  "_integrity": "sha512-wZIafKCeLaQw5v0EmrgXG4okyMeX4EhyGp192AXjLmJttzxViq0JF2YFGxDM80PcoA30q1P2PW0VLtrJNp5btg==",
+  "_integrity": "sha512-3EsVOhE5lo/nRyX27+nOyPNsV5TtKInTKirldUqucGZZtcyWT4ZxqAxswIz3bAolnb17UDb8eJKHOH6ERMLEhg==",
   "_location": "/@vaadin/vaadin-themable-mixin",
   "_phantomChildren": {},
   "_requested": {
@@ -19,10 +19,10 @@
   "_requiredBy": [
     "/@vaadin/vaadin-split-layout"
   ],
-  "_resolved": "https://registry.npmjs.org/@vaadin/vaadin-themable-mixin/-/vaadin-themable-mixin-1.5.1.tgz",
-  "_shasum": "4b74625987ac350ba2083d3e0387518febd5f7b9",
+  "_resolved": "https://registry.npmjs.org/@vaadin/vaadin-themable-mixin/-/vaadin-themable-mixin-1.5.2.tgz",
+  "_shasum": "3fc4ec1180f8032c8025fe70053deacbeffd7f62",
   "_spec": "@vaadin/vaadin-themable-mixin@^1.2.1",
-  "_where": "/tmp/asset_stagerU9mU7/node_modules/@vaadin/vaadin-split-layout",
+  "_where": "/tmp/asset_stage2GOmGf/node_modules/@vaadin/vaadin-split-layout",
   "author": {
     "name": "Vaadin Ltd"
   },
@@ -31,7 +31,8 @@
   },
   "bundleDependencies": false,
   "dependencies": {
-    "@polymer/polymer": "^3.0.0"
+    "@polymer/polymer": "^3.0.0",
+    "lit-element": "^2.0.0"
   },
   "deprecated": false,
   "description": "vaadin-themable-mixin",
@@ -64,5 +65,5 @@
     "supports-color": "3.1.2",
     "type-detect": "1.0.0"
   },
-  "version": "1.5.1"
+  "version": "1.5.2"
 }
