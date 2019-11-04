@@ -1,9 +1,5 @@
-commit 3ad162605f9f53abe677cfc883b55582ff2b572f
+commit ae509d98c9cb02871ebfee50344e4d73a6c2c31e
 Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Mon Nov 4 14:18:19 2019 +1000
+Date:   Mon Nov 4 15:32:18 2019 +1000
 
-    Ports more manifest tests to unified syntax (#3986)
-    
-    * Update more manifest tests to use unified syntax
-    
-    * Set default syntax on and de-duplicate slandles syntax tests
+    Update flow graph tests to unified syntax (#3988)
