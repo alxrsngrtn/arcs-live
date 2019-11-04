@@ -1,5 +1,5 @@
-commit e310536e46663ad315628c2c2c201a5bca5aa452
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Mon Nov 4 11:42:28 2019 -0800
+commit c3b24e31e850b207d021157aa7db1e2eff28c1ad
+Author: Ray Cromwell <cromwellian@gmail.com>
+Date:   Mon Nov 4 14:51:24 2019 -0800
 
-    Fixes the javaharness broken by #3954 (#3991)
+    Fix G3 presubmit issues (#3992)
