@@ -1,5 +1,15 @@
-commit 01fc9dc6d0c2a63a1873dfe4b34e6894254552fd
-Author: Sarah Heimlich <heimlich@google.com>
-Date:   Mon Nov 4 10:46:08 2019 -0800
+commit d35b1754f3304c940d8261cf57003c7bc053d115
+Author: ianull <ianchang@google.com>
+Date:   Mon Nov 4 11:31:58 2019 -0800
 
-    Added .bazelproject for intellij importing. (#3989)
+    solo overrides dynamic manifest (#3975)
+    
+    Currently connecting to host pipes-shell doesn't work at the demo app
+    via the url http://localhost:8786/...?solo=<manifest> since the dynamic
+    manifest via bus.dispatcher.configure always overrides the solo argument
+    but the demo_manifest_bundle.arcs is not generated during web depolyment
+    via the deploy.sh script.
+    
+    Let the solo argument override dynamic manifest provides the flexibility
+    of exercising new features before bundling and deploying them via dynamic
+    manifest in app assets.
