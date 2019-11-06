@@ -26,9 +26,9 @@ declare class SyntheticKey extends KeyBase {
     readonly targetType: Type;
     readonly syntheticType: Type;
     constructor(key: string, storageFactory: StorageProviderFactory);
-    readonly protocol: string;
+    get protocol(): string;
     base(): string;
-    readonly arcId: string;
+    get arcId(): string;
     childKeyForHandle(id: any): SyntheticKey;
     childKeyForArcInfo(): SyntheticKey;
     childKeyForSuggestions(userId: any, arcId: any): KeyBase;

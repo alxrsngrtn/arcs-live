@@ -17,7 +17,7 @@ import { Content } from '../slot-consumer.js';
 export declare class FakeSlotComposer extends SlotComposer {
     constructor(options?: SlotComposerOptions);
     renderSlot(particle: Particle, slotName: string, content: Content): void;
-    readonly contexts: SlotContext[];
+    get contexts(): SlotContext[];
 }
 /**
  * A helper SlotComposer that records renderSlot calls.

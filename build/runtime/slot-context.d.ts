@@ -21,7 +21,7 @@ export declare abstract class SlotContext {
     addSlotConsumer(slotConsumer: SlotConsumer): void;
     clearSlotConsumers(): void;
     abstract onRenderSlot(consumer: SlotConsumer, content: Content, handler: any): any;
-    abstract readonly containerAvailable: boolean;
+    abstract get containerAvailable(): boolean;
 }
 /**
  * Represents a slot created by a transformation particle in the inner arc.
@@ -42,7 +42,8 @@ export declare class HostedSlotContext extends SlotContext {
     constructor(id: string, transformationSlotConsumer: SlotConsumer, storeId: string);
     onRenderSlot(consumer: SlotConsumer, content: Content, handler: any): void;
     addSlotConsumer(consumer: SlotConsumer): void;
-    containerAvailable: boolean;
+    get containerAvailable(): boolean;
+    set containerAvailable(containerAvailable: boolean);
 }
 /**
  * Represents a slot provided by a particle through a provide connection or one of the root slots
@@ -58,9 +59,10 @@ export declare class ProvidedSlotContext extends SlotContext {
     handles: Handle[];
     constructor(id: string, name: string, tags: string[], container: HTMLElement, spec: ProvideSlotConnectionSpec, sourceSlotConsumer?: SlotConsumer);
     onRenderSlot(consumer: SlotConsumer, content: Content, handler: any): void;
-    container: HTMLElement;
-    readonly containerAvailable: boolean;
+    get container(): HTMLElement;
+    get containerAvailable(): boolean;
     static createContextForContainer(id: any, name: any, container: any, tags: any): ProvidedSlotContext;
     isSameContainer(container: any): boolean;
+    set container(container: HTMLElement);
     addSlotConsumer(slotConsumer: any): void;
 }

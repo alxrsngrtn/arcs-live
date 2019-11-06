@@ -33,7 +33,7 @@ export declare class PouchDbKey extends KeyBase {
     readonly dbName: string;
     constructor(key: string);
     base(): string;
-    readonly arcId: string;
+    get arcId(): string;
     /**
      * Creates a new child PouchDbKey relative to the current key, based on the value of id.
      */

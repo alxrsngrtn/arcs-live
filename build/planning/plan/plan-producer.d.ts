@@ -53,7 +53,8 @@ export declare class PlanProducer {
         debug?: boolean;
         noSpecEx?: boolean;
     });
-    isPlanning: boolean;
+    get isPlanning(): boolean;
+    set isPlanning(isPlanning: boolean);
     registerStateChangedCallback(callback: any): void;
     onSearchChanged(): Promise<boolean>;
     dispose(): void;

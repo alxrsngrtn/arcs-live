@@ -1,6 +1,7 @@
+import { Schema } from './schema.js';
 import { Loader } from '../platform/loader.js';
 import { Reference } from './reference.js';
-import { Schema, Type, EntityType } from './type.js';
+import { Type, EntityType } from './type.js';
 import { Storable } from './handle.js';
 import { Particle } from './particle.js';
 import { Handle } from './handle.js';

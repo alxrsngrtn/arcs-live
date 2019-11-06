@@ -30,7 +30,7 @@ export declare class PouchDbStorage extends StorageBase {
     /** Tracks replication status and allows cancellation in tests */
     private static syncHandler;
     constructor(arcId: Id);
-    debug: boolean;
+    set debug(d: boolean);
     /**
      * Determines if the given type is Reference Mode and sets it
      * accordingly.  Attempts to sidestep the hacky ways reference mode

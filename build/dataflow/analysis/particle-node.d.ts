@@ -20,8 +20,8 @@ export declare class ParticleNode extends Node {
     constructor(nodeId: string, particle: Particle);
     addInEdge(edge: ParticleInput): void;
     addOutEdge(edge: Edge): void;
-    readonly inEdges: readonly ParticleInput[];
-    readonly outEdges: readonly Edge[];
+    get inEdges(): readonly ParticleInput[];
+    get outEdges(): readonly Edge[];
     /**
      * Iterates through all of the relevant in-edges leading into this particle, that flow out into the given out-edge. The out-edge may have a
      * 'derives from' claim that restricts which edges flow into it.
@@ -38,7 +38,7 @@ export declare class ParticleInput implements Edge {
     readonly modifier: FlowModifier;
     check?: FlowCheck;
     constructor(edgeId: string, particleNode: ParticleNode, otherEnd: Node, connection: HandleConnection);
-    readonly type: Type;
+    get type(): Type;
 }
 export declare class ParticleOutput implements Edge {
     readonly edgeId: string;
@@ -50,7 +50,7 @@ export declare class ParticleOutput implements Edge {
     readonly modifier: FlowModifier;
     readonly derivesFrom: Edge[];
     constructor(edgeId: string, particleNode: ParticleNode, otherEnd: Node, connection: HandleConnection);
-    readonly type: Type;
+    get type(): Type;
     computeDerivedFromEdges(): void;
     /**
      * Returns the list of edges from which the given edge could have derived. The

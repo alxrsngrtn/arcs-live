@@ -22,7 +22,7 @@ export declare class Match {
 export declare class SimplePlanner {
     readonly recipes: Recipe[];
     private _recipesByTrigger;
-    readonly recipesByTrigger: Match[];
+    get recipesByTrigger(): Match[];
     constructor(recipes: Recipe[]);
     plan(arc: Arc, request: [string, string][]): Promise<Recipe>;
 }

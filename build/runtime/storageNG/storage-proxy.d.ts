@@ -30,7 +30,7 @@ export declare class StorageProxy<T extends CRDTTypeRecord> {
     private readonly scheduler;
     private modelHasSynced;
     constructor(apiChannelId: string, storeProvider: StorageCommunicationEndpointProvider<T>, type: Type);
-    readonly pec: ParticleExecutionContext;
+    get pec(): ParticleExecutionContext;
     idle(): Promise<void>;
     reportExceptionInHost(exception: PropagatedException): void;
     registerHandle(handle: Handle<T>): VersionMap;
@@ -81,9 +81,9 @@ export declare class StorageProxyScheduler<T extends CRDTTypeRecord> {
     private _idle;
     constructor();
     enqueue(particle: Particle, handle: Handle<T>, args: Event): void;
-    readonly busy: boolean;
+    get busy(): boolean;
     _updateIdle(): void;
-    readonly idle: Promise<void>;
+    get idle(): Promise<void>;
     _schedule(): void;
     _dispatch(): void;
     _dispatchUpdate(handle: Handle<T>, update: Event): Promise<void>;

@@ -13,7 +13,6 @@ import {assert} from '../../platform/chai-web.js';
 import {fs} from '../../platform/fs-web.js';
 import {path} from '../../platform/path-web.js';
 import {Manifest, ErrorSeverity} from '../manifest.js';
-import {Schema} from '../type.js';
 import {checkDefined, checkNotNull} from '../testing/preconditions.js';
 import {StubLoader} from '../testing/stub-loader.js';
 import {Dictionary} from '../hot.js';
@@ -22,6 +21,7 @@ import {ClaimType, ClaimIsTag, ClaimDerivesFrom} from '../particle-claim.js';
 import {CheckHasTag, CheckBooleanExpression, CheckCondition, CheckIsFromStore} from '../particle-check.js';
 import {ProvideSlotConnectionSpec} from '../particle-spec.js';
 import {Flags} from '../flags.js';
+import {Schema} from '../schema.js';
 import {Store} from '../storageNG/store.js';
 import {StorageStub} from '../storage-stub.js';
 import {collectionHandleForTest} from '../testing/handle-for-test.js';
@@ -376,15 +376,15 @@ ${particleStr1}
         x: writes S
 
       recipe
-        handle1: use
-        handle2: use
+        handle1: use *
+        handle2: use *
         P1
           x: writes handle1
         P1
           x: writes handle2
       recipe
-        handle1: use
-        handle2: use
+        handle1: use *
+        handle2: use *
         P1
           x: writes handle2
         P1

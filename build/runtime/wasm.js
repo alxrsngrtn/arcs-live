@@ -411,6 +411,7 @@ class KotlinWasmDriver {
     initializeInstance(container, instance) {
         this.updateMemoryViews(container);
         // Kotlin main() must be invoked before everything else.
+        // TODO(alxrsngtn): Work out how to give Konan_js_main a type signature.
         instance.exports.Konan_js_main(1, 0);
     }
     updateMemoryViews(container) {

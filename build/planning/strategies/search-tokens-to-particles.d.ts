@@ -12,7 +12,7 @@ import { Strategy } from '../strategizer.js';
 export declare class SearchTokensToParticles extends Strategy {
     private readonly _walker;
     constructor(arc: Arc, options: any);
-    readonly walker: any;
+    get walker(): any;
     getResults(inputParams: any): any[];
     private _addThing;
     private _addThingByToken;

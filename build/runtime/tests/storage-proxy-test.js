@@ -10,9 +10,10 @@
 import { assert } from '../../platform/chai-web.js';
 import { handleFor } from '../handle.js';
 import { ArcId, IdGenerator } from '../id.js';
+import { Schema } from '../schema.js';
 import { StorageProxy, StorageProxyScheduler } from '../storage-proxy.js';
 import { CrdtCollectionModel } from '../storage/crdt-collection-model.js';
-import { Schema, EntityType } from '../type.js';
+import { EntityType } from '../type.js';
 import { Entity } from '../entity.js';
 import { floatingPromiseToAudit } from '../util.js';
 const CAN_READ = true;

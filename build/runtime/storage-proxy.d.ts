@@ -205,9 +205,9 @@ export declare class StorageProxyScheduler {
     private _idle;
     constructor();
     enqueue(particle: Particle, handle: HandleOld, args: [string, Particle, {}]): void;
-    readonly busy: boolean;
+    get busy(): boolean;
     _updateIdle(): void;
-    readonly idle: Promise<void>;
+    get idle(): Promise<void>;
     _schedule(): void;
     _dispatch(): void;
 }

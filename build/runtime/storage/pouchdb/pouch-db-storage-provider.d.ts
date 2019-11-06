@@ -39,7 +39,7 @@ export declare abstract class PouchDbStorageProvider extends StorageProviderBase
     /**
      * The active database for this provider.
      */
-    protected readonly db: PouchDB.Database;
+    protected get db(): PouchDB.Database;
     /**
      * Called when the remote pouchdb server updates locally.
      */

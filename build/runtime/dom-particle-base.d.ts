@@ -18,7 +18,7 @@ export declare class DomParticleBase extends Particle {
     /**
      * Override to return a String defining primary markup.
      */
-    readonly template: string;
+    get template(): string;
     /**
      * Override to return a String defining primary markup for the given slot name.
      */

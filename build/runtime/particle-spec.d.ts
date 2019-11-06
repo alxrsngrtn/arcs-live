@@ -10,7 +10,8 @@
 import { Modality } from './modality.js';
 import { Direction, ParticleClaimStatement, ParticleCheckStatement } from './manifest-ast-nodes.js';
 import { TypeVariableInfo } from './type-variable-info.js';
-import { Schema, InterfaceType, Type, TypeLiteral } from './type.js';
+import { Schema } from './schema.js';
+import { InterfaceType, Type, TypeLiteral } from './type.js';
 import { Literal } from './hot.js';
 import { Check } from './particle-check.js';
 import { ParticleClaim, Claim } from './particle-claim.js';
@@ -45,8 +46,8 @@ export declare class HandleConnectionSpec {
     constructor(rawData: SerializedHandleConnectionSpec, typeVarMap: Map<string, Type>);
     instantiateDependentConnections(particle: any, typeVarMap: Map<string, Type>): void;
     toSlotConnectionSpec(): ConsumeSlotConnectionSpec;
-    readonly isInput: boolean;
-    readonly isOutput: boolean;
+    get isInput(): boolean;
+    get isOutput(): boolean;
     isCompatibleType(type: Type): boolean;
 }
 declare type SerializedSlotConnectionSpec = {
@@ -68,10 +69,10 @@ export declare class ConsumeSlotConnectionSpec {
     handles: string[];
     provideSlotConnections: ProvideSlotConnectionSpec[];
     constructor(slotModel: SerializedSlotConnectionSpec);
-    readonly isOptional: boolean;
-    readonly direction: string;
-    readonly type: Type;
-    readonly dependentConnections: ProvideSlotConnectionSpec[];
+    get isOptional(): boolean;
+    get direction(): string;
+    get type(): Type;
+    get dependentConnections(): ProvideSlotConnectionSpec[];
 }
 export declare class ProvideSlotConnectionSpec extends ConsumeSlotConnectionSpec {
     check?: Check;
@@ -108,10 +109,10 @@ export declare class ParticleSpec {
     trustChecks: Check[];
     constructor(model: SerializedParticleSpec);
     createConnection(arg: SerializedHandleConnectionSpec, typeVarMap: Map<string, Type>): HandleConnectionSpec;
-    readonly handleConnections: HandleConnectionSpec[];
-    readonly connections: HandleConnectionSpec[];
-    readonly inputs: HandleConnectionSpec[];
-    readonly outputs: HandleConnectionSpec[];
+    get handleConnections(): HandleConnectionSpec[];
+    get connections(): HandleConnectionSpec[];
+    get inputs(): HandleConnectionSpec[];
+    get outputs(): HandleConnectionSpec[];
     isInput(param: string): boolean;
     isOutput(param: string): boolean;
     getConnectionByName(name: string): HandleConnectionSpec | undefined;
@@ -119,7 +120,7 @@ export declare class ParticleSpec {
     getSlandleSpec(slotName: string): ConsumeSlotConnectionSpec | undefined;
     slandleConnectionNames(): string[];
     slotConnectionNames(): string[];
-    readonly primaryVerb: string | undefined;
+    get primaryVerb(): string | undefined;
     isCompatible(modality: Modality): boolean;
     setImplBlobUrl(url: string): void;
     toLiteral(): SerializedParticleSpec;

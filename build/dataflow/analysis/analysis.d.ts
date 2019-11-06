@@ -36,7 +36,7 @@ export declare class ValidationResult {
     addCheckFailure(check: string, flow: Flow): void;
     addIngressFailure(check: string): void;
     addAllFailures(other: ValidationResult): void;
-    readonly isValid: boolean;
+    get isValid(): boolean;
     getFailureMessages(graph: FlowGraph): string[];
 }
 /** Returns true if all checks in the graph pass. */
@@ -58,8 +58,8 @@ export declare class EdgeExpression {
      */
     readonly unresolvedFlows: Map<Edge, FlowModifierSet>;
     constructor(edge: Edge);
-    readonly isResolved: boolean;
-    readonly parents: Edge[];
+    get isResolved(): boolean;
+    get parents(): Edge[];
     /**
      * Replaces an unresolved parent with the parent's own expression. Any
      * resolved flows into the parent get copied and modified to become resolved
@@ -84,7 +84,7 @@ export declare class Solver {
     private _isResolved;
     constructor(edges: readonly Edge[]);
     /** Returns true if every edge in the graph has been fully resolved to a FlowSet. */
-    readonly isResolved: boolean;
+    get isResolved(): boolean;
     /**
      * Runs through every check on an edge in the graph, and validates it against
      * the resolved flows into that edge.

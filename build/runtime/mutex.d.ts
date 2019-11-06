@@ -39,7 +39,7 @@ export declare class Mutex {
     /**
      * @return true if the mutex is already acquired.
      */
-    readonly locked: boolean;
+    get locked(): boolean;
     /**
      * Call acquire and await it to lock the critical section for the Mutex.
      *

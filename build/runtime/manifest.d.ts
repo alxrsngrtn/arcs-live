@@ -15,7 +15,8 @@ import * as AstNode from './manifest-ast-nodes.js';
 import { ParticleSpec } from './particle-spec.js';
 import { Recipe } from './recipe/recipe.js';
 import { StorageProviderFactory } from './storage/storage-provider-factory.js';
-import { Schema, EntityType, InterfaceType, Type } from './type.js';
+import { Schema } from './schema.js';
+import { EntityType, InterfaceType, Type } from './type.js';
 import { Dictionary } from './hot.js';
 import { ClaimIsTag } from './particle-claim.js';
 import { UnifiedStore } from './storageNG/unified-store.js';
@@ -64,22 +65,22 @@ export declare class Manifest {
     constructor({ id }: {
         id: Id | string;
     });
-    readonly id: Id;
-    readonly storageProviderFactory: StorageProviderFactory;
-    readonly recipes: Recipe[];
-    readonly allRecipes: Recipe[];
-    readonly activeRecipe: Recipe;
-    readonly particles: ParticleSpec[];
-    readonly allParticles: ParticleSpec[];
-    readonly imports: Manifest[];
-    readonly schemas: Dictionary<Schema>;
-    readonly allSchemas: Schema[];
-    readonly fileName: string;
-    readonly stores: UnifiedStore[];
-    readonly allStores: UnifiedStore[];
-    readonly interfaces: InterfaceInfo[];
-    readonly meta: ManifestMeta;
-    readonly resources: {};
+    get id(): Id;
+    get storageProviderFactory(): StorageProviderFactory;
+    get recipes(): Recipe[];
+    get allRecipes(): Recipe[];
+    get activeRecipe(): Recipe;
+    get particles(): ParticleSpec[];
+    get allParticles(): ParticleSpec[];
+    get imports(): Manifest[];
+    get schemas(): Dictionary<Schema>;
+    get allSchemas(): Schema[];
+    get fileName(): string;
+    get stores(): UnifiedStore[];
+    get allStores(): UnifiedStore[];
+    get interfaces(): InterfaceInfo[];
+    get meta(): ManifestMeta;
+    get resources(): {};
     applyMeta(section: {
         name: string;
     } & {
@@ -145,6 +146,6 @@ export declare class Manifest {
         showUnresolved?: boolean;
         hideFields?: boolean;
     }): string;
-    readonly idGeneratorForTesting: IdGenerator;
+    get idGeneratorForTesting(): IdGenerator;
 }
 export {};

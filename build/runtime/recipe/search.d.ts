@@ -14,9 +14,9 @@ export declare class Search {
     _resolvedTokens: string[];
     constructor(phrase: string, unresolvedTokens?: string[]);
     _append(phrase: string, unresolvedTokens: string[], resolvedTokens: string[]): void;
-    readonly phrase: string;
-    readonly unresolvedTokens: string[];
-    readonly resolvedTokens: string[];
+    get phrase(): string;
+    get unresolvedTokens(): string[];
+    get resolvedTokens(): string[];
     resolveToken(token: string): void;
     isValid(): boolean;
     isResolved(): boolean;

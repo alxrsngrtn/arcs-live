@@ -91,8 +91,8 @@
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* WEBPACK VAR INJECTION */(function(global) {/* harmony import */ var _build_runtime_particle_execution_context_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2);
-/* harmony import */ var _build_runtime_id_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(16);
-/* harmony import */ var _build_platform_loader_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(48);
+/* harmony import */ var _build_runtime_id_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(23);
+/* harmony import */ var _build_platform_loader_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(49);
 /**
  * @license
  * Copyright 2019 Google LLC.
@@ -156,13 +156,13 @@ __webpack_require__.r(__webpack_exports__);
 /* WEBPACK VAR INJECTION */(function(global) {/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ParticleExecutionContext", function() { return ParticleExecutionContext; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 /* harmony import */ var _api_channel_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(4);
-/* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(11);
-/* harmony import */ var _slot_proxy_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(44);
-/* harmony import */ var _storage_proxy_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(13);
-/* harmony import */ var _storageNG_storage_proxy_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(23);
-/* harmony import */ var _wasm_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(45);
-/* harmony import */ var _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(12);
-/* harmony import */ var _flags_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(37);
+/* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(18);
+/* harmony import */ var _slot_proxy_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(45);
+/* harmony import */ var _storage_proxy_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(20);
+/* harmony import */ var _storageNG_storage_proxy_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(30);
+/* harmony import */ var _wasm_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(46);
+/* harmony import */ var _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(19);
+/* harmony import */ var _flags_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(11);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -559,8 +559,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 /* harmony import */ var _particle_spec_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(5);
 /* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(8);
-/* harmony import */ var _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(12);
-/* harmony import */ var _util_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(28);
+/* harmony import */ var _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(19);
+/* harmony import */ var _util_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(35);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -1190,10 +1190,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modality_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6);
 /* harmony import */ var _recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(7);
 /* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(8);
-/* harmony import */ var _particle_check_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(42);
-/* harmony import */ var _particle_claim_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(43);
-/* harmony import */ var _flags_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(37);
-/* harmony import */ var _manifest_ast_nodes_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(36);
+/* harmony import */ var _particle_check_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(43);
+/* harmony import */ var _particle_claim_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(44);
+/* harmony import */ var _flags_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(11);
+/* harmony import */ var _manifest_ast_nodes_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(10);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -2012,7 +2012,6 @@ class TypeChecker {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Schema", function() { return Schema; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Type", function() { return Type; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CountType", function() { return CountType; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SingletonType", function() { return SingletonType; });
@@ -2026,17 +2025,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ReferenceType", function() { return ReferenceType; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ArcType", function() { return ArcType; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "HandleType", function() { return HandleType; });
-/* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(9);
-/* harmony import */ var _interface_info_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(35);
-/* harmony import */ var _slot_info_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(38);
-/* harmony import */ var _synthetic_types_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(39);
-/* harmony import */ var _type_variable_info_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(40);
-/* harmony import */ var _crdt_crdt_count_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(41);
-/* harmony import */ var _crdt_crdt_collection_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(20);
-/* harmony import */ var _crdt_crdt_singleton_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(22);
-/* harmony import */ var _crdt_crdt_entity_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(31);
-/* harmony import */ var _storageNG_handle_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(19);
-/* harmony import */ var _flags_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(37);
+/* harmony import */ var _interface_info_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(9);
+/* harmony import */ var _slot_info_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(12);
+/* harmony import */ var _synthetic_types_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(13);
+/* harmony import */ var _type_variable_info_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(14);
+/* harmony import */ var _crdt_crdt_count_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(42);
+/* harmony import */ var _crdt_crdt_collection_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(27);
+/* harmony import */ var _crdt_crdt_singleton_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(29);
+/* harmony import */ var _storageNG_handle_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(26);
+/* harmony import */ var _schema_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(15);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -2055,204 +2052,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
-
-class Schema {
-    // For convenience, primitive field types can be specified as {name: 'Type'}
-    // in `fields`; the constructor will convert these to the correct schema form.
-    // tslint:disable-next-line: no-any
-    constructor(names, fields, description) {
-        this.description = {};
-        this.names = names;
-        this.fields = {};
-        for (const [name, field] of Object.entries(fields)) {
-            if (typeof (field) === 'string') {
-                this.fields[name] = { kind: 'schema-primitive', type: field };
-            }
-            else {
-                this.fields[name] = field;
-            }
-        }
-        if (description) {
-            description.description.forEach(desc => this.description[desc.name] = desc.pattern || desc.patterns[0]);
-        }
-    }
-    toLiteral() {
-        const fields = {};
-        const updateField = field => {
-            if (field.kind === 'schema-reference') {
-                const schema = field.schema;
-                return { kind: 'schema-reference', schema: { kind: schema.kind, model: schema.model.toLiteral() } };
-            }
-            else if (field.kind === 'schema-collection') {
-                return { kind: 'schema-collection', schema: updateField(field.schema) };
-            }
-            else {
-                return field;
-            }
-        };
-        for (const key of Object.keys(this.fields)) {
-            fields[key] = updateField(this.fields[key]);
-        }
-        return { names: this.names, fields, description: this.description };
-    }
-    static fromLiteral(data = { fields: {}, names: [], description: {} }) {
-        const fields = {};
-        const updateField = field => {
-            if (field.kind === 'schema-reference') {
-                const schema = field.schema;
-                return { kind: 'schema-reference', schema: { kind: schema.kind, model: Type.fromLiteral(schema.model) } };
-            }
-            else if (field.kind === 'schema-collection') {
-                return { kind: 'schema-collection', schema: updateField(field.schema) };
-            }
-            else {
-                return field;
-            }
-        };
-        for (const key of Object.keys(data.fields)) {
-            fields[key] = updateField(data.fields[key]);
-        }
-        const result = new Schema(data.names, fields);
-        result.description = data.description || {};
-        return result;
-    }
-    // TODO(cypher1): This should only be an ident used in manifest parsing.
-    get name() {
-        return this.names[0];
-    }
-    static typesEqual(fieldType1, fieldType2) {
-        // TODO(cypher1): structural check instead of stringification.
-        return Schema._typeString(fieldType1) === Schema._typeString(fieldType2);
-    }
-    static _typeString(type) {
-        switch (type.kind) {
-            case 'schema-primitive':
-                return type.type;
-            case 'schema-union':
-                return `(${type.types.map(t => t.type).join(' or ')})`;
-            case 'schema-tuple':
-                return `(${type.types.map(t => t.type).join(', ')})`;
-            case 'schema-reference':
-                return `Reference<${Schema._typeString(type.schema)}>`;
-            case 'type-name':
-            case 'schema-inline':
-                return type.model.entitySchema.toInlineSchemaString();
-            case 'schema-collection':
-                return `[${Schema._typeString(type.schema)}]`;
-            default:
-                throw new Error(`Unknown type kind ${type.kind} in schema ${this.name}`);
-        }
-    }
-    static union(schema1, schema2) {
-        const names = [...new Set([...schema1.names, ...schema2.names])];
-        const fields = {};
-        for (const [field, type] of [...Object.entries(schema1.fields), ...Object.entries(schema2.fields)]) {
-            if (fields[field]) {
-                if (!Schema.typesEqual(fields[field], type)) {
-                    return null;
-                }
-            }
-            else {
-                fields[field] = type;
-            }
-        }
-        return new Schema(names, fields);
-    }
-    static intersect(schema1, schema2) {
-        const names = [...schema1.names].filter(name => schema2.names.includes(name));
-        const fields = {};
-        for (const [field, type] of Object.entries(schema1.fields)) {
-            const otherType = schema2.fields[field];
-            if (otherType && Schema.typesEqual(type, otherType)) {
-                fields[field] = type;
-            }
-        }
-        return new Schema(names, fields);
-    }
-    equals(otherSchema) {
-        // TODO(cypher1): Check equality without calling contains.
-        return this === otherSchema || (this.name === otherSchema.name
-            && this.isMoreSpecificThan(otherSchema)
-            && otherSchema.isMoreSpecificThan(this));
-    }
-    isMoreSpecificThan(otherSchema) {
-        const names = new Set(this.names);
-        for (const name of otherSchema.names) {
-            if (!names.has(name)) {
-                return false;
-            }
-        }
-        const fields = {};
-        for (const [name, type] of Object.entries(this.fields)) {
-            fields[name] = type;
-        }
-        for (const [name, type] of Object.entries(otherSchema.fields)) {
-            if (fields[name] == undefined) {
-                return false;
-            }
-            if (!Schema.typesEqual(fields[name], type)) {
-                return false;
-            }
-        }
-        return true;
-    }
-    get type() {
-        return new EntityType(this);
-    }
-    entityClass(context = null) {
-        return _entity_js__WEBPACK_IMPORTED_MODULE_0__["Entity"].createEntityClass(this, context);
-    }
-    crdtConstructor() {
-        const singletons = {};
-        const collections = {};
-        // TODO(shans) do this properly
-        for (const [field, { type }] of Object.entries(this.fields)) {
-            if (type === 'Text') {
-                singletons[field] = new _crdt_crdt_singleton_js__WEBPACK_IMPORTED_MODULE_7__["CRDTSingleton"]();
-            }
-            else if (type === 'Number') {
-                singletons[field] = new _crdt_crdt_singleton_js__WEBPACK_IMPORTED_MODULE_7__["CRDTSingleton"]();
-            }
-            else {
-                throw new Error(`Big Scary Exception: entity field ${field} of type ${type} doesn't yet have a CRDT mapping implemented`);
-            }
-        }
-        return class EntityCRDT extends _crdt_crdt_entity_js__WEBPACK_IMPORTED_MODULE_8__["CRDTEntity"] {
-            constructor() {
-                super(singletons, collections);
-            }
-        };
-    }
-    // TODO(jopra): Enforce that 'type' of a field is a Type.
-    // tslint:disable-next-line: no-any
-    static fieldToString([name, type]) {
-        const typeStr = Schema._typeString(type);
-        if (_flags_js__WEBPACK_IMPORTED_MODULE_10__["Flags"].defaultToPreSlandlesSyntax) {
-            return `${typeStr} ${name}`;
-        }
-        return `${name}: ${typeStr}`;
-    }
-    toInlineSchemaString(options) {
-        const names = this.names.join(' ') || '*';
-        const fields = Object.entries(this.fields).map(Schema.fieldToString).join(', ');
-        return `${names} {${fields.length > 0 && options && options.hideFields ? '...' : fields}}`;
-    }
-    toManifestString() {
-        const results = [];
-        results.push(`schema ${this.names.join(' ')}`);
-        results.push(...Object.entries(this.fields).map(f => `  ${Schema.fieldToString(f)}`));
-        if (Object.keys(this.description).length > 0) {
-            results.push(`  description \`${this.description.pattern}\``);
-            for (const name of Object.keys(this.description)) {
-                if (name !== 'pattern') {
-                    results.push(`    ${name} \`${this.description[name]}\``);
-                }
-            }
-        }
-        return results.join('\n');
-    }
-}
 class Type {
     constructor(tag) {
         this.tag = tag;
@@ -2260,9 +2059,9 @@ class Type {
     static fromLiteral(literal) {
         switch (literal.tag) {
             case 'Entity':
-                return new EntityType(Schema.fromLiteral(literal.data));
+                return new EntityType(_schema_js__WEBPACK_IMPORTED_MODULE_8__["Schema"].fromLiteral(literal.data));
             case 'TypeVariable':
-                return new TypeVariable(_type_variable_info_js__WEBPACK_IMPORTED_MODULE_4__["TypeVariableInfo"].fromLiteral(literal.data));
+                return new TypeVariable(_type_variable_info_js__WEBPACK_IMPORTED_MODULE_3__["TypeVariableInfo"].fromLiteral(literal.data));
             case 'Collection':
                 return new CollectionType(Type.fromLiteral(literal.data));
             case 'BigCollection':
@@ -2270,9 +2069,9 @@ class Type {
             case 'Relation':
                 return new RelationType(literal.data.map(t => Type.fromLiteral(t)));
             case 'Interface':
-                return new InterfaceType(_interface_info_js__WEBPACK_IMPORTED_MODULE_1__["InterfaceInfo"].fromLiteral(literal.data));
+                return new InterfaceType(_interface_info_js__WEBPACK_IMPORTED_MODULE_0__["InterfaceInfo"].fromLiteral(literal.data));
             case 'Slot':
-                return new SlotType(_slot_info_js__WEBPACK_IMPORTED_MODULE_2__["SlotInfo"].fromLiteral(literal.data));
+                return new SlotType(_slot_info_js__WEBPACK_IMPORTED_MODULE_1__["SlotInfo"].fromLiteral(literal.data));
             case 'Reference':
                 return new ReferenceType(Type.fromLiteral(literal.data));
             case 'Arc':
@@ -2304,7 +2103,7 @@ class Type {
                 return false;
             }
             if (type1.canReadSubset instanceof EntityType && type2.canReadSubset instanceof EntityType) {
-                return Schema.intersect(type1.canReadSubset.entitySchema, type2.canReadSubset.entitySchema) !== null;
+                return _schema_js__WEBPACK_IMPORTED_MODULE_8__["Schema"].intersect(type1.canReadSubset.entitySchema, type2.canReadSubset.entitySchema) !== null;
             }
             throw new Error(`_canMergeCanReadSubset not implemented for types tagged with ${type1.canReadSubset.tag}`);
         }
@@ -2316,7 +2115,7 @@ class Type {
                 return false;
             }
             if (type1.canWriteSuperset instanceof EntityType && type2.canWriteSuperset instanceof EntityType) {
-                return Schema.union(type1.canWriteSuperset.entitySchema, type2.canWriteSuperset.entitySchema) !== null;
+                return _schema_js__WEBPACK_IMPORTED_MODULE_8__["Schema"].union(type1.canWriteSuperset.entitySchema, type2.canWriteSuperset.entitySchema) !== null;
             }
         }
         return true;
@@ -2455,7 +2254,7 @@ class CountType extends Type {
         return { tag: 'Count' };
     }
     crdtInstanceConstructor() {
-        return _crdt_crdt_count_js__WEBPACK_IMPORTED_MODULE_5__["CRDTCount"];
+        return _crdt_crdt_count_js__WEBPACK_IMPORTED_MODULE_4__["CRDTCount"];
     }
 }
 class SingletonType extends Type {
@@ -2470,10 +2269,10 @@ class SingletonType extends Type {
         return this.innerType;
     }
     crdtInstanceConstructor() {
-        return _crdt_crdt_singleton_js__WEBPACK_IMPORTED_MODULE_7__["CRDTSingleton"];
+        return _crdt_crdt_singleton_js__WEBPACK_IMPORTED_MODULE_6__["CRDTSingleton"];
     }
     handleConstructor() {
-        return _storageNG_handle_js__WEBPACK_IMPORTED_MODULE_9__["SingletonHandle"];
+        return _storageNG_handle_js__WEBPACK_IMPORTED_MODULE_7__["SingletonHandle"];
     }
     get isSingleton() {
         return true;
@@ -2488,7 +2287,7 @@ class EntityType extends Type {
         this.entitySchema = schema;
     }
     static make(names, fields, description) {
-        return new EntityType(new Schema(names, fields, description));
+        return new EntityType(new _schema_js__WEBPACK_IMPORTED_MODULE_8__["Schema"](names, fields, description));
     }
     // These type identifier methods are being left in place for non-runtime code.
     get isEntity() {
@@ -2548,7 +2347,7 @@ class TypeVariable extends Type {
         this.variable = variable;
     }
     static make(name, canWriteSuperset, canReadSubset) {
-        return new TypeVariable(new _type_variable_info_js__WEBPACK_IMPORTED_MODULE_4__["TypeVariableInfo"](name, canWriteSuperset, canReadSubset));
+        return new TypeVariable(new _type_variable_info_js__WEBPACK_IMPORTED_MODULE_3__["TypeVariableInfo"](name, canWriteSuperset, canReadSubset));
     }
     get isVariable() {
         return true;
@@ -2591,7 +2390,7 @@ class TypeVariable extends Type {
             return new TypeVariable(variableMap.get(name));
         }
         else {
-            const newTypeVariable = _type_variable_info_js__WEBPACK_IMPORTED_MODULE_4__["TypeVariableInfo"].fromLiteral(this.variable.toLiteral());
+            const newTypeVariable = _type_variable_info_js__WEBPACK_IMPORTED_MODULE_3__["TypeVariableInfo"].fromLiteral(this.variable.toLiteral());
             variableMap.set(name, newTypeVariable);
             return new TypeVariable(newTypeVariable);
         }
@@ -2601,7 +2400,7 @@ class TypeVariable extends Type {
             return new TypeVariable(variableMap.get(this.variable));
         }
         else {
-            const newTypeVariable = _type_variable_info_js__WEBPACK_IMPORTED_MODULE_4__["TypeVariableInfo"].fromLiteral(this.variable.toLiteralIgnoringResolutions());
+            const newTypeVariable = _type_variable_info_js__WEBPACK_IMPORTED_MODULE_3__["TypeVariableInfo"].fromLiteral(this.variable.toLiteralIgnoringResolutions());
             if (this.variable.resolution) {
                 newTypeVariable._resolution = this.variable._resolution._cloneWithResolutions(variableMap);
             }
@@ -2695,10 +2494,10 @@ class CollectionType extends Type {
         return `${this.collectionType.toPrettyString()} List`;
     }
     crdtInstanceConstructor() {
-        return _crdt_crdt_collection_js__WEBPACK_IMPORTED_MODULE_6__["CRDTCollection"];
+        return _crdt_crdt_collection_js__WEBPACK_IMPORTED_MODULE_5__["CRDTCollection"];
     }
     handleConstructor() {
-        return _storageNG_handle_js__WEBPACK_IMPORTED_MODULE_9__["CollectionHandle"];
+        return _storageNG_handle_js__WEBPACK_IMPORTED_MODULE_7__["CollectionHandle"];
     }
 }
 class BigCollectionType extends Type {
@@ -2788,7 +2587,7 @@ class InterfaceType extends Type {
         this.interfaceInfo = iface;
     }
     static make(name, handleConnections, slots) {
-        return new InterfaceType(new _interface_info_js__WEBPACK_IMPORTED_MODULE_1__["InterfaceInfo"](name, handleConnections, slots));
+        return new InterfaceType(new _interface_info_js__WEBPACK_IMPORTED_MODULE_0__["InterfaceInfo"](name, handleConnections, slots));
     }
     get isInterface() {
         return true;
@@ -2843,7 +2642,7 @@ class SlotType extends Type {
         this.slot = slot;
     }
     static make(formFactor, handle) {
-        return new SlotType(new _slot_info_js__WEBPACK_IMPORTED_MODULE_2__["SlotInfo"](formFactor, handle));
+        return new SlotType(new _slot_info_js__WEBPACK_IMPORTED_MODULE_1__["SlotInfo"](formFactor, handle));
     }
     getSlot() {
         return this.slot;
@@ -2948,7 +2747,7 @@ class ArcType extends Type {
         return true;
     }
     newInstance(arcId, serialization) {
-        return new _synthetic_types_js__WEBPACK_IMPORTED_MODULE_3__["ArcInfo"](arcId, serialization);
+        return new _synthetic_types_js__WEBPACK_IMPORTED_MODULE_2__["ArcInfo"](arcId, serialization);
     }
     toLiteral() {
         return { tag: this.tag };
@@ -2973,12 +2772,1129 @@ class HandleType extends Type {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "InterfaceInfo", function() { return InterfaceInfo; });
+/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
+/* harmony import */ var _recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(7);
+/* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(8);
+/* harmony import */ var _manifest_ast_nodes_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(10);
+/* harmony import */ var _flags_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(11);
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+
+
+
+
+function _typeFromLiteral(member) {
+    return _type_js__WEBPACK_IMPORTED_MODULE_2__["Type"].fromLiteral(member);
+}
+function _typeVarOrStringFromLiteral(member) {
+    if (typeof member === 'object') {
+        return _typeFromLiteral(member);
+    }
+    return member;
+}
+function _HandleConnectionFromLiteral({ type, name, direction }) {
+    return {
+        type: type ? _typeFromLiteral(type) : undefined,
+        name: name ? _typeVarOrStringFromLiteral(name) : undefined,
+        direction: direction || 'any'
+    };
+}
+function _SlotFromLiteral({ name, direction, isRequired, isSet }) {
+    return {
+        name: name ? _typeVarOrStringFromLiteral(name) : undefined,
+        direction, isRequired, isSet
+    };
+}
+function _typeToLiteral(member) {
+    return member.toLiteral();
+}
+function _typeVarOrStringToLiteral(member) {
+    if (member instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["TypeVariable"]) {
+        return member.toLiteral();
+    }
+    return member;
+}
+function _HandleConnectionToLiteral({ type, name, direction }) {
+    return {
+        type: type && _typeToLiteral(type),
+        name: name && _typeVarOrStringToLiteral(name),
+        direction
+    };
+}
+function _SlotToLiteral({ name, direction, isRequired, isSet }) {
+    return {
+        name: name && _typeVarOrStringToLiteral(name),
+        direction,
+        isRequired,
+        isSet
+    };
+}
+const handleConnectionFields = ['type', 'name', 'direction'];
+const slotFields = ['name', 'direction', 'isRequired', 'isSet'];
+class InterfaceInfo {
+    constructor(name, handleConnections, slots) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(name);
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(handleConnections !== undefined);
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(slots !== undefined);
+        this.name = name;
+        this.handleConnections = handleConnections;
+        this.slots = slots;
+        this.typeVars = [];
+        for (const handleConnection of handleConnections) {
+            for (const field of handleConnectionFields) {
+                if (InterfaceInfo.isTypeVar(handleConnection[field])) {
+                    this.typeVars.push({ object: handleConnection, field });
+                }
+            }
+        }
+        for (const slot of slots) {
+            for (const field of slotFields) {
+                if (InterfaceInfo.isTypeVar(slot[field])) {
+                    this.typeVars.push({ object: slot, field });
+                }
+            }
+        }
+    }
+    toPrettyString() {
+        return 'InterfaceInfo';
+    }
+    mergeTypeVariablesByName(variableMap) {
+        this.typeVars.forEach(({ object, field }) => object[field] = object[field].mergeTypeVariablesByName(variableMap));
+    }
+    get canReadSubset() {
+        return this._cloneAndUpdate(typeVar => typeVar.canReadSubset);
+    }
+    get canWriteSuperset() {
+        return this._cloneAndUpdate(typeVar => typeVar.canWriteSuperset);
+    }
+    isMoreSpecificThan(other) {
+        if (this.handleConnections.length !== other.handleConnections.length ||
+            this.slots.length !== other.slots.length) {
+            return false;
+        }
+        // TODO: should probably confirm that handleConnections and slots actually match.
+        for (let i = 0; i < this.typeVars.length; i++) {
+            const thisTypeVar = this.typeVars[i];
+            const otherTypeVar = other.typeVars[i];
+            if (!thisTypeVar.object[thisTypeVar.field].isMoreSpecificThan(otherTypeVar.object[otherTypeVar.field])) {
+                return false;
+            }
+        }
+        return true;
+    }
+    _applyExistenceTypeTest(test) {
+        for (const typeRef of this.typeVars) {
+            if (test(typeRef.object[typeRef.field])) {
+                return true;
+            }
+        }
+        return false;
+    }
+    _handleConnectionsToManifestString() {
+        return this.handleConnections
+            .map(h => {
+            if (_flags_js__WEBPACK_IMPORTED_MODULE_4__["Flags"].defaultToPreSlandlesSyntax) {
+                return `  ${h.direction || 'any'} ${h.type.toString()} ${h.name ? h.name : '*'}`;
+            }
+            else {
+                const nameStr = h.name ? `${h.name}: ` : '';
+                const direction = _manifest_ast_nodes_js__WEBPACK_IMPORTED_MODULE_3__["preSlandlesDirectionToDirection"](h.direction || 'any');
+                return `  ${nameStr}${direction} ${h.type.toString()}`;
+            }
+        }).join('\n');
+    }
+    _slotsToManifestString() {
+        // TODO deal with isRequired
+        return this.slots
+            .map(slot => {
+            if (_flags_js__WEBPACK_IMPORTED_MODULE_4__["Flags"].defaultToPreSlandlesSyntax) {
+                return `  ${slot.isRequired ? 'must ' : ''}${slot.direction} ${slot.isSet ? 'set of ' : ''}${slot.name || ''}`;
+            }
+            else {
+                const nameStr = slot.name ? `${slot.name}: ` : '';
+                return `  ${nameStr}${slot.direction}s${slot.isRequired ? '' : '?'} ${slot.isSet ? '[Slot]' : 'Slot'}`;
+            }
+        })
+            .join('\n');
+    }
+    // TODO: Include name as a property of the interface and normalize this to just toString()
+    toString() {
+        return `interface ${this.name}
+${this._handleConnectionsToManifestString()}
+${this._slotsToManifestString()}`;
+    }
+    static fromLiteral(data) {
+        const handleConnections = data.handleConnections.map(_HandleConnectionFromLiteral);
+        const slots = data.slots.map(_SlotFromLiteral);
+        return new InterfaceInfo(data.name, handleConnections, slots);
+    }
+    toLiteral() {
+        const handleConnections = this.handleConnections.map(_HandleConnectionToLiteral);
+        const slots = this.slots.map(_SlotToLiteral);
+        return { name: this.name, handleConnections, slots };
+    }
+    clone(variableMap) {
+        const handleConnections = this.handleConnections.map(({ name, direction, type }) => ({ name, direction, type: type ? type.clone(variableMap) : undefined }));
+        const slots = this.slots.map(({ name, direction, isRequired, isSet }) => ({ name, direction, isRequired, isSet }));
+        return new InterfaceInfo(this.name, handleConnections, slots);
+    }
+    cloneWithResolutions(variableMap) {
+        return this._cloneWithResolutions(variableMap);
+    }
+    _cloneWithResolutions(variableMap) {
+        const handleConnections = this.handleConnections.map(({ name, direction, type }) => ({ name, direction, type: type ? type._cloneWithResolutions(variableMap) : undefined }));
+        const slots = this.slots.map(({ name, direction, isRequired, isSet }) => ({ name, direction, isRequired, isSet }));
+        return new InterfaceInfo(this.name, handleConnections, slots);
+    }
+    canEnsureResolved() {
+        for (const typeVar of this.typeVars) {
+            if (!typeVar.object[typeVar.field].canEnsureResolved()) {
+                return false;
+            }
+        }
+        return true;
+    }
+    maybeEnsureResolved() {
+        for (const typeVar of this.typeVars) {
+            let variable = typeVar.object[typeVar.field];
+            variable = variable.clone(new Map());
+            if (!variable.maybeEnsureResolved())
+                return false;
+        }
+        for (const typeVar of this.typeVars) {
+            typeVar.object[typeVar.field].maybeEnsureResolved();
+        }
+        return true;
+    }
+    tryMergeTypeVariablesWith(other) {
+        // Type variable enabled slot matching will Just Work when we
+        // unify slots and handleConnections.
+        if (!this._equalItems(other.slots, this.slots, this._equalSlot)) {
+            return null;
+        }
+        if (other.handleConnections.length !== this.handleConnections.length) {
+            return null;
+        }
+        const handleConnections = new Set(this.handleConnections);
+        const otherHandleConnections = new Set(other.handleConnections);
+        const handleConnectionMap = new Map();
+        let sizeCheck = handleConnections.size;
+        while (handleConnections.size > 0) {
+            const handleConnectionMatches = [...handleConnections.values()].map(handleConnection => ({ handleConnection, match: [...otherHandleConnections.values()].filter(otherHandleConnection => this._equalHandleConnection(handleConnection, otherHandleConnection)) }));
+            for (const handleConnectionMatch of handleConnectionMatches) {
+                // no match!
+                if (handleConnectionMatch.match.length === 0) {
+                    return null;
+                }
+                if (handleConnectionMatch.match.length === 1) {
+                    handleConnectionMap.set(handleConnectionMatch.handleConnection, handleConnectionMatch.match[0]);
+                    otherHandleConnections.delete(handleConnectionMatch.match[0]);
+                    handleConnections.delete(handleConnectionMatch.handleConnection);
+                }
+            }
+            // no progress!
+            if (handleConnections.size === sizeCheck) {
+                return null;
+            }
+            sizeCheck = handleConnections.size;
+        }
+        const handleConnectionList = [];
+        for (const handleConnection of this.handleConnections) {
+            const otherHandleConnection = handleConnectionMap.get(handleConnection);
+            let resultType;
+            if (handleConnection.type.hasVariable || otherHandleConnection.type.hasVariable) {
+                resultType = _recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_1__["TypeChecker"]._tryMergeTypeVariable(handleConnection.type, otherHandleConnection.type);
+                if (!resultType) {
+                    return null;
+                }
+            }
+            else {
+                resultType = handleConnection.type || otherHandleConnection.type;
+            }
+            handleConnectionList.push({ name: handleConnection.name || otherHandleConnection.name, direction: handleConnection.direction || otherHandleConnection.direction, type: resultType });
+        }
+        const slots = this.slots.map(({ name, direction, isRequired, isSet }) => ({ name, direction, isRequired, isSet }));
+        return new InterfaceInfo(this.name, handleConnectionList, slots);
+    }
+    resolvedType() {
+        return this._cloneAndUpdate(typeVar => typeVar.resolvedType());
+    }
+    equals(other) {
+        if (this.handleConnections.length !== other.handleConnections.length) {
+            return false;
+        }
+        // TODO: this isn't quite right as it doesn't deal with duplicates properly
+        if (!this._equalItems(other.handleConnections, this.handleConnections, this._equalHandleConnection)) {
+            return false;
+        }
+        if (!this._equalItems(other.slots, this.slots, this._equalSlot)) {
+            return false;
+        }
+        return true;
+    }
+    _equalHandleConnection(handleConnection, otherHandleConnection) {
+        return handleConnection.name === otherHandleConnection.name
+            && handleConnection.direction === otherHandleConnection.direction
+            && _recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_1__["TypeChecker"].compareTypes({ type: handleConnection.type }, { type: otherHandleConnection.type });
+    }
+    _equalSlot(slot, otherSlot) {
+        return slot.name === otherSlot.name && slot.direction === otherSlot.direction && slot.isRequired === otherSlot.isRequired && slot.isSet === otherSlot.isSet;
+    }
+    _equalItems(otherItems, items, compareItem) {
+        for (const otherItem of otherItems) {
+            let exists = false;
+            for (const item of items) {
+                if (compareItem(item, otherItem)) {
+                    exists = true;
+                    break;
+                }
+            }
+            if (!exists) {
+                return false;
+            }
+        }
+        return true;
+    }
+    _cloneAndUpdate(update) {
+        const copy = this.clone(new Map());
+        copy.typeVars.forEach(typeVar => InterfaceInfo._updateTypeVar(typeVar, update));
+        return copy;
+    }
+    static _updateTypeVar(typeVar, update) {
+        typeVar.object[typeVar.field] = update(typeVar.object[typeVar.field]);
+    }
+    static isTypeVar(reference) {
+        return reference instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["TypeVariable"] || reference instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["Type"] && reference.hasVariable;
+    }
+    static mustMatch(reference) {
+        return !(reference == undefined || InterfaceInfo.isTypeVar(reference));
+    }
+    static handleConnectionsMatch(interfaceHandleConnection, particleHandleConnection) {
+        if (InterfaceInfo.mustMatch(interfaceHandleConnection.name) &&
+            interfaceHandleConnection.name !== particleHandleConnection.name) {
+            return false;
+        }
+        // TODO: FIXME direction subsetting?
+        if (InterfaceInfo.mustMatch(interfaceHandleConnection.direction)
+            && interfaceHandleConnection.direction !== 'any'
+            && particleHandleConnection.direction !== 'any'
+            && interfaceHandleConnection.direction !== particleHandleConnection.direction) {
+            return false;
+        }
+        if (interfaceHandleConnection.type == undefined) {
+            return true;
+        }
+        const [left, right] = _type_js__WEBPACK_IMPORTED_MODULE_2__["Type"].unwrapPair(interfaceHandleConnection.type, particleHandleConnection.type);
+        if (left instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["TypeVariable"]) {
+            return [{ var: left, value: right, direction: interfaceHandleConnection.direction }];
+        }
+        else {
+            return _recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_1__["TypeChecker"].compareTypes({ type: left }, { type: right });
+        }
+    }
+    static slotsMatch(interfaceSlot, particleSlot) {
+        if (InterfaceInfo.mustMatch(interfaceSlot.name) &&
+            interfaceSlot.name !== particleSlot.name) {
+            return false;
+        }
+        if (InterfaceInfo.mustMatch(interfaceSlot.direction) &&
+            interfaceSlot.direction !== particleSlot.direction) {
+            return false;
+        }
+        if (InterfaceInfo.mustMatch(interfaceSlot.isRequired) &&
+            interfaceSlot.isRequired !== particleSlot.isRequired) {
+            return false;
+        }
+        if (InterfaceInfo.mustMatch(interfaceSlot.isSet) &&
+            interfaceSlot.isSet !== particleSlot.isSet) {
+            return false;
+        }
+        return true;
+    }
+    particleMatches(particleSpec) {
+        const interfaceInfo = this.cloneWithResolutions(new Map());
+        return interfaceInfo.restrictType(particleSpec) !== false;
+    }
+    restrictType(particleSpec) {
+        return this._restrictThis(particleSpec);
+    }
+    _restrictThis(particleSpec) {
+        const handleConnectionMatches = this.handleConnections.map(h => particleSpec.handleConnections.map(c => ({ match: c, result: InterfaceInfo.handleConnectionsMatch(h, c) }))
+            .filter(a => a.result !== false));
+        const particleSlots = [];
+        particleSpec.slotConnections.forEach(consumedSlot => {
+            particleSlots.push({ name: consumedSlot.name, direction: 'consume', isRequired: consumedSlot.isRequired, isSet: consumedSlot.isSet });
+            consumedSlot.provideSlotConnections.forEach(providedSlot => {
+                particleSlots.push({ name: providedSlot.name, direction: 'provide', isRequired: false, isSet: providedSlot.isSet });
+            });
+        });
+        const slotsThatMatch = this.slots.map(slot => particleSlots.filter(particleSlot => InterfaceInfo.slotsMatch(slot, particleSlot)));
+        const slotMatches = slotsThatMatch.map(matchList => matchList.map(slot => ({ match: slot, result: true })));
+        // TODO: this probably doesn't deal with multiple match options.
+        function choose(list, exclusions) {
+            if (list.length === 0) {
+                return [];
+            }
+            const thisLevel = list.pop();
+            for (const connection of thisLevel) {
+                if (exclusions.includes(connection.match)) {
+                    continue;
+                }
+                const newExclusions = exclusions.slice();
+                newExclusions.push(connection.match);
+                const constraints = choose(list, newExclusions);
+                if (constraints !== false) {
+                    if (typeof connection.result === 'boolean') {
+                        return constraints;
+                    }
+                    return constraints.concat(connection.result);
+                }
+            }
+            return false;
+        }
+        const handleConnectionOptions = choose(handleConnectionMatches, []);
+        const slotOptions = choose(slotMatches, []);
+        if (handleConnectionOptions === false || slotOptions === false) {
+            return false;
+        }
+        for (const constraint of handleConnectionOptions) {
+            if (!constraint.var.variable.resolution) {
+                constraint.var.variable.resolution = constraint.value;
+            }
+            else if (constraint.var.variable.resolution instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["TypeVariable"]) {
+                // TODO(shans): revisit how this should be done,
+                // consider reusing tryMergeTypeVariablesWith(other).
+                if (!_recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_1__["TypeChecker"].processTypeList(constraint.var, [{
+                        type: constraint.value, direction: constraint.direction
+                    }]))
+                    return false;
+            }
+            else {
+                if (!_recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_1__["TypeChecker"].compareTypes({ type: constraint.var.variable.resolution }, { type: constraint.value })) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+}
+//# sourceMappingURL=interface-info.js.map
+
+/***/ }),
+/* 10 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "BaseNode", function() { return BaseNode; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isCollectionType", function() { return isCollectionType; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isTypeVariable", function() { return isTypeVariable; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isSlotType", function() { return isSlotType; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "slandleType", function() { return slandleType; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "preSlandlesDirectionToDirection", function() { return preSlandlesDirectionToDirection; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "directionToPreSlandlesDirection", function() { return directionToPreSlandlesDirection; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "arrowToDirection", function() { return arrowToDirection; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "directionToArrow", function() { return directionToArrow; });
+/**
+ * A base token interface for the `kind` and `location` entries. This creates
+ * a TypeScript Discriminated Union for most tokens.
+ */
+class BaseNode {
+}
+function isCollectionType(node) {
+    return node.kind === 'collection-type';
+}
+function isTypeVariable(node) {
+    return node.kind === 'variable-type';
+}
+function isSlotType(node) {
+    return node.kind === 'slot-type';
+}
+function slandleType(arg) {
+    if (isSlotType(arg.type)) {
+        return arg.type;
+    }
+    if (isCollectionType(arg.type) && isSlotType(arg.type.type)) {
+        return arg.type.type;
+    }
+    return undefined;
+}
+function preSlandlesDirectionToDirection(direction, isOptional = false) {
+    // TODO(jopra): Remove after syntax unification.
+    // Use switch for totality checking.
+    const opt = isOptional ? '?' : '';
+    switch (direction) {
+        case 'in':
+            return `reads${opt}`;
+        case 'out':
+            return `writes${opt}`;
+        case 'inout':
+            return `reads${opt} writes${opt}`;
+        case '`consume':
+            return `\`consumes${opt}`;
+        case '`provide':
+            return `\`provides${opt}`;
+        case 'host':
+            return `hosts${opt}`;
+        case 'any':
+            return `any${opt}`;
+        default:
+            // Catch nulls and unsafe values from javascript.
+            throw new Error(`Bad pre slandles direction ${direction}`);
+    }
+}
+function directionToPreSlandlesDirection(direction) {
+    // TODO(jopra): Remove after syntax unification.
+    // Use switch for totality checking.
+    switch (direction) {
+        case 'reads':
+            return 'in';
+        case 'writes':
+            return 'out';
+        case 'reads writes':
+            return 'inout';
+        case '`consumes':
+            return '`consume';
+        case '`provides':
+            return '`provide';
+        case 'hosts':
+            return 'host';
+        case 'any':
+            return 'any';
+        default:
+            // Catch nulls and unsafe values from javascript.
+            throw new Error(`Bad direction ${direction}`);
+    }
+}
+function arrowToDirection(arrow) {
+    // TODO(jopra): Remove after syntax unification.
+    // Use switch for totality checking.
+    switch (arrow) {
+        case '->':
+            return 'out';
+        case '<-':
+            return 'in';
+        case '<->':
+            return 'inout';
+        case '`consume':
+            return '`consume';
+        case '`provide':
+            return '`provide';
+        case '=':
+            return 'any';
+        default:
+            // Catch nulls and unsafe values from javascript.
+            throw new Error(`Bad arrow ${arrow}`);
+    }
+}
+function directionToArrow(dir) {
+    // TODO(jopra): Remove after syntax unification.
+    switch (dir) {
+        case 'in':
+            return '<-';
+        case 'out':
+            return '->';
+        case 'inout':
+            return '<->';
+        case 'host':
+            return '=';
+        case '`consume':
+            return '`consume';
+        case '`provide':
+            return '`provide';
+        case 'any':
+            return '=';
+        default:
+            throw new Error(`Unexpected direction ${dir}`);
+    }
+}
+//# sourceMappingURL=manifest-ast-nodes.js.map
+
+/***/ }),
+/* 11 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Flags", function() { return Flags; });
+/**
+ * @license
+ * Copyright 2019 Google LLC.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+/** Arcs runtime flags. */
+class FlagDefaults {
+}
+FlagDefaults.useNewStorageStack = false;
+// Enables the parsing of both pre and post slandles (unified) syntaxes.
+// Preslandles syntax is to be deprecated.
+FlagDefaults.parseBothSyntaxes = true;
+// Use pre slandles syntax for parsing and toString by default.
+// If parseBothSyntaxes is off, this will set which syntax is enabled.
+FlagDefaults.defaultToPreSlandlesSyntax = true;
+class Flags extends FlagDefaults {
+    /** Resets flags. To be called in test teardown methods. */
+    static reset() {
+        Object.assign(Flags, FlagDefaults);
+    }
+    // tslint:disable-next-line: no-any
+    static withPreSlandlesSyntax(f) {
+        return Flags.withFlags({ parseBothSyntaxes: false, defaultToPreSlandlesSyntax: true }, f);
+    }
+    // tslint:disable-next-line: no-any
+    static withPostSlandlesSyntax(f) {
+        return Flags.withFlags({ parseBothSyntaxes: false, defaultToPreSlandlesSyntax: false }, f);
+    }
+    // tslint:disable-next-line: no-any
+    static withNewStorageStack(f) {
+        return Flags.withFlags({ useNewStorageStack: true }, f);
+    }
+    // For testing with a different set of flags to the default.
+    // tslint:disable-next-line: no-any
+    static withFlags(flagsSettings, f) {
+        return async (...args) => {
+            Object.assign(Flags, flagsSettings);
+            let res;
+            try {
+                res = await f(...args);
+            }
+            finally {
+                Flags.reset();
+            }
+            return res;
+        };
+    }
+}
+/** Initialize flags to their default value */
+Flags.reset();
+//# sourceMappingURL=flags.js.map
+
+/***/ }),
+/* 12 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SlotInfo", function() { return SlotInfo; });
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class SlotInfo {
+    constructor(formFactor, handle) {
+        this.formFactor = formFactor;
+        this.handle = handle;
+    }
+    toLiteral() {
+        return this;
+    }
+    static fromLiteral({ formFactor, handle }) {
+        return new SlotInfo(formFactor, handle);
+    }
+}
+//# sourceMappingURL=slot-info.js.map
+
+/***/ }),
+/* 13 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ArcInfo", function() { return ArcInfo; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ArcHandle", function() { return ArcHandle; });
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+// Equivalent to an Entity with Schema { serialization Text }
+class ArcInfo {
+    constructor(arcId, serialization) {
+        this.id = arcId.toString();
+        // TODO: remove the import-removal hack when import statements no longer appear
+        // in serialized manifests, or deal with them correctly if they end up staying
+        this.serialization = serialization.replace(/\bimport .*\n/g, '');
+    }
+    // Retrieves the serialized string from a stored instance of ArcInfo.
+    static extractSerialization(data) {
+        return data.serialization.replace(/\bimport .*\n/g, '');
+    }
+}
+class ArcHandle {
+    constructor(id, storageKey, type, tags) {
+        this.id = id;
+        this.storageKey = storageKey;
+        this.type = type;
+        this.tags = tags;
+    }
+}
+//# sourceMappingURL=synthetic-types.js.map
+
+/***/ }),
+/* 14 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TypeVariableInfo", function() { return TypeVariableInfo; });
+/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
+/* harmony import */ var _schema_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(15);
+/* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(8);
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+
+
+class TypeVariableInfo {
+    constructor(name, canWriteSuperset, canReadSubset) {
+        this.name = name;
+        this._canWriteSuperset = canWriteSuperset;
+        this._canReadSubset = canReadSubset;
+        this._resolution = null;
+    }
+    /**
+     * Merge both the read subset (upper bound) and write superset (lower bound) constraints
+     * of two variables together. Use this when two separate type variables need to resolve
+     * to the same value.
+     */
+    maybeMergeConstraints(variable) {
+        if (!this.maybeMergeCanReadSubset(variable.canReadSubset)) {
+            return false;
+        }
+        return this.maybeMergeCanWriteSuperset(variable.canWriteSuperset);
+    }
+    /**
+     * Merge a type variable's read subset (upper bound) constraints into this variable.
+     * This is used to accumulate read constraints when resolving a handle's type.
+     */
+    maybeMergeCanReadSubset(constraint) {
+        if (constraint == null) {
+            return true;
+        }
+        if (this.canReadSubset == null) {
+            this.canReadSubset = constraint;
+            return true;
+        }
+        if (this.canReadSubset instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["SlotType"] && constraint instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["SlotType"]) {
+            // TODO: formFactor compatibility, etc.
+            return true;
+        }
+        if (this.canReadSubset instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["EntityType"] && constraint instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["EntityType"]) {
+            const mergedSchema = _schema_js__WEBPACK_IMPORTED_MODULE_1__["Schema"].intersect(this.canReadSubset.entitySchema, constraint.entitySchema);
+            if (!mergedSchema) {
+                return false;
+            }
+            this.canReadSubset = new _type_js__WEBPACK_IMPORTED_MODULE_2__["EntityType"](mergedSchema);
+            return true;
+        }
+        return false;
+    }
+    /**
+     * merge a type variable's write superset (lower bound) constraints into this variable.
+     * This is used to accumulate write constraints when resolving a handle's type.
+     */
+    maybeMergeCanWriteSuperset(constraint) {
+        if (constraint == null) {
+            return true;
+        }
+        if (this.canWriteSuperset == null) {
+            this.canWriteSuperset = constraint;
+            return true;
+        }
+        if (this.canWriteSuperset instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["SlotType"] && constraint instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["SlotType"]) {
+            // TODO: formFactor compatibility, etc.
+            return true;
+        }
+        if (this.canWriteSuperset instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["EntityType"] && constraint instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["EntityType"]) {
+            const mergedSchema = _schema_js__WEBPACK_IMPORTED_MODULE_1__["Schema"].union(this.canWriteSuperset.entitySchema, constraint.entitySchema);
+            if (!mergedSchema) {
+                return false;
+            }
+            this.canWriteSuperset = new _type_js__WEBPACK_IMPORTED_MODULE_2__["EntityType"](mergedSchema);
+            return true;
+        }
+        return false;
+    }
+    isSatisfiedBy(type) {
+        const constraint = this._canWriteSuperset;
+        if (!constraint) {
+            return true;
+        }
+        if (!(constraint instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["EntityType"]) || !(type instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["EntityType"])) {
+            throw new Error(`constraint checking not implemented for ${this} and ${type}`);
+        }
+        return type.getEntitySchema().isMoreSpecificThan(constraint.getEntitySchema());
+    }
+    get resolution() {
+        if (this._resolution) {
+            return this._resolution.resolvedType();
+        }
+        return null;
+    }
+    isValidResolutionCandidate(value) {
+        const elementType = value.resolvedType().getContainedType();
+        if (elementType instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["TypeVariable"] && elementType.variable === this) {
+            return { result: false, detail: 'variable cannot resolve to collection of itself' };
+        }
+        return { result: true };
+    }
+    set resolution(value) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!this._resolution);
+        const isValid = this.isValidResolutionCandidate(value);
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(isValid.result, isValid.detail);
+        let probe = value;
+        while (probe) {
+            if (!(probe instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["TypeVariable"])) {
+                break;
+            }
+            if (probe.variable === this) {
+                return;
+            }
+            probe = probe.variable.resolution;
+        }
+        this._resolution = value;
+        this._canWriteSuperset = null;
+        this._canReadSubset = null;
+    }
+    get canWriteSuperset() {
+        if (this._resolution) {
+            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!this._canWriteSuperset);
+            if (this._resolution instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["TypeVariable"]) {
+                return this._resolution.variable.canWriteSuperset;
+            }
+            return null;
+        }
+        return this._canWriteSuperset;
+    }
+    set canWriteSuperset(value) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!this._resolution);
+        this._canWriteSuperset = value;
+    }
+    get canReadSubset() {
+        if (this._resolution) {
+            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!this._canReadSubset);
+            if (this._resolution instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["TypeVariable"]) {
+                return this._resolution.variable.canReadSubset;
+            }
+            return null;
+        }
+        return this._canReadSubset;
+    }
+    set canReadSubset(value) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!this._resolution);
+        this._canReadSubset = value;
+    }
+    get hasConstraint() {
+        return this._canReadSubset !== null || this._canWriteSuperset !== null;
+    }
+    canEnsureResolved() {
+        if (this._resolution) {
+            return this._resolution.canEnsureResolved();
+        }
+        if (this._canWriteSuperset || this._canReadSubset) {
+            return true;
+        }
+        return false;
+    }
+    maybeEnsureResolved() {
+        if (this._resolution) {
+            return this._resolution.maybeEnsureResolved();
+        }
+        if (this._canWriteSuperset) {
+            this.resolution = this._canWriteSuperset;
+            return true;
+        }
+        if (this._canReadSubset) {
+            this.resolution = this._canReadSubset;
+            return true;
+        }
+        return false;
+    }
+    toLiteral() {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.resolution == null);
+        return this.toLiteralIgnoringResolutions();
+    }
+    toLiteralIgnoringResolutions() {
+        return {
+            name: this.name,
+            canWriteSuperset: this._canWriteSuperset && this._canWriteSuperset.toLiteral(),
+            canReadSubset: this._canReadSubset && this._canReadSubset.toLiteral()
+        };
+    }
+    static fromLiteral(data) {
+        return new TypeVariableInfo(data.name, data.canWriteSuperset ? _type_js__WEBPACK_IMPORTED_MODULE_2__["Type"].fromLiteral(data.canWriteSuperset) : null, data.canReadSubset ? _type_js__WEBPACK_IMPORTED_MODULE_2__["Type"].fromLiteral(data.canReadSubset) : null);
+    }
+    isResolved() {
+        return this._resolution && this._resolution.isResolved();
+    }
+}
+//# sourceMappingURL=type-variable-info.js.map
+
+/***/ }),
+/* 15 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Schema", function() { return Schema; });
+/* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(16);
+/* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(8);
+/* harmony import */ var _crdt_crdt_entity_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(38);
+/* harmony import */ var _crdt_crdt_singleton_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(29);
+/* harmony import */ var _flags_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(11);
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+
+
+
+
+class Schema {
+    // For convenience, primitive field types can be specified as {name: 'Type'}
+    // in `fields`; the constructor will convert these to the correct schema form.
+    // tslint:disable-next-line: no-any
+    constructor(names, fields, description) {
+        this.description = {};
+        this.names = names;
+        this.fields = {};
+        for (const [name, field] of Object.entries(fields)) {
+            if (typeof (field) === 'string') {
+                this.fields[name] = { kind: 'schema-primitive', type: field };
+            }
+            else {
+                this.fields[name] = field;
+            }
+        }
+        if (description) {
+            description.description.forEach(desc => this.description[desc.name] = desc.pattern || desc.patterns[0]);
+        }
+    }
+    toLiteral() {
+        const fields = {};
+        const updateField = field => {
+            if (field.kind === 'schema-reference') {
+                const schema = field.schema;
+                return { kind: 'schema-reference', schema: { kind: schema.kind, model: schema.model.toLiteral() } };
+            }
+            else if (field.kind === 'schema-collection') {
+                return { kind: 'schema-collection', schema: updateField(field.schema) };
+            }
+            else {
+                return field;
+            }
+        };
+        for (const key of Object.keys(this.fields)) {
+            fields[key] = updateField(this.fields[key]);
+        }
+        return { names: this.names, fields, description: this.description };
+    }
+    static fromLiteral(data = { fields: {}, names: [], description: {} }) {
+        const fields = {};
+        const updateField = field => {
+            if (field.kind === 'schema-reference') {
+                const schema = field.schema;
+                return { kind: 'schema-reference', schema: { kind: schema.kind, model: _type_js__WEBPACK_IMPORTED_MODULE_1__["Type"].fromLiteral(schema.model) } };
+            }
+            else if (field.kind === 'schema-collection') {
+                return { kind: 'schema-collection', schema: updateField(field.schema) };
+            }
+            else {
+                return field;
+            }
+        };
+        for (const key of Object.keys(data.fields)) {
+            fields[key] = updateField(data.fields[key]);
+        }
+        const result = new Schema(data.names, fields);
+        result.description = data.description || {};
+        return result;
+    }
+    // TODO(cypher1): This should only be an ident used in manifest parsing.
+    get name() {
+        return this.names[0];
+    }
+    static typesEqual(fieldType1, fieldType2) {
+        // TODO(cypher1): structural check instead of stringification.
+        return Schema._typeString(fieldType1) === Schema._typeString(fieldType2);
+    }
+    static _typeString(type) {
+        switch (type.kind) {
+            case 'schema-primitive':
+                return type.type;
+            case 'schema-union':
+                return `(${type.types.map(t => t.type).join(' or ')})`;
+            case 'schema-tuple':
+                return `(${type.types.map(t => t.type).join(', ')})`;
+            case 'schema-reference':
+                return `Reference<${Schema._typeString(type.schema)}>`;
+            case 'type-name':
+            case 'schema-inline':
+                return type.model.entitySchema.toInlineSchemaString();
+            case 'schema-collection':
+                return `[${Schema._typeString(type.schema)}]`;
+            default:
+                throw new Error(`Unknown type kind ${type.kind} in schema ${this.name}`);
+        }
+    }
+    static union(schema1, schema2) {
+        const names = [...new Set([...schema1.names, ...schema2.names])];
+        const fields = {};
+        for (const [field, type] of [...Object.entries(schema1.fields), ...Object.entries(schema2.fields)]) {
+            if (fields[field]) {
+                if (!Schema.typesEqual(fields[field], type)) {
+                    return null;
+                }
+            }
+            else {
+                fields[field] = type;
+            }
+        }
+        return new Schema(names, fields);
+    }
+    static intersect(schema1, schema2) {
+        const names = [...schema1.names].filter(name => schema2.names.includes(name));
+        const fields = {};
+        for (const [field, type] of Object.entries(schema1.fields)) {
+            const otherType = schema2.fields[field];
+            if (otherType && Schema.typesEqual(type, otherType)) {
+                fields[field] = type;
+            }
+        }
+        return new Schema(names, fields);
+    }
+    equals(otherSchema) {
+        // TODO(cypher1): Check equality without calling contains.
+        return this === otherSchema || (this.name === otherSchema.name
+            && this.isMoreSpecificThan(otherSchema)
+            && otherSchema.isMoreSpecificThan(this));
+    }
+    isMoreSpecificThan(otherSchema) {
+        const names = new Set(this.names);
+        for (const name of otherSchema.names) {
+            if (!names.has(name)) {
+                return false;
+            }
+        }
+        const fields = {};
+        for (const [name, type] of Object.entries(this.fields)) {
+            fields[name] = type;
+        }
+        for (const [name, type] of Object.entries(otherSchema.fields)) {
+            if (fields[name] == undefined) {
+                return false;
+            }
+            if (!Schema.typesEqual(fields[name], type)) {
+                return false;
+            }
+        }
+        return true;
+    }
+    get type() {
+        return new _type_js__WEBPACK_IMPORTED_MODULE_1__["EntityType"](this);
+    }
+    entityClass(context = null) {
+        return _entity_js__WEBPACK_IMPORTED_MODULE_0__["Entity"].createEntityClass(this, context);
+    }
+    crdtConstructor() {
+        const singletons = {};
+        const collections = {};
+        // TODO(shans) do this properly
+        for (const [field, { type }] of Object.entries(this.fields)) {
+            if (type === 'Text') {
+                singletons[field] = new _crdt_crdt_singleton_js__WEBPACK_IMPORTED_MODULE_3__["CRDTSingleton"]();
+            }
+            else if (type === 'Number') {
+                singletons[field] = new _crdt_crdt_singleton_js__WEBPACK_IMPORTED_MODULE_3__["CRDTSingleton"]();
+            }
+            else {
+                throw new Error(`Big Scary Exception: entity field ${field} of type ${type} doesn't yet have a CRDT mapping implemented`);
+            }
+        }
+        return class EntityCRDT extends _crdt_crdt_entity_js__WEBPACK_IMPORTED_MODULE_2__["CRDTEntity"] {
+            constructor() {
+                super(singletons, collections);
+            }
+        };
+    }
+    // TODO(jopra): Enforce that 'type' of a field is a Type.
+    // tslint:disable-next-line: no-any
+    static fieldToString([name, type]) {
+        const typeStr = Schema._typeString(type);
+        if (_flags_js__WEBPACK_IMPORTED_MODULE_4__["Flags"].defaultToPreSlandlesSyntax) {
+            return `${typeStr} ${name}`;
+        }
+        return `${name}: ${typeStr}`;
+    }
+    toInlineSchemaString(options) {
+        const names = this.names.join(' ') || '*';
+        const fields = Object.entries(this.fields).map(Schema.fieldToString).join(', ');
+        return `${names} {${fields.length > 0 && options && options.hideFields ? '...' : fields}}`;
+    }
+    toManifestString() {
+        const results = [];
+        results.push(`schema ${this.names.join(' ')}`);
+        results.push(...Object.entries(this.fields).map(f => `  ${Schema.fieldToString(f)}`));
+        if (Object.keys(this.description).length > 0) {
+            results.push(`  description \`${this.description.pattern}\``);
+            for (const name of Object.keys(this.description)) {
+                if (name !== 'pattern') {
+                    results.push(`    ${name} \`${this.description[name]}\``);
+                }
+            }
+        }
+        return results.join('\n');
+    }
+}
+//# sourceMappingURL=schema.js.map
+
+/***/ }),
+/* 16 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Entity", function() { return Entity; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 /* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(8);
-/* harmony import */ var _reference_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(10);
+/* harmony import */ var _reference_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(17);
 /* harmony import */ var _recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(7);
-/* harmony import */ var _symbols_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(18);
+/* harmony import */ var _symbols_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(25);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -3360,7 +4276,7 @@ function sanitizeEntry(type, value, name, context) {
 //# sourceMappingURL=entity.js.map
 
 /***/ }),
-/* 10 */
+/* 17 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3368,11 +4284,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Reference", function() { return Reference; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ClientReference", function() { return ClientReference; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(11);
+/* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(18);
 /* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(8);
-/* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(9);
-/* harmony import */ var _symbols_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(18);
-/* harmony import */ var _storageNG_handle_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(19);
+/* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(16);
+/* harmony import */ var _symbols_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(25);
+/* harmony import */ var _storageNG_handle_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(26);
 /**
  * @license
  * Copyright (c) 2018 Google Inc. All rights reserved.
@@ -3480,7 +4396,7 @@ class ClientReference extends Reference {
 //# sourceMappingURL=reference.js.map
 
 /***/ }),
-/* 11 */
+/* 18 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3492,16 +4408,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "handleFor", function() { return handleFor; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "unifiedHandleFor", function() { return unifiedHandleFor; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(12);
+/* harmony import */ var _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(19);
 /* harmony import */ var _particle_spec_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(5);
-/* harmony import */ var _reference_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(10);
-/* harmony import */ var _storage_proxy_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(13);
+/* harmony import */ var _reference_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(17);
+/* harmony import */ var _storage_proxy_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(20);
 /* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(8);
-/* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(9);
-/* harmony import */ var _id_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(16);
-/* harmony import */ var _symbols_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(18);
-/* harmony import */ var _storageNG_handle_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(19);
-/* harmony import */ var _storageNG_storage_proxy_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(23);
+/* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(16);
+/* harmony import */ var _id_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(23);
+/* harmony import */ var _symbols_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(25);
+/* harmony import */ var _storageNG_handle_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(26);
+/* harmony import */ var _storageNG_storage_proxy_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(30);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -3952,7 +4868,7 @@ function unifiedHandleFor(opts) {
 //# sourceMappingURL=handle.js.map
 
 /***/ }),
-/* 12 */
+/* 19 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4042,7 +4958,7 @@ registerSystemExceptionHandler((exception) => {
 //# sourceMappingURL=arc-exceptions.js.map
 
 /***/ }),
-/* 13 */
+/* 20 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4054,12 +4970,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "NoOpStorageProxy", function() { return NoOpStorageProxy; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "StorageProxyScheduler", function() { return StorageProxyScheduler; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _platform_sourcemapped_stacktrace_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(14);
-/* harmony import */ var _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(12);
-/* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(11);
-/* harmony import */ var _storage_crdt_collection_model_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(15);
+/* harmony import */ var _platform_sourcemapped_stacktrace_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(21);
+/* harmony import */ var _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(19);
+/* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(18);
+/* harmony import */ var _storage_crdt_collection_model_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(22);
 /* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(8);
-/* harmony import */ var _id_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(16);
+/* harmony import */ var _id_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(23);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -4694,7 +5610,7 @@ class StorageProxyScheduler {
 //# sourceMappingURL=storage-proxy.js.map
 
 /***/ }),
-/* 14 */
+/* 21 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4716,7 +5632,7 @@ const mapStackTrace = (x, f) => f([x]);
 //# sourceMappingURL=sourcemapped-stacktrace-node.js.map
 
 /***/ }),
-/* 15 */
+/* 22 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4845,7 +5761,7 @@ class CrdtCollectionModel {
 //# sourceMappingURL=crdt-collection-model.js.map
 
 /***/ }),
-/* 16 */
+/* 23 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4853,7 +5769,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "IdGenerator", function() { return IdGenerator; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Id", function() { return Id; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ArcId", function() { return ArcId; });
-/* harmony import */ var _random_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(17);
+/* harmony import */ var _random_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(24);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -4964,7 +5880,7 @@ class ArcId extends Id {
 //# sourceMappingURL=id.js.map
 
 /***/ }),
-/* 17 */
+/* 24 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4999,7 +5915,7 @@ class Random {
 //# sourceMappingURL=random.js.map
 
 /***/ }),
-/* 18 */
+/* 25 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5021,7 +5937,7 @@ const SYMBOL_INTERNALS = Symbol('internals');
 //# sourceMappingURL=symbols.js.map
 
 /***/ }),
-/* 19 */
+/* 26 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5032,14 +5948,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SingletonHandle", function() { return SingletonHandle; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "handleNGFor", function() { return handleNGFor; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(12);
-/* harmony import */ var _crdt_crdt_collection_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(20);
-/* harmony import */ var _crdt_crdt_singleton_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(22);
-/* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(9);
-/* harmony import */ var _id_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(16);
+/* harmony import */ var _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(19);
+/* harmony import */ var _crdt_crdt_collection_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(27);
+/* harmony import */ var _crdt_crdt_singleton_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(29);
+/* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(16);
+/* harmony import */ var _id_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(23);
 /* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(8);
-/* harmony import */ var _storage_proxy_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(23);
-/* harmony import */ var _symbols_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(18);
+/* harmony import */ var _storage_proxy_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(30);
+/* harmony import */ var _symbols_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(25);
 /**
  * @license
  * Copyright (c) 2019 Google Inc. All rights reserved.
@@ -5282,7 +6198,7 @@ function handleNGFor(key, storageProxy, idGenerator, particle, canRead, canWrite
 //# sourceMappingURL=handle.js.map
 
 /***/ }),
-/* 20 */
+/* 27 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5290,7 +6206,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CollectionOpTypes", function() { return CollectionOpTypes; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CRDTCollection", function() { return CRDTCollection; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "simplifyFastForwardOp", function() { return simplifyFastForwardOp; });
-/* harmony import */ var _crdt_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(21);
+/* harmony import */ var _crdt_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(28);
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(3);
 /**
  * @license
@@ -5543,7 +6459,7 @@ function getSingleActorIncrement(oldVersion, newVersion) {
 //# sourceMappingURL=crdt-collection.js.map
 
 /***/ }),
-/* 21 */
+/* 28 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5576,15 +6492,15 @@ var ChangeType;
 //# sourceMappingURL=crdt.js.map
 
 /***/ }),
-/* 22 */
+/* 29 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SingletonOpTypes", function() { return SingletonOpTypes; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CRDTSingleton", function() { return CRDTSingleton; });
-/* harmony import */ var _crdt_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(21);
-/* harmony import */ var _crdt_collection_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(20);
+/* harmony import */ var _crdt_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(28);
+/* harmony import */ var _crdt_collection_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(27);
 /**
  * @license
  * Copyright (c) 2019 Google Inc. All rights reserved.
@@ -5669,7 +6585,7 @@ class CRDTSingleton {
 //# sourceMappingURL=crdt-singleton.js.map
 
 /***/ }),
-/* 23 */
+/* 30 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5677,11 +6593,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "StorageProxy", function() { return StorageProxy; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "NoOpStorageProxy", function() { return NoOpStorageProxy; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "StorageProxyScheduler", function() { return StorageProxyScheduler; });
-/* harmony import */ var _platform_sourcemapped_stacktrace_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(14);
-/* harmony import */ var _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(12);
-/* harmony import */ var _crdt_crdt_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(21);
+/* harmony import */ var _platform_sourcemapped_stacktrace_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(21);
+/* harmony import */ var _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(19);
+/* harmony import */ var _crdt_crdt_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(28);
 /* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(8);
-/* harmony import */ var _store_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(24);
+/* harmony import */ var _store_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(31);
 /**
  * @license
  * Copyright (c) 2019 Google Inc. All rights reserved.
@@ -5983,23 +6899,23 @@ class StorageProxyScheduler {
 //# sourceMappingURL=storage-proxy.js.map
 
 /***/ }),
-/* 24 */
+/* 31 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Store", function() { return Store; });
-/* harmony import */ var _drivers_driver_factory_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(25);
-/* harmony import */ var _store_interface_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(26);
+/* harmony import */ var _drivers_driver_factory_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(32);
+/* harmony import */ var _store_interface_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(33);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ActiveStore", function() { return _store_interface_js__WEBPACK_IMPORTED_MODULE_1__["ActiveStore"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ProxyMessageType", function() { return _store_interface_js__WEBPACK_IMPORTED_MODULE_1__["ProxyMessageType"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "StorageMode", function() { return _store_interface_js__WEBPACK_IMPORTED_MODULE_1__["StorageMode"]; });
 
-/* harmony import */ var _direct_store_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(27);
-/* harmony import */ var _reference_mode_store_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(29);
-/* harmony import */ var _unified_store_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(33);
+/* harmony import */ var _direct_store_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(34);
+/* harmony import */ var _reference_mode_store_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(36);
+/* harmony import */ var _unified_store_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(40);
 /**
  * @license
  * Copyright (c) 2019 Google Inc. All rights reserved.
@@ -6075,7 +6991,7 @@ Store.constructors = new Map([
 //# sourceMappingURL=store.js.map
 
 /***/ }),
-/* 25 */
+/* 32 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -6144,7 +7060,7 @@ DriverFactory.providers = new Set();
 //# sourceMappingURL=driver-factory.js.map
 
 /***/ }),
-/* 26 */
+/* 33 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -6226,17 +7142,17 @@ class ActiveStore {
 //# sourceMappingURL=store-interface.js.map
 
 /***/ }),
-/* 27 */
+/* 34 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DirectStoreState", function() { return DirectStoreState; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DirectStore", function() { return DirectStore; });
-/* harmony import */ var _crdt_crdt_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(21);
-/* harmony import */ var _drivers_driver_factory_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(25);
-/* harmony import */ var _store_interface_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(26);
-/* harmony import */ var _util_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(28);
+/* harmony import */ var _crdt_crdt_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(28);
+/* harmony import */ var _drivers_driver_factory_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(32);
+/* harmony import */ var _store_interface_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(33);
+/* harmony import */ var _util_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(35);
 /**
  * @license
  * Copyright (c) 2019 Google Inc. All rights reserved.
@@ -6503,7 +7419,7 @@ class DirectStore extends _store_interface_js__WEBPACK_IMPORTED_MODULE_2__["Acti
 //# sourceMappingURL=direct-store.js.map
 
 /***/ }),
-/* 28 */
+/* 35 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -6596,7 +7512,7 @@ function noAwait(result) { }
 //# sourceMappingURL=util.js.map
 
 /***/ }),
-/* 29 */
+/* 36 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -6605,15 +7521,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ReferenceSingleton", function() { return ReferenceSingleton; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ReferenceModeStorageKey", function() { return ReferenceModeStorageKey; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ReferenceModeStore", function() { return ReferenceModeStore; });
-/* harmony import */ var _crdt_crdt_singleton_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(22);
-/* harmony import */ var _crdt_crdt_collection_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(20);
-/* harmony import */ var _store_interface_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(26);
-/* harmony import */ var _backing_store_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(30);
-/* harmony import */ var _crdt_crdt_entity_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(31);
-/* harmony import */ var _direct_store_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(27);
-/* harmony import */ var _storage_key_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(32);
+/* harmony import */ var _crdt_crdt_singleton_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(29);
+/* harmony import */ var _crdt_crdt_collection_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(27);
+/* harmony import */ var _store_interface_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(33);
+/* harmony import */ var _backing_store_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(37);
+/* harmony import */ var _crdt_crdt_entity_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(38);
+/* harmony import */ var _direct_store_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(34);
+/* harmony import */ var _storage_key_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(39);
 /* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(8);
-/* harmony import */ var _util_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(28);
+/* harmony import */ var _util_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(35);
 /**
  * @license
  * Copyright (c) 2019 Google Inc. All rights reserved.
@@ -7250,13 +8166,13 @@ function isSingletonOperation(operation) {
 //# sourceMappingURL=reference-mode-store.js.map
 
 /***/ }),
-/* 30 */
+/* 37 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "BackingStore", function() { return BackingStore; });
-/* harmony import */ var _direct_store_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(27);
+/* harmony import */ var _direct_store_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(34);
 /**
  * @license
  * Copyright (c) 2019 Google Inc. All rights reserved.
@@ -7336,16 +8252,16 @@ class BackingStore {
 //# sourceMappingURL=backing-store.js.map
 
 /***/ }),
-/* 31 */
+/* 38 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EntityOpTypes", function() { return EntityOpTypes; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CRDTEntity", function() { return CRDTEntity; });
-/* harmony import */ var _crdt_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(21);
-/* harmony import */ var _crdt_collection_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(20);
-/* harmony import */ var _crdt_singleton_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(22);
+/* harmony import */ var _crdt_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(28);
+/* harmony import */ var _crdt_collection_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(27);
+/* harmony import */ var _crdt_singleton_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(29);
 /**
  * @license
  * Copyright (c) 2019 Google Inc. All rights reserved.
@@ -7510,7 +8426,7 @@ class CRDTEntity {
 //# sourceMappingURL=crdt-entity.js.map
 
 /***/ }),
-/* 32 */
+/* 39 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -7539,13 +8455,13 @@ class StorageKey {
 //# sourceMappingURL=storage-key.js.map
 
 /***/ }),
-/* 33 */
+/* 40 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UnifiedStore", function() { return UnifiedStore; });
-/* harmony import */ var _recipe_comparable_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(34);
+/* harmony import */ var _recipe_comparable_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(41);
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(3);
 /**
  * @license
@@ -7665,7 +8581,7 @@ class UnifiedStore {
 //# sourceMappingURL=unified-store.js.map
 
 /***/ }),
-/* 34 */
+/* 41 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -7741,905 +8657,14 @@ function compareComparables(o1, o2) {
 //# sourceMappingURL=comparable.js.map
 
 /***/ }),
-/* 35 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "InterfaceInfo", function() { return InterfaceInfo; });
-/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(7);
-/* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(8);
-/* harmony import */ var _manifest_ast_nodes_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(36);
-/* harmony import */ var _flags_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(37);
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-
-
-
-
-function _typeFromLiteral(member) {
-    return _type_js__WEBPACK_IMPORTED_MODULE_2__["Type"].fromLiteral(member);
-}
-function _typeVarOrStringFromLiteral(member) {
-    if (typeof member === 'object') {
-        return _typeFromLiteral(member);
-    }
-    return member;
-}
-function _HandleConnectionFromLiteral({ type, name, direction }) {
-    return {
-        type: type ? _typeFromLiteral(type) : undefined,
-        name: name ? _typeVarOrStringFromLiteral(name) : undefined,
-        direction: direction || 'any'
-    };
-}
-function _SlotFromLiteral({ name, direction, isRequired, isSet }) {
-    return {
-        name: name ? _typeVarOrStringFromLiteral(name) : undefined,
-        direction, isRequired, isSet
-    };
-}
-function _typeToLiteral(member) {
-    return member.toLiteral();
-}
-function _typeVarOrStringToLiteral(member) {
-    if (member instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["TypeVariable"]) {
-        return member.toLiteral();
-    }
-    return member;
-}
-function _HandleConnectionToLiteral({ type, name, direction }) {
-    return {
-        type: type && _typeToLiteral(type),
-        name: name && _typeVarOrStringToLiteral(name),
-        direction
-    };
-}
-function _SlotToLiteral({ name, direction, isRequired, isSet }) {
-    return {
-        name: name && _typeVarOrStringToLiteral(name),
-        direction,
-        isRequired,
-        isSet
-    };
-}
-const handleConnectionFields = ['type', 'name', 'direction'];
-const slotFields = ['name', 'direction', 'isRequired', 'isSet'];
-class InterfaceInfo {
-    constructor(name, handleConnections, slots) {
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(name);
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(handleConnections !== undefined);
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(slots !== undefined);
-        this.name = name;
-        this.handleConnections = handleConnections;
-        this.slots = slots;
-        this.typeVars = [];
-        for (const handleConnection of handleConnections) {
-            for (const field of handleConnectionFields) {
-                if (InterfaceInfo.isTypeVar(handleConnection[field])) {
-                    this.typeVars.push({ object: handleConnection, field });
-                }
-            }
-        }
-        for (const slot of slots) {
-            for (const field of slotFields) {
-                if (InterfaceInfo.isTypeVar(slot[field])) {
-                    this.typeVars.push({ object: slot, field });
-                }
-            }
-        }
-    }
-    toPrettyString() {
-        return 'InterfaceInfo';
-    }
-    mergeTypeVariablesByName(variableMap) {
-        this.typeVars.forEach(({ object, field }) => object[field] = object[field].mergeTypeVariablesByName(variableMap));
-    }
-    get canReadSubset() {
-        return this._cloneAndUpdate(typeVar => typeVar.canReadSubset);
-    }
-    get canWriteSuperset() {
-        return this._cloneAndUpdate(typeVar => typeVar.canWriteSuperset);
-    }
-    isMoreSpecificThan(other) {
-        if (this.handleConnections.length !== other.handleConnections.length ||
-            this.slots.length !== other.slots.length) {
-            return false;
-        }
-        // TODO: should probably confirm that handleConnections and slots actually match.
-        for (let i = 0; i < this.typeVars.length; i++) {
-            const thisTypeVar = this.typeVars[i];
-            const otherTypeVar = other.typeVars[i];
-            if (!thisTypeVar.object[thisTypeVar.field].isMoreSpecificThan(otherTypeVar.object[otherTypeVar.field])) {
-                return false;
-            }
-        }
-        return true;
-    }
-    _applyExistenceTypeTest(test) {
-        for (const typeRef of this.typeVars) {
-            if (test(typeRef.object[typeRef.field])) {
-                return true;
-            }
-        }
-        return false;
-    }
-    _handleConnectionsToManifestString() {
-        return this.handleConnections
-            .map(h => {
-            if (_flags_js__WEBPACK_IMPORTED_MODULE_4__["Flags"].defaultToPreSlandlesSyntax) {
-                return `  ${h.direction || 'any'} ${h.type.toString()} ${h.name ? h.name : '*'}`;
-            }
-            else {
-                const nameStr = h.name ? `${h.name}: ` : '';
-                const direction = _manifest_ast_nodes_js__WEBPACK_IMPORTED_MODULE_3__["preSlandlesDirectionToDirection"](h.direction || 'any');
-                return `  ${nameStr}${direction} ${h.type.toString()}`;
-            }
-        }).join('\n');
-    }
-    _slotsToManifestString() {
-        // TODO deal with isRequired
-        return this.slots
-            .map(slot => {
-            if (_flags_js__WEBPACK_IMPORTED_MODULE_4__["Flags"].defaultToPreSlandlesSyntax) {
-                return `  ${slot.isRequired ? 'must ' : ''}${slot.direction} ${slot.isSet ? 'set of ' : ''}${slot.name || ''}`;
-            }
-            else {
-                const nameStr = slot.name ? `${slot.name}: ` : '';
-                return `  ${nameStr}${slot.direction}s${slot.isRequired ? '' : '?'} ${slot.isSet ? '[Slot]' : 'Slot'}`;
-            }
-        })
-            .join('\n');
-    }
-    // TODO: Include name as a property of the interface and normalize this to just toString()
-    toString() {
-        return `interface ${this.name}
-${this._handleConnectionsToManifestString()}
-${this._slotsToManifestString()}`;
-    }
-    static fromLiteral(data) {
-        const handleConnections = data.handleConnections.map(_HandleConnectionFromLiteral);
-        const slots = data.slots.map(_SlotFromLiteral);
-        return new InterfaceInfo(data.name, handleConnections, slots);
-    }
-    toLiteral() {
-        const handleConnections = this.handleConnections.map(_HandleConnectionToLiteral);
-        const slots = this.slots.map(_SlotToLiteral);
-        return { name: this.name, handleConnections, slots };
-    }
-    clone(variableMap) {
-        const handleConnections = this.handleConnections.map(({ name, direction, type }) => ({ name, direction, type: type ? type.clone(variableMap) : undefined }));
-        const slots = this.slots.map(({ name, direction, isRequired, isSet }) => ({ name, direction, isRequired, isSet }));
-        return new InterfaceInfo(this.name, handleConnections, slots);
-    }
-    cloneWithResolutions(variableMap) {
-        return this._cloneWithResolutions(variableMap);
-    }
-    _cloneWithResolutions(variableMap) {
-        const handleConnections = this.handleConnections.map(({ name, direction, type }) => ({ name, direction, type: type ? type._cloneWithResolutions(variableMap) : undefined }));
-        const slots = this.slots.map(({ name, direction, isRequired, isSet }) => ({ name, direction, isRequired, isSet }));
-        return new InterfaceInfo(this.name, handleConnections, slots);
-    }
-    canEnsureResolved() {
-        for (const typeVar of this.typeVars) {
-            if (!typeVar.object[typeVar.field].canEnsureResolved()) {
-                return false;
-            }
-        }
-        return true;
-    }
-    maybeEnsureResolved() {
-        for (const typeVar of this.typeVars) {
-            let variable = typeVar.object[typeVar.field];
-            variable = variable.clone(new Map());
-            if (!variable.maybeEnsureResolved())
-                return false;
-        }
-        for (const typeVar of this.typeVars) {
-            typeVar.object[typeVar.field].maybeEnsureResolved();
-        }
-        return true;
-    }
-    tryMergeTypeVariablesWith(other) {
-        // Type variable enabled slot matching will Just Work when we
-        // unify slots and handleConnections.
-        if (!this._equalItems(other.slots, this.slots, this._equalSlot)) {
-            return null;
-        }
-        if (other.handleConnections.length !== this.handleConnections.length) {
-            return null;
-        }
-        const handleConnections = new Set(this.handleConnections);
-        const otherHandleConnections = new Set(other.handleConnections);
-        const handleConnectionMap = new Map();
-        let sizeCheck = handleConnections.size;
-        while (handleConnections.size > 0) {
-            const handleConnectionMatches = [...handleConnections.values()].map(handleConnection => ({ handleConnection, match: [...otherHandleConnections.values()].filter(otherHandleConnection => this._equalHandleConnection(handleConnection, otherHandleConnection)) }));
-            for (const handleConnectionMatch of handleConnectionMatches) {
-                // no match!
-                if (handleConnectionMatch.match.length === 0) {
-                    return null;
-                }
-                if (handleConnectionMatch.match.length === 1) {
-                    handleConnectionMap.set(handleConnectionMatch.handleConnection, handleConnectionMatch.match[0]);
-                    otherHandleConnections.delete(handleConnectionMatch.match[0]);
-                    handleConnections.delete(handleConnectionMatch.handleConnection);
-                }
-            }
-            // no progress!
-            if (handleConnections.size === sizeCheck) {
-                return null;
-            }
-            sizeCheck = handleConnections.size;
-        }
-        const handleConnectionList = [];
-        for (const handleConnection of this.handleConnections) {
-            const otherHandleConnection = handleConnectionMap.get(handleConnection);
-            let resultType;
-            if (handleConnection.type.hasVariable || otherHandleConnection.type.hasVariable) {
-                resultType = _recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_1__["TypeChecker"]._tryMergeTypeVariable(handleConnection.type, otherHandleConnection.type);
-                if (!resultType) {
-                    return null;
-                }
-            }
-            else {
-                resultType = handleConnection.type || otherHandleConnection.type;
-            }
-            handleConnectionList.push({ name: handleConnection.name || otherHandleConnection.name, direction: handleConnection.direction || otherHandleConnection.direction, type: resultType });
-        }
-        const slots = this.slots.map(({ name, direction, isRequired, isSet }) => ({ name, direction, isRequired, isSet }));
-        return new InterfaceInfo(this.name, handleConnectionList, slots);
-    }
-    resolvedType() {
-        return this._cloneAndUpdate(typeVar => typeVar.resolvedType());
-    }
-    equals(other) {
-        if (this.handleConnections.length !== other.handleConnections.length) {
-            return false;
-        }
-        // TODO: this isn't quite right as it doesn't deal with duplicates properly
-        if (!this._equalItems(other.handleConnections, this.handleConnections, this._equalHandleConnection)) {
-            return false;
-        }
-        if (!this._equalItems(other.slots, this.slots, this._equalSlot)) {
-            return false;
-        }
-        return true;
-    }
-    _equalHandleConnection(handleConnection, otherHandleConnection) {
-        return handleConnection.name === otherHandleConnection.name
-            && handleConnection.direction === otherHandleConnection.direction
-            && _recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_1__["TypeChecker"].compareTypes({ type: handleConnection.type }, { type: otherHandleConnection.type });
-    }
-    _equalSlot(slot, otherSlot) {
-        return slot.name === otherSlot.name && slot.direction === otherSlot.direction && slot.isRequired === otherSlot.isRequired && slot.isSet === otherSlot.isSet;
-    }
-    _equalItems(otherItems, items, compareItem) {
-        for (const otherItem of otherItems) {
-            let exists = false;
-            for (const item of items) {
-                if (compareItem(item, otherItem)) {
-                    exists = true;
-                    break;
-                }
-            }
-            if (!exists) {
-                return false;
-            }
-        }
-        return true;
-    }
-    _cloneAndUpdate(update) {
-        const copy = this.clone(new Map());
-        copy.typeVars.forEach(typeVar => InterfaceInfo._updateTypeVar(typeVar, update));
-        return copy;
-    }
-    static _updateTypeVar(typeVar, update) {
-        typeVar.object[typeVar.field] = update(typeVar.object[typeVar.field]);
-    }
-    static isTypeVar(reference) {
-        return reference instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["TypeVariable"] || reference instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["Type"] && reference.hasVariable;
-    }
-    static mustMatch(reference) {
-        return !(reference == undefined || InterfaceInfo.isTypeVar(reference));
-    }
-    static handleConnectionsMatch(interfaceHandleConnection, particleHandleConnection) {
-        if (InterfaceInfo.mustMatch(interfaceHandleConnection.name) &&
-            interfaceHandleConnection.name !== particleHandleConnection.name) {
-            return false;
-        }
-        // TODO: FIXME direction subsetting?
-        if (InterfaceInfo.mustMatch(interfaceHandleConnection.direction)
-            && interfaceHandleConnection.direction !== 'any'
-            && particleHandleConnection.direction !== 'any'
-            && interfaceHandleConnection.direction !== particleHandleConnection.direction) {
-            return false;
-        }
-        if (interfaceHandleConnection.type == undefined) {
-            return true;
-        }
-        const [left, right] = _type_js__WEBPACK_IMPORTED_MODULE_2__["Type"].unwrapPair(interfaceHandleConnection.type, particleHandleConnection.type);
-        if (left instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["TypeVariable"]) {
-            return [{ var: left, value: right, direction: interfaceHandleConnection.direction }];
-        }
-        else {
-            return _recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_1__["TypeChecker"].compareTypes({ type: left }, { type: right });
-        }
-    }
-    static slotsMatch(interfaceSlot, particleSlot) {
-        if (InterfaceInfo.mustMatch(interfaceSlot.name) &&
-            interfaceSlot.name !== particleSlot.name) {
-            return false;
-        }
-        if (InterfaceInfo.mustMatch(interfaceSlot.direction) &&
-            interfaceSlot.direction !== particleSlot.direction) {
-            return false;
-        }
-        if (InterfaceInfo.mustMatch(interfaceSlot.isRequired) &&
-            interfaceSlot.isRequired !== particleSlot.isRequired) {
-            return false;
-        }
-        if (InterfaceInfo.mustMatch(interfaceSlot.isSet) &&
-            interfaceSlot.isSet !== particleSlot.isSet) {
-            return false;
-        }
-        return true;
-    }
-    particleMatches(particleSpec) {
-        const interfaceInfo = this.cloneWithResolutions(new Map());
-        return interfaceInfo.restrictType(particleSpec) !== false;
-    }
-    restrictType(particleSpec) {
-        return this._restrictThis(particleSpec);
-    }
-    _restrictThis(particleSpec) {
-        const handleConnectionMatches = this.handleConnections.map(h => particleSpec.handleConnections.map(c => ({ match: c, result: InterfaceInfo.handleConnectionsMatch(h, c) }))
-            .filter(a => a.result !== false));
-        const particleSlots = [];
-        particleSpec.slotConnections.forEach(consumedSlot => {
-            particleSlots.push({ name: consumedSlot.name, direction: 'consume', isRequired: consumedSlot.isRequired, isSet: consumedSlot.isSet });
-            consumedSlot.provideSlotConnections.forEach(providedSlot => {
-                particleSlots.push({ name: providedSlot.name, direction: 'provide', isRequired: false, isSet: providedSlot.isSet });
-            });
-        });
-        const slotsThatMatch = this.slots.map(slot => particleSlots.filter(particleSlot => InterfaceInfo.slotsMatch(slot, particleSlot)));
-        const slotMatches = slotsThatMatch.map(matchList => matchList.map(slot => ({ match: slot, result: true })));
-        // TODO: this probably doesn't deal with multiple match options.
-        function choose(list, exclusions) {
-            if (list.length === 0) {
-                return [];
-            }
-            const thisLevel = list.pop();
-            for (const connection of thisLevel) {
-                if (exclusions.includes(connection.match)) {
-                    continue;
-                }
-                const newExclusions = exclusions.slice();
-                newExclusions.push(connection.match);
-                const constraints = choose(list, newExclusions);
-                if (constraints !== false) {
-                    if (typeof connection.result === 'boolean') {
-                        return constraints;
-                    }
-                    return constraints.concat(connection.result);
-                }
-            }
-            return false;
-        }
-        const handleConnectionOptions = choose(handleConnectionMatches, []);
-        const slotOptions = choose(slotMatches, []);
-        if (handleConnectionOptions === false || slotOptions === false) {
-            return false;
-        }
-        for (const constraint of handleConnectionOptions) {
-            if (!constraint.var.variable.resolution) {
-                constraint.var.variable.resolution = constraint.value;
-            }
-            else if (constraint.var.variable.resolution instanceof _type_js__WEBPACK_IMPORTED_MODULE_2__["TypeVariable"]) {
-                // TODO(shans): revisit how this should be done,
-                // consider reusing tryMergeTypeVariablesWith(other).
-                if (!_recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_1__["TypeChecker"].processTypeList(constraint.var, [{
-                        type: constraint.value, direction: constraint.direction
-                    }]))
-                    return false;
-            }
-            else {
-                if (!_recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_1__["TypeChecker"].compareTypes({ type: constraint.var.variable.resolution }, { type: constraint.value })) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-}
-//# sourceMappingURL=interface-info.js.map
-
-/***/ }),
-/* 36 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "BaseNode", function() { return BaseNode; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isCollectionType", function() { return isCollectionType; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isTypeVariable", function() { return isTypeVariable; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isSlotType", function() { return isSlotType; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "slandleType", function() { return slandleType; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "preSlandlesDirectionToDirection", function() { return preSlandlesDirectionToDirection; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "directionToPreSlandlesDirection", function() { return directionToPreSlandlesDirection; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "arrowToDirection", function() { return arrowToDirection; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "directionToArrow", function() { return directionToArrow; });
-/**
- * A base token interface for the `kind` and `location` entries. This creates
- * a TypeScript Discriminated Union for most tokens.
- */
-class BaseNode {
-}
-function isCollectionType(node) {
-    return node.kind === 'collection-type';
-}
-function isTypeVariable(node) {
-    return node.kind === 'variable-type';
-}
-function isSlotType(node) {
-    return node.kind === 'slot-type';
-}
-function slandleType(arg) {
-    if (isSlotType(arg.type)) {
-        return arg.type;
-    }
-    if (isCollectionType(arg.type) && isSlotType(arg.type.type)) {
-        return arg.type.type;
-    }
-    return undefined;
-}
-function preSlandlesDirectionToDirection(direction, isOptional = false) {
-    // TODO(jopra): Remove after syntax unification.
-    // Use switch for totality checking.
-    const opt = isOptional ? '?' : '';
-    switch (direction) {
-        case 'in':
-            return `reads${opt}`;
-        case 'out':
-            return `writes${opt}`;
-        case 'inout':
-            return `reads${opt} writes${opt}`;
-        case '`consume':
-            return `\`consumes${opt}`;
-        case '`provide':
-            return `\`provides${opt}`;
-        case 'host':
-            return `hosts${opt}`;
-        case 'any':
-            return `any${opt}`;
-        default:
-            // Catch nulls and unsafe values from javascript.
-            throw new Error(`Bad pre slandles direction ${direction}`);
-    }
-}
-function directionToPreSlandlesDirection(direction) {
-    // TODO(jopra): Remove after syntax unification.
-    // Use switch for totality checking.
-    switch (direction) {
-        case 'reads':
-            return 'in';
-        case 'writes':
-            return 'out';
-        case 'reads writes':
-            return 'inout';
-        case '`consumes':
-            return '`consume';
-        case '`provides':
-            return '`provide';
-        case 'hosts':
-            return 'host';
-        case 'any':
-            return 'any';
-        default:
-            // Catch nulls and unsafe values from javascript.
-            throw new Error(`Bad direction ${direction}`);
-    }
-}
-function arrowToDirection(arrow) {
-    // TODO(jopra): Remove after syntax unification.
-    // Use switch for totality checking.
-    switch (arrow) {
-        case '->':
-            return 'out';
-        case '<-':
-            return 'in';
-        case '<->':
-            return 'inout';
-        case '`consume':
-            return '`consume';
-        case '`provide':
-            return '`provide';
-        case '=':
-            return 'any';
-        default:
-            // Catch nulls and unsafe values from javascript.
-            throw new Error(`Bad arrow ${arrow}`);
-    }
-}
-function directionToArrow(dir) {
-    // TODO(jopra): Remove after syntax unification.
-    switch (dir) {
-        case 'in':
-            return '<-';
-        case 'out':
-            return '->';
-        case 'inout':
-            return '<->';
-        case 'host':
-            return '=';
-        case '`consume':
-            return '`consume';
-        case '`provide':
-            return '`provide';
-        case 'any':
-            return '=';
-        default:
-            throw new Error(`Unexpected direction ${dir}`);
-    }
-}
-//# sourceMappingURL=manifest-ast-nodes.js.map
-
-/***/ }),
-/* 37 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Flags", function() { return Flags; });
-/**
- * @license
- * Copyright 2019 Google LLC.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-/** Arcs runtime flags. */
-class FlagDefaults {
-}
-FlagDefaults.useNewStorageStack = false;
-// Enables the parsing of both pre and post slandles (unified) syntaxes.
-// Preslandles syntax is to be deprecated.
-FlagDefaults.parseBothSyntaxes = true;
-// Use pre slandles syntax for parsing and toString by default.
-// If parseBothSyntaxes is off, this will set which syntax is enabled.
-FlagDefaults.defaultToPreSlandlesSyntax = true;
-class Flags extends FlagDefaults {
-    /** Resets flags. To be called in test teardown methods. */
-    static reset() {
-        Object.assign(Flags, FlagDefaults);
-    }
-    // tslint:disable-next-line: no-any
-    static withPreSlandlesSyntax(f) {
-        return Flags.withFlags({ parseBothSyntaxes: false, defaultToPreSlandlesSyntax: true }, f);
-    }
-    // tslint:disable-next-line: no-any
-    static withPostSlandlesSyntax(f) {
-        return Flags.withFlags({ parseBothSyntaxes: false, defaultToPreSlandlesSyntax: false }, f);
-    }
-    // tslint:disable-next-line: no-any
-    static withNewStorageStack(f) {
-        return Flags.withFlags({ useNewStorageStack: true }, f);
-    }
-    // For testing with a different set of flags to the default.
-    // tslint:disable-next-line: no-any
-    static withFlags(flagsSettings, f) {
-        return async (...args) => {
-            Object.assign(Flags, flagsSettings);
-            let res;
-            try {
-                res = await f(...args);
-            }
-            finally {
-                Flags.reset();
-            }
-            return res;
-        };
-    }
-}
-/** Initialize flags to their default value */
-Flags.reset();
-//# sourceMappingURL=flags.js.map
-
-/***/ }),
-/* 38 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SlotInfo", function() { return SlotInfo; });
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-class SlotInfo {
-    constructor(formFactor, handle) {
-        this.formFactor = formFactor;
-        this.handle = handle;
-    }
-    toLiteral() {
-        return this;
-    }
-    static fromLiteral({ formFactor, handle }) {
-        return new SlotInfo(formFactor, handle);
-    }
-}
-//# sourceMappingURL=slot-info.js.map
-
-/***/ }),
-/* 39 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ArcInfo", function() { return ArcInfo; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ArcHandle", function() { return ArcHandle; });
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-// Equivalent to an Entity with Schema { serialization Text }
-class ArcInfo {
-    constructor(arcId, serialization) {
-        this.id = arcId.toString();
-        // TODO: remove the import-removal hack when import statements no longer appear
-        // in serialized manifests, or deal with them correctly if they end up staying
-        this.serialization = serialization.replace(/\bimport .*\n/g, '');
-    }
-    // Retrieves the serialized string from a stored instance of ArcInfo.
-    static extractSerialization(data) {
-        return data.serialization.replace(/\bimport .*\n/g, '');
-    }
-}
-class ArcHandle {
-    constructor(id, storageKey, type, tags) {
-        this.id = id;
-        this.storageKey = storageKey;
-        this.type = type;
-        this.tags = tags;
-    }
-}
-//# sourceMappingURL=synthetic-types.js.map
-
-/***/ }),
-/* 40 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TypeVariableInfo", function() { return TypeVariableInfo; });
-/* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(8);
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-
-class TypeVariableInfo {
-    constructor(name, canWriteSuperset, canReadSubset) {
-        this.name = name;
-        this._canWriteSuperset = canWriteSuperset;
-        this._canReadSubset = canReadSubset;
-        this._resolution = null;
-    }
-    /**
-     * Merge both the read subset (upper bound) and write superset (lower bound) constraints
-     * of two variables together. Use this when two separate type variables need to resolve
-     * to the same value.
-     */
-    maybeMergeConstraints(variable) {
-        if (!this.maybeMergeCanReadSubset(variable.canReadSubset)) {
-            return false;
-        }
-        return this.maybeMergeCanWriteSuperset(variable.canWriteSuperset);
-    }
-    /**
-     * Merge a type variable's read subset (upper bound) constraints into this variable.
-     * This is used to accumulate read constraints when resolving a handle's type.
-     */
-    maybeMergeCanReadSubset(constraint) {
-        if (constraint == null) {
-            return true;
-        }
-        if (this.canReadSubset == null) {
-            this.canReadSubset = constraint;
-            return true;
-        }
-        if (this.canReadSubset instanceof _type_js__WEBPACK_IMPORTED_MODULE_1__["SlotType"] && constraint instanceof _type_js__WEBPACK_IMPORTED_MODULE_1__["SlotType"]) {
-            // TODO: formFactor compatibility, etc.
-            return true;
-        }
-        if (this.canReadSubset instanceof _type_js__WEBPACK_IMPORTED_MODULE_1__["EntityType"] && constraint instanceof _type_js__WEBPACK_IMPORTED_MODULE_1__["EntityType"]) {
-            const mergedSchema = _type_js__WEBPACK_IMPORTED_MODULE_1__["Schema"].intersect(this.canReadSubset.entitySchema, constraint.entitySchema);
-            if (!mergedSchema) {
-                return false;
-            }
-            this.canReadSubset = new _type_js__WEBPACK_IMPORTED_MODULE_1__["EntityType"](mergedSchema);
-            return true;
-        }
-        return false;
-    }
-    /**
-     * merge a type variable's write superset (lower bound) constraints into this variable.
-     * This is used to accumulate write constraints when resolving a handle's type.
-     */
-    maybeMergeCanWriteSuperset(constraint) {
-        if (constraint == null) {
-            return true;
-        }
-        if (this.canWriteSuperset == null) {
-            this.canWriteSuperset = constraint;
-            return true;
-        }
-        if (this.canWriteSuperset instanceof _type_js__WEBPACK_IMPORTED_MODULE_1__["SlotType"] && constraint instanceof _type_js__WEBPACK_IMPORTED_MODULE_1__["SlotType"]) {
-            // TODO: formFactor compatibility, etc.
-            return true;
-        }
-        if (this.canWriteSuperset instanceof _type_js__WEBPACK_IMPORTED_MODULE_1__["EntityType"] && constraint instanceof _type_js__WEBPACK_IMPORTED_MODULE_1__["EntityType"]) {
-            const mergedSchema = _type_js__WEBPACK_IMPORTED_MODULE_1__["Schema"].union(this.canWriteSuperset.entitySchema, constraint.entitySchema);
-            if (!mergedSchema) {
-                return false;
-            }
-            this.canWriteSuperset = new _type_js__WEBPACK_IMPORTED_MODULE_1__["EntityType"](mergedSchema);
-            return true;
-        }
-        return false;
-    }
-    isSatisfiedBy(type) {
-        const constraint = this._canWriteSuperset;
-        if (!constraint) {
-            return true;
-        }
-        if (!(constraint instanceof _type_js__WEBPACK_IMPORTED_MODULE_1__["EntityType"]) || !(type instanceof _type_js__WEBPACK_IMPORTED_MODULE_1__["EntityType"])) {
-            throw new Error(`constraint checking not implemented for ${this} and ${type}`);
-        }
-        return type.getEntitySchema().isMoreSpecificThan(constraint.getEntitySchema());
-    }
-    get resolution() {
-        if (this._resolution) {
-            return this._resolution.resolvedType();
-        }
-        return null;
-    }
-    isValidResolutionCandidate(value) {
-        const elementType = value.resolvedType().getContainedType();
-        if (elementType instanceof _type_js__WEBPACK_IMPORTED_MODULE_1__["TypeVariable"] && elementType.variable === this) {
-            return { result: false, detail: 'variable cannot resolve to collection of itself' };
-        }
-        return { result: true };
-    }
-    set resolution(value) {
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!this._resolution);
-        const isValid = this.isValidResolutionCandidate(value);
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(isValid.result, isValid.detail);
-        let probe = value;
-        while (probe) {
-            if (!(probe instanceof _type_js__WEBPACK_IMPORTED_MODULE_1__["TypeVariable"])) {
-                break;
-            }
-            if (probe.variable === this) {
-                return;
-            }
-            probe = probe.variable.resolution;
-        }
-        this._resolution = value;
-        this._canWriteSuperset = null;
-        this._canReadSubset = null;
-    }
-    get canWriteSuperset() {
-        if (this._resolution) {
-            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!this._canWriteSuperset);
-            if (this._resolution instanceof _type_js__WEBPACK_IMPORTED_MODULE_1__["TypeVariable"]) {
-                return this._resolution.variable.canWriteSuperset;
-            }
-            return null;
-        }
-        return this._canWriteSuperset;
-    }
-    set canWriteSuperset(value) {
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!this._resolution);
-        this._canWriteSuperset = value;
-    }
-    get canReadSubset() {
-        if (this._resolution) {
-            Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!this._canReadSubset);
-            if (this._resolution instanceof _type_js__WEBPACK_IMPORTED_MODULE_1__["TypeVariable"]) {
-                return this._resolution.variable.canReadSubset;
-            }
-            return null;
-        }
-        return this._canReadSubset;
-    }
-    set canReadSubset(value) {
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(!this._resolution);
-        this._canReadSubset = value;
-    }
-    get hasConstraint() {
-        return this._canReadSubset !== null || this._canWriteSuperset !== null;
-    }
-    canEnsureResolved() {
-        if (this._resolution) {
-            return this._resolution.canEnsureResolved();
-        }
-        if (this._canWriteSuperset || this._canReadSubset) {
-            return true;
-        }
-        return false;
-    }
-    maybeEnsureResolved() {
-        if (this._resolution) {
-            return this._resolution.maybeEnsureResolved();
-        }
-        if (this._canWriteSuperset) {
-            this.resolution = this._canWriteSuperset;
-            return true;
-        }
-        if (this._canReadSubset) {
-            this.resolution = this._canReadSubset;
-            return true;
-        }
-        return false;
-    }
-    toLiteral() {
-        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.resolution == null);
-        return this.toLiteralIgnoringResolutions();
-    }
-    toLiteralIgnoringResolutions() {
-        return {
-            name: this.name,
-            canWriteSuperset: this._canWriteSuperset && this._canWriteSuperset.toLiteral(),
-            canReadSubset: this._canReadSubset && this._canReadSubset.toLiteral()
-        };
-    }
-    static fromLiteral(data) {
-        return new TypeVariableInfo(data.name, data.canWriteSuperset ? _type_js__WEBPACK_IMPORTED_MODULE_1__["Type"].fromLiteral(data.canWriteSuperset) : null, data.canReadSubset ? _type_js__WEBPACK_IMPORTED_MODULE_1__["Type"].fromLiteral(data.canReadSubset) : null);
-    }
-    isResolved() {
-        return this._resolution && this._resolution.isResolved();
-    }
-}
-//# sourceMappingURL=type-variable-info.js.map
-
-/***/ }),
-/* 41 */
+/* 42 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CountOpTypes", function() { return CountOpTypes; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CRDTCount", function() { return CRDTCount; });
-/* harmony import */ var _crdt_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(21);
+/* harmony import */ var _crdt_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(28);
 /**
  * @license
  * Copyright (c) 2019 Google Inc. All rights reserved.
@@ -8732,7 +8757,7 @@ class CRDTCount {
 //# sourceMappingURL=crdt-count.js.map
 
 /***/ }),
-/* 42 */
+/* 43 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -8903,7 +8928,7 @@ function createCheck(checkTarget, astNode, handleConnectionMap) {
 //# sourceMappingURL=particle-check.js.map
 
 /***/ }),
-/* 43 */
+/* 44 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -8985,7 +9010,7 @@ function createParticleClaim(handle, astNode, handleConnectionMap) {
 //# sourceMappingURL=particle-claim.js.map
 
 /***/ }),
-/* 44 */
+/* 45 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -9059,7 +9084,7 @@ class SlotProxy {
 //# sourceMappingURL=slot-proxy.js.map
 
 /***/ }),
-/* 45 */
+/* 46 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -9069,13 +9094,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "WasmContainer", function() { return WasmContainer; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "WasmParticle", function() { return WasmParticle; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(9);
-/* harmony import */ var _reference_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(10);
+/* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(16);
+/* harmony import */ var _reference_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(17);
 /* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(8);
-/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(46);
-/* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(11);
-/* harmony import */ var _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(12);
-/* harmony import */ var _bimap_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(47);
+/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(47);
+/* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(18);
+/* harmony import */ var _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(19);
+/* harmony import */ var _bimap_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(48);
 /**
  * @license
  * Copyright (c) 2019 Google Inc. All rights reserved.
@@ -9489,6 +9514,7 @@ class KotlinWasmDriver {
     initializeInstance(container, instance) {
         this.updateMemoryViews(container);
         // Kotlin main() must be invoked before everything else.
+        // TODO(alxrsngtn): Work out how to give Konan_js_main a type signature.
         instance.exports.Konan_js_main(1, 0);
     }
     updateMemoryViews(container) {
@@ -9838,14 +9864,14 @@ class WasmParticle extends _particle_js__WEBPACK_IMPORTED_MODULE_4__["Particle"]
 //# sourceMappingURL=wasm.js.map
 
 /***/ }),
-/* 46 */
+/* 47 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Particle", function() { return Particle; });
-/* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(11);
-/* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(9);
+/* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(18);
+/* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(16);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -10108,7 +10134,7 @@ class Particle {
 //# sourceMappingURL=particle.js.map
 
 /***/ }),
-/* 47 */
+/* 48 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -10185,12 +10211,12 @@ class BiMap {
 //# sourceMappingURL=bimap.js.map
 
 /***/ }),
-/* 48 */
+/* 49 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _loader_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(49);
+/* harmony import */ var _loader_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(50);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Loader", function() { return _loader_web_js__WEBPACK_IMPORTED_MODULE_0__["Loader"]; });
 
 /**
@@ -10206,14 +10232,14 @@ __webpack_require__.r(__webpack_exports__);
 //# sourceMappingURL=loader.js.map
 
 /***/ }),
-/* 49 */
+/* 50 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Loader", function() { return Loader; });
-/* harmony import */ var _logs_factory_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(50);
-/* harmony import */ var _loader_base_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(52);
+/* harmony import */ var _logs_factory_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(51);
+/* harmony import */ var _loader_base_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(53);
 /**
  * @license
  * Copyright 2019 Google LLC.
@@ -10296,13 +10322,13 @@ class Loader extends _loader_base_js__WEBPACK_IMPORTED_MODULE_1__["LoaderBase"] 
 //# sourceMappingURL=loader-web.js.map
 
 /***/ }),
-/* 50 */
+/* 51 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* WEBPACK VAR INJECTION */(function(global) {/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "logsFactory", function() { return logsFactory; });
-/* harmony import */ var _log_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(51);
+/* harmony import */ var _log_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(52);
 /**
  * @license
  * Copyright 2019 Google LLC.
@@ -10344,7 +10370,7 @@ const logsFactory = (preamble, color = '') => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(1)))
 
 /***/ }),
-/* 51 */
+/* 52 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -10366,24 +10392,24 @@ const logFactory = (preamble, color, log = 'log') => {
 //# sourceMappingURL=log-web.js.map
 
 /***/ }),
-/* 52 */
+/* 53 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "LoaderBase", function() { return LoaderBase; });
 /* harmony import */ var _assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _fetch_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(53);
-/* harmony import */ var _runtime_converters_jsonldToManifest_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(54);
-/* harmony import */ var _runtime_reference_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(10);
-/* harmony import */ var _runtime_particle_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(46);
-/* harmony import */ var _runtime_dom_particle_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(55);
-/* harmony import */ var _runtime_transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(58);
-/* harmony import */ var _runtime_multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(59);
-/* harmony import */ var _runtime_ui_particle_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(60);
-/* harmony import */ var _runtime_ui_multiplexer_particle_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(62);
-/* harmony import */ var _runtime_html_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(64);
-/* harmony import */ var _platform_logs_factory_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(50);
+/* harmony import */ var _fetch_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(54);
+/* harmony import */ var _runtime_converters_jsonldToManifest_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(55);
+/* harmony import */ var _runtime_reference_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(17);
+/* harmony import */ var _runtime_particle_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(47);
+/* harmony import */ var _runtime_dom_particle_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(56);
+/* harmony import */ var _runtime_transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(59);
+/* harmony import */ var _runtime_multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(60);
+/* harmony import */ var _runtime_ui_particle_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(61);
+/* harmony import */ var _runtime_ui_multiplexer_particle_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(63);
+/* harmony import */ var _runtime_html_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(65);
+/* harmony import */ var _platform_logs_factory_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(51);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -10647,7 +10673,7 @@ class LoaderBase {
 //# sourceMappingURL=loader-base.js.map
 
 /***/ }),
-/* 53 */
+/* 54 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -10671,7 +10697,7 @@ const localFetch = fetch;
 //# sourceMappingURL=fetch-web.js.map
 
 /***/ }),
-/* 54 */
+/* 55 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -10786,14 +10812,14 @@ class JsonldToManifest {
 //# sourceMappingURL=jsonldToManifest.js.map
 
 /***/ }),
-/* 55 */
+/* 56 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DomParticle", function() { return DomParticle; });
-/* harmony import */ var _modalities_dom_components_xen_xen_state_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(56);
-/* harmony import */ var _dom_particle_base_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(57);
+/* harmony import */ var _modalities_dom_components_xen_xen_state_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(57);
+/* harmony import */ var _dom_particle_base_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(58);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -10966,7 +10992,7 @@ class DomParticle extends Object(_modalities_dom_components_xen_xen_state_js__WE
 //# sourceMappingURL=dom-particle.js.map
 
 /***/ }),
-/* 56 */
+/* 57 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -11119,14 +11145,14 @@ const XenStateMixin = Base => class extends Base {
 
 
 /***/ }),
-/* 57 */
+/* 58 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DomParticleBase", function() { return DomParticleBase; });
-/* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(11);
-/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(46);
+/* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(18);
+/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(47);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -11404,14 +11430,14 @@ class DomParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particl
 //# sourceMappingURL=dom-particle-base.js.map
 
 /***/ }),
-/* 58 */
+/* 59 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TransformationDomParticle", function() { return TransformationDomParticle; });
-/* harmony import */ var _dom_particle_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(55);
-/* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(9);
+/* harmony import */ var _dom_particle_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(56);
+/* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(16);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -11460,7 +11486,7 @@ class TransformationDomParticle extends _dom_particle_js__WEBPACK_IMPORTED_MODUL
 //# sourceMappingURL=transformation-dom-particle.js.map
 
 /***/ }),
-/* 59 */
+/* 60 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -11468,8 +11494,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MultiplexerDomParticle", function() { return MultiplexerDomParticle; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 /* harmony import */ var _particle_spec_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(5);
-/* harmony import */ var _transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(58);
-/* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(9);
+/* harmony import */ var _transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(59);
+/* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(16);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -11653,14 +11679,14 @@ class MultiplexerDomParticle extends _transformation_dom_particle_js__WEBPACK_IM
 //# sourceMappingURL=multiplexer-dom-particle.js.map
 
 /***/ }),
-/* 60 */
+/* 61 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UiParticle", function() { return UiParticle; });
-/* harmony import */ var _modalities_dom_components_xen_xen_state_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(56);
-/* harmony import */ var _ui_particle_base_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(61);
+/* harmony import */ var _modalities_dom_components_xen_xen_state_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(57);
+/* harmony import */ var _ui_particle_base_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(62);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -11805,15 +11831,15 @@ class UiParticle extends Object(_modalities_dom_components_xen_xen_state_js__WEB
 //# sourceMappingURL=ui-particle.js.map
 
 /***/ }),
-/* 61 */
+/* 62 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UiParticleBase", function() { return UiParticleBase; });
-/* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(9);
-/* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(11);
-/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(46);
+/* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(16);
+/* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(18);
+/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(47);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -11993,14 +12019,14 @@ class UiParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_2__["Particle
 //# sourceMappingURL=ui-particle-base.js.map
 
 /***/ }),
-/* 62 */
+/* 63 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UiMultiplexerParticle", function() { return UiMultiplexerParticle; });
 /* harmony import */ var _particle_spec_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(5);
-/* harmony import */ var _ui_transformation_particle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(63);
+/* harmony import */ var _ui_transformation_particle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(64);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -12163,14 +12189,14 @@ class UiMultiplexerParticle extends _ui_transformation_particle_js__WEBPACK_IMPO
 //# sourceMappingURL=ui-multiplexer-particle.js.map
 
 /***/ }),
-/* 63 */
+/* 64 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UiTransformationParticle", function() { return UiTransformationParticle; });
-/* harmony import */ var _ui_particle_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(60);
-/* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(9);
+/* harmony import */ var _ui_particle_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(61);
+/* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(16);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -12208,7 +12234,7 @@ class UiTransformationParticle extends _ui_particle_js__WEBPACK_IMPORTED_MODULE_
 //# sourceMappingURL=ui-transformation-particle.js.map
 
 /***/ }),
-/* 64 */
+/* 65 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";

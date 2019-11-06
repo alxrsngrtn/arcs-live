@@ -31,8 +31,8 @@ export declare class DeepSet<T extends UniqueStringable> implements Iterable<T> 
     [Symbol.iterator](): IterableIterator<T>;
     asSet(): ReadonlySet<T>;
     toArray(): T[];
-    readonly size: number;
-    readonly isEmpty: boolean;
+    get size(): number;
+    get isEmpty(): boolean;
     /**
      * Returns true if this DeepSet is equal to the other DeepSet (deep equals,
      * computed via toUniqueString() for each DeepSet).

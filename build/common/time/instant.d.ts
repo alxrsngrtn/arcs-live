@@ -27,15 +27,15 @@ export declare class Instant {
     /**
      * Returns the rounded number of milliseconds from the Epoch for this Instant..
      */
-    readonly epochMilliseconds: number;
+    get epochMilliseconds(): number;
     /**
      * Returns the rounded number of seconds from the Epoch for this Instant.
      */
-    readonly epochSeconds: number;
+    get epochSeconds(): number;
     /**
      * Provides the resolution of this Instant based on the inputs
      */
-    readonly resolution: TimeUnit;
+    get resolution(): TimeUnit;
     /**
      * Returns a truncated Instant based on the current value and the
      * specified TimeUnit.

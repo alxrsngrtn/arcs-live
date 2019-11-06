@@ -16,8 +16,8 @@ export declare class SuggestDomConsumer extends SlotDomConsumer {
     _suggestionContent: any;
     _eventHandler: any;
     constructor(arc: Arc, containerKind: string, suggestion: Suggestion, eventHandler: any);
-    readonly suggestion: Suggestion;
-    readonly templatePrefix: string;
+    get suggestion(): Suggestion;
+    get templatePrefix(): string;
     formatContent(content: Content): Content | undefined;
     onContainerUpdate(container: any, originalContainer: any): void;
     static _extractContent(suggestion: Suggestion): import("./plan/suggestion.js").DescriptionProperties;

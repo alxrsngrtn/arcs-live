@@ -39,10 +39,10 @@ export declare class SlotConsumer {
     description: Description;
     constructor(arc: Arc, consumeConn: SlotConnection, containerKind?: string);
     getRendering(subId?: string): Rendering;
-    readonly renderings: [string, Rendering][];
+    get renderings(): [string, Rendering][];
     addRenderingBySubId(subId: string | undefined, rendering: Rendering): void;
     addHostedSlotContexts(context: HostedSlotContext): void;
-    readonly allProvidedSlotContexts: ProvidedSlotContext[];
+    get allProvidedSlotContexts(): ProvidedSlotContext[];
     findProvidedContext(predicate: Predicate<ProvidedSlotContext>): any;
     private generateProvidedContexts;
     onContainerUpdate(newContainer: any, originalContainer: any): void;

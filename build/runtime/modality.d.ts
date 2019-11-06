@@ -15,7 +15,7 @@ export declare class Modality {
     static union(modalities: Modality[]): Modality;
     isResolved(): boolean;
     isCompatible(names: string[]): boolean;
-    static readonly Name: typeof ModalityName;
+    static get Name(): typeof ModalityName;
     static readonly all: Modality;
     static readonly dom: Modality;
     static readonly domTouch: Modality;

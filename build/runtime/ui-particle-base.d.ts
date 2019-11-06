@@ -21,11 +21,11 @@ export declare class UiParticleBase extends Particle {
     /**
      * Override if necessary, to modify superclass config.
      */
-    readonly config: UiParticleConfig;
+    get config(): UiParticleConfig;
     /**
      * Override to return a template.
      */
-    readonly template: string;
+    get template(): string;
     /**
      * Override to return false if the Particle isn't ready to `render()`
      */

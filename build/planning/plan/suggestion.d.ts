@@ -52,7 +52,7 @@ export declare class Suggestion {
     searchGroups: string[][];
     static create(plan: Recipe, hash: string, relevance?: Relevance): Suggestion;
     constructor(plan: Recipe, hash: string, rank: number, versionByStore: {});
-    readonly descriptionText: string;
+    get descriptionText(): string;
     getDescription(modality: string): DescriptionProperties;
     setDescription(description: Description, modality: Modality, descriptionFormatter?: typeof DescriptionFormatter): void;
     isEquivalent(other: Suggestion): boolean;

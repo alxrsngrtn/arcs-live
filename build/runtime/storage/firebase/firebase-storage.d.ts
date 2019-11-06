@@ -20,7 +20,7 @@ declare class FirebaseKey extends KeyBase {
     apiKey?: string;
     constructor(key: string);
     base(): string;
-    readonly arcId: string;
+    get arcId(): string;
     childKeyForHandle(id: any): FirebaseKey;
     childKeyForArcInfo(): FirebaseKey;
     childKeyForSuggestions(userId: any, arcId: any): KeyBase;
@@ -61,7 +61,7 @@ declare abstract class FirebaseStorageProvider extends StorageProviderBase {
     abstract backingType(): Type;
     static newProvider(type: any, storageEngine: any, id: any, reference: any, key: any, shouldExist: any, mode: any): FirebaseBackingStore | FirebaseCollection | FirebaseBigCollection | FirebaseVariable;
     _transaction(transactionFunction: any): Promise<any>;
-    abstract readonly _hasLocalChanges: boolean;
+    abstract get _hasLocalChanges(): boolean;
     abstract _persistChangesImpl(): Promise<void>;
     _persistChanges(): Promise<void>;
 }
@@ -105,9 +105,9 @@ declare class FirebaseVariable extends FirebaseStorageProvider implements Single
     dispose(): void;
     backingType(): Type;
     remoteStateChanged(dataSnapshot: firebase.database.DataSnapshot): Promise<void>;
-    readonly _hasLocalChanges: boolean;
+    get _hasLocalChanges(): boolean;
     _persistChangesImpl(): Promise<void>;
-    readonly versionForTesting: number;
+    get versionForTesting(): number;
     get(): Promise<any>;
     set(value: any, originatorId?: any, barrier?: any): Promise<void>;
     clear(originatorId?: string, barrier?: string): Promise<void>;
@@ -169,12 +169,12 @@ declare class FirebaseCollection extends FirebaseStorageProvider implements Coll
     dispose(): void;
     backingType(): Type;
     remoteStateChanged(dataSnapshot: any): Promise<void>;
-    readonly versionForTesting: number;
+    get versionForTesting(): number;
     get(id: string): Promise<any>;
     removeMultiple(items: any, originatorId?: any): Promise<void>;
     remove(id: string, keys?: string[], originatorId?: any): Promise<void>;
     store(value: any, keys: any, originatorId?: any): Promise<void>;
-    readonly _hasLocalChanges: boolean;
+    get _hasLocalChanges(): boolean;
     _persistChangesImpl(): Promise<void>;
     _toList(): Promise<SerializedModelEntry[]>;
     modelForSynchronization(): Promise<{
@@ -251,7 +251,7 @@ declare class FirebaseBigCollection extends FirebaseStorageProvider implements B
      */
     cursorVersion(cursorId: number): number;
     _persistChangesImpl(): Promise<void>;
-    readonly _hasLocalChanges: boolean;
+    get _hasLocalChanges(): boolean;
     cloneFrom(handle: any): Promise<void>;
     serializeContents(): Promise<{
         version: number;
@@ -278,7 +278,7 @@ declare class FirebaseBackingStore extends FirebaseStorageProvider implements Co
     getMultiple(ids: string[]): Promise<any[]>;
     toList(): Promise<any[]>;
     backingType(): Type;
-    readonly _hasLocalChanges: boolean;
+    get _hasLocalChanges(): boolean;
     _persistChangesImpl(): Promise<void>;
     enableReferenceMode(): void;
     ensureBackingStore(): Promise<FirebaseBackingStore>;

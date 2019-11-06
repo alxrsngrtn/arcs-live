@@ -58,7 +58,7 @@ export declare abstract class StorageBase {
      * Turn on debugginf for this storage provider.  Providers should
      * subclass this and react to changes in the debug value.
      */
-    debug: boolean;
+    set debug(d: boolean);
     /**
      * Provides graceful shutdown for tests.
      */
@@ -98,11 +98,11 @@ export declare abstract class StorageProviderBase extends UnifiedStore implement
     referenceMode: boolean;
     _version: number | null;
     storeInfo: StoreInfo;
-    readonly versionToken: string | null;
+    get versionToken(): string | null;
     protected constructor(type: Type, name: string, id: string, key: string);
     enableReferenceMode(): void;
-    readonly baseStore: StorageProviderBase;
-    readonly storageKey: string;
+    get baseStore(): StorageProviderBase;
+    get storageKey(): string;
     reportExceptionInHost(exception: PropagatedException): void;
     on(callback: ProxyCallback<null>): number;
     off(callbackId: number): void;
@@ -113,7 +113,7 @@ export declare abstract class StorageProviderBase extends UnifiedStore implement
      * Propagate updates to change listeners.
      */
     protected _fire(details: ChangeEvent): Promise<void>;
-    readonly apiChannelMappingId: string;
+    get apiChannelMappingId(): string;
     dispose(): void;
     /**
      * @returns an object notation of this storage provider.

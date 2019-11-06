@@ -40,12 +40,13 @@ export declare class UiParticle extends UiParticle_base {
     /**
      * Getters and setters for working with state/props.
      */
+    get state(): any;
     /**
-    * Syntactic sugar: `this.state = {state}` is equivalent to `this.setState(state)`.
-    * This is a merge, not an assignment.
-    */
-    state: any;
-    readonly props: any;
+     * Syntactic sugar: `this.state = {state}` is equivalent to `this.setState(state)`.
+     * This is a merge, not an assignment.
+     */
+    set state(state: any);
+    get props(): any;
     _shouldUpdate(): boolean;
     _update(...args: any[]): void;
     _async(fn: any): NodeJS.Timeout;

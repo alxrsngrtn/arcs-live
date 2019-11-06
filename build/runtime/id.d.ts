@@ -29,7 +29,7 @@ export declare class IdGenerator {
      * the generator's random session ID will be used as the ID's root.
      */
     newChildId(parentId: Id, subcomponent?: string): Id;
-    readonly currentSessionIdForTesting: string;
+    get currentSessionIdForTesting(): string;
 }
 /**
  * An immutable object consisting of two components: a root, and an idTree. The root is the session ID from the particular session in which the

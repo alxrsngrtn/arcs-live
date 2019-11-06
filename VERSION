@@ -1,5 +1,5 @@
-commit c3b24e31e850b207d021157aa7db1e2eff28c1ad
-Author: Ray Cromwell <cromwellian@gmail.com>
-Date:   Mon Nov 4 14:51:24 2019 -0800
+commit 3e9b704e5c9fb96370d35755fba1c6c77cd36a28
+Author: Walter Korman <wkorman@chromium.org>
+Date:   Wed Nov 6 14:07:36 2019 -0800
 
-    Fix G3 presubmit issues (#3992)
+    Disable Arcs personal cloud build/test. (#4024)

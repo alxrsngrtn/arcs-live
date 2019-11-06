@@ -19,7 +19,7 @@ export declare class SuggestionComposer {
     private _suggestions;
     protected readonly _suggestConsumers: SuggestDomConsumer[];
     constructor(arc: Arc, slotComposer: SlotComposer);
-    readonly modalityHandler: PlanningModalityHandler;
+    get modalityHandler(): PlanningModalityHandler;
     clear(): void;
     setSuggestions(suggestions: Suggestion[]): void;
     private _addInlineSuggestion;

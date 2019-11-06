@@ -14,7 +14,7 @@ export declare class MessagePort {
     _onmessage: (e: MessageEvent) => void | undefined;
     constructor(channel: any, id: any, other: any);
     postMessage(message: any): Promise<void>;
-    onmessage: (e: MessageEvent) => void;
+    set onmessage(f: (e: MessageEvent) => void);
     close(): void;
 }
 declare class MessageEvent {

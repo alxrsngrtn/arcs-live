@@ -8,8 +8,8 @@ export declare class HeadlessSuggestDomConsumer extends SuggestDomConsumer {
     contentAvailable: any;
     _contentAvailableResolve: any;
     constructor(arc: Arc, containerKind: any, suggestion: Suggestion, eventHandler: any);
-    readonly suggestion: Suggestion;
-    readonly templatePrefix: string;
+    get suggestion(): Suggestion;
+    get templatePrefix(): string;
     onContainerUpdate(container: any, originalContainer: any): void;
     static render(arc: Arc, container: any, suggestion: Suggestion): SuggestDomConsumer;
     setContent(content: any, handler: any): void;

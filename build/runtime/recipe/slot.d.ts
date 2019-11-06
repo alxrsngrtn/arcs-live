@@ -21,19 +21,25 @@ export declare class Slot implements Comparable<Slot> {
     private _formFactor?;
     private _consumeConnections;
     constructor(recipe: Recipe, name: string);
-    readonly recipe: Recipe;
-    id: string | undefined;
-    localName: string | undefined;
-    name: string;
-    tags: string[];
-    formFactor: string | undefined;
-    sourceConnection: SlotConnection | undefined;
-    readonly consumeConnections: SlotConnection[];
-    readonly spec: import("../particle-spec.js").ConsumeSlotConnectionSpec | {
+    get recipe(): Recipe;
+    get id(): string | undefined;
+    set id(id: string);
+    get localName(): string | undefined;
+    set localName(localName: string | undefined);
+    get name(): string;
+    set name(name: string);
+    get tags(): string[];
+    set tags(tags: string[]);
+    get formFactor(): string | undefined;
+    set formFactor(formFactor: string | undefined);
+    get sourceConnection(): SlotConnection | undefined;
+    set sourceConnection(sourceConnection: SlotConnection | undefined);
+    get consumeConnections(): SlotConnection[];
+    get spec(): import("../particle-spec.js").ConsumeSlotConnectionSpec | {
         isSet: boolean;
         tags: any[];
     };
-    readonly handles: Handle[];
+    get handles(): Handle[];
     _copyInto(recipe: Recipe, cloneMap: CloneMap): Slot;
     _startNormalize(): void;
     _finishNormalize(): void;

@@ -39,13 +39,16 @@ export declare class Handle implements Comparable<Handle> {
     _startNormalize(): void;
     _finishNormalize(): void;
     _compareTo(other: Handle): number;
-    fate: Fate;
-    readonly originalFate: Fate;
-    readonly originalId: string | null;
-    readonly recipe: Recipe;
-    tags: string[];
-    readonly type: Type;
-    id: string | null;
+    get fate(): Fate;
+    set fate(fate: Fate);
+    get originalFate(): Fate;
+    get originalId(): string | null;
+    get recipe(): Recipe;
+    get tags(): string[];
+    set tags(tags: string[]);
+    get type(): Type;
+    get id(): string | null;
+    set id(id: string | null);
     mapToStorage(storage: {
         id: string;
         type: Type;
@@ -53,12 +56,17 @@ export declare class Handle implements Comparable<Handle> {
         storageKey?: string | StorageKey;
         claims?: ClaimIsTag[];
     }): void;
-    localName: string;
-    readonly connections: HandleConnection[];
-    storageKey: string | StorageKey;
-    pattern: string;
-    mappedType: Type;
-    immediateValue: ParticleSpec;
+    get localName(): string;
+    set localName(name: string);
+    get connections(): HandleConnection[];
+    get storageKey(): string | StorageKey;
+    set storageKey(key: string | StorageKey);
+    get pattern(): string;
+    set pattern(pattern: string);
+    get mappedType(): Type;
+    set mappedType(mappedType: Type);
+    get immediateValue(): ParticleSpec;
+    set immediateValue(value: ParticleSpec);
     static effectiveType(handleType: Type, connections: {
         type?: Type;
         direction?: Direction;

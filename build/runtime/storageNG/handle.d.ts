@@ -35,9 +35,9 @@ export declare abstract class Handle<StorageType extends CRDTTypeRecord> {
     readonly canWrite: boolean;
     particle: Particle;
     readonly name: string;
-    readonly storage: StorageProxy<StorageType>;
-    readonly type: Type;
-    readonly _id: string;
+    get storage(): StorageProxy<StorageType>;
+    get type(): Type;
+    get _id(): string;
     createIdentityFor(entity: Entity): void;
     constructor(key: string, storageProxy: StorageProxy<StorageType>, idGenerator: IdGenerator, particle: Particle, canRead: boolean, canWrite: boolean, name?: string);
     configure(options: {

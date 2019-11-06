@@ -39,5 +39,5 @@ export declare class CrdtCollectionModel {
     has(id: string): boolean;
     getKeys(id: string): string[];
     getValue(id: string): ModelValue | null;
-    readonly size: number;
+    get size(): number;
 }

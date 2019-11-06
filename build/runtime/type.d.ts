@@ -7,8 +7,6 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { Dictionary } from './hot.js';
-import { EntityClass } from './entity.js';
 import { Id } from './id.js';
 import { InterfaceInfo, HandleConnection, Slot } from './interface-info.js';
 import { SlotInfo } from './slot-info.js';
@@ -20,54 +18,8 @@ import { CRDTCount } from './crdt/crdt-count.js';
 import { CRDTCollection } from './crdt/crdt-collection.js';
 import { CRDTSingleton } from './crdt/crdt-singleton.js';
 import { CollectionHandle, SingletonHandle } from './storageNG/handle.js';
-import { ParticleExecutionContext } from './particle-execution-context.js';
 import { Referenceable } from './crdt/crdt-collection.js';
-export declare class Schema {
-    readonly names: string[];
-    readonly fields: Dictionary<any>;
-    description: Dictionary<string>;
-    isAlias: boolean;
-    constructor(names: string[], fields: Dictionary<any>, description?: any);
-    toLiteral(): {
-        names: string[];
-        fields: {};
-        description: Dictionary<string>;
-    };
-    static fromLiteral(data?: {
-        fields: {};
-        names: any[];
-        description: {};
-    }): Schema;
-    readonly name: string;
-    static typesEqual(fieldType1: any, fieldType2: any): boolean;
-    static _typeString(type: any): string;
-    static union(schema1: Schema, schema2: Schema): Schema | null;
-    static intersect(schema1: Schema, schema2: Schema): Schema;
-    equals(otherSchema: Schema): boolean;
-    isMoreSpecificThan(otherSchema: Schema): boolean;
-    readonly type: Type;
-    entityClass(context?: ParticleExecutionContext | null): EntityClass;
-    crdtConstructor<S extends Dictionary<Referenceable>, C extends Dictionary<Referenceable>>(): {
-        new (): {
-            model: import("./crdt/crdt-entity.js").EntityInternalModel<S, C>;
-            merge(other: import("./crdt/crdt-entity.js").EntityData<S, C>): {
-                modelChange: import("./crdt/crdt.js").CRDTChange<import("./crdt/crdt-entity.js").CRDTEntityTypeRecord<S, C>>;
-                otherChange: import("./crdt/crdt.js").CRDTChange<import("./crdt/crdt-entity.js").CRDTEntityTypeRecord<S, C>>;
-            };
-            applyOperation(op: import("./crdt/crdt-entity.js").EntityOperation<S, C>): boolean;
-            getData(): import("./crdt/crdt-entity.js").EntityData<S, C>;
-            getParticleView(): {
-                singletons: S;
-                collections: { [P in keyof C]: Set<C[P]>; };
-            };
-        };
-    };
-    static fieldToString([name, type]: [string, any]): string;
-    toInlineSchemaString(options?: {
-        hideFields?: boolean;
-    }): string;
-    toManifestString(): string;
-}
+import { Schema } from './schema.js';
 export interface TypeLiteral extends Literal {
     tag: string;
     data?: any;
@@ -90,20 +42,20 @@ export declare abstract class Type {
     isResolved(): boolean;
     mergeTypeVariablesByName(variableMap: Map<string, Type>): Type;
     _applyExistenceTypeTest(test: Predicate<Type>): boolean;
-    readonly hasVariable: boolean;
-    readonly hasUnresolvedVariable: boolean;
+    get hasVariable(): boolean;
+    get hasUnresolvedVariable(): boolean;
     getContainedType(): Type | null;
     isTypeContainer(): boolean;
-    readonly isReference: boolean;
-    readonly isSingleton: boolean;
+    get isReference(): boolean;
+    get isSingleton(): boolean;
     collectionOf(): CollectionType<this>;
     bigCollectionOf(): BigCollectionType<this>;
     resolvedType(): Type;
     canEnsureResolved(): boolean;
     protected _canEnsureResolved(): boolean;
     maybeEnsureResolved(): boolean;
-    readonly canWriteSuperset: Type;
-    readonly canReadSubset: Type;
+    get canWriteSuperset(): Type;
+    get canReadSubset(): Type;
     isMoreSpecificThan(type: Type): boolean;
     protected _isMoreSpecificThan(type: Type): boolean;
     /**
@@ -141,16 +93,16 @@ export declare class SingletonType<T extends Type> extends Type {
     getContainedType(): T;
     crdtInstanceConstructor(): typeof CRDTSingleton;
     handleConstructor<T>(): typeof SingletonHandle;
-    readonly isSingleton: boolean;
+    get isSingleton(): boolean;
     toString(options?: any): string;
 }
 export declare class EntityType extends Type {
     readonly entitySchema: Schema;
     constructor(schema: Schema);
     static make(names: string[], fields: {}, description?: any): EntityType;
-    readonly isEntity: boolean;
-    readonly canWriteSuperset: EntityType;
-    readonly canReadSubset: EntityType;
+    get isEntity(): boolean;
+    get canWriteSuperset(): EntityType;
+    get canReadSubset(): EntityType;
     _isMoreSpecificThan(type: EntityType): boolean;
     toLiteral(): TypeLiteral;
     toString(options?: any): string;
@@ -159,15 +111,15 @@ export declare class EntityType extends Type {
     toPrettyString(): string;
     crdtInstanceConstructor(): {
         new (): {
-            model: import("./crdt/crdt-entity.js").EntityInternalModel<Dictionary<Referenceable>, Dictionary<Referenceable>>;
-            merge(other: import("./crdt/crdt-entity.js").EntityData<Dictionary<Referenceable>, Dictionary<Referenceable>>): {
-                modelChange: import("./crdt/crdt.js").CRDTChange<import("./crdt/crdt-entity.js").CRDTEntityTypeRecord<Dictionary<Referenceable>, Dictionary<Referenceable>>>;
-                otherChange: import("./crdt/crdt.js").CRDTChange<import("./crdt/crdt-entity.js").CRDTEntityTypeRecord<Dictionary<Referenceable>, Dictionary<Referenceable>>>;
+            model: import("./crdt/crdt-entity.js").EntityInternalModel<import("./hot.js").Dictionary<Referenceable>, import("./hot.js").Dictionary<Referenceable>>;
+            merge(other: import("./crdt/crdt-entity.js").EntityData<import("./hot.js").Dictionary<Referenceable>, import("./hot.js").Dictionary<Referenceable>>): {
+                modelChange: import("./crdt/crdt.js").CRDTChange<import("./crdt/crdt-entity.js").CRDTEntityTypeRecord<import("./hot.js").Dictionary<Referenceable>, import("./hot.js").Dictionary<Referenceable>>>;
+                otherChange: import("./crdt/crdt.js").CRDTChange<import("./crdt/crdt-entity.js").CRDTEntityTypeRecord<import("./hot.js").Dictionary<Referenceable>, import("./hot.js").Dictionary<Referenceable>>>;
             };
-            applyOperation(op: import("./crdt/crdt-entity.js").EntityOperation<Dictionary<Referenceable>, Dictionary<Referenceable>>): boolean;
-            getData(): import("./crdt/crdt-entity.js").EntityData<Dictionary<Referenceable>, Dictionary<Referenceable>>;
+            applyOperation(op: import("./crdt/crdt-entity.js").EntityOperation<import("./hot.js").Dictionary<Referenceable>, import("./hot.js").Dictionary<Referenceable>>): boolean;
+            getData(): import("./crdt/crdt-entity.js").EntityData<import("./hot.js").Dictionary<Referenceable>, import("./hot.js").Dictionary<Referenceable>>;
             getParticleView(): {
-                singletons: Dictionary<Referenceable>;
+                singletons: import("./hot.js").Dictionary<Referenceable>;
                 collections: {
                     [x: string]: Set<Referenceable>;
                 };
@@ -180,13 +132,13 @@ export declare class TypeVariable extends Type {
     readonly variable: TypeVariableInfo;
     constructor(variable: TypeVariableInfo);
     static make(name: string, canWriteSuperset?: Type, canReadSubset?: Type): TypeVariable;
-    readonly isVariable: boolean;
+    get isVariable(): boolean;
     mergeTypeVariablesByName(variableMap: Map<string, Type>): Type;
     resolvedType(): Type | this;
     _canEnsureResolved(): boolean;
     maybeEnsureResolved(): boolean;
-    readonly canWriteSuperset: Type;
-    readonly canReadSubset: Type;
+    get canWriteSuperset(): Type;
+    get canReadSubset(): Type;
     _clone(variableMap: any): TypeVariable;
     _cloneWithResolutions(variableMap: Map<TypeVariableInfo | Schema, TypeVariableInfo | Schema>): TypeVariable;
     toLiteral(): TypeLiteral;
@@ -197,7 +149,7 @@ export declare class TypeVariable extends Type {
 export declare class CollectionType<T extends Type> extends Type {
     readonly collectionType: T;
     constructor(collectionType: T);
-    readonly isCollection: boolean;
+    get isCollection(): boolean;
     mergeTypeVariablesByName(variableMap: Map<string, Type>): CollectionType<Type>;
     _applyExistenceTypeTest(test: Predicate<Type>): boolean;
     getContainedType(): T;
@@ -205,8 +157,8 @@ export declare class CollectionType<T extends Type> extends Type {
     resolvedType(): CollectionType<Type>;
     _canEnsureResolved(): boolean;
     maybeEnsureResolved(): boolean;
-    readonly canWriteSuperset: InterfaceType;
-    readonly canReadSubset: InterfaceType;
+    get canWriteSuperset(): InterfaceType;
+    get canReadSubset(): InterfaceType;
     _clone(variableMap: Map<string, Type>): Type;
     _cloneWithResolutions(variableMap: Map<TypeVariableInfo | Schema, TypeVariableInfo | Schema>): CollectionType<Type>;
     toLiteral(): TypeLiteral;
@@ -220,7 +172,7 @@ export declare class CollectionType<T extends Type> extends Type {
 export declare class BigCollectionType<T extends Type> extends Type {
     readonly bigCollectionType: T;
     constructor(bigCollectionType: T);
-    readonly isBigCollection: boolean;
+    get isBigCollection(): boolean;
     mergeTypeVariablesByName(variableMap: Map<string, Type>): BigCollectionType<Type>;
     _applyExistenceTypeTest(test: any): boolean;
     getContainedType(): T;
@@ -228,8 +180,8 @@ export declare class BigCollectionType<T extends Type> extends Type {
     resolvedType(): BigCollectionType<Type>;
     _canEnsureResolved(): boolean;
     maybeEnsureResolved(): boolean;
-    readonly canWriteSuperset: InterfaceType;
-    readonly canReadSubset: InterfaceType;
+    get canWriteSuperset(): InterfaceType;
+    get canReadSubset(): InterfaceType;
     _clone(variableMap: Map<string, Type>): Type;
     _cloneWithResolutions(variableMap: Map<TypeVariableInfo | Schema, TypeVariableInfo | Schema>): BigCollectionType<Type>;
     toLiteral(): TypeLiteral;
@@ -241,7 +193,7 @@ export declare class BigCollectionType<T extends Type> extends Type {
 export declare class RelationType extends Type {
     private readonly relationEntities;
     constructor(relation: Type[]);
-    readonly isRelation: boolean;
+    get isRelation(): boolean;
     toLiteral(): TypeLiteral;
     toPrettyString(): string;
 }
@@ -249,14 +201,14 @@ export declare class InterfaceType extends Type {
     readonly interfaceInfo: InterfaceInfo;
     constructor(iface: InterfaceInfo);
     static make(name: string, handleConnections: HandleConnection[], slots: Slot[]): InterfaceType;
-    readonly isInterface: boolean;
+    get isInterface(): boolean;
     mergeTypeVariablesByName(variableMap: Map<string, Type>): InterfaceType;
     _applyExistenceTypeTest(test: any): boolean;
     resolvedType(): InterfaceType;
     _canEnsureResolved(): boolean;
     maybeEnsureResolved(): boolean;
-    readonly canWriteSuperset: InterfaceType;
-    readonly canReadSubset: InterfaceType;
+    get canWriteSuperset(): InterfaceType;
+    get canReadSubset(): InterfaceType;
     _isMoreSpecificThan(type: InterfaceType): boolean;
     _clone(variableMap: Map<string, Type>): Type;
     _cloneWithResolutions(variableMap: any): InterfaceType;
@@ -269,8 +221,8 @@ export declare class SlotType extends Type {
     constructor(slot: SlotInfo);
     static make(formFactor: string, handle: string): SlotType;
     getSlot(): SlotInfo;
-    readonly canWriteSuperset: SlotType;
-    readonly canReadSubset: this;
+    get canWriteSuperset(): SlotType;
+    get canReadSubset(): this;
     _isMoreSpecificThan(type: SlotType): boolean;
     toLiteral(): TypeLiteral;
     toString(options?: any): string;
@@ -279,14 +231,14 @@ export declare class SlotType extends Type {
 export declare class ReferenceType extends Type {
     readonly referredType: Type;
     constructor(reference: Type);
-    readonly isReference: boolean;
+    get isReference(): boolean;
     getContainedType(): Type;
     isTypeContainer(): boolean;
     resolvedType(): ReferenceType;
     _canEnsureResolved(): boolean;
     maybeEnsureResolved(): boolean;
-    readonly canWriteSuperset: Type;
-    readonly canReadSubset: Type;
+    get canWriteSuperset(): Type;
+    get canReadSubset(): Type;
     _clone(variableMap: Map<string, Type>): Type;
     _cloneWithResolutions(variableMap: Map<TypeVariableInfo | Schema, TypeVariableInfo | Schema>): ReferenceType;
     toLiteral(): TypeLiteral;
@@ -296,12 +248,12 @@ export declare class ReferenceType extends Type {
 }
 export declare class ArcType extends Type {
     constructor();
-    readonly isArc: boolean;
+    get isArc(): boolean;
     newInstance(arcId: Id, serialization: string): ArcInfo;
     toLiteral(): TypeLiteral;
 }
 export declare class HandleType extends Type {
     constructor();
-    readonly isHandle: boolean;
+    get isHandle(): boolean;
     toLiteral(): TypeLiteral;
 }

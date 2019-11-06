@@ -23,7 +23,7 @@ export declare class SlotProxy {
     readonly requestedContentTypes: Set<string>;
     private _isRendered;
     constructor(apiPort: PECInnerPort, particle: Particle, slotName: string, providedSlots: ReadonlyMap<string, string>);
-    readonly isRendered: boolean;
+    get isRendered(): boolean;
     /**
      * renders content to the slot.
      */

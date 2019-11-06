@@ -43,7 +43,7 @@ export declare class TestHelper {
     static parseManifest(manifestString: string, loader: any): Promise<Manifest>;
     setTimeout(timeout: number): void;
     clearTimeout(): void;
-    readonly envOptions: {
+    get envOptions(): {
         context: Manifest;
         loader: Loader;
     };

@@ -10,13 +10,13 @@
 import { DevtoolsChannel } from '../platform/devtools-channel-web.js';
 import { DevtoolsChannelStub } from './testing/devtools-channel-stub.js';
 export declare class DevtoolsConnection {
-    static readonly isConnected: boolean;
-    static readonly onceConnected: Promise<DevtoolsChannel>;
+    static get isConnected(): boolean;
+    static get onceConnected(): Promise<DevtoolsChannel>;
     static get(): any;
     static ensure(): void;
 }
 export declare class DevtoolsForTests {
-    static readonly channel: DevtoolsChannelStub;
+    static get channel(): DevtoolsChannelStub;
     static ensureStub(): void;
     static reset(): void;
 }

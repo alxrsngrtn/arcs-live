@@ -25,6 +25,6 @@ export declare class ExplorerProxy {
     private onceDeviceAppears;
     constructor();
     listen(server: Server, explorePort: number): void;
-    readonly deviceConnected: boolean;
-    readonly explorerConnected: boolean;
+    get deviceConnected(): boolean;
+    get explorerConnected(): boolean;
 }

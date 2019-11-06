@@ -51,15 +51,16 @@ export declare class DomParticle extends DomParticle_base {
     /**
      * Getters and setters for working with state/props.
      */
+    get state(): any;
     /**
-    * Syntactic sugar: `this.state = {state}` is equivalent to `this.setState(state)`.
-    */
-    state: any;
-    readonly props: any;
+     * Syntactic sugar: `this.state = {state}` is equivalent to `this.setState(state)`.
+     */
+    set state(state: any);
+    get props(): any;
     /**
      * Override if necessary, to modify superclass config.
      */
-    readonly config: DomParticleConfig;
+    get config(): DomParticleConfig;
     _willReceiveProps(...args: any[]): void;
     _update(...args: any[]): void;
     _async(fn: any): NodeJS.Timeout;

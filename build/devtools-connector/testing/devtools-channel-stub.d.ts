@@ -20,7 +20,7 @@ import { DevtoolsMessage, AbstractDevtoolsChannel } from '../abstract-devtools-c
 export declare class DevtoolsChannelStub extends AbstractDevtoolsChannel {
     private _messages;
     constructor();
-    readonly messages: DevtoolsMessage[];
+    get messages(): DevtoolsMessage[];
     send(message: DevtoolsMessage): void;
     receive(message: DevtoolsMessage): Promise<void>;
     clear(): void;

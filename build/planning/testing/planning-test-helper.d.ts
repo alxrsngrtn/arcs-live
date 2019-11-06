@@ -60,6 +60,6 @@ export declare class PlanningTestHelper extends TestHelper {
     /**
      * Getter for a single available suggestion plan (fails, if there is more than one).
      */
-    readonly plan: Recipe;
+    get plan(): Recipe;
 }
 export {};

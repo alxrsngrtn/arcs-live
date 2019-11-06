@@ -35,7 +35,7 @@ export declare class SlotDomConsumer extends SlotConsumer {
     createTemplateElement(template: any): HTMLTemplateElement & {
         innerHTML: any;
     };
-    readonly templatePrefix: string;
+    get templatePrefix(): string;
     _setTemplate(rendering: DomRendering, templatePrefix: any, templateName: any, template: any): void;
     _onUpdate(rendering: DomRendering): void;
     _observe(container: any): void;

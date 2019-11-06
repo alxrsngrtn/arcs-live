@@ -29,7 +29,7 @@ declare class SlotInput implements Edge {
     readonly connectionName: string;
     readonly modifier: FlowModifier;
     constructor(edgeId: string, particleNode: ParticleNode, slotNode: SlotNode, connection: SlotConnection);
-    readonly check: FlowCheck | undefined;
+    get check(): FlowCheck | undefined;
 }
 export declare function createSlotNodes(slots: Slot[]): Map<Slot, SlotNode>;
 /** Adds a connection between the given particle and slot nodes, where the particle "consumes" the slot. */

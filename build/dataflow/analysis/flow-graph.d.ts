@@ -30,9 +30,9 @@ export declare class FlowGraph {
     private readonly handleSpecMap;
     private readonly manifest;
     constructor(recipe: Recipe, manifest: Manifest);
-    readonly edges: readonly Edge[];
+    get edges(): readonly Edge[];
     /** Returns a list of all pairwise particle connections, in string form: 'P1.foo -> P2.bar'. */
-    readonly connectionsAsStrings: string[];
+    get connectionsAsStrings(): string[];
     /** Converts a list of edge IDs into a path string using the edge labels. */
     edgeIdsToPath(edgeIds: readonly string[]): string;
     /** Converts an "is from handle" check into the node ID that we need to search for. */

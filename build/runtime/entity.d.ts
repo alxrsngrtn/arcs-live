@@ -7,7 +7,8 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { Schema, Type } from './type.js';
+import { Schema } from './schema.js';
+import { Type } from './type.js';
 import { ParticleExecutionContext } from './particle-execution-context.js';
 import { Storable } from './handle.js';
 import { SerializedEntity } from './storage-proxy.js';

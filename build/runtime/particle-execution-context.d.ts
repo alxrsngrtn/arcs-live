@@ -48,7 +48,7 @@ export declare class ParticleExecutionContext implements StorageCommunicationEnd
     private assignHandle;
     private createParticleFromSpec;
     private loadWasmParticle;
-    readonly relevance: Map<any, any>;
-    readonly busy: boolean;
-    readonly idle: Promise<any>;
+    get relevance(): Map<any, any>;
+    get busy(): boolean;
+    get idle(): Promise<any>;
 }

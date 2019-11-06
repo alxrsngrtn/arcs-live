@@ -118,8 +118,8 @@ export declare abstract class Node {
     abstract readonly outEdges: readonly Edge[];
     abstract addInEdge(edge: Edge): void;
     abstract addOutEdge(edge: Edge): void;
-    readonly inNodes: Node[];
-    readonly outNodes: Node[];
+    get inNodes(): Node[];
+    get outNodes(): Node[];
     abstract inEdgesFromOutEdge(outEdge: Edge): readonly Edge[];
 }
 /**

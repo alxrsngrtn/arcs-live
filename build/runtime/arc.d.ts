@@ -82,14 +82,14 @@ export declare class Arc {
     readonly volatileMemory: VolatileMemory;
     private readonly volatileStorageDriverProvider;
     constructor({ id, context, pecFactories, slotComposer, loader, storageKey, storageProviderFactory, speculative, innerArc, stub, inspectorFactory }: ArcOptions);
-    readonly loader: Loader;
-    readonly modality: Modality;
+    get loader(): Loader;
+    get modality(): Modality;
     dispose(): void;
     _waitForIdle(): Promise<void>;
-    readonly idle: Promise<void>;
+    get idle(): Promise<void>;
     findInnerArcs(particle: Particle): Arc[];
-    readonly innerArcs: Arc[];
-    readonly allDescendingArcs: Arc[];
+    get innerArcs(): Arc[];
+    get allDescendingArcs(): Arc[];
     createInnerArc(transformationParticle: Particle): Arc;
     private _serializeStore;
     private _serializeHandles;
@@ -98,11 +98,11 @@ export declare class Arc {
     serialize(): Promise<string>;
     persistSerialization(serialization: string): Promise<void>;
     static deserialize({ serialization, pecFactories, slotComposer, loader, fileName, context, inspectorFactory }: DeserializeArcOptions): Promise<Arc>;
-    readonly context: Manifest;
-    readonly activeRecipe: Recipe;
-    readonly allRecipes: Recipe[];
-    readonly recipes: Recipe[];
-    readonly recipeDeltas: {
+    get context(): Manifest;
+    get activeRecipe(): Recipe;
+    get allRecipes(): Recipe[];
+    get recipes(): Recipe[];
+    get recipeDeltas(): {
         handles: Handle[];
         particles: Particle[];
         slots: Slot[];
@@ -117,7 +117,7 @@ export declare class Arc {
     }>;
     private _provisionSpecUrl;
     generateID(component?: string): Id;
-    readonly _stores: UnifiedStore[];
+    get _stores(): UnifiedStore[];
     cloneForSpeculativeExecution(): Promise<Arc>;
     /**
      * Instantiates the given recipe in the Arc.
@@ -158,7 +158,7 @@ export declare class Arc {
     }): {};
     keyForId(id: string): string | StorageKey;
     toContextString(): string;
-    readonly apiChannelMappingId: string;
-    readonly idGeneratorForTesting: IdGenerator;
+    get apiChannelMappingId(): string;
+    get idGeneratorForTesting(): IdGenerator;
 }
 export {};

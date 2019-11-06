@@ -40,7 +40,7 @@ export declare class Planificator {
     constructor(arc: Arc, result: PlanningResult, searchStore: SingletonStorageProvider, onlyConsumer?: boolean, debug?: boolean, inspectorFactory?: PlannerInspectorFactory, noSpecEx?: boolean);
     forceReplan(): Promise<void>;
     requestPlanning(options?: {}): Promise<void>;
-    readonly consumerOnly: boolean;
+    get consumerOnly(): boolean;
     loadSuggestions(): Promise<boolean>;
     setSearch(search: string | null): Promise<void>;
     registerSuggestionsChangedCallback(callback: any): void;

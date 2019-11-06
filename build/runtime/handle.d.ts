@@ -53,9 +53,9 @@ export declare abstract class HandleOld {
     configure(options: any): void;
     _serialize(entity: Storable): SerializedEntity;
     createIdentityFor(entity: Entity): void;
-    readonly type: import("./type.js").Type;
-    readonly _id: string;
-    readonly storage: Readonly<Store>;
+    get type(): import("./type.js").Type;
+    get _id(): string;
+    get storage(): Readonly<Store>;
     toManifestString(): string;
     protected generateKey(): string;
     /**
@@ -106,7 +106,7 @@ export declare class Collection extends HandleOld {
      * in the particle's manifest.
      */
     remove(entity: Storable): Promise<void>;
-    readonly storage: Readonly<CollectionStore>;
+    get storage(): Readonly<CollectionStore>;
 }
 /**
  * A handle on a single entity. A particle's manifest dictates
@@ -135,7 +135,7 @@ export declare class Singleton extends HandleOld {
      * in the particle's manifest.
      */
     clear(): Promise<void>;
-    readonly storage: Readonly<SingletonStore>;
+    get storage(): Readonly<SingletonStore>;
 }
 /**
  * Provides paginated read access to a BigCollection. Conforms to the javascript iterator protocol
@@ -195,7 +195,7 @@ export declare class BigCollection extends HandleOld {
         pageSize: number;
         forward: boolean;
     }): Promise<Cursor>;
-    readonly storage: Readonly<BigCollectionStore>;
+    get storage(): Readonly<BigCollectionStore>;
 }
 export declare function handleFor(storage: Store, idGenerator: IdGenerator, name?: string, particleId?: string, canRead?: boolean, canWrite?: boolean): HandleOld;
 /** Creates either a new- or old-style Handle for the given storage proxy. */
@@ -207,5 +207,5 @@ export declare function unifiedHandleFor(opts: {
     particle?: Particle;
     canRead?: boolean;
     canWrite?: boolean;
-}): Handle;
+}): HandleOld | HandleNG<CRDTTypeRecord>;
 export {};

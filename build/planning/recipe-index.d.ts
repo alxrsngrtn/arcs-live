@@ -29,7 +29,7 @@ export declare class RecipeIndex {
     private _isReady;
     constructor(arc: Arc);
     static create(arc: Arc): RecipeIndex;
-    readonly recipes: Recipe[];
+    get recipes(): Recipe[];
     ensureReady(): void;
     /**
      * Given provided handle and requested fates, finds handles with
@@ -53,7 +53,7 @@ export declare class RecipeIndex {
      *    as a potential match to a slot above.
      */
     private _fatesAndDirectionsMatch;
-    readonly coalescableFates: string[];
+    get coalescableFates(): string[];
     findCoalescableHandles(recipe: Recipe, otherRecipe: Recipe, usedHandles?: Set<Handle>): Map<Handle, Handle>;
 }
 export {};

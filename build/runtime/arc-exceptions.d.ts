@@ -32,11 +32,11 @@ export declare class PropagatedException extends Error {
 }
 /** An exception thrown in Arcs runtime code. */
 export declare class SystemException extends PropagatedException {
-    readonly message: string;
+    get message(): string;
 }
 /** An exception thrown in the user particle code (as opposed to an error in the Arcs runtime). */
 export declare class UserException extends PropagatedException {
-    readonly message: string;
+    get message(): string;
 }
 declare type ExceptionHandler = Consumer<PropagatedException>;
 export declare function reportSystemException(exception: PropagatedException): void;

@@ -38,13 +38,13 @@ export declare abstract class UnifiedStore implements Comparable<UnifiedStore>, 
     abstract referenceMode: boolean;
     storeInfo: StoreInfo;
     constructor(storeInfo: StoreInfo);
-    readonly id: string;
-    readonly name: string;
-    readonly type: Type;
-    readonly originalId: string;
-    readonly source: string;
-    readonly description: string;
-    readonly claims: ClaimIsTag[];
+    get id(): string;
+    get name(): string;
+    get type(): Type;
+    get originalId(): string;
+    get source(): string;
+    get description(): string;
+    get claims(): ClaimIsTag[];
     abstract activate(): Promise<UnifiedActiveStore>;
     /**
      * Hack to cast this UnifiedStore to the old-style class StorageStub.

@@ -20,7 +20,7 @@ export declare class OrderedSet<T> {
     addAll(other: OrderedSet<T>): void;
     has(element: T): boolean;
     copy(): OrderedSet<T>;
-    readonly length: number;
+    get length(): number;
     asSet(): ReadonlySet<T>;
     asArray(): readonly T[];
 }

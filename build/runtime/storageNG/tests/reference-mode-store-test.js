@@ -15,7 +15,8 @@ import { ReferenceModeStore, ReferenceCollection, ReferenceModeStorageKey } from
 import { CRDTEntity, EntityOpTypes } from '../../crdt/crdt-entity.js';
 import { CRDTCollection, CollectionOpTypes } from '../../crdt/crdt-collection.js';
 import { CRDTSingleton } from '../../crdt/crdt-singleton.js';
-import { Schema, CountType, CollectionType, EntityType } from '../../type.js';
+import { Schema } from '../../schema.js';
+import { CountType, CollectionType, EntityType } from '../../type.js';
 /* eslint-disable no-async-promise-executor */
 let testKey;
 let baseStore;

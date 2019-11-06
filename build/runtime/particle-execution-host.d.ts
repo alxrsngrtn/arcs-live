@@ -39,8 +39,8 @@ export declare class ParticleExecutionHost {
     private choosePortForParticle;
     private getPort;
     stop(): void;
-    readonly idle: Promise<Map<Particle, number[]>> | undefined;
-    readonly messageCount: number;
+    get idle(): Promise<Map<Particle, number[]>> | undefined;
+    get messageCount(): number;
     sendEvent(particle: any, slotName: any, event: any): void;
     instantiate(particle: Particle, stores: Map<string, UnifiedStore>): void;
     reinstantiate(particle: Particle, stores: Map<string, UnifiedStore>): void;

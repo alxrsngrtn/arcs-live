@@ -36,14 +36,17 @@ export declare class TypeVariableInfo {
      */
     maybeMergeCanWriteSuperset(constraint: Type): boolean;
     isSatisfiedBy(type: Type): boolean;
-    resolution: Type | null;
+    get resolution(): Type | null;
     isValidResolutionCandidate(value: Type): {
         result: boolean;
         detail?: string;
     };
-    canWriteSuperset: Type | null;
-    canReadSubset: Type | null;
-    readonly hasConstraint: boolean;
+    set resolution(value: Type);
+    get canWriteSuperset(): Type | null;
+    set canWriteSuperset(value: Type | null);
+    get canReadSubset(): Type | null;
+    set canReadSubset(value: Type | null);
+    get hasConstraint(): boolean;
     canEnsureResolved(): boolean;
     maybeEnsureResolved(): boolean;
     toLiteral(): TypeVariableInfoLiteral;

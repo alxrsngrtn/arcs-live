@@ -37,8 +37,8 @@ export declare class UiSlotComposer {
      * - containerKind: the type of container wrapping each slot-context's container  (for example, div).
      */
     constructor(options?: SlotComposerOptions);
-    readonly consumers: SlotConsumer[];
-    readonly containerKind: string;
+    get consumers(): SlotConsumer[];
+    get containerKind(): string;
     getSlotConsumer(particle: Particle, slotName: string): SlotConsumer;
     findContainerByName(name: string): HTMLElement | undefined;
     findContextsByName(name: string): ProvidedSlotContext[];

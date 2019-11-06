@@ -55,8 +55,8 @@ export declare class InterfaceInfo {
     constructor(name: string, handleConnections: HandleConnection[], slots: Slot[]);
     toPrettyString(): string;
     mergeTypeVariablesByName(variableMap: Map<string, Type>): void;
-    readonly canReadSubset: InterfaceInfo;
-    readonly canWriteSuperset: InterfaceInfo;
+    get canReadSubset(): InterfaceInfo;
+    get canWriteSuperset(): InterfaceInfo;
     isMoreSpecificThan(other: InterfaceInfo): boolean;
     _applyExistenceTypeTest(test: Predicate<TypeVarReference>): boolean;
     _handleConnectionsToManifestString(): string;

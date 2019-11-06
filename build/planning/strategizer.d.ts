@@ -42,14 +42,14 @@ export declare class Strategizer {
     _terminal: Descendant<Recipe>[];
     populationHash: Map<string, Descendant<Recipe>>;
     constructor(strategies: Strategy[], evaluators: Strategy[], ruleset: Ruleset);
-    readonly generation: number;
-    readonly population: Descendant<Recipe>[];
-    readonly generated: Descendant<Recipe>[];
+    get generation(): number;
+    get population(): Descendant<Recipe>[];
+    get generated(): Descendant<Recipe>[];
     /**
      * @return Individuals from the previous generation that were not descended from in the
      * current generation.
      */
-    readonly terminal: Descendant<Recipe>[];
+    get terminal(): Descendant<Recipe>[];
     generate(): Promise<GenerationRecord>;
     static _mergeEvaluations(evaluations: number[][], generated: Descendant<Recipe>[]): number[];
 }

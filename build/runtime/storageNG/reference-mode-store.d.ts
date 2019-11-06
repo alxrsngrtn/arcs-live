@@ -66,7 +66,7 @@ export declare class ReferenceModeStore<Entity extends Referenceable, S extends 
     }): Promise<ReferenceModeStore<Entity, S, C, ReferenceContainer, Container>>;
     serializeContents(): Promise<Container['data']>;
     reportExceptionInHost(exception: PropagatedException): void;
-    readonly versionToken: string;
+    get versionToken(): string;
     on(callback: ProxyCallback<Container>): number;
     off(callback: number): void;
     private registerStoreCallbacks;

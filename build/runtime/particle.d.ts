@@ -106,9 +106,9 @@ export declare class Particle {
      */
     protected onHandleDesync(handle: Handle): Promise<void>;
     constructInnerArc(): Promise<InnerArcHandle>;
-    readonly busy: boolean;
-    readonly idle: Promise<void>;
-    relevance: Relevance | number;
+    get busy(): boolean;
+    get idle(): Promise<void>;
+    set relevance(r: Relevance | number);
     startBusy(): void;
     doneBusy(): void;
     inputs(): HandleConnectionSpec[];

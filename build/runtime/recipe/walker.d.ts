@@ -66,7 +66,7 @@ export declare abstract class Action<T extends Cloneable<T>> {
     private readonly _arc?;
     private readonly _args?;
     constructor(arc?: Arc, args?: any);
-    readonly arc: Arc | undefined;
+    get arc(): Arc | undefined;
     getResults({ generated }: GenerateParams<T>): Descendant<T>[];
     generateFrom(generated: Descendant<T>[]): Promise<Descendant<T>[]>;
     abstract generate(inputParams: GenerateParams<T>): Promise<Descendant<T>[]>;

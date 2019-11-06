@@ -27,7 +27,7 @@ export declare class Store<T extends CRDTTypeRecord> extends UnifiedStore implem
         storageKey: StorageKey;
         exists: Exists;
     });
-    readonly versionToken: string;
+    get versionToken(): string;
     activate(): Promise<ActiveStore<T>>;
-    readonly referenceMode: boolean;
+    get referenceMode(): boolean;
 }

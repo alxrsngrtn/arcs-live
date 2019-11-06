@@ -18,7 +18,8 @@ declare class VolatileKey extends KeyBase {
     _arcId: string;
     constructor(key: string);
     base(): string;
-    arcId: string;
+    get arcId(): string;
+    set arcId(arcId: string);
     childKeyForHandle(id: any): VolatileKey;
     childKeyForArcInfo(): VolatileKey;
     childKeyForSuggestions(userId: any, arcId: any): KeyBase;
