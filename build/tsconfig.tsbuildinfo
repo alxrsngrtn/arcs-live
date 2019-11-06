@@ -538,8 +538,8 @@
         "signature": "f56d407931090c16c3859eab94bc71f346fa140551b583d4631e9b05291fecbc"
       },
       "../src/runtime/wasm.ts": {
-        "version": "b3e66284be013e62cb26ef19bd48478fb11e75d4b2ec545d25ed7fd5265a9747",
-        "signature": "fcc906f1b907391edf66b2cc7fd8e01d0290b39624754c8712815085b369cc74"
+        "version": "668d6bb01a781e668fb947dccf241d1ec444640860523551cfd73fa7241fdcea",
+        "signature": "2bd7cd216fc7a6328b159b790f65798d1d7c048fa807f3a19efb39ac5172822b"
       },
       "../src/runtime/particle-execution-context.ts": {
         "version": "6e34cef0c2785ed793038a50beb7d710bc788677d6cc2867578346fec5a16679",
@@ -2573,7 +2573,7 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/wasm-test.ts": {
-        "version": "920562af4389b4cc4c7dab7dc0ea30237cfacb075139beb61964599e1f55f1e6",
+        "version": "da7ee80bdf11bf3ab2c44b6c3bbab84c7cec832a6f3f8789631dea0a1483615f",
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
       },
       "../src/runtime/tests/recipe/comparable-test.ts": {

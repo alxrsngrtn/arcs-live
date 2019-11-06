@@ -26,6 +26,7 @@ import { BiMap } from './bimap.js';
 //    Boolean      B<zero-or-one>
 //    Reference    R<length>:<id>|<length>:<storage-key>|<type-index>:
 //    Dictionary   D<length>:<dictionary format>
+//    Array        A<length>:<array format>
 //
 //  <collection> = <num-entities>:<length>:<encoded><length>:<encoded> ...
 //
@@ -177,6 +178,27 @@ export class StringDecoder {
         }
         return dict;
     }
+    // TODO: make work in the new world.
+    static decodeArray(str) {
+        const decoder = new EntityDecoder(null, null, null);
+        decoder.str = str;
+        const arr = [];
+        let num = Number(decoder.upTo(':'));
+        while (num--) {
+            // TODO(sjmiles): be backward compatible with encoders that only encode string values
+            const typeChar = decoder.chomp(1);
+            // if typeChar is a digit, it's part of a length specifier
+            if (typeChar >= '0' && typeChar <= '9') {
+                const len = Number(`${typeChar}${decoder.upTo(':')}`);
+                arr.push(decoder.chomp(len));
+            }
+            // otherwise typeChar is value-type specifier
+            else {
+                arr.push(decoder.decodeValue(typeChar));
+            }
+        }
+        return arr;
+    }
     upTo(char) {
         const i = this.str.indexOf(char);
         if (i < 0) {
@@ -216,6 +238,11 @@ export class StringDecoder {
                 const len = Number(this.upTo(':'));
                 const dictionary = this.chomp(len);
                 return StringDecoder.decodeDictionary(dictionary);
+            }
+            case 'A': {
+                const len = Number(this.upTo(':'));
+                const array = this.chomp(len);
+                return StringDecoder.decodeArray(array);
             }
             default:
                 throw new Error(`Packaged entity decoding fail: unknown or unsupported primitive value type '${typeChar}'`);

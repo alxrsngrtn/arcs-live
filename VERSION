@@ -1,11 +1,46 @@
-commit 1c0418027f617fadae7ded8c9056913e550f30ee
-Author: Jason Feinstein <jwf@google.com>
-Date:   Wed Nov 6 14:39:57 2019 -0800
+commit 4401f9eed93942320a0f9360faf62918af29a002
+Author: Sarah Heimlich <heimlich@google.com>
+Date:   Wed Nov 6 15:25:57 2019 -0800
 
-    Create ReferenceModeStore (#4002)
+    Adding List to KT-Wasm  String Encoding/Decoding (#3983)
     
-    * Implement ReferenceModeStore.
-    * Make Schema capable of actually materializing a CrdtEntity.
-    * Add ReferencablePrimitive.
-    * Make BackingStore more threadsafe.
-    * Use root .bazelproject for src_kt.
+    * Adding tutorial 5 and basic support for Map<String, Any> WARNING: ERRORS
+    
+    * Collections can display! Now to add handles...
+    
+    * another commit.
+    
+    * passing in js null instead of 0
+    
+    * _syncHandle: defensive against NPEs
+    
+    * Updates to BUILD file.
+    
+    * treating out-of-bounds memory error
+    
+    * using 0 over null
+    
+    * Don't sync handles if there's no encoding
+    
+    * properly handle nullable syncs and updates
+    
+    * Getting arrays working.
+    
+    * Tutorial 5 workinggit add .
+    
+    * Cleaning up code.
+    
+    * Updating based on changes to Master.
+    
+    * Add wasm decoding test.
+    
+    * Added tests
+    
+    * Lint cleanups
+    
+    * Delete stringEncoderTest.kt
+    
+    Git/Mac issues with file renaming.
+    
+    * Delete .bazelproject file - shouldn't have been in this PR.
+    Updates for PR

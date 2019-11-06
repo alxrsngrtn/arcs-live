@@ -33,10 +33,11 @@ export declare abstract class StringDecoder {
     static create(type: Type, typeMap: EntityTypeMap, pec: ParticleExecutionContext): StringDecoder;
     abstract decodeSingleton(str: string): Storable;
     static decodeDictionary(str: string): Dictionary<string>;
+    static decodeArray(str: string): string[];
     protected upTo(char: string): string;
     protected chomp(len: number): string;
     protected validate(token: string): void;
-    protected decodeValue(typeChar: string): string | number | boolean | Reference | Dictionary<string>;
+    protected decodeValue(typeChar: string): string | number | boolean | Reference | Dictionary<string> | string[];
     protected decodeReference(): Reference;
 }
 declare type WasmAddress = number;
