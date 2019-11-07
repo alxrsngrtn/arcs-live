@@ -1,16 +1,5 @@
-commit 47e5c3b95856c0743ccd402a8b6636059c9251cd
-Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Thu Nov 7 12:38:07 2019 +1100
+commit a73c8801c63a725f12121d15c967b553ba9a6caa
+Author: Joshua Pratt <jp10010101010000@gmail.com>
+Date:   Thu Nov 7 12:21:40 2019 +1000
 
-    Fixes personal cloud build and restores test on Travis (#4029)
-    
-    * Fixes personal cloud build and restores test on Travis
-    
-    - Reverts #4014 (caused error TS7027: Unreachable code detected).
-    - Restores personal cloud test on Travis (reverts #4024).
-    
-    Build should be back to normal!
-    
-    Fixes #4018.
-    
-    * Revert tsc version to 3.6.4 for server
+    Update schema2graph tests to unified syntax (#3987)
