@@ -1,15 +1,9 @@
-commit 82051782ea4183d1a5133e493edc36762ead9c44
-Author: Sarah Heimlich <heimlich@google.com>
-Date:   Thu Nov 7 09:34:31 2019 -0800
+commit bd73114ce5b68169205852cc7e364c83b8f1b979
+Author: ianull <ianchang@google.com>
+Date:   Thu Nov 7 10:18:59 2019 -0800
 
-    Wasm event data (#4016)
+    Fix pipes-shell cannot reflect source changes (#4012)
     
-    * adding tutorial kt tutorial 4
-    
-    * ERRORS, but working on it.
-    
-    * Trying to get cpp test passing
-    
-    * Tests pass
-    
-    * Update tests to check for event data.
+    srcs can only reflect shells/pipes-shell/...
+    Add deps to all sources defined at the root BUILD.bazel to reflect
+    changes on sources.
