@@ -1,5 +1,5 @@
-commit a53aaa8e9276381e733dc122e0d1aa8aa2e6bfd9
-Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Thu Nov 7 12:31:11 2019 +1000
+commit 5cfe6f3552edd416172278f355c6c80ad5f09b25
+Author: Walter Korman <wkorman@chromium.org>
+Date:   Wed Nov 6 18:51:59 2019 -0800
 
-    Fix up language server imports (#4010)
+    Add .npmrc to disable package-lock for sub-projects. (#4003)
