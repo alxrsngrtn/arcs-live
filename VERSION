@@ -1,11 +1,16 @@
-commit 02652586d127fb08c05da8f804c134ca6cce4b75
+commit 47e5c3b95856c0743ccd402a8b6636059c9251cd
 Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
-Date:   Thu Nov 7 12:02:12 2019 +1100
+Date:   Thu Nov 7 12:38:07 2019 +1100
 
-    Pins tsc and express versions to fix build, and restores tests (#4028)
+    Fixes personal cloud build and restores test on Travis (#4029)
     
-    * Pin TypeScript to version 3.7.2
+    * Fixes personal cloud build and restores test on Travis
     
-    * Pin express to version 4.17.1
+    - Reverts #4014 (caused error TS7027: Unreachable code detected).
+    - Restores personal cloud test on Travis (reverts #4024).
     
-    * Restore webshell and bazel tests
+    Build should be back to normal!
+    
+    Fixes #4018.
+    
+    * Revert tsc version to 3.6.4 for server

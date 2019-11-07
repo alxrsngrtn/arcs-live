@@ -14,4 +14,4 @@ import { ExplorerProxy } from './explorer-proxy.js';
  *
  * Very simple at the moment, will likely grow as we add features.
  */
-export declare function status(proxy: ExplorerProxy): (req: Request, res: Response, next: NextFunction) => any;
+export declare function status(proxy: ExplorerProxy): (req: Request, res: Response, next: NextFunction) => void;

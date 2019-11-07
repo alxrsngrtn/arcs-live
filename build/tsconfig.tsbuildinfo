@@ -2781,8 +2781,8 @@
         "signature": "bba1c9a029a451a9c86ab633a97c1053ca53a50e0fd37f90341f8aba9c59d232"
       },
       "../src/tools/dev_server/status-handler.ts": {
-        "version": "158117e2b17e3e981151d223e8d017360f847942268412fd4224ee6566210895",
-        "signature": "eebba3e634f496bc5a2e931f42712876824d9a4a61a61904be59aec8c8d0cf62"
+        "version": "2de53880043f8ac51aadbb82bd4f38871a90a308ffc97d3ebc7d7fccdca8c77f",
+        "signature": "e099641bf2594ccf6b0cad4cf78c2f50d563cd52aa874686bd4a6ba11129176a"
       },
       "../node_modules/chokidar/types/index.d.ts": {
         "version": "ca7f76d3ea132bde53dca1a0f33cda95397d20c248e452c050773f01504d9802",
