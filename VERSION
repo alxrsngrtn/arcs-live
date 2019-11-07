@@ -1,46 +1,5 @@
-commit 4401f9eed93942320a0f9360faf62918af29a002
-Author: Sarah Heimlich <heimlich@google.com>
-Date:   Wed Nov 6 15:25:57 2019 -0800
+commit fb8d5595a977566d82ce7b3f712f5719d4bbf748
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Wed Nov 6 16:37:38 2019 -0800
 
-    Adding List to KT-Wasm  String Encoding/Decoding (#3983)
-    
-    * Adding tutorial 5 and basic support for Map<String, Any> WARNING: ERRORS
-    
-    * Collections can display! Now to add handles...
-    
-    * another commit.
-    
-    * passing in js null instead of 0
-    
-    * _syncHandle: defensive against NPEs
-    
-    * Updates to BUILD file.
-    
-    * treating out-of-bounds memory error
-    
-    * using 0 over null
-    
-    * Don't sync handles if there's no encoding
-    
-    * properly handle nullable syncs and updates
-    
-    * Getting arrays working.
-    
-    * Tutorial 5 workinggit add .
-    
-    * Cleaning up code.
-    
-    * Updating based on changes to Master.
-    
-    * Add wasm decoding test.
-    
-    * Added tests
-    
-    * Lint cleanups
-    
-    * Delete stringEncoderTest.kt
-    
-    Git/Mac issues with file renaming.
-    
-    * Delete .bazelproject file - shouldn't have been in this PR.
-    Updates for PR
+    Unified internal and external Kotlin rules (#4017)
