@@ -1,5 +1,5 @@
-commit 5cfe6f3552edd416172278f355c6c80ad5f09b25
-Author: Walter Korman <wkorman@chromium.org>
-Date:   Wed Nov 6 18:51:59 2019 -0800
+commit 87912c6501dca6cd5c4d1b89b36f7c61e3b3d111
+Author: Piotr Swigon <piotr.swigon@gmail.com>
+Date:   Thu Nov 7 07:45:05 2019 -0800
 
-    Add .npmrc to disable package-lock for sub-projects. (#4003)
+    Use fixed Root.arcs manifest name (#4030)
