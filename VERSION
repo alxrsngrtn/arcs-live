@@ -1,5 +1,11 @@
-commit fb8d5595a977566d82ce7b3f712f5719d4bbf748
-Author: Piotr Swigon <piotr.swigon@gmail.com>
-Date:   Wed Nov 6 16:37:38 2019 -0800
+commit 02652586d127fb08c05da8f804c134ca6cce4b75
+Author: Cameron Silvestrini <csilvestrini@users.noreply.github.com>
+Date:   Thu Nov 7 12:02:12 2019 +1100
 
-    Unified internal and external Kotlin rules (#4017)
+    Pins tsc and express versions to fix build, and restores tests (#4028)
+    
+    * Pin TypeScript to version 3.7.2
+    
+    * Pin express to version 4.17.1
+    
+    * Restore webshell and bazel tests

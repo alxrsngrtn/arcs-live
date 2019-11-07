@@ -2769,8 +2769,8 @@
         "signature": "599abfa56230d73afc30a3bde749c2efd90acb58301b446835d5e235b35e2768"
       },
       "../node_modules/@types/express/index.d.ts": {
-        "version": "6e1c6fe784daeba017901db7766e6b872f535defe33b0e0196d2a12c26f50517",
-        "signature": "6e1c6fe784daeba017901db7766e6b872f535defe33b0e0196d2a12c26f50517"
+        "version": "1f92cdebe2b1e0e6309ccdb6e8700cfd2d3e7131c7842f91b38ed1e4ff2a7090",
+        "signature": "1f92cdebe2b1e0e6309ccdb6e8700cfd2d3e7131c7842f91b38ed1e4ff2a7090"
       },
       "../node_modules/@types/morgan/index.d.ts": {
         "version": "caf53e071bb7f68cebd6a1d8d63a8c6e8a4472da65ee7620014f58f7dc984d42",
@@ -2782,7 +2782,7 @@
       },
       "../src/tools/dev_server/status-handler.ts": {
         "version": "158117e2b17e3e981151d223e8d017360f847942268412fd4224ee6566210895",
-        "signature": "4966ffb64fcbcf26b27e4a664e594d7a6d9c7d2360d9f61f89f60c9c4e44e35d"
+        "signature": "eebba3e634f496bc5a2e931f42712876824d9a4a61a61904be59aec8c8d0cf62"
       },
       "../node_modules/chokidar/types/index.d.ts": {
         "version": "ca7f76d3ea132bde53dca1a0f33cda95397d20c248e452c050773f01504d9802",
@@ -9944,7 +9944,6 @@
         "../node_modules/@types/node/http.d.ts"
       ],
       "../src/tools/dev_server/status-handler.ts": [
-        "../node_modules/@types/express-serve-static-core/index.d.ts",
         "../src/tools/dev_server/explorer-proxy.ts",
         "../node_modules/@types/express/index.d.ts"
       ],
