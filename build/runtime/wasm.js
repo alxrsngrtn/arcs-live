@@ -114,6 +114,9 @@ export class StringEncoder {
         }
     }
     static encodeStr(str) {
+        if (!str) {
+            return '0:';
+        }
         return str.length + ':' + str;
     }
 }
@@ -781,8 +784,9 @@ export class WasmParticle extends Particle {
     fireEvent(slotName, event) {
         const sp = this.container.store(slotName);
         const hp = this.container.store(event.handler);
-        this.exports._fireEvent(this.innerParticle, sp, hp);
-        this.container.free(sp, hp);
+        const data = this.container.store(StringEncoder.encodeDictionary(event.data || {}));
+        this.exports._fireEvent(this.innerParticle, sp, hp, data);
+        this.container.free(sp, hp, data);
     }
 }
 //# sourceMappingURL=wasm.js.map

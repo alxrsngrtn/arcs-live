@@ -538,7 +538,7 @@
         "signature": "f56d407931090c16c3859eab94bc71f346fa140551b583d4631e9b05291fecbc"
       },
       "../src/runtime/wasm.ts": {
-        "version": "668d6bb01a781e668fb947dccf241d1ec444640860523551cfd73fa7241fdcea",
+        "version": "f727e8561e88f8fb4913400f9a7a434588e907060e27764c452f309eee9b6c74",
         "signature": "2bd7cd216fc7a6328b159b790f65798d1d7c048fa807f3a19efb39ac5172822b"
       },
       "../src/runtime/particle-execution-context.ts": {
@@ -2821,7 +2821,7 @@
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/wasm/tests/wasm-api-tests.ts": {
-        "version": "8a91b965f17155ff6f5de1cdee858b75a9082e5d79b44caf0b076062d9f7b6bb",
+        "version": "d405d8ed3308605ac80d8dc66155f8e59891c9dfbfe61bcc6fff1ed6a7200d2c",
         "signature": "a2b75277977abae98ac357640599bb500a2621d1f3cfb443b830e8417680fdfb"
       },
       "../node_modules/@types/long/index.d.ts": {
