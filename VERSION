@@ -1,13 +1,8 @@
-commit 8338417fa8d490cd7c993c77e124acfb625e0372
-Author: raulverag <42563960+raulverag@users.noreply.github.com>
-Date:   Fri Nov 8 17:46:36 2019 +1100
+commit 6e65a14a15f8fedddeae43368affe4cd90a135ee
+Author: Jason Feinstein <jwf@google.com>
+Date:   Fri Nov 8 00:20:20 2019 -0800
 
-    Move most tests from package.json to sigh (#4040)
+    Easymode ArcsSet (#4042)
     
-    * Move most tests from package.json to sigh
-    
-    * update .appveyor.yml too
-    
-    * update .appveyor.yml again due to wdio issues on windows
-    
-    * Tweaks per review comments, and missing args to wdio tests
+    Creates ArcsSet, and ensures sets/entities return empty operations change objects during merge if nothing changed.
+    Ref: #4037
