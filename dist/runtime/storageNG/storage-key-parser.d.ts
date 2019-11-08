@@ -8,7 +8,8 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { StorageKey } from './storage-key.js';
-declare type Parser = (key: string) => StorageKey;
+declare type ParserTopLevel = (key: string) => StorageKey;
+declare type Parser = (key: string, parse: ParserTopLevel) => StorageKey;
 /**
  * Parses storage key string representations back into real StorageKey
  * instances.

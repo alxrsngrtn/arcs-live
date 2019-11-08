@@ -28,6 +28,7 @@ import { InterfaceInfo } from './interface-info.js';
 import { VolatileMemory } from './storageNG/drivers/volatile.js';
 import { StorageKey } from './storageNG/storage-key.js';
 import { UnifiedStore } from './storageNG/unified-store.js';
+import { ArcInterface } from './arc-serializer.js';
 export declare type ArcOptions = Readonly<{
     id: Id;
     context: Manifest;
@@ -51,7 +52,7 @@ declare type DeserializeArcOptions = Readonly<{
     context: Manifest;
     inspectorFactory?: ArcInspectorFactory;
 }>;
-export declare class Arc {
+export declare class Arc implements ArcInterface {
     private readonly _context;
     private readonly pecFactories;
     readonly isSpeculative: boolean;
@@ -62,6 +63,7 @@ export declare class Arc {
     readonly _loader: Loader;
     private readonly dataChangeCallbacks;
     private readonly storesById;
+    private readonly storesByKey;
     private storageKeys;
     readonly storageKey?: string | StorageKey;
     storageProviderFactory: StorageProviderFactory;
@@ -91,10 +93,6 @@ export declare class Arc {
     get innerArcs(): Arc[];
     get allDescendingArcs(): Arc[];
     createInnerArc(transformationParticle: Particle): Arc;
-    private _serializeStore;
-    private _serializeHandles;
-    private _serializeParticles;
-    private _serializeStorageKey;
     serialize(): Promise<string>;
     persistSerialization(serialization: string): Promise<void>;
     static deserialize({ serialization, pecFactories, slotComposer, loader, fileName, context, inspectorFactory }: DeserializeArcOptions): Promise<Arc>;

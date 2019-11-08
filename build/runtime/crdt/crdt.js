@@ -21,4 +21,10 @@ export var ChangeType;
     ChangeType[ChangeType["Operations"] = 0] = "Operations";
     ChangeType[ChangeType["Model"] = 1] = "Model";
 })(ChangeType || (ChangeType = {}));
+export function isEmptyChange(change) {
+    return change.changeType === ChangeType.Operations && change.operations.length === 0;
+}
+export function createEmptyChange() {
+    return { changeType: ChangeType.Operations, operations: [] };
+}
 //# sourceMappingURL=crdt.js.map

@@ -96,6 +96,9 @@ export class UnifiedStore {
             }
             else {
                 handleStr.push(`in ${info.source}`);
+                if (info.includeKey) {
+                    handleStr.push(`at '${info.includeKey}'`);
+                }
             }
         }
         else if (this.storageKey) {

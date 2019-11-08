@@ -81,4 +81,10 @@ export declare type StoreInfo = {
     readonly claims?: ClaimIsTag[];
     readonly versionToken?: string;
     readonly model?: {};
+    /**
+     * If set, include this storage key in the serialization.
+     * Used to ensure that the location of volatile storage is stable
+     * across serialization/deserialization.
+     */
+    readonly includeKey?: string;
 };

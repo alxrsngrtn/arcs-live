@@ -1684,6 +1684,12 @@ var ChangeType;
     ChangeType[ChangeType["Operations"] = 0] = "Operations";
     ChangeType[ChangeType["Model"] = 1] = "Model";
 })(ChangeType || (ChangeType = {}));
+function isEmptyChange(change) {
+    return change.changeType === ChangeType.Operations && change.operations.length === 0;
+}
+function createEmptyChange() {
+    return { changeType: ChangeType.Operations, operations: [] };
+}
 
 /**
  * @license
@@ -1705,6 +1711,25 @@ class CRDTCollection {
         this.model = { values: {}, version: {} };
     }
     merge(other) {
+        // Ensure we never send an update if the two versions are already the same.
+        // TODO(shans): Remove this once fast-forwarding is two-sided, and replace with
+        // a check for an effect-free fast-forward op in each direction instead.
+        if (sameVersions(this.model.version, other.version)) {
+            let entriesMatch = true;
+            const theseKeys = Object.keys(this.model.values);
+            const otherKeys = Object.keys(other.values);
+            if (theseKeys.length === otherKeys.length) {
+                for (const key of Object.keys(this.model.values)) {
+                    if (!other.values[key]) {
+                        entriesMatch = false;
+                        break;
+                    }
+                }
+                if (entriesMatch) {
+                    return { modelChange: createEmptyChange(), otherChange: createEmptyChange() };
+                }
+            }
+        }
         const newClock = mergeVersions(this.model.version, other.version);
         const merged = {};
         // Fast-forward op to send to other model. Elements added and removed will
@@ -1951,13 +1976,20 @@ class CRDTSingleton {
         this.collection = new CRDTCollection();
     }
     merge(other) {
-        this.collection.merge(other);
+        const { modelChange, otherChange } = this.collection.merge(other);
         // We cannot pass through the collection ops, so always return the updated model.
-        const change = {
+        let newModelChange = {
             changeType: ChangeType.Model,
             modelPostChange: this.collection.getData()
         };
-        return { modelChange: change, otherChange: change };
+        let newOtherChange = newModelChange;
+        if (isEmptyChange(modelChange)) {
+            newModelChange = createEmptyChange();
+        }
+        if (isEmptyChange(otherChange)) {
+            newOtherChange = createEmptyChange();
+        }
+        return { modelChange: newModelChange, otherChange: newOtherChange };
     }
     applyOperation(op) {
         if (op.type === SingletonOpTypes.Clear) {
@@ -2273,9 +2305,6 @@ class DirectStore extends ActiveStore {
     static async construct(options) {
         const me = new DirectStore(options);
         me.localModel = new (options.type.crdtInstanceConstructor())();
-        if (options.model) {
-            me.localModel.merge(options.model);
-        }
         me.driver = await DriverFactory.driverInstance(options.storageKey, options.exists);
         if (me.driver == null) {
             throw new CRDTError(`No driver exists to support storage key ${options.storageKey}`);
@@ -2697,27 +2726,6 @@ class CRDTEntity {
 
 /**
  * @license
- * Copyright 2019 Google LLC.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-class StorageKey {
-    constructor(protocol) {
-        this.protocol = protocol;
-    }
-    childKeyForArcInfo() {
-        return this.childWithComponent('arc-info');
-    }
-    childKeyForHandle(id) {
-        return this.childWithComponent(`handle/${id}`);
-    }
-}
-
-/**
- * @license
  * Copyright (c) 2019 Google Inc. All rights reserved.
  * This code may only be used under the BSD style license found at
  * http://polymer.github.io/LICENSE.txt
@@ -2731,22 +2739,6 @@ var ReferenceModeUpdateSource;
     ReferenceModeUpdateSource[ReferenceModeUpdateSource["BackingStore"] = 1] = "BackingStore";
     ReferenceModeUpdateSource[ReferenceModeUpdateSource["StorageProxy"] = 2] = "StorageProxy";
 })(ReferenceModeUpdateSource || (ReferenceModeUpdateSource = {}));
-class ReferenceModeStorageKey extends StorageKey {
-    constructor(backingKey, storageKey) {
-        super('reference-mode');
-        this.backingKey = backingKey;
-        this.storageKey = storageKey;
-    }
-    embedKey(key) {
-        return key.toString().replace(/\{/g, '{{').replace(/\}/g, '}}');
-    }
-    toString() {
-        return `${this.protocol}://{${this.embedKey(this.backingKey)}}{${this.embedKey(this.storageKey)}}`;
-    }
-    childWithComponent(component) {
-        return new ReferenceModeStorageKey(this.backingKey, this.storageKey.childWithComponent(component));
-    }
-}
 /**
  * ReferenceModeStores adapt between a collection (CRDTCollection or CRDTSingleton) of entities from the perspective of their public API,
  * and a collection of references + a backing store of entity CRDTs from an internal storage perspective.
@@ -2819,12 +2811,11 @@ class ReferenceModeStore extends ActiveStore {
             refType = new CollectionType(new ReferenceType(type.getContainedType()));
         }
         else {
-            // TODO(shans) probably need a singleton type here now.
-            refType = new ReferenceType(type.getContainedType());
+            refType = new SingletonType(new ReferenceType(type.getContainedType()));
         }
         result.containerStore = await DirectStore.construct({
             storageKey: storageKey.storageKey,
-            type,
+            type: refType,
             mode: StorageMode.Direct,
             exists: options.exists,
             baseStore: options.baseStore,
@@ -3114,7 +3105,15 @@ class ReferenceModeStore extends ActiveStore {
                 const send = this.pendingSends.shift();
                 send.fn();
             }
+            else {
+                return;
+            }
         }
+    }
+    addFieldToValueList(list, value, version) {
+        // NOTE: This could potentially be an extension point to provide automatic IDs if we
+        // need some sort of field-level collection capabilities ahead of entity mutation.
+        list[value['id']] = { value, version };
     }
     /**
      * Convert the provided entity to a CRDT Model of the entity. This requires synthesizing
@@ -3127,23 +3126,21 @@ class ReferenceModeStore extends ActiveStore {
         const entityVersion = this.versions[entity.id];
         const model = this.newBackingInstance().getData();
         let maxVersion = 0;
-        for (const key of Object.keys(entity)) {
-            if (key === 'id') {
-                continue;
-            }
+        for (const key of Object.keys(entity.rawData)) {
             if (entityVersion[key] == undefined) {
                 entityVersion[key] = 0;
             }
             const version = { [this.crdtKey]: ++entityVersion[key] };
             maxVersion = Math.max(maxVersion, entityVersion[key]);
             if (model.singletons[key]) {
-                model.singletons[key].values = { [entity[key].id]: { value: entity[key], version } };
+                model.singletons[key].values = {};
+                this.addFieldToValueList(model.singletons[key].values, entity.rawData[key], version);
                 model.singletons[key].version = version;
             }
             else if (model.collections[key]) {
                 model.collections[key].values = {};
-                for (const value of entity[key]) {
-                    model.collections[key].values[value.id] = { value, version };
+                for (const value of entity.rawData[key]) {
+                    this.addFieldToValueList(model.collections[key].values, value, version);
                 }
                 model.collections[key].version = version;
             }
@@ -3158,7 +3155,7 @@ class ReferenceModeStore extends ActiveStore {
      * Convert the provided CRDT model into an entity.
      */
     entityFromModel(model, id) {
-        const entity = { id };
+        const entity = { id, rawData: {} };
         const singletons = {};
         for (const field of Object.keys(model.singletons)) {
             singletons[field] = new CRDTSingleton();
@@ -3171,10 +3168,10 @@ class ReferenceModeStore extends ActiveStore {
         entityCRDT.merge(model);
         const data = entityCRDT.getParticleView();
         for (const [key, value] of Object.entries(data.singletons)) {
-            entity[key] = value;
+            entity.rawData[key] = value;
         }
         for (const [key, value] of Object.entries(data.collections)) {
-            entity[key] = value;
+            entity.rawData[key] = value;
         }
         return entity;
     }
@@ -3477,6 +3474,9 @@ class UnifiedStore {
             }
             else {
                 handleStr.push(`in ${info.source}`);
+                if (info.includeKey) {
+                    handleStr.push(`at '${info.includeKey}'`);
+                }
             }
         }
         else if (this.storageKey) {
@@ -3492,6 +3492,64 @@ class UnifiedStore {
             results.push(`  description \`${info.description}\``);
         }
         return results.join('\n');
+    }
+}
+
+/**
+ * @license
+ * Copyright 2019 Google LLC.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class StorageKey {
+    constructor(protocol) {
+        this.protocol = protocol;
+    }
+    childKeyForArcInfo() {
+        return this.childWithComponent('arc-info');
+    }
+    childKeyForHandle(id) {
+        return this.childWithComponent(`handle/${id}`);
+    }
+}
+
+/**
+ * @license
+ * Copyright (c) 2019 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class ReferenceModeStorageKey extends StorageKey {
+    constructor(backingKey, storageKey) {
+        super('reference-mode');
+        this.backingKey = backingKey;
+        this.storageKey = storageKey;
+    }
+    embedKey(key) {
+        return key.toString().replace(/\{/g, '{{').replace(/\}/g, '}}');
+    }
+    static unembedKey(key) {
+        return key.replace(/\}\}/g, '}').replace(/\{\{/g, '}');
+    }
+    toString() {
+        return `${this.protocol}://{${this.embedKey(this.backingKey)}}{${this.embedKey(this.storageKey)}}`;
+    }
+    childWithComponent(component) {
+        return new ReferenceModeStorageKey(this.backingKey, this.storageKey.childWithComponent(component));
+    }
+    static fromString(key, parse) {
+        const match = key.match(/^reference-mode:\/\/{((?:\}\}|[^}])+)}{((?:\}\}|[^}])+)}$/);
+        if (!match) {
+            throw new Error(`Not a valid ReferenceModeStorageKey: ${key}.`);
+        }
+        const [_, backingKey, storageKey] = match;
+        return new ReferenceModeStorageKey(parse(ReferenceModeStorageKey.unembedKey(backingKey)), parse(ReferenceModeStorageKey.unembedKey(storageKey)));
     }
 }
 
@@ -3545,8 +3603,7 @@ class Store extends UnifiedStore {
             type: this.type,
             mode: this.mode,
             baseStore: this,
-            versionToken: this.parsedVersionToken,
-            model: this.model
+            versionToken: this.parsedVersionToken
         });
         this.exists = Exists.ShouldExist;
         this.activeStore = activeStore;
@@ -6047,6 +6104,9 @@ class SlotType extends Type {
 class ReferenceType extends Type {
     constructor(reference) {
         super('Reference');
+        if (reference == null) {
+            throw new Error('invalid type! Reference types must include a referenced type declaration');
+        }
         this.referredType = reference;
     }
     get isReference() {
@@ -6094,6 +6154,9 @@ class ReferenceType extends Type {
     }
     getEntitySchema() {
         return this.referredType.getEntitySchema();
+    }
+    crdtInstanceConstructor() {
+        return this.referredType.crdtInstanceConstructor();
     }
 }
 class ArcType extends Type {
@@ -7855,6 +7918,7 @@ function peg$parse(input, options) {
             tags: optional(tags, tags => tags[1], null),
             source: source.source,
             origin: source.origin,
+            storageKey: source['storageKey'] || null,
             description,
             claim,
         });
@@ -7862,9 +7926,16 @@ function peg$parse(input, options) {
     const peg$c27 = "in";
     const peg$c28 = peg$literalExpectation("in", false);
     const peg$c29 = function (source) { return toAstNode({ kind: 'manifest-storage-source', origin: 'file', source }); };
-    const peg$c30 = function (source) { return toAstNode({ kind: 'manifest-storage-source', origin: 'resource', source }); };
-    const peg$c31 = "at";
-    const peg$c32 = peg$literalExpectation("at", false);
+    const peg$c30 = "at";
+    const peg$c31 = peg$literalExpectation("at", false);
+    const peg$c32 = function (source, storageKey) {
+        return toAstNode({
+            kind: 'manifest-storage-source',
+            origin: 'resource',
+            source,
+            storageKey: optional(storageKey, sk => sk[3], null)
+        });
+    };
     const peg$c33 = function (source) { return toAstNode({ kind: 'manifest-storage-source', origin: 'storage', source }); };
     const peg$c34 = "description";
     const peg$c35 = peg$literalExpectation("description", false);
@@ -10126,7 +10197,7 @@ function peg$parse(input, options) {
         return s0;
     }
     function peg$parseManifestStorageResourceSource() {
-        let s0, s1, s2, s3;
+        let s0, s1, s2, s3, s4, s5, s6, s7, s8;
         s0 = peg$currPos;
         if (input.substr(peg$currPos, 2) === peg$c27) {
             s1 = peg$c27;
@@ -10143,9 +10214,58 @@ function peg$parse(input, options) {
             if (s2 !== peg$FAILED) {
                 s3 = peg$parseupperIdent();
                 if (s3 !== peg$FAILED) {
-                    peg$savedPos = s0;
-                    s1 = peg$c30(s3);
-                    s0 = s1;
+                    s4 = peg$currPos;
+                    s5 = peg$parsewhiteSpace();
+                    if (s5 !== peg$FAILED) {
+                        if (input.substr(peg$currPos, 2) === peg$c30) {
+                            s6 = peg$c30;
+                            peg$currPos += 2;
+                        }
+                        else {
+                            s6 = peg$FAILED;
+                            if (peg$silentFails === 0) {
+                                peg$fail(peg$c31);
+                            }
+                        }
+                        if (s6 !== peg$FAILED) {
+                            s7 = peg$parsewhiteSpace();
+                            if (s7 !== peg$FAILED) {
+                                s8 = peg$parseid();
+                                if (s8 !== peg$FAILED) {
+                                    s5 = [s5, s6, s7, s8];
+                                    s4 = s5;
+                                }
+                                else {
+                                    peg$currPos = s4;
+                                    s4 = peg$FAILED;
+                                }
+                            }
+                            else {
+                                peg$currPos = s4;
+                                s4 = peg$FAILED;
+                            }
+                        }
+                        else {
+                            peg$currPos = s4;
+                            s4 = peg$FAILED;
+                        }
+                    }
+                    else {
+                        peg$currPos = s4;
+                        s4 = peg$FAILED;
+                    }
+                    if (s4 === peg$FAILED) {
+                        s4 = null;
+                    }
+                    if (s4 !== peg$FAILED) {
+                        peg$savedPos = s0;
+                        s1 = peg$c32(s3, s4);
+                        s0 = s1;
+                    }
+                    else {
+                        peg$currPos = s0;
+                        s0 = peg$FAILED;
+                    }
                 }
                 else {
                     peg$currPos = s0;
@@ -10166,14 +10286,14 @@ function peg$parse(input, options) {
     function peg$parseManifestStorageStorageSource() {
         let s0, s1, s2, s3;
         s0 = peg$currPos;
-        if (input.substr(peg$currPos, 2) === peg$c31) {
-            s1 = peg$c31;
+        if (input.substr(peg$currPos, 2) === peg$c30) {
+            s1 = peg$c30;
             peg$currPos += 2;
         }
         else {
             s1 = peg$FAILED;
             if (peg$silentFails === 0) {
-                peg$fail(peg$c32);
+                peg$fail(peg$c31);
             }
         }
         if (s1 !== peg$FAILED) {
@@ -24289,11 +24409,13 @@ class VolatileMemory {
         this.token = Math.random() + '';
     }
 }
+let id = 0;
 class VolatileDriver extends Driver {
     constructor(storageKey, exists, memory) {
         super(storageKey, exists);
         this.pendingVersion = 0;
         this.pendingModel = null;
+        this.id = id++;
         const keyAsString = storageKey.toString();
         this.memory = memory;
         switch (exists) {
@@ -24651,19 +24773,20 @@ class StorageKeyParser {
             ['volatile', VolatileStorageKey.fromString],
             ['firebase', FirebaseStorageKey.fromString],
             ['ramdisk', RamDiskStorageKey.fromString],
+            ['reference-mode', ReferenceModeStorageKey.fromString]
         ]);
     }
     static parse(key) {
-        const match = key.match(/^(\w+):\/\/(.*)$/);
+        const match = key.match(/^((?:\w|-)+):\/\/(.*)$/);
         if (!match) {
             throw new Error('Failed to parse storage key: ' + key);
         }
         const protocol = match[1];
-        const parser = this.parsers.get(protocol);
+        const parser = StorageKeyParser.parsers.get(protocol);
         if (!parser) {
             throw new Error(`Unknown storage key protocol ${protocol} in key ${key}.`);
         }
-        return parser(key);
+        return parser(key, StorageKeyParser.parse);
     }
     static reset() {
         this.parsers = this.getDefaultParsers();
@@ -24854,7 +24977,7 @@ class Manifest {
             if (typeof storageKey === 'string') {
                 storageKey = StorageKeyParser.parse(storageKey);
             }
-            store = new Store({ ...opts, storageKey, exists: Exists.ShouldCreate });
+            store = new Store({ ...opts, storageKey, exists: Exists.MayExist });
         }
         else {
             if (opts.storageKey instanceof StorageKey) {
@@ -25755,9 +25878,10 @@ ${e.message}
             throw new ManifestError(item.location, `Error parsing JSON from '${source}' (${e.message})'`);
         }
         if (Flags.useNewStorageStack) {
-            return manifest.newStore({ type, name, id, storageKey: manifest.createLocalDataStorageKey(),
-                tags, originalId, claims, description: item.description, version: item.version || null,
-                source: item.source, origin: item.origin, referenceMode: false, model: entities });
+            const storageKey = item['storageKey'] || manifest.createLocalDataStorageKey();
+            return manifest.newStore({ type, name, id, storageKey, tags, originalId, claims,
+                description: item.description, version: item.version || null, source: item.source,
+                origin: item.origin, referenceMode: false, model: entities });
         }
         // TODO: clean this up
         let unitType = null;
@@ -28058,7 +28182,7 @@ class ParticleExecutionContext {
         if (!this.busy) {
             return Promise.resolve();
         }
-        const busyParticlePromises = [...this.particles.values()].filter(async (particle) => particle.busy).map(async (particle) => particle.idle);
+        const busyParticlePromises = [...this.particles.values()].filter(particle => particle.busy).map(async (particle) => particle.idle);
         return Promise.all([this.scheduler.idle, ...this.pendingLoads, ...busyParticlePromises]).then(() => this.idle);
     }
 }
@@ -29036,6 +29160,200 @@ class PECOuterPortImpl extends PECOuterPort {
 
 /**
  * @license
+ * Copyright (c) 2019 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class ArcSerializer {
+    constructor(arc) {
+        this.handles = '';
+        this.resources = '';
+        this.interfaces = '';
+        this.dataResources = new Map();
+        this.memoryResourceNames = new Map();
+        this.arc = arc;
+    }
+    async serialize() {
+        return `
+meta
+  name: '${this.arc.id}'
+  ${this.serializeStorageKey()}
+
+${await this.serializeVolatileMemory()}
+
+${await this.serializeHandles()}
+
+${this.serializeParticles()}
+
+@active
+${this.arc.activeRecipe.toString()}`;
+    }
+    async serializeVolatileMemory() {
+        let resourceNum = 0;
+        let serialization = '';
+        const indent = '  ';
+        if (Flags.useNewStorageStack) {
+            for (const [key, value] of this.arc.volatileMemory.entries.entries()) {
+                this.memoryResourceNames.set(key, `VolatileMemoryResource${resourceNum}`);
+                serialization +=
+                    `resource VolatileMemoryResource${resourceNum++} // ${key}\n` +
+                        indent + 'start\n' +
+                        JSON.stringify(value.data).split('\n').map(line => indent + line).join('\n') + '\n';
+            }
+            return serialization;
+        }
+        else {
+            return '';
+        }
+    }
+    async _serializeStore(store, name) {
+        const type = store.type.getContainedType() || store.type;
+        if (type instanceof InterfaceType) {
+            this.interfaces += type.interfaceInfo.toString() + '\n';
+        }
+        let key;
+        if (typeof store.storageKey === 'string') {
+            key = this.arc.storageProviderFactory.parseStringAsKey(store.storageKey);
+        }
+        else {
+            key = store.storageKey;
+        }
+        const tags = this.arc.storeTags.get(store) || new Set();
+        const handleTags = [...tags];
+        const actualHandle = this.arc.activeRecipe.findHandle(store.id);
+        const originalId = actualHandle ? actualHandle.originalId : null;
+        let combinedId = `'${store.id}'`;
+        if (originalId) {
+            combinedId += `!!'${originalId}'`;
+        }
+        switch (key.protocol) {
+            case 'reference-mode':
+            case 'firebase':
+            case 'pouchdb':
+                this.handles += store.toManifestString({ handleTags, overrides: { name } }) + '\n';
+                break;
+            case 'volatile':
+                if (Flags.useNewStorageStack) {
+                    const storageKey = store.storageKey.toString();
+                    this.handles += store.toManifestString({ handleTags, overrides: { name, source: this.memoryResourceNames.get(storageKey), origin: 'resource', includeKey: storageKey } }) + '\n';
+                }
+                else {
+                    // TODO(sjmiles): emit empty data for stores marked `volatile`: shell will supply data
+                    const volatile = handleTags.includes('volatile');
+                    let serializedData = [];
+                    if (!volatile) {
+                        // TODO: include keys in serialized [big]collections?
+                        const activeStore = await store.activate();
+                        const model = await activeStore.serializeContents();
+                        serializedData = model.model.map((model) => {
+                            const { id, value } = model;
+                            const index = model['index']; // TODO: Invalid Type
+                            if (value == null) {
+                                return null;
+                            }
+                            let result;
+                            if (value.rawData) {
+                                result = { $id: id };
+                                for (const field of Object.keys(value.rawData)) {
+                                    result[field] = value.rawData[field];
+                                }
+                            }
+                            else {
+                                result = value;
+                            }
+                            if (index !== undefined) {
+                                result.$index = index;
+                            }
+                            return result;
+                        });
+                    }
+                    if (store.referenceMode && serializedData.length > 0) {
+                        const storageKey = serializedData[0].storageKey;
+                        if (!this.dataResources.has(storageKey)) {
+                            const storeId = `${name}_Data`;
+                            this.dataResources.set(storageKey, storeId);
+                            // TODO: can't just reach into the store for the backing Store like this, should be an
+                            // accessor that loads-on-demand in the storage objects.
+                            if (store instanceof StorageProviderBase) {
+                                await store.ensureBackingStore();
+                                await this._serializeStore(store.backingStore, storeId);
+                            }
+                        }
+                        const storeId = this.dataResources.get(storageKey);
+                        serializedData.forEach(a => { a.storageKey = storeId; });
+                    }
+                    const indent = '  ';
+                    const data = JSON.stringify(serializedData);
+                    const resourceName = `${name}Resource`;
+                    this.resources += `resource ${resourceName}\n`
+                        + indent + 'start\n'
+                        + data.split('\n').map(line => indent + line).join('\n')
+                        + '\n';
+                    this.handles += store.toManifestString({ handleTags, overrides: { name, source: resourceName, origin: 'resource' } }) + '\n';
+                }
+                break;
+            default:
+                throw new Error(`unknown storageKey protocol ${key.protocol}`);
+        }
+    }
+    async serializeHandles() {
+        let id = 0;
+        const importSet = new Set();
+        const handlesToSerialize = new Set();
+        const contextSet = new Set(this.arc.context.stores.map(store => store.id));
+        for (const handle of this.arc.activeRecipe.handles) {
+            if (handle.fate === 'map') {
+                importSet.add(this.arc.context.findManifestUrlForHandleId(handle.id));
+            }
+            else {
+                // Immediate value handles have values inlined in the recipe and are not serialized.
+                if (handle.immediateValue)
+                    continue;
+                handlesToSerialize.add(handle.id);
+            }
+        }
+        for (const url of importSet.values()) {
+            this.resources += `import '${url}'\n`;
+        }
+        for (const store of this.arc._stores) {
+            if (Flags.useNewStorageStack || (handlesToSerialize.has(store.id) && !contextSet.has(store.id))) {
+                await this._serializeStore(store, `Store${id++}`);
+            }
+        }
+        return this.resources + this.interfaces + this.handles;
+    }
+    serializeParticles() {
+        const particleSpecs = [];
+        // Particles used directly.
+        particleSpecs.push(...this.arc.activeRecipe.particles.map(entry => entry.spec));
+        // Particles referenced in an immediate mode.
+        particleSpecs.push(...this.arc.activeRecipe.handles
+            .filter(h => h.immediateValue)
+            .map(h => h.immediateValue));
+        const results = [];
+        particleSpecs.forEach(spec => {
+            for (const connection of spec.handleConnections) {
+                if (connection.type instanceof InterfaceType) {
+                    results.push(connection.type.interfaceInfo.toString());
+                }
+            }
+            results.push(spec.toString());
+        });
+        return results.join('\n');
+    }
+    serializeStorageKey() {
+        if (this.arc.storageKey) {
+            return `storageKey: '${this.arc.storageKey}'\n`;
+        }
+        return '';
+    }
+}
+
+/**
+ * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
  * This code may only be used under the BSD style license found at
  * http://polymer.github.io/LICENSE.txt
@@ -29050,6 +29368,7 @@ class Arc {
         this.dataChangeCallbacks = new Map();
         // All the stores, mapped by store ID
         this.storesById = new Map();
+        this.storesByKey = new Map();
         // storage keys for referenced handles
         this.storageKeys = {};
         // Map from each store to a set of tags. public for debug access
@@ -29130,12 +29449,12 @@ class Arc {
         // eslint-disable-next-line no-constant-condition
         while (true) {
             const messageCount = this.pec.messageCount;
-            const innerArcs = this.innerArcs;
+            const innerArcsLength = this.innerArcs.length;
             // tslint:disable-next-line: no-any
-            await Promise.all([this.pec.idle, ...innerArcs.map(async (arc) => arc.idle)]);
+            await Promise.all([this.pec.idle, ...this.innerArcs.map(async (arc) => arc.idle)]);
             // We're idle if no new inner arcs appeared and this.pec had exactly 2 messages,
             // one requesting the idle status, and one answering it.
-            if (this.innerArcs.length === innerArcs.length
+            if (this.innerArcs.length === innerArcsLength
                 && this.pec.messageCount === messageCount + 2)
                 break;
         }
@@ -29176,161 +29495,9 @@ class Arc {
         particleInnerArcs.push(innerArc);
         return innerArc;
     }
-    async _serializeStore(store, context, name) {
-        const type = store.type.getContainedType() || store.type;
-        if (type instanceof InterfaceType) {
-            context.interfaces += type.interfaceInfo.toString() + '\n';
-        }
-        let key;
-        if (typeof store.storageKey === 'string') {
-            key = this.storageProviderFactory.parseStringAsKey(store.storageKey);
-        }
-        else {
-            key = store.storageKey;
-        }
-        const tags = this.storeTags.get(store) || new Set();
-        const handleTags = [...tags];
-        const actualHandle = this.activeRecipe.findHandle(store.id);
-        const originalId = actualHandle ? actualHandle.originalId : null;
-        let combinedId = `'${store.id}'`;
-        if (originalId) {
-            combinedId += `!!'${originalId}'`;
-        }
-        switch (key.protocol) {
-            case 'firebase':
-            case 'pouchdb':
-                context.handles += store.toManifestString({ handleTags, overrides: { name } }) + '\n';
-                break;
-            case 'volatile': {
-                // TODO(sjmiles): emit empty data for stores marked `volatile`: shell will supply data
-                const volatile = handleTags.includes('volatile');
-                let serializedData = [];
-                if (!volatile) {
-                    // TODO: include keys in serialized [big]collections?
-                    const activeStore = await store.activate();
-                    const model = await activeStore.serializeContents();
-                    if (Flags.useNewStorageStack) {
-                        serializedData = model;
-                    }
-                    else {
-                        serializedData = model.model.map((model) => {
-                            const { id, value } = model;
-                            const index = model['index']; // TODO: Invalid Type
-                            if (value == null) {
-                                return null;
-                            }
-                            let result;
-                            if (value.rawData) {
-                                result = { $id: id };
-                                for (const field of Object.keys(value.rawData)) {
-                                    result[field] = value.rawData[field];
-                                }
-                            }
-                            else {
-                                result = value;
-                            }
-                            if (index !== undefined) {
-                                result.$index = index;
-                            }
-                            return result;
-                        });
-                    }
-                }
-                if (store.referenceMode && serializedData.length > 0) {
-                    const storageKey = serializedData[0].storageKey;
-                    if (!context.dataResources.has(storageKey)) {
-                        const storeId = `${name}_Data`;
-                        context.dataResources.set(storageKey, storeId);
-                        // TODO: can't just reach into the store for the backing Store like this, should be an
-                        // accessor that loads-on-demand in the storage objects.
-                        if (store instanceof StorageProviderBase) {
-                            await store.ensureBackingStore();
-                            await this._serializeStore(store.backingStore, context, storeId);
-                        }
-                    }
-                    const storeId = context.dataResources.get(storageKey);
-                    serializedData.forEach(a => { a.storageKey = storeId; });
-                }
-                const indent = '  ';
-                const data = JSON.stringify(serializedData);
-                const resourceName = `${name}Resource`;
-                context.resources += `resource ${resourceName}\n`
-                    + indent + 'start\n'
-                    + data.split('\n').map(line => indent + line).join('\n')
-                    + '\n';
-                context.handles += store.toManifestString({ handleTags, overrides: { name, source: resourceName, origin: 'resource' } }) + '\n';
-                break;
-            }
-            default:
-                throw new Error(`unknown storageKey protocol ${key.protocol}`);
-        }
-    }
-    async _serializeHandles() {
-        const context = { handles: '', resources: '', interfaces: '', dataResources: new Map() };
-        let id = 0;
-        const importSet = new Set();
-        const handlesToSerialize = new Set();
-        const contextSet = new Set(this.context.stores.map(store => store.id));
-        for (const handle of this._activeRecipe.handles) {
-            if (handle.fate === 'map') {
-                importSet.add(this.context.findManifestUrlForHandleId(handle.id));
-            }
-            else {
-                // Immediate value handles have values inlined in the recipe and are not serialized.
-                if (handle.immediateValue)
-                    continue;
-                handlesToSerialize.add(handle.id);
-            }
-        }
-        for (const url of importSet.values()) {
-            context.resources += `import '${url}'\n`;
-        }
-        for (const store of this._stores) {
-            if (!handlesToSerialize.has(store.id) || contextSet.has(store.id)) {
-                continue;
-            }
-            await this._serializeStore(store, context, `Store${id++}`);
-        }
-        return context.resources + context.interfaces + context.handles;
-    }
-    _serializeParticles() {
-        const particleSpecs = [];
-        // Particles used directly.
-        particleSpecs.push(...this._activeRecipe.particles.map(entry => entry.spec));
-        // Particles referenced in an immediate mode.
-        particleSpecs.push(...this._activeRecipe.handles
-            .filter(h => h.immediateValue)
-            .map(h => h.immediateValue));
-        const results = [];
-        particleSpecs.forEach(spec => {
-            for (const connection of spec.handleConnections) {
-                if (connection.type instanceof InterfaceType) {
-                    results.push(connection.type.interfaceInfo.toString());
-                }
-            }
-            results.push(spec.toString());
-        });
-        return results.join('\n');
-    }
-    _serializeStorageKey() {
-        if (this.storageKey) {
-            return `storageKey: '${this.storageKey}'\n`;
-        }
-        return '';
-    }
     async serialize() {
         await this.idle;
-        return `
-meta
-  name: '${this.id}'
-  ${this._serializeStorageKey()}
-
-${await this._serializeHandles()}
-
-${this._serializeParticles()}
-
-@active
-${this.activeRecipe.toString()}`;
+        return new ArcSerializer(this).serialize();
     }
     // Writes `serialization` to the ArcInfo child key under the Arc's storageKey.
     // This does not directly use serialize() as callers may want to modify the
@@ -29360,6 +29527,12 @@ ${this.activeRecipe.toString()}`;
             const tags = manifest.storeTags.get(storeStub);
             const store = await storeStub.activate();
             await arc._registerStore(store.baseStore, tags);
+            if (store.baseStore.storageKey instanceof VolatileStorageKey) {
+                const driver = new VolatileDriver(store.baseStore.storageKey, Exists.MayExist, arc.volatileMemory);
+                driver.registerReceiver(() => true);
+                await driver.send(store.baseStore.storeInfo.model, 1);
+                // TODO(shans): Remove driver from driver list
+            }
         }));
         const recipe = manifest.activeRecipe.clone();
         const options = { errors: new Map() };
@@ -29581,6 +29754,11 @@ ${this.activeRecipe.toString()}`;
     }
     async createStore(type, name, id, tags, storageKey) {
         assert(type instanceof Type, `can't createStore with type ${type} that isn't a Type`);
+        if (Flags.useNewStorageStack) {
+            if (this.storesByKey.has(storageKey)) {
+                return this.storesByKey.get(storageKey);
+            }
+        }
         if (type instanceof RelationType) {
             type = new CollectionType(type);
         }
@@ -29605,7 +29783,7 @@ ${this.activeRecipe.toString()}`;
             if (typeof storageKey === 'string') {
                 throw new Error(`Can't use string storage keys with the new storage stack.`);
             }
-            store = new Store({ storageKey, exists: Exists.ShouldCreate, type, id, name });
+            store = new Store({ storageKey, exists: Exists.MayExist, type, id, name });
         }
         else {
             if (typeof storageKey !== 'string') {
@@ -29616,6 +29794,12 @@ ${this.activeRecipe.toString()}`;
             store.storeInfo.name = name;
         }
         await this._registerStore(store, tags);
+        if (storageKey instanceof ReferenceModeStorageKey && Flags.useNewStorageStack) {
+            const refContainedType = new ReferenceType(type.getContainedType());
+            const refType = type.isSingleton ? new SingletonType(refContainedType) : new CollectionType(refContainedType);
+            await this.createStore(refType, name ? name + '_referenceContainer' : null, null, [], storageKey.storageKey);
+            await this.createStore(new CollectionType(type.getContainedType()), name ? name + '_backingStore' : null, null, [], storageKey.backingKey);
+        }
         return store;
     }
     async _registerStore(store, tags) {
@@ -29623,6 +29807,7 @@ ${this.activeRecipe.toString()}`;
         tags = tags || [];
         tags = Array.isArray(tags) ? tags : [tags];
         this.storesById.set(store.id, store);
+        this.storesByKey.set(store.storageKey, store);
         this.storeTags.set(store, new Set(tags));
         this.storageKeys[store.id] = store.storageKey;
         const activeStore = await store.activate();

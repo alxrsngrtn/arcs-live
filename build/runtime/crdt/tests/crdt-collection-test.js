@@ -8,7 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { assert } from '../../../platform/chai-web.js';
-import { ChangeType } from '../crdt.js';
+import { ChangeType, isEmptyChange } from '../crdt.js';
 import { CollectionOpTypes, CRDTCollection, simplifyFastForwardOp } from '../crdt-collection.js';
 /** Creates an Add operation. */
 function addOp(id, actor, clock) {
@@ -525,6 +525,24 @@ describe('CRDTCollection', () => {
                 oldClock: { a: 1 },
                 newClock: { a: 3 },
             }));
+        });
+        it('returns an empty change when merging identical models', () => {
+            const set = new CRDTCollection();
+            const { modelChange, otherChange } = set.merge(set.getData());
+            assert.isTrue(isEmptyChange(modelChange));
+            assert.isTrue(isEmptyChange(otherChange));
+            set.applyOperation({ type: CollectionOpTypes.Add, actor: 'a', added: { id: 'foo' }, clock: { 'a': 1 } });
+            set.applyOperation({ type: CollectionOpTypes.Add, actor: 'b', added: { id: 'bar' }, clock: { 'a': 1, 'b': 1 } });
+            const { modelChange: modelChange2, otherChange: otherChange2 } = set.merge(set.getData());
+            assert.isTrue(isEmptyChange(modelChange2));
+            assert.isTrue(isEmptyChange(otherChange2));
+            const set2 = new CRDTCollection();
+            set2.merge(set.getData());
+            set.applyOperation({ type: CollectionOpTypes.Remove, actor: 'a', removed: { id: 'foo' }, clock: { 'a': 1, 'b': 1 } });
+            set2.applyOperation({ type: CollectionOpTypes.Remove, actor: 'a', removed: { id: 'bar' }, clock: { 'a': 1, 'b': 1 } });
+            const { modelChange: modelChange3, otherChange: otherChange3 } = set.merge(set2.getData());
+            assert.isFalse(isEmptyChange(modelChange3));
+            assert.isFalse(isEmptyChange(otherChange3));
         });
     });
 });

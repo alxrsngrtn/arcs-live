@@ -92,7 +92,7 @@
 __webpack_require__.r(__webpack_exports__);
 /* WEBPACK VAR INJECTION */(function(global) {/* harmony import */ var _build_runtime_particle_execution_context_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2);
 /* harmony import */ var _build_runtime_id_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(23);
-/* harmony import */ var _build_platform_loader_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(49);
+/* harmony import */ var _build_platform_loader_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(50);
 /**
  * @license
  * Copyright 2019 Google LLC.
@@ -157,10 +157,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 /* harmony import */ var _api_channel_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(4);
 /* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(18);
-/* harmony import */ var _slot_proxy_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(45);
+/* harmony import */ var _slot_proxy_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(46);
 /* harmony import */ var _storage_proxy_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(20);
 /* harmony import */ var _storageNG_storage_proxy_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(30);
-/* harmony import */ var _wasm_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(46);
+/* harmony import */ var _wasm_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(47);
 /* harmony import */ var _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(19);
 /* harmony import */ var _flags_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(11);
 /**
@@ -512,7 +512,7 @@ class ParticleExecutionContext {
         if (!this.busy) {
             return Promise.resolve();
         }
-        const busyParticlePromises = [...this.particles.values()].filter(async (particle) => particle.busy).map(async (particle) => particle.idle);
+        const busyParticlePromises = [...this.particles.values()].filter(particle => particle.busy).map(async (particle) => particle.idle);
         return Promise.all([this.scheduler.idle, ...this.pendingLoads, ...busyParticlePromises]).then(() => this.idle);
     }
 }
@@ -1190,8 +1190,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modality_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6);
 /* harmony import */ var _recipe_type_checker_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(7);
 /* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(8);
-/* harmony import */ var _particle_check_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(43);
-/* harmony import */ var _particle_claim_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(44);
+/* harmony import */ var _particle_check_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(44);
+/* harmony import */ var _particle_claim_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(45);
 /* harmony import */ var _flags_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(11);
 /* harmony import */ var _manifest_ast_nodes_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(10);
 /**
@@ -2029,7 +2029,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _slot_info_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(12);
 /* harmony import */ var _synthetic_types_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(13);
 /* harmony import */ var _type_variable_info_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(14);
-/* harmony import */ var _crdt_crdt_count_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(42);
+/* harmony import */ var _crdt_crdt_count_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(43);
 /* harmony import */ var _crdt_crdt_collection_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(27);
 /* harmony import */ var _crdt_crdt_singleton_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(29);
 /* harmony import */ var _storageNG_handle_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(26);
@@ -2690,6 +2690,9 @@ class SlotType extends Type {
 class ReferenceType extends Type {
     constructor(reference) {
         super('Reference');
+        if (reference == null) {
+            throw new Error('invalid type! Reference types must include a referenced type declaration');
+        }
         this.referredType = reference;
     }
     get isReference() {
@@ -2737,6 +2740,9 @@ class ReferenceType extends Type {
     }
     getEntitySchema() {
         return this.referredType.getEntitySchema();
+    }
+    crdtInstanceConstructor() {
+        return this.referredType.crdtInstanceConstructor();
     }
 }
 class ArcType extends Type {
@@ -6230,6 +6236,25 @@ class CRDTCollection {
         this.model = { values: {}, version: {} };
     }
     merge(other) {
+        // Ensure we never send an update if the two versions are already the same.
+        // TODO(shans): Remove this once fast-forwarding is two-sided, and replace with
+        // a check for an effect-free fast-forward op in each direction instead.
+        if (sameVersions(this.model.version, other.version)) {
+            let entriesMatch = true;
+            const theseKeys = Object.keys(this.model.values);
+            const otherKeys = Object.keys(other.values);
+            if (theseKeys.length === otherKeys.length) {
+                for (const key of Object.keys(this.model.values)) {
+                    if (!other.values[key]) {
+                        entriesMatch = false;
+                        break;
+                    }
+                }
+                if (entriesMatch) {
+                    return { modelChange: Object(_crdt_js__WEBPACK_IMPORTED_MODULE_0__["createEmptyChange"])(), otherChange: Object(_crdt_js__WEBPACK_IMPORTED_MODULE_0__["createEmptyChange"])() };
+                }
+            }
+        }
         const newClock = mergeVersions(this.model.version, other.version);
         const merged = {};
         // Fast-forward op to send to other model. Elements added and removed will
@@ -6466,6 +6491,8 @@ function getSingleActorIncrement(oldVersion, newVersion) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CRDTError", function() { return CRDTError; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ChangeType", function() { return ChangeType; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isEmptyChange", function() { return isEmptyChange; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createEmptyChange", function() { return createEmptyChange; });
 /**
  * @license
  * Copyright (c) 2019 Google Inc. All rights reserved.
@@ -6489,6 +6516,12 @@ var ChangeType;
     ChangeType[ChangeType["Operations"] = 0] = "Operations";
     ChangeType[ChangeType["Model"] = 1] = "Model";
 })(ChangeType || (ChangeType = {}));
+function isEmptyChange(change) {
+    return change.changeType === ChangeType.Operations && change.operations.length === 0;
+}
+function createEmptyChange() {
+    return { changeType: ChangeType.Operations, operations: [] };
+}
 //# sourceMappingURL=crdt.js.map
 
 /***/ }),
@@ -6522,13 +6555,20 @@ class CRDTSingleton {
         this.collection = new _crdt_collection_js__WEBPACK_IMPORTED_MODULE_1__["CRDTCollection"]();
     }
     merge(other) {
-        this.collection.merge(other);
+        const { modelChange, otherChange } = this.collection.merge(other);
         // We cannot pass through the collection ops, so always return the updated model.
-        const change = {
+        let newModelChange = {
             changeType: _crdt_js__WEBPACK_IMPORTED_MODULE_0__["ChangeType"].Model,
             modelPostChange: this.collection.getData()
         };
-        return { modelChange: change, otherChange: change };
+        let newOtherChange = newModelChange;
+        if (Object(_crdt_js__WEBPACK_IMPORTED_MODULE_0__["isEmptyChange"])(modelChange)) {
+            newModelChange = Object(_crdt_js__WEBPACK_IMPORTED_MODULE_0__["createEmptyChange"])();
+        }
+        if (Object(_crdt_js__WEBPACK_IMPORTED_MODULE_0__["isEmptyChange"])(otherChange)) {
+            newOtherChange = Object(_crdt_js__WEBPACK_IMPORTED_MODULE_0__["createEmptyChange"])();
+        }
+        return { modelChange: newModelChange, otherChange: newOtherChange };
     }
     applyOperation(op) {
         if (op.type === SingletonOpTypes.Clear) {
@@ -6915,7 +6955,8 @@ __webpack_require__.r(__webpack_exports__);
 
 /* harmony import */ var _direct_store_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(34);
 /* harmony import */ var _reference_mode_store_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(36);
-/* harmony import */ var _unified_store_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(40);
+/* harmony import */ var _unified_store_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(39);
+/* harmony import */ var _reference_mode_storage_key_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(41);
 /**
  * @license
  * Copyright (c) 2019 Google Inc. All rights reserved.
@@ -6925,6 +6966,7 @@ __webpack_require__.r(__webpack_exports__);
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+
 
 
 
@@ -6945,7 +6987,7 @@ class Store extends _unified_store_js__WEBPACK_IMPORTED_MODULE_4__["UnifiedStore
         this.parsedVersionToken = null;
         this.storageKey = opts.storageKey;
         this.exists = opts.exists;
-        this.mode = opts.storageKey instanceof _reference_mode_store_js__WEBPACK_IMPORTED_MODULE_3__["ReferenceModeStorageKey"] ? _store_interface_js__WEBPACK_IMPORTED_MODULE_1__["StorageMode"].ReferenceMode : _store_interface_js__WEBPACK_IMPORTED_MODULE_1__["StorageMode"].Direct;
+        this.mode = opts.storageKey instanceof _reference_mode_storage_key_js__WEBPACK_IMPORTED_MODULE_5__["ReferenceModeStorageKey"] ? _store_interface_js__WEBPACK_IMPORTED_MODULE_1__["StorageMode"].ReferenceMode : _store_interface_js__WEBPACK_IMPORTED_MODULE_1__["StorageMode"].Direct;
         this.parsedVersionToken = opts.versionToken;
         this.model = opts.model;
     }
@@ -6972,8 +7014,7 @@ class Store extends _unified_store_js__WEBPACK_IMPORTED_MODULE_4__["UnifiedStore
             type: this.type,
             mode: this.mode,
             baseStore: this,
-            versionToken: this.parsedVersionToken,
-            model: this.model
+            versionToken: this.parsedVersionToken
         });
         this.exists = _drivers_driver_factory_js__WEBPACK_IMPORTED_MODULE_0__["Exists"].ShouldExist;
         this.activeStore = activeStore;
@@ -7230,9 +7271,6 @@ class DirectStore extends _store_interface_js__WEBPACK_IMPORTED_MODULE_2__["Acti
     static async construct(options) {
         const me = new DirectStore(options);
         me.localModel = new (options.type.crdtInstanceConstructor())();
-        if (options.model) {
-            me.localModel.merge(options.model);
-        }
         me.driver = await _drivers_driver_factory_js__WEBPACK_IMPORTED_MODULE_1__["DriverFactory"].driverInstance(options.storageKey, options.exists);
         if (me.driver == null) {
             throw new _crdt_crdt_js__WEBPACK_IMPORTED_MODULE_0__["CRDTError"](`No driver exists to support storage key ${options.storageKey}`);
@@ -7519,7 +7557,6 @@ function noAwait(result) { }
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ReferenceCollection", function() { return ReferenceCollection; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ReferenceSingleton", function() { return ReferenceSingleton; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ReferenceModeStorageKey", function() { return ReferenceModeStorageKey; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ReferenceModeStore", function() { return ReferenceModeStore; });
 /* harmony import */ var _crdt_crdt_singleton_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(29);
 /* harmony import */ var _crdt_crdt_collection_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(27);
@@ -7527,9 +7564,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _backing_store_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(37);
 /* harmony import */ var _crdt_crdt_entity_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(38);
 /* harmony import */ var _direct_store_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(34);
-/* harmony import */ var _storage_key_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(39);
-/* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(8);
-/* harmony import */ var _util_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(35);
+/* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(8);
+/* harmony import */ var _util_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(35);
 /**
  * @license
  * Copyright (c) 2019 Google Inc. All rights reserved.
@@ -7539,7 +7575,6 @@ __webpack_require__.r(__webpack_exports__);
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-
 
 
 
@@ -7558,22 +7593,6 @@ var ReferenceModeUpdateSource;
     ReferenceModeUpdateSource[ReferenceModeUpdateSource["BackingStore"] = 1] = "BackingStore";
     ReferenceModeUpdateSource[ReferenceModeUpdateSource["StorageProxy"] = 2] = "StorageProxy";
 })(ReferenceModeUpdateSource || (ReferenceModeUpdateSource = {}));
-class ReferenceModeStorageKey extends _storage_key_js__WEBPACK_IMPORTED_MODULE_6__["StorageKey"] {
-    constructor(backingKey, storageKey) {
-        super('reference-mode');
-        this.backingKey = backingKey;
-        this.storageKey = storageKey;
-    }
-    embedKey(key) {
-        return key.toString().replace(/\{/g, '{{').replace(/\}/g, '}}');
-    }
-    toString() {
-        return `${this.protocol}://{${this.embedKey(this.backingKey)}}{${this.embedKey(this.storageKey)}}`;
-    }
-    childWithComponent(component) {
-        return new ReferenceModeStorageKey(this.backingKey, this.storageKey.childWithComponent(component));
-    }
-}
 /**
  * ReferenceModeStores adapt between a collection (CRDTCollection or CRDTSingleton) of entities from the perspective of their public API,
  * and a collection of references + a backing store of entity CRDTs from an internal storage perspective.
@@ -7643,15 +7662,14 @@ class ReferenceModeStore extends _store_interface_js__WEBPACK_IMPORTED_MODULE_2_
         });
         let refType;
         if (type.isCollectionType()) {
-            refType = new _type_js__WEBPACK_IMPORTED_MODULE_7__["CollectionType"](new _type_js__WEBPACK_IMPORTED_MODULE_7__["ReferenceType"](type.getContainedType()));
+            refType = new _type_js__WEBPACK_IMPORTED_MODULE_6__["CollectionType"](new _type_js__WEBPACK_IMPORTED_MODULE_6__["ReferenceType"](type.getContainedType()));
         }
         else {
-            // TODO(shans) probably need a singleton type here now.
-            refType = new _type_js__WEBPACK_IMPORTED_MODULE_7__["ReferenceType"](type.getContainedType());
+            refType = new _type_js__WEBPACK_IMPORTED_MODULE_6__["SingletonType"](new _type_js__WEBPACK_IMPORTED_MODULE_6__["ReferenceType"](type.getContainedType()));
         }
         result.containerStore = await _direct_store_js__WEBPACK_IMPORTED_MODULE_5__["DirectStore"].construct({
             storageKey: storageKey.storageKey,
-            type,
+            type: refType,
             mode: _store_interface_js__WEBPACK_IMPORTED_MODULE_2__["StorageMode"].Direct,
             exists: options.exists,
             baseStore: options.baseStore,
@@ -7941,7 +7959,15 @@ class ReferenceModeStore extends _store_interface_js__WEBPACK_IMPORTED_MODULE_2_
                 const send = this.pendingSends.shift();
                 send.fn();
             }
+            else {
+                return;
+            }
         }
+    }
+    addFieldToValueList(list, value, version) {
+        // NOTE: This could potentially be an extension point to provide automatic IDs if we
+        // need some sort of field-level collection capabilities ahead of entity mutation.
+        list[value['id']] = { value, version };
     }
     /**
      * Convert the provided entity to a CRDT Model of the entity. This requires synthesizing
@@ -7954,23 +7980,21 @@ class ReferenceModeStore extends _store_interface_js__WEBPACK_IMPORTED_MODULE_2_
         const entityVersion = this.versions[entity.id];
         const model = this.newBackingInstance().getData();
         let maxVersion = 0;
-        for (const key of Object.keys(entity)) {
-            if (key === 'id') {
-                continue;
-            }
+        for (const key of Object.keys(entity.rawData)) {
             if (entityVersion[key] == undefined) {
                 entityVersion[key] = 0;
             }
             const version = { [this.crdtKey]: ++entityVersion[key] };
             maxVersion = Math.max(maxVersion, entityVersion[key]);
             if (model.singletons[key]) {
-                model.singletons[key].values = { [entity[key].id]: { value: entity[key], version } };
+                model.singletons[key].values = {};
+                this.addFieldToValueList(model.singletons[key].values, entity.rawData[key], version);
                 model.singletons[key].version = version;
             }
             else if (model.collections[key]) {
                 model.collections[key].values = {};
-                for (const value of entity[key]) {
-                    model.collections[key].values[value.id] = { value, version };
+                for (const value of entity.rawData[key]) {
+                    this.addFieldToValueList(model.collections[key].values, value, version);
                 }
                 model.collections[key].version = version;
             }
@@ -7985,7 +8009,7 @@ class ReferenceModeStore extends _store_interface_js__WEBPACK_IMPORTED_MODULE_2_
      * Convert the provided CRDT model into an entity.
      */
     entityFromModel(model, id) {
-        const entity = { id };
+        const entity = { id, rawData: {} };
         const singletons = {};
         for (const field of Object.keys(model.singletons)) {
             singletons[field] = new _crdt_crdt_singleton_js__WEBPACK_IMPORTED_MODULE_0__["CRDTSingleton"]();
@@ -7998,10 +8022,10 @@ class ReferenceModeStore extends _store_interface_js__WEBPACK_IMPORTED_MODULE_2_
         entityCRDT.merge(model);
         const data = entityCRDT.getParticleView();
         for (const [key, value] of Object.entries(data.singletons)) {
-            entity[key] = value;
+            entity.rawData[key] = value;
         }
         for (const [key, value] of Object.entries(data.collections)) {
-            entity[key] = value;
+            entity.rawData[key] = value;
         }
         return entity;
     }
@@ -8046,7 +8070,7 @@ class ReferenceModeStore extends _store_interface_js__WEBPACK_IMPORTED_MODULE_2_
      */
     async send(message) {
         for (const key of this.callbacks.keys()) {
-            Object(_util_js__WEBPACK_IMPORTED_MODULE_8__["noAwait"])(this.callbacks.get(key)({ ...message, id: key }));
+            Object(_util_js__WEBPACK_IMPORTED_MODULE_7__["noAwait"])(this.callbacks.get(key)({ ...message, id: key }));
         }
     }
     /**
@@ -8058,7 +8082,7 @@ class ReferenceModeStore extends _store_interface_js__WEBPACK_IMPORTED_MODULE_2_
             if (key === notTo) {
                 continue;
             }
-            Object(_util_js__WEBPACK_IMPORTED_MODULE_8__["noAwait"])(this.callbacks.get(key)({ ...message, id: key }));
+            Object(_util_js__WEBPACK_IMPORTED_MODULE_7__["noAwait"])(this.callbacks.get(key)({ ...message, id: key }));
         }
     }
     /**
@@ -8431,37 +8455,8 @@ class CRDTEntity {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "StorageKey", function() { return StorageKey; });
-/**
- * @license
- * Copyright 2019 Google LLC.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-class StorageKey {
-    constructor(protocol) {
-        this.protocol = protocol;
-    }
-    childKeyForArcInfo() {
-        return this.childWithComponent('arc-info');
-    }
-    childKeyForHandle(id) {
-        return this.childWithComponent(`handle/${id}`);
-    }
-}
-//# sourceMappingURL=storage-key.js.map
-
-/***/ }),
-/* 40 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UnifiedStore", function() { return UnifiedStore; });
-/* harmony import */ var _recipe_comparable_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(41);
+/* harmony import */ var _recipe_comparable_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(40);
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(3);
 /**
  * @license
@@ -8561,6 +8556,9 @@ class UnifiedStore {
             }
             else {
                 handleStr.push(`in ${info.source}`);
+                if (info.includeKey) {
+                    handleStr.push(`at '${info.includeKey}'`);
+                }
             }
         }
         else if (this.storageKey) {
@@ -8581,7 +8579,7 @@ class UnifiedStore {
 //# sourceMappingURL=unified-store.js.map
 
 /***/ }),
-/* 41 */
+/* 40 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -8657,7 +8655,83 @@ function compareComparables(o1, o2) {
 //# sourceMappingURL=comparable.js.map
 
 /***/ }),
+/* 41 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ReferenceModeStorageKey", function() { return ReferenceModeStorageKey; });
+/* harmony import */ var _storage_key_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(42);
+/**
+ * @license
+ * Copyright (c) 2019 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+
+class ReferenceModeStorageKey extends _storage_key_js__WEBPACK_IMPORTED_MODULE_0__["StorageKey"] {
+    constructor(backingKey, storageKey) {
+        super('reference-mode');
+        this.backingKey = backingKey;
+        this.storageKey = storageKey;
+    }
+    embedKey(key) {
+        return key.toString().replace(/\{/g, '{{').replace(/\}/g, '}}');
+    }
+    static unembedKey(key) {
+        return key.replace(/\}\}/g, '}').replace(/\{\{/g, '}');
+    }
+    toString() {
+        return `${this.protocol}://{${this.embedKey(this.backingKey)}}{${this.embedKey(this.storageKey)}}`;
+    }
+    childWithComponent(component) {
+        return new ReferenceModeStorageKey(this.backingKey, this.storageKey.childWithComponent(component));
+    }
+    static fromString(key, parse) {
+        const match = key.match(/^reference-mode:\/\/{((?:\}\}|[^}])+)}{((?:\}\}|[^}])+)}$/);
+        if (!match) {
+            throw new Error(`Not a valid ReferenceModeStorageKey: ${key}.`);
+        }
+        const [_, backingKey, storageKey] = match;
+        return new ReferenceModeStorageKey(parse(ReferenceModeStorageKey.unembedKey(backingKey)), parse(ReferenceModeStorageKey.unembedKey(storageKey)));
+    }
+}
+//# sourceMappingURL=reference-mode-storage-key.js.map
+
+/***/ }),
 /* 42 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "StorageKey", function() { return StorageKey; });
+/**
+ * @license
+ * Copyright 2019 Google LLC.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class StorageKey {
+    constructor(protocol) {
+        this.protocol = protocol;
+    }
+    childKeyForArcInfo() {
+        return this.childWithComponent('arc-info');
+    }
+    childKeyForHandle(id) {
+        return this.childWithComponent(`handle/${id}`);
+    }
+}
+//# sourceMappingURL=storage-key.js.map
+
+/***/ }),
+/* 43 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -8757,7 +8831,7 @@ class CRDTCount {
 //# sourceMappingURL=crdt-count.js.map
 
 /***/ }),
-/* 43 */
+/* 44 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -8928,7 +9002,7 @@ function createCheck(checkTarget, astNode, handleConnectionMap) {
 //# sourceMappingURL=particle-check.js.map
 
 /***/ }),
-/* 44 */
+/* 45 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -9010,7 +9084,7 @@ function createParticleClaim(handle, astNode, handleConnectionMap) {
 //# sourceMappingURL=particle-claim.js.map
 
 /***/ }),
-/* 45 */
+/* 46 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -9084,7 +9158,7 @@ class SlotProxy {
 //# sourceMappingURL=slot-proxy.js.map
 
 /***/ }),
-/* 46 */
+/* 47 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -9097,10 +9171,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(16);
 /* harmony import */ var _reference_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(17);
 /* harmony import */ var _type_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(8);
-/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(47);
+/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(48);
 /* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(18);
 /* harmony import */ var _arc_exceptions_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(19);
-/* harmony import */ var _bimap_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(48);
+/* harmony import */ var _bimap_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(49);
 /**
  * @license
  * Copyright (c) 2019 Google Inc. All rights reserved.
@@ -9895,7 +9969,7 @@ class WasmParticle extends _particle_js__WEBPACK_IMPORTED_MODULE_4__["Particle"]
 //# sourceMappingURL=wasm.js.map
 
 /***/ }),
-/* 47 */
+/* 48 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -10165,7 +10239,7 @@ class Particle {
 //# sourceMappingURL=particle.js.map
 
 /***/ }),
-/* 48 */
+/* 49 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -10242,12 +10316,12 @@ class BiMap {
 //# sourceMappingURL=bimap.js.map
 
 /***/ }),
-/* 49 */
+/* 50 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _loader_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(50);
+/* harmony import */ var _loader_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(51);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Loader", function() { return _loader_web_js__WEBPACK_IMPORTED_MODULE_0__["Loader"]; });
 
 /**
@@ -10263,14 +10337,14 @@ __webpack_require__.r(__webpack_exports__);
 //# sourceMappingURL=loader.js.map
 
 /***/ }),
-/* 50 */
+/* 51 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Loader", function() { return Loader; });
-/* harmony import */ var _logs_factory_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(51);
-/* harmony import */ var _loader_base_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(53);
+/* harmony import */ var _logs_factory_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(52);
+/* harmony import */ var _loader_base_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(54);
 /**
  * @license
  * Copyright 2019 Google LLC.
@@ -10353,13 +10427,13 @@ class Loader extends _loader_base_js__WEBPACK_IMPORTED_MODULE_1__["LoaderBase"] 
 //# sourceMappingURL=loader-web.js.map
 
 /***/ }),
-/* 51 */
+/* 52 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* WEBPACK VAR INJECTION */(function(global) {/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "logsFactory", function() { return logsFactory; });
-/* harmony import */ var _log_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(52);
+/* harmony import */ var _log_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(53);
 /**
  * @license
  * Copyright 2019 Google LLC.
@@ -10401,7 +10475,7 @@ const logsFactory = (preamble, color = '') => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(1)))
 
 /***/ }),
-/* 52 */
+/* 53 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -10423,24 +10497,24 @@ const logFactory = (preamble, color, log = 'log') => {
 //# sourceMappingURL=log-web.js.map
 
 /***/ }),
-/* 53 */
+/* 54 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "LoaderBase", function() { return LoaderBase; });
 /* harmony import */ var _assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _fetch_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(54);
-/* harmony import */ var _runtime_converters_jsonldToManifest_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(55);
+/* harmony import */ var _fetch_web_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(55);
+/* harmony import */ var _runtime_converters_jsonldToManifest_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(56);
 /* harmony import */ var _runtime_reference_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(17);
-/* harmony import */ var _runtime_particle_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(47);
-/* harmony import */ var _runtime_dom_particle_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(56);
-/* harmony import */ var _runtime_transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(59);
-/* harmony import */ var _runtime_multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(60);
-/* harmony import */ var _runtime_ui_particle_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(61);
-/* harmony import */ var _runtime_ui_multiplexer_particle_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(63);
-/* harmony import */ var _runtime_html_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(65);
-/* harmony import */ var _platform_logs_factory_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(51);
+/* harmony import */ var _runtime_particle_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(48);
+/* harmony import */ var _runtime_dom_particle_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(57);
+/* harmony import */ var _runtime_transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(60);
+/* harmony import */ var _runtime_multiplexer_dom_particle_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(61);
+/* harmony import */ var _runtime_ui_particle_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(62);
+/* harmony import */ var _runtime_ui_multiplexer_particle_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(64);
+/* harmony import */ var _runtime_html_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(66);
+/* harmony import */ var _platform_logs_factory_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(52);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -10704,7 +10778,7 @@ class LoaderBase {
 //# sourceMappingURL=loader-base.js.map
 
 /***/ }),
-/* 54 */
+/* 55 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -10728,7 +10802,7 @@ const localFetch = fetch;
 //# sourceMappingURL=fetch-web.js.map
 
 /***/ }),
-/* 55 */
+/* 56 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -10843,14 +10917,14 @@ class JsonldToManifest {
 //# sourceMappingURL=jsonldToManifest.js.map
 
 /***/ }),
-/* 56 */
+/* 57 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DomParticle", function() { return DomParticle; });
-/* harmony import */ var _modalities_dom_components_xen_xen_state_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(57);
-/* harmony import */ var _dom_particle_base_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(58);
+/* harmony import */ var _modalities_dom_components_xen_xen_state_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(58);
+/* harmony import */ var _dom_particle_base_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(59);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -11023,7 +11097,7 @@ class DomParticle extends Object(_modalities_dom_components_xen_xen_state_js__WE
 //# sourceMappingURL=dom-particle.js.map
 
 /***/ }),
-/* 57 */
+/* 58 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -11176,14 +11250,14 @@ const XenStateMixin = Base => class extends Base {
 
 
 /***/ }),
-/* 58 */
+/* 59 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DomParticleBase", function() { return DomParticleBase; });
 /* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(18);
-/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(47);
+/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(48);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -11461,13 +11535,13 @@ class DomParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_1__["Particl
 //# sourceMappingURL=dom-particle-base.js.map
 
 /***/ }),
-/* 59 */
+/* 60 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TransformationDomParticle", function() { return TransformationDomParticle; });
-/* harmony import */ var _dom_particle_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(56);
+/* harmony import */ var _dom_particle_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(57);
 /* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(16);
 /**
  * @license
@@ -11517,7 +11591,7 @@ class TransformationDomParticle extends _dom_particle_js__WEBPACK_IMPORTED_MODUL
 //# sourceMappingURL=transformation-dom-particle.js.map
 
 /***/ }),
-/* 60 */
+/* 61 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -11525,7 +11599,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MultiplexerDomParticle", function() { return MultiplexerDomParticle; });
 /* harmony import */ var _platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 /* harmony import */ var _particle_spec_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(5);
-/* harmony import */ var _transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(59);
+/* harmony import */ var _transformation_dom_particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(60);
 /* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(16);
 /**
  * @license
@@ -11710,14 +11784,14 @@ class MultiplexerDomParticle extends _transformation_dom_particle_js__WEBPACK_IM
 //# sourceMappingURL=multiplexer-dom-particle.js.map
 
 /***/ }),
-/* 61 */
+/* 62 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UiParticle", function() { return UiParticle; });
-/* harmony import */ var _modalities_dom_components_xen_xen_state_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(57);
-/* harmony import */ var _ui_particle_base_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(62);
+/* harmony import */ var _modalities_dom_components_xen_xen_state_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(58);
+/* harmony import */ var _ui_particle_base_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(63);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -11862,7 +11936,7 @@ class UiParticle extends Object(_modalities_dom_components_xen_xen_state_js__WEB
 //# sourceMappingURL=ui-particle.js.map
 
 /***/ }),
-/* 62 */
+/* 63 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -11870,7 +11944,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UiParticleBase", function() { return UiParticleBase; });
 /* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(16);
 /* harmony import */ var _handle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(18);
-/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(47);
+/* harmony import */ var _particle_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(48);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -12050,14 +12124,14 @@ class UiParticleBase extends _particle_js__WEBPACK_IMPORTED_MODULE_2__["Particle
 //# sourceMappingURL=ui-particle-base.js.map
 
 /***/ }),
-/* 63 */
+/* 64 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UiMultiplexerParticle", function() { return UiMultiplexerParticle; });
 /* harmony import */ var _particle_spec_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(5);
-/* harmony import */ var _ui_transformation_particle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(64);
+/* harmony import */ var _ui_transformation_particle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(65);
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -12220,13 +12294,13 @@ class UiMultiplexerParticle extends _ui_transformation_particle_js__WEBPACK_IMPO
 //# sourceMappingURL=ui-multiplexer-particle.js.map
 
 /***/ }),
-/* 64 */
+/* 65 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UiTransformationParticle", function() { return UiTransformationParticle; });
-/* harmony import */ var _ui_particle_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(61);
+/* harmony import */ var _ui_particle_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(62);
 /* harmony import */ var _entity_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(16);
 /**
  * @license
@@ -12265,7 +12339,7 @@ class UiTransformationParticle extends _ui_particle_js__WEBPACK_IMPORTED_MODULE_
 //# sourceMappingURL=ui-transformation-particle.js.map
 
 /***/ }),
-/* 65 */
+/* 66 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";

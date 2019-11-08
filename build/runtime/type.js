@@ -654,6 +654,9 @@ export class SlotType extends Type {
 export class ReferenceType extends Type {
     constructor(reference) {
         super('Reference');
+        if (reference == null) {
+            throw new Error('invalid type! Reference types must include a referenced type declaration');
+        }
         this.referredType = reference;
     }
     get isReference() {
@@ -701,6 +704,9 @@ export class ReferenceType extends Type {
     }
     getEntitySchema() {
         return this.referredType.getEntitySchema();
+    }
+    crdtInstanceConstructor() {
+        return this.referredType.crdtInstanceConstructor();
     }
 }
 export class ArcType extends Type {

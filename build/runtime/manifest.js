@@ -200,7 +200,7 @@ export class Manifest {
             if (typeof storageKey === 'string') {
                 storageKey = StorageKeyParser.parse(storageKey);
             }
-            store = new Store({ ...opts, storageKey, exists: Exists.ShouldCreate });
+            store = new Store({ ...opts, storageKey, exists: Exists.MayExist });
         }
         else {
             if (opts.storageKey instanceof StorageKey) {
@@ -1101,9 +1101,10 @@ ${e.message}
             throw new ManifestError(item.location, `Error parsing JSON from '${source}' (${e.message})'`);
         }
         if (Flags.useNewStorageStack) {
-            return manifest.newStore({ type, name, id, storageKey: manifest.createLocalDataStorageKey(),
-                tags, originalId, claims, description: item.description, version: item.version || null,
-                source: item.source, origin: item.origin, referenceMode: false, model: entities });
+            const storageKey = item['storageKey'] || manifest.createLocalDataStorageKey();
+            return manifest.newStore({ type, name, id, storageKey, tags, originalId, claims,
+                description: item.description, version: item.version || null, source: item.source,
+                origin: item.origin, referenceMode: false, model: entities });
         }
         // TODO: clean this up
         let unitType = null;

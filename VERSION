@@ -1,9 +1,5 @@
-commit bd73114ce5b68169205852cc7e364c83b8f1b979
-Author: ianull <ianchang@google.com>
-Date:   Thu Nov 7 10:18:59 2019 -0800
+commit da0467fa6f38350a5e4aaa4d1c6f3259e7d8707b
+Author: shans <shane.stephens@gmail.com>
+Date:   Fri Nov 8 11:16:25 2019 +1100
 
-    Fix pipes-shell cannot reflect source changes (#4012)
-    
-    srcs can only reflect shells/pipes-shell/...
-    Add deps to all sources defined at the root BUILD.bazel to reflect
-    changes on sources.
+    Ng serialization (#4000)

@@ -7,7 +7,7 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { ChangeType } from './crdt.js';
+import { ChangeType, isEmptyChange, createEmptyChange } from './crdt.js';
 import { CollectionOpTypes, CRDTCollection } from './crdt-collection.js';
 export var SingletonOpTypes;
 (function (SingletonOpTypes) {
@@ -19,13 +19,20 @@ export class CRDTSingleton {
         this.collection = new CRDTCollection();
     }
     merge(other) {
-        this.collection.merge(other);
+        const { modelChange, otherChange } = this.collection.merge(other);
         // We cannot pass through the collection ops, so always return the updated model.
-        const change = {
+        let newModelChange = {
             changeType: ChangeType.Model,
             modelPostChange: this.collection.getData()
         };
-        return { modelChange: change, otherChange: change };
+        let newOtherChange = newModelChange;
+        if (isEmptyChange(modelChange)) {
+            newModelChange = createEmptyChange();
+        }
+        if (isEmptyChange(otherChange)) {
+            newOtherChange = createEmptyChange();
+        }
+        return { modelChange: newModelChange, otherChange: newOtherChange };
     }
     applyOperation(op) {
         if (op.type === SingletonOpTypes.Clear) {

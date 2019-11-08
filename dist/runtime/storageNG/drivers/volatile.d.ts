@@ -34,6 +34,7 @@ export declare class VolatileDriver<Data> extends Driver<Data> {
     private pendingModel;
     private receiver;
     private data;
+    private id;
     constructor(storageKey: StorageKey, exists: Exists, memory: VolatileMemory);
     registerReceiver(receiver: ReceiveMethod<Data>, token?: string): void;
     getToken(): string;

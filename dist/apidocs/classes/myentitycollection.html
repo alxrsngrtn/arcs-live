@@ -70,7 +70,7 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<a href="crdtcollection.html" class="tsd-signature-type">CRDTCollection</a><span class="tsd-signature-symbol">&lt;</span><a href="myentity.html" class="tsd-signature-type">MyEntity</a><span class="tsd-signature-symbol">&gt;</span>
+						<a href="crdtcollection.html" class="tsd-signature-type">CRDTCollection</a><span class="tsd-signature-symbol">&lt;</span><a href="../globals.html#serializedentity" class="tsd-signature-type">SerializedEntity</a><span class="tsd-signature-symbol">&gt;</span>
 						<ul class="tsd-hierarchy">
 							<li>
 								<span class="target">MyEntityCollection</span>
@@ -82,7 +82,7 @@
 			<section class="tsd-panel">
 				<h3>Implements</h3>
 				<ul class="tsd-hierarchy">
-					<li><a href="../interfaces/crdtmodel.html" class="tsd-signature-type">CRDTModel</a><span class="tsd-signature-symbol">&lt;</span><a href="myentity.html" class="tsd-signature-type">MyEntity</a><span class="tsd-signature-symbol">&gt;</span></li>
+					<li><a href="../interfaces/crdtmodel.html" class="tsd-signature-type">CRDTModel</a><span class="tsd-signature-symbol">&lt;</span><a href="../globals.html#serializedentity" class="tsd-signature-type">SerializedEntity</a><span class="tsd-signature-symbol">&gt;</span></li>
 				</ul>
 			</section>
 			<section class="tsd-panel-group tsd-index-group">
@@ -107,20 +107,20 @@
 					<a name="applyoperation" class="tsd-anchor"></a>
 					<h3>apply<wbr>Operation</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
-						<li class="tsd-signature tsd-kind-icon">apply<wbr>Operation<span class="tsd-signature-symbol">(</span>op<span class="tsd-signature-symbol">: </span><a href="../globals.html#collectionoperation" class="tsd-signature-type">CollectionOperation</a><span class="tsd-signature-symbol">&lt;</span><a href="myentity.html" class="tsd-signature-type">MyEntity</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+						<li class="tsd-signature tsd-kind-icon">apply<wbr>Operation<span class="tsd-signature-symbol">(</span>op<span class="tsd-signature-symbol">: </span><a href="../globals.html#collectionoperation" class="tsd-signature-type">CollectionOperation</a><span class="tsd-signature-symbol">&lt;</span><a href="../globals.html#serializedentity" class="tsd-signature-type">SerializedEntity</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="crdtcollection.html">CRDTCollection</a>.<a href="crdtcollection.html#applyoperation">applyOperation</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/bd73114/src/runtime/crdt/crdt-collection.ts#L115">src/runtime/crdt/crdt-collection.ts:115</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/da0467f/src/runtime/crdt/crdt-collection.ts#L135">src/runtime/crdt/crdt-collection.ts:135</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>op: <a href="../globals.html#collectionoperation" class="tsd-signature-type">CollectionOperation</a><span class="tsd-signature-symbol">&lt;</span><a href="myentity.html" class="tsd-signature-type">MyEntity</a><span class="tsd-signature-symbol">&gt;</span></h5>
+									<h5>op: <a href="../globals.html#collectionoperation" class="tsd-signature-type">CollectionOperation</a><span class="tsd-signature-symbol">&lt;</span><a href="../globals.html#serializedentity" class="tsd-signature-type">SerializedEntity</a><span class="tsd-signature-symbol">&gt;</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
@@ -131,7 +131,7 @@
 					<a name="getdata" class="tsd-anchor"></a>
 					<h3>get<wbr>Data</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
-						<li class="tsd-signature tsd-kind-icon">get<wbr>Data<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../globals.html#collectiondata" class="tsd-signature-type">CollectionData</a><span class="tsd-signature-symbol">&lt;</span><a href="myentity.html" class="tsd-signature-type">MyEntity</a><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Data<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../globals.html#collectiondata" class="tsd-signature-type">CollectionData</a><span class="tsd-signature-symbol">&lt;</span><a href="../globals.html#serializedentity" class="tsd-signature-type">SerializedEntity</a><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
@@ -139,10 +139,10 @@
 								<p>Implementation of <a href="../interfaces/crdtmodel.html">CRDTModel</a>.<a href="../interfaces/crdtmodel.html#getdata">getData</a></p>
 								<p>Inherited from <a href="crdtcollection.html">CRDTCollection</a>.<a href="crdtcollection.html#getdata">getData</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/bd73114/src/runtime/crdt/crdt-collection.ts#L128">src/runtime/crdt/crdt-collection.ts:128</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/da0467f/src/runtime/crdt/crdt-collection.ts#L148">src/runtime/crdt/crdt-collection.ts:148</a></li>
 								</ul>
 							</aside>
-							<h4 class="tsd-returns-title">Returns <a href="../globals.html#collectiondata" class="tsd-signature-type">CollectionData</a><span class="tsd-signature-symbol">&lt;</span><a href="myentity.html" class="tsd-signature-type">MyEntity</a><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <a href="../globals.html#collectiondata" class="tsd-signature-type">CollectionData</a><span class="tsd-signature-symbol">&lt;</span><a href="../globals.html#serializedentity" class="tsd-signature-type">SerializedEntity</a><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -150,7 +150,7 @@
 					<a name="getparticleview" class="tsd-anchor"></a>
 					<h3>get<wbr>Particle<wbr>View</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
-						<li class="tsd-signature tsd-kind-icon">get<wbr>Particle<wbr>View<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../globals.html#rawcollection" class="tsd-signature-type">RawCollection</a><span class="tsd-signature-symbol">&lt;</span><a href="myentity.html" class="tsd-signature-type">MyEntity</a><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Particle<wbr>View<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../globals.html#rawcollection" class="tsd-signature-type">RawCollection</a><span class="tsd-signature-symbol">&lt;</span><a href="../globals.html#serializedentity" class="tsd-signature-type">SerializedEntity</a><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
@@ -158,10 +158,10 @@
 								<p>Implementation of <a href="../interfaces/crdtmodel.html">CRDTModel</a>.<a href="../interfaces/crdtmodel.html#getparticleview">getParticleView</a></p>
 								<p>Inherited from <a href="crdtcollection.html">CRDTCollection</a>.<a href="crdtcollection.html#getparticleview">getParticleView</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/bd73114/src/runtime/crdt/crdt-collection.ts#L132">src/runtime/crdt/crdt-collection.ts:132</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/da0467f/src/runtime/crdt/crdt-collection.ts#L152">src/runtime/crdt/crdt-collection.ts:152</a></li>
 								</ul>
 							</aside>
-							<h4 class="tsd-returns-title">Returns <a href="../globals.html#rawcollection" class="tsd-signature-type">RawCollection</a><span class="tsd-signature-symbol">&lt;</span><a href="myentity.html" class="tsd-signature-type">MyEntity</a><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <a href="../globals.html#rawcollection" class="tsd-signature-type">RawCollection</a><span class="tsd-signature-symbol">&lt;</span><a href="../globals.html#serializedentity" class="tsd-signature-type">SerializedEntity</a><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -169,29 +169,29 @@
 					<a name="merge" class="tsd-anchor"></a>
 					<h3>merge</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
-						<li class="tsd-signature tsd-kind-icon">merge<span class="tsd-signature-symbol">(</span>other<span class="tsd-signature-symbol">: </span><a href="../globals.html#collectiondata" class="tsd-signature-type">CollectionData</a><span class="tsd-signature-symbol">&lt;</span><a href="myentity.html" class="tsd-signature-type">MyEntity</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">object</span></li>
+						<li class="tsd-signature tsd-kind-icon">merge<span class="tsd-signature-symbol">(</span>other<span class="tsd-signature-symbol">: </span><a href="../globals.html#collectiondata" class="tsd-signature-type">CollectionData</a><span class="tsd-signature-symbol">&lt;</span><a href="../globals.html#serializedentity" class="tsd-signature-type">SerializedEntity</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">object</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="crdtcollection.html">CRDTCollection</a>.<a href="crdtcollection.html#merge">merge</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/bd73114/src/runtime/crdt/crdt-collection.ts#L52">src/runtime/crdt/crdt-collection.ts:52</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/da0467f/src/runtime/crdt/crdt-collection.ts#L52">src/runtime/crdt/crdt-collection.ts:52</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>other: <a href="../globals.html#collectiondata" class="tsd-signature-type">CollectionData</a><span class="tsd-signature-symbol">&lt;</span><a href="myentity.html" class="tsd-signature-type">MyEntity</a><span class="tsd-signature-symbol">&gt;</span></h5>
+									<h5>other: <a href="../globals.html#collectiondata" class="tsd-signature-type">CollectionData</a><span class="tsd-signature-symbol">&lt;</span><a href="../globals.html#serializedentity" class="tsd-signature-type">SerializedEntity</a><span class="tsd-signature-symbol">&gt;</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">object</span></h4>
 							<ul class="tsd-parameters">
 								<li class="tsd-parameter">
-									<h5>model<wbr>Change<span class="tsd-signature-symbol">: </span><a href="../globals.html#collectionchange" class="tsd-signature-type">CollectionChange</a><span class="tsd-signature-symbol">&lt;</span><a href="myentity.html" class="tsd-signature-type">MyEntity</a><span class="tsd-signature-symbol">&gt;</span></h5>
+									<h5>model<wbr>Change<span class="tsd-signature-symbol">: </span><a href="../globals.html#collectionchange" class="tsd-signature-type">CollectionChange</a><span class="tsd-signature-symbol">&lt;</span><a href="../globals.html#serializedentity" class="tsd-signature-type">SerializedEntity</a><span class="tsd-signature-symbol">&gt;</span></h5>
 								</li>
 								<li class="tsd-parameter">
-									<h5>other<wbr>Change<span class="tsd-signature-symbol">: </span><a href="../globals.html#collectionchange" class="tsd-signature-type">CollectionChange</a><span class="tsd-signature-symbol">&lt;</span><a href="myentity.html" class="tsd-signature-type">MyEntity</a><span class="tsd-signature-symbol">&gt;</span></h5>
+									<h5>other<wbr>Change<span class="tsd-signature-symbol">: </span><a href="../globals.html#collectionchange" class="tsd-signature-type">CollectionChange</a><span class="tsd-signature-symbol">&lt;</span><a href="../globals.html#serializedentity" class="tsd-signature-type">SerializedEntity</a><span class="tsd-signature-symbol">&gt;</span></h5>
 								</li>
 							</ul>
 						</li>

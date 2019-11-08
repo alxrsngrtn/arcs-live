@@ -44,11 +44,13 @@ export class VolatileMemory {
         this.token = Math.random() + '';
     }
 }
+let id = 0;
 export class VolatileDriver extends Driver {
     constructor(storageKey, exists, memory) {
         super(storageKey, exists);
         this.pendingVersion = 0;
         this.pendingModel = null;
+        this.id = id++;
         const keyAsString = storageKey.toString();
         this.memory = memory;
         switch (exists) {

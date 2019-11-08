@@ -10,8 +10,9 @@
 import { Exists } from './drivers/driver-factory.js';
 import { StorageMode, ActiveStore, ProxyMessageType } from './store-interface.js';
 import { DirectStore } from './direct-store.js';
-import { ReferenceModeStore, ReferenceModeStorageKey } from './reference-mode-store.js';
+import { ReferenceModeStore } from './reference-mode-store.js';
 import { UnifiedStore } from './unified-store.js';
+import { ReferenceModeStorageKey } from './reference-mode-storage-key.js';
 export { ActiveStore, ProxyMessageType, StorageMode };
 // A representation of a store. Note that initially a constructed store will be
 // inactive - it will not connect to a driver, will not accept connections from
@@ -54,8 +55,7 @@ export class Store extends UnifiedStore {
             type: this.type,
             mode: this.mode,
             baseStore: this,
-            versionToken: this.parsedVersionToken,
-            model: this.model
+            versionToken: this.parsedVersionToken
         });
         this.exists = Exists.ShouldExist;
         this.activeStore = activeStore;

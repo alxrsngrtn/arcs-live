@@ -13,8 +13,7 @@ import { ActiveStore, ProxyMessageType, StorageMode } from './store-interface.js
 import { BackingStore } from './backing-store.js';
 import { CRDTEntity } from '../crdt/crdt-entity.js';
 import { DirectStore } from './direct-store.js';
-import { StorageKey } from './storage-key.js';
-import { CollectionType, ReferenceType } from '../type.js';
+import { CollectionType, ReferenceType, SingletonType } from '../type.js';
 import { noAwait } from '../util.js';
 export class ReferenceCollection extends CRDTCollection {
 }
@@ -26,22 +25,6 @@ var ReferenceModeUpdateSource;
     ReferenceModeUpdateSource[ReferenceModeUpdateSource["BackingStore"] = 1] = "BackingStore";
     ReferenceModeUpdateSource[ReferenceModeUpdateSource["StorageProxy"] = 2] = "StorageProxy";
 })(ReferenceModeUpdateSource || (ReferenceModeUpdateSource = {}));
-export class ReferenceModeStorageKey extends StorageKey {
-    constructor(backingKey, storageKey) {
-        super('reference-mode');
-        this.backingKey = backingKey;
-        this.storageKey = storageKey;
-    }
-    embedKey(key) {
-        return key.toString().replace(/\{/g, '{{').replace(/\}/g, '}}');
-    }
-    toString() {
-        return `${this.protocol}://{${this.embedKey(this.backingKey)}}{${this.embedKey(this.storageKey)}}`;
-    }
-    childWithComponent(component) {
-        return new ReferenceModeStorageKey(this.backingKey, this.storageKey.childWithComponent(component));
-    }
-}
 /**
  * ReferenceModeStores adapt between a collection (CRDTCollection or CRDTSingleton) of entities from the perspective of their public API,
  * and a collection of references + a backing store of entity CRDTs from an internal storage perspective.
@@ -114,12 +97,11 @@ export class ReferenceModeStore extends ActiveStore {
             refType = new CollectionType(new ReferenceType(type.getContainedType()));
         }
         else {
-            // TODO(shans) probably need a singleton type here now.
-            refType = new ReferenceType(type.getContainedType());
+            refType = new SingletonType(new ReferenceType(type.getContainedType()));
         }
         result.containerStore = await DirectStore.construct({
             storageKey: storageKey.storageKey,
-            type,
+            type: refType,
             mode: StorageMode.Direct,
             exists: options.exists,
             baseStore: options.baseStore,
@@ -409,7 +391,15 @@ export class ReferenceModeStore extends ActiveStore {
                 const send = this.pendingSends.shift();
                 send.fn();
             }
+            else {
+                return;
+            }
         }
+    }
+    addFieldToValueList(list, value, version) {
+        // NOTE: This could potentially be an extension point to provide automatic IDs if we
+        // need some sort of field-level collection capabilities ahead of entity mutation.
+        list[value['id']] = { value, version };
     }
     /**
      * Convert the provided entity to a CRDT Model of the entity. This requires synthesizing
@@ -422,23 +412,21 @@ export class ReferenceModeStore extends ActiveStore {
         const entityVersion = this.versions[entity.id];
         const model = this.newBackingInstance().getData();
         let maxVersion = 0;
-        for (const key of Object.keys(entity)) {
-            if (key === 'id') {
-                continue;
-            }
+        for (const key of Object.keys(entity.rawData)) {
             if (entityVersion[key] == undefined) {
                 entityVersion[key] = 0;
             }
             const version = { [this.crdtKey]: ++entityVersion[key] };
             maxVersion = Math.max(maxVersion, entityVersion[key]);
             if (model.singletons[key]) {
-                model.singletons[key].values = { [entity[key].id]: { value: entity[key], version } };
+                model.singletons[key].values = {};
+                this.addFieldToValueList(model.singletons[key].values, entity.rawData[key], version);
                 model.singletons[key].version = version;
             }
             else if (model.collections[key]) {
                 model.collections[key].values = {};
-                for (const value of entity[key]) {
-                    model.collections[key].values[value.id] = { value, version };
+                for (const value of entity.rawData[key]) {
+                    this.addFieldToValueList(model.collections[key].values, value, version);
                 }
                 model.collections[key].version = version;
             }
@@ -453,7 +441,7 @@ export class ReferenceModeStore extends ActiveStore {
      * Convert the provided CRDT model into an entity.
      */
     entityFromModel(model, id) {
-        const entity = { id };
+        const entity = { id, rawData: {} };
         const singletons = {};
         for (const field of Object.keys(model.singletons)) {
             singletons[field] = new CRDTSingleton();
@@ -466,10 +454,10 @@ export class ReferenceModeStore extends ActiveStore {
         entityCRDT.merge(model);
         const data = entityCRDT.getParticleView();
         for (const [key, value] of Object.entries(data.singletons)) {
-            entity[key] = value;
+            entity.rawData[key] = value;
         }
         for (const [key, value] of Object.entries(data.collections)) {
-            entity[key] = value;
+            entity.rawData[key] = value;
         }
         return entity;
     }

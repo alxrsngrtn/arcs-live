@@ -56,7 +56,6 @@ export declare type StoreConstructorOptions<T extends CRDTTypeRecord> = {
     mode: StorageMode;
     baseStore: Store<T>;
     versionToken: string;
-    model?: T['data'];
 };
 export declare type StoreConstructor = {
     construct<T extends CRDTTypeRecord>(options: StoreConstructorOptions<T>): Promise<ActiveStore<T>>;

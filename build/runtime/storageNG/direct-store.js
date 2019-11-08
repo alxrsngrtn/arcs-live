@@ -75,9 +75,6 @@ export class DirectStore extends ActiveStore {
     static async construct(options) {
         const me = new DirectStore(options);
         me.localModel = new (options.type.crdtInstanceConstructor())();
-        if (options.model) {
-            me.localModel.merge(options.model);
-        }
         me.driver = await DriverFactory.driverInstance(options.storageKey, options.exists);
         if (me.driver == null) {
             throw new CRDTError(`No driver exists to support storage key ${options.storageKey}`);

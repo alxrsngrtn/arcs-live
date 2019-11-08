@@ -7,7 +7,7 @@
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-import { ChangeType, CRDTError } from './crdt.js';
+import { ChangeType, CRDTError, createEmptyChange } from './crdt.js';
 import { assert } from '../../platform/assert-web.js';
 export var CollectionOpTypes;
 (function (CollectionOpTypes) {
@@ -20,6 +20,25 @@ export class CRDTCollection {
         this.model = { values: {}, version: {} };
     }
     merge(other) {
+        // Ensure we never send an update if the two versions are already the same.
+        // TODO(shans): Remove this once fast-forwarding is two-sided, and replace with
+        // a check for an effect-free fast-forward op in each direction instead.
+        if (sameVersions(this.model.version, other.version)) {
+            let entriesMatch = true;
+            const theseKeys = Object.keys(this.model.values);
+            const otherKeys = Object.keys(other.values);
+            if (theseKeys.length === otherKeys.length) {
+                for (const key of Object.keys(this.model.values)) {
+                    if (!other.values[key]) {
+                        entriesMatch = false;
+                        break;
+                    }
+                }
+                if (entriesMatch) {
+                    return { modelChange: createEmptyChange(), otherChange: createEmptyChange() };
+                }
+            }
+        }
         const newClock = mergeVersions(this.model.version, other.version);
         const merged = {};
         // Fast-forward op to send to other model. Elements added and removed will

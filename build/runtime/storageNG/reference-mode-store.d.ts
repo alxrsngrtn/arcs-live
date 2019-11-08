@@ -17,6 +17,8 @@ import { StorageKey } from './storage-key.js';
 import { CRDTData, VersionMap } from '../crdt/crdt.js';
 import { Dictionary } from '../hot.js';
 import { PropagatedException } from '../arc-exceptions.js';
+import { SerializedEntity } from '../storage-proxy.js';
+import { ReferenceModeStorageKey } from './reference-mode-storage-key.js';
 export declare type Reference = {
     id: string;
     storageKey: StorageKey;
@@ -27,14 +29,6 @@ export declare class ReferenceCollection extends CRDTCollection<Reference> {
 export declare class ReferenceSingleton extends CRDTSingleton<Reference> {
 }
 export declare type ReferenceModeOperation<T extends Referenceable> = CRDTSingletonTypeRecord<T>['operation'] | CRDTCollectionTypeRecord<T>['operation'];
-export declare class ReferenceModeStorageKey extends StorageKey {
-    backingKey: StorageKey;
-    storageKey: StorageKey;
-    constructor(backingKey: StorageKey, storageKey: StorageKey);
-    embedKey(key: StorageKey): string;
-    toString(): string;
-    childWithComponent(component: string): StorageKey;
-}
 /**
  * ReferenceModeStores adapt between a collection (CRDTCollection or CRDTSingleton) of entities from the perspective of their public API,
  * and a collection of references + a backing store of entity CRDTs from an internal storage perspective.
@@ -50,7 +44,7 @@ export declare class ReferenceModeStorageKey extends StorageKey {
  *   outgoing updates are sent in the correct order.
  *
  */
-export declare class ReferenceModeStore<Entity extends Referenceable, S extends Dictionary<Referenceable>, C extends Dictionary<Referenceable>, ReferenceContainer extends CRDTSingletonTypeRecord<Reference> | CRDTCollectionTypeRecord<Reference>, Container extends CRDTSingletonTypeRecord<Entity> | CRDTCollectionTypeRecord<Entity>> extends ActiveStore<Container> {
+export declare class ReferenceModeStore<Entity extends SerializedEntity, S extends Dictionary<Referenceable>, C extends Dictionary<Referenceable>, ReferenceContainer extends CRDTSingletonTypeRecord<Reference> | CRDTCollectionTypeRecord<Reference>, Container extends CRDTSingletonTypeRecord<Entity> | CRDTCollectionTypeRecord<Entity>> extends ActiveStore<Container> {
     backingStore: BackingStore<CRDTEntityTypeRecord<S, C>>;
     containerStore: DirectStore<ReferenceContainer>;
     private callbacks;
@@ -61,7 +55,7 @@ export declare class ReferenceModeStore<Entity extends Referenceable, S extends 
     private pendingSends;
     private holdQueue;
     private blockCounter;
-    static construct<Entity extends Referenceable, S extends Dictionary<Referenceable>, C extends Dictionary<Referenceable>, ReferenceContainer extends CRDTSingletonTypeRecord<Reference> | CRDTCollectionTypeRecord<Reference>, Container extends CRDTSingletonTypeRecord<Entity> | CRDTCollectionTypeRecord<Entity>>(options: StoreConstructorOptions<Container> & {
+    static construct<Entity extends SerializedEntity, S extends Dictionary<Referenceable>, C extends Dictionary<Referenceable>, ReferenceContainer extends CRDTSingletonTypeRecord<Reference> | CRDTCollectionTypeRecord<Reference>, Container extends CRDTSingletonTypeRecord<Entity> | CRDTCollectionTypeRecord<Entity>>(options: StoreConstructorOptions<Container> & {
         storageKey: ReferenceModeStorageKey;
     }): Promise<ReferenceModeStore<Entity, S, C, ReferenceContainer, Container>>;
     serializeContents(): Promise<Container['data']>;
@@ -138,6 +132,7 @@ export declare class ReferenceModeStore<Entity extends Referenceable, S extends 
      * provided block. This should only be called by the holdQueue.
      */
     private processPendingSends;
+    private addFieldToValueList;
     /**
      * Convert the provided entity to a CRDT Model of the entity. This requires synthesizing
      * a version map for the CRDT model, which is also provided as an output.

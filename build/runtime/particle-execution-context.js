@@ -347,7 +347,7 @@ export class ParticleExecutionContext {
         if (!this.busy) {
             return Promise.resolve();
         }
-        const busyParticlePromises = [...this.particles.values()].filter(async (particle) => particle.busy).map(async (particle) => particle.idle);
+        const busyParticlePromises = [...this.particles.values()].filter(particle => particle.busy).map(async (particle) => particle.idle);
         return Promise.all([this.scheduler.idle, ...this.pendingLoads, ...busyParticlePromises]).then(() => this.idle);
     }
 }

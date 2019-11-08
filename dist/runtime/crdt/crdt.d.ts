@@ -43,3 +43,5 @@ export declare type CRDTChange<T extends CRDTTypeRecord> = {
     changeType: ChangeType.Model;
     modelPostChange: T['data'];
 };
+export declare function isEmptyChange<T extends CRDTTypeRecord>(change: CRDTChange<T>): boolean;
+export declare function createEmptyChange<T extends CRDTTypeRecord>(): CRDTChange<T>;

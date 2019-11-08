@@ -1,6 +1,7 @@
 import { VolatileStorageKey } from './drivers/volatile.js';
 import { FirebaseStorageKey } from './drivers/firebase.js';
 import { RamDiskStorageKey } from './drivers/ramdisk.js';
+import { ReferenceModeStorageKey } from './reference-mode-storage-key.js';
 /**
  * Parses storage key string representations back into real StorageKey
  * instances.
@@ -15,19 +16,20 @@ export class StorageKeyParser {
             ['volatile', VolatileStorageKey.fromString],
             ['firebase', FirebaseStorageKey.fromString],
             ['ramdisk', RamDiskStorageKey.fromString],
+            ['reference-mode', ReferenceModeStorageKey.fromString]
         ]);
     }
     static parse(key) {
-        const match = key.match(/^(\w+):\/\/(.*)$/);
+        const match = key.match(/^((?:\w|-)+):\/\/(.*)$/);
         if (!match) {
             throw new Error('Failed to parse storage key: ' + key);
         }
         const protocol = match[1];
-        const parser = this.parsers.get(protocol);
+        const parser = StorageKeyParser.parsers.get(protocol);
         if (!parser) {
             throw new Error(`Unknown storage key protocol ${protocol} in key ${key}.`);
         }
-        return parser(key);
+        return parser(key, StorageKeyParser.parse);
     }
     static reset() {
         this.parsers = this.getDefaultParsers();

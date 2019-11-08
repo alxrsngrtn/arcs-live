@@ -11,12 +11,13 @@ import { assert } from '../../../platform/chai-web.js';
 import { Store, ProxyMessageType } from '../store.js';
 import { Exists, DriverFactory } from '../drivers/driver-factory.js';
 import { MockStorageDriverProvider, MockHierarchicalStorageKey } from '../testing/test-storage.js';
-import { ReferenceModeStore, ReferenceCollection, ReferenceModeStorageKey } from '../reference-mode-store.js';
+import { ReferenceModeStore, ReferenceCollection } from '../reference-mode-store.js';
 import { CRDTEntity, EntityOpTypes } from '../../crdt/crdt-entity.js';
 import { CRDTCollection, CollectionOpTypes } from '../../crdt/crdt-collection.js';
 import { CRDTSingleton } from '../../crdt/crdt-singleton.js';
+import { CountType, CollectionType, EntityType, SingletonType } from '../../type.js';
 import { Schema } from '../../schema.js';
-import { CountType, CollectionType, EntityType } from '../../type.js';
+import { ReferenceModeStorageKey } from '../reference-mode-storage-key.js';
 /* eslint-disable no-async-promise-executor */
 let testKey;
 let baseStore;
@@ -26,6 +27,9 @@ class MyEntityModel extends CRDTEntity {
     }
 }
 class MyEntity {
+    constructor() {
+        this.rawData = {};
+    }
 }
 class MyEntityCollection extends CRDTCollection {
 }
@@ -44,14 +48,14 @@ async function createReferenceModeStore() {
 describe('Reference Mode Store', async () => {
     beforeEach(() => {
         testKey = new ReferenceModeStorageKey(new MockHierarchicalStorageKey(), new MockHierarchicalStorageKey());
-        baseStore = new Store({ storageKey: testKey, exists: Exists.ShouldCreate, type: new CountType(), id: 'base-store-id' });
+        baseStore = new Store({ storageKey: testKey, exists: Exists.ShouldCreate, type: new SingletonType(new CountType()), id: 'base-store-id' });
         DriverFactory.clearRegistrationsForTesting();
     });
     after(() => {
         DriverFactory.clearRegistrationsForTesting();
     });
     it(`will throw an exception if an appropriate driver can't be found`, async () => {
-        const store = new Store({ storageKey: testKey, exists: Exists.ShouldCreate, type: new CountType(), id: 'an-id' });
+        const store = new Store({ storageKey: testKey, exists: Exists.ShouldCreate, type: new SingletonType(new CountType()), id: 'an-id' });
         try {
             await store.activate();
             assert.fail('store.activate() should not have succeeded');
@@ -62,7 +66,7 @@ describe('Reference Mode Store', async () => {
     });
     it('will construct ReferenceMode stores when required', async () => {
         DriverFactory.register(new MockStorageDriverProvider());
-        const store = new Store({ storageKey: testKey, exists: Exists.ShouldCreate, type: new CountType(), id: 'an-id' });
+        const store = new Store({ storageKey: testKey, exists: Exists.ShouldCreate, type: new SingletonType(new CountType()), id: 'an-id' });
         const activeStore = await store.activate();
         assert.equal(activeStore.constructor, ReferenceModeStore);
     });
@@ -74,9 +78,9 @@ describe('Reference Mode Store', async () => {
         driver.send = async (model) => { capturedModel = model; return true; };
         const collection = new MyEntityCollection();
         const entity = new MyEntity();
-        entity.age = { id: '42', value: 42 };
+        entity.rawData.age = { id: '42', value: 42 };
         entity.id = 'an-id';
-        entity.name = { id: 'bob' };
+        entity.rawData.name = { id: 'bob' };
         collection.applyOperation({ type: CollectionOpTypes.Add, clock: { me: 1 }, actor: 'me', added: entity });
         const result = await activeStore.onProxyMessage({ type: ProxyMessageType.ModelUpdate, model: collection.getData(), id: 1 });
         assert.isTrue(result);
@@ -97,9 +101,9 @@ describe('Reference Mode Store', async () => {
         // Add some data.
         const collection = new MyEntityCollection();
         const entity = new MyEntity();
-        entity.age = { id: '42', value: 42 };
+        entity.rawData.age = { id: '42', value: 42 };
         entity.id = 'an-id';
-        entity.name = { id: 'bob' };
+        entity.rawData.name = { id: 'bob' };
         collection.applyOperation({ type: CollectionOpTypes.Add, clock: { me: 1 }, actor: 'me', added: entity });
         const result = await activeStore.onProxyMessage({ type: ProxyMessageType.ModelUpdate, model: collection.getData(), id: 1 });
         // Clone.
@@ -115,9 +119,9 @@ describe('Reference Mode Store', async () => {
         driver.send = async (model) => { capturedModel = model; return true; };
         const collection = new MyEntityCollection();
         const entity = new MyEntity();
-        entity.age = { id: '42', value: 42 };
+        entity.rawData.age = { id: '42', value: 42 };
         entity.id = 'an-id';
-        entity.name = { id: 'bob' };
+        entity.rawData.name = { id: 'bob' };
         const operation = { type: CollectionOpTypes.Add, clock: { me: 1 }, actor: 'me', added: entity };
         const result = await activeStore.onProxyMessage({ type: ProxyMessageType.Operations, operations: [operation], id: 1 });
         assert.isTrue(result);
@@ -140,9 +144,9 @@ describe('Reference Mode Store', async () => {
         driver.send = async (model) => true;
         const collection = new MyEntityCollection();
         const entity = new MyEntity();
-        entity.age = { id: '42', value: 42 };
+        entity.rawData.age = { id: '42', value: 42 };
         entity.id = 'an-id';
-        entity.name = { id: 'bob' };
+        entity.rawData.name = { id: 'bob' };
         const operation = { type: CollectionOpTypes.Add, clock: { me: 1 }, actor: 'me', added: entity };
         collection.applyOperation(operation);
         let sentSyncRequest = false;
@@ -188,9 +192,9 @@ describe('Reference Mode Store', async () => {
         const activeStore = await createReferenceModeStore();
         const collection = new MyEntityCollection();
         const entity = new MyEntity();
-        entity.age = { id: '42', value: 42 };
+        entity.rawData.age = { id: '42', value: 42 };
         entity.id = 'an-id';
-        entity.name = { id: 'bob' };
+        entity.rawData.name = { id: 'bob' };
         collection.applyOperation({ type: CollectionOpTypes.Add, clock: { me: 1 }, actor: 'me', added: entity });
         const referenceCollection = new ReferenceCollection();
         const reference = { storageKey: new MockHierarchicalStorageKey(''), id: 'an-id', version: { me: 1 } };
@@ -233,9 +237,9 @@ describe('Reference Mode Store', async () => {
         // local model from proxy
         const collection = new MyEntityCollection();
         const entity = new MyEntity();
-        entity.age = { id: '42', value: 42 };
+        entity.rawData.age = { id: '42', value: 42 };
         entity.id = 'an-id';
-        entity.name = { id: 'bob' };
+        entity.rawData.name = { id: 'bob' };
         collection.applyOperation({ type: CollectionOpTypes.Add, clock: { me: 1 }, actor: 'me', added: entity });
         // conflicting remote count from store
         const remoteCollection = new ReferenceCollection();
@@ -303,8 +307,8 @@ describe('Reference Mode Store', async () => {
                     return false;
                 }
                 const entityRecord = message['model'].values['an-id'].value;
-                assert.equal(entityRecord.name.id, 'bob');
-                assert.equal(entityRecord.age.value, 42);
+                assert.equal(entityRecord.rawData.name.id, 'bob');
+                assert.equal(entityRecord.rawData.age.value, 42);
                 resolve();
                 return true;
             });

@@ -245,6 +245,7 @@ export declare class ReferenceType extends Type {
     toString(options?: any): string;
     toPrettyString(): string;
     getEntitySchema(): Schema;
+    crdtInstanceConstructor<T extends CRDTTypeRecord>(): new () => CRDTModel<T>;
 }
 export declare class ArcType extends Type {
     constructor();
