@@ -1,5 +1,13 @@
-commit 94e61e4d326b515743357ba1aa2e5438dbd9016d
-Author: Jason Feinstein <jwf@google.com>
-Date:   Thu Nov 7 19:45:55 2019 -0800
+commit 8338417fa8d490cd7c993c77e124acfb625e0372
+Author: raulverag <42563960+raulverag@users.noreply.github.com>
+Date:   Fri Nov 8 17:46:36 2019 +1100
 
-    Create arcs.util.Log (#4031)
+    Move most tests from package.json to sigh (#4040)
+    
+    * Move most tests from package.json to sigh
+    
+    * update .appveyor.yml too
+    
+    * update .appveyor.yml again due to wdio issues on windows
+    
+    * Tweaks per review comments, and missing args to wdio tests

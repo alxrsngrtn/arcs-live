@@ -1,4 +1,3 @@
-"use strict";
 /**
  * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
@@ -13,9 +12,12 @@ const os = require('os');
 const path = require('path');
 const minimist = require('minimist');
 const semver = require('semver');
-// Use saneSpawn or saneSpawnWithOutput instead, this is not cross-platform.
+// Use saneSpawn[Sync] or saneSpawnSyncWithOutput instead, as the arguments to
+// child_process.spawn[Sync] calls must be massaged to be cross-platform.
 // tslint:disable-next-line: variable-name
-const _DO_NOT_USE_spawn = require('child_process').spawnSync;
+const _DO_NOT_USE_spawnSync = require('child_process').spawnSync;
+// tslint:disable-next-line: variable-name
+const _DO_NOT_USE_spawn = require('child_process').spawn;
 const projectRoot = path.resolve(__dirname, '..');
 process.chdir(projectRoot);
 let keepProcessAlive = false;
@@ -54,6 +56,8 @@ const steps = {
     peg: [peg, railroad],
     railroad: [railroad],
     test: [peg, railroad, build, runTests],
+    testShells: [peg, railroad, build, webpack, devServerAsync, testWdioShells],
+    testWdioShells: [testWdioShells],
     webpack: [peg, railroad, build, webpack],
     webpackTools: [peg, build, webpackTools],
     build: [peg, build],
@@ -64,13 +68,14 @@ const steps = {
     clean: [clean],
     unit: [unit],
     health: [health],
-    bundle: runScriptSteps('bundle'),
-    schema2wasm: runScriptSteps('schema2wasm'),
+    bundle: runNodeScriptSteps('bundle'),
+    schema2wasm: runNodeScriptSteps('schema2wasm'),
     devServer: [peg, build, devServer],
-    flowcheck: runScriptSteps('flowcheck'),
-    run: [peg, build, runScript],
+    flowcheck: runNodeScriptSteps('flowcheck'),
+    run: [peg, build, runNodeScript],
     licenses: [build],
-    default: [check, peg, railroad, build, runTestsOrHealthOnCron, webpack, webpackTools, lint, tslint],
+    default: [check, peg, railroad, build, runTestsOrHealthOnCron, webpack,
+        webpackTools, lint, tslint, devServerAsync, testWdioShells],
 };
 /**
  * Maps from script name to script path. Scripts can be invoked via:
@@ -138,7 +143,7 @@ function getOptionalDependencies(deps, prefix) {
             }
         }();
     }
-    if (!saneSpawn('npm', ['install', '--no-save', ...missing], { logCmd: true })) {
+    if (!saneSpawnSync('npm', ['install', '--no-save', ...missing], { logCmd: true })) {
         throw new Error('Failed to install optional dependencies');
     }
     return deps.map(dep => require(dep));
@@ -193,7 +198,7 @@ function check() {
     if (!semver.satisfies(process.version, nodeRequiredVersion)) {
         throw new Error(`at least node ${nodeRequiredVersion} is required, you have ${process.version}`);
     }
-    const npmVersion = saneSpawnWithOutput('npm', ['-v']).stdout;
+    const npmVersion = saneSpawnSyncWithOutput('npm', ['-v']).stdout;
     if (!semver.satisfies(npmVersion, npmRequiredVersion)) {
         throw new Error(`at least npm ${npmRequiredVersion} is required, you have ${npmVersion}`);
     }
@@ -379,8 +384,8 @@ function buildPath(path, preprocess) {
     return fn;
 }
 function tsc(path) {
-    sighLog(saneSpawnWithOutput('node_modules/.bin/tsc', ['--version']).stdout);
-    const result = saneSpawnWithOutput('node_modules/.bin/tsc', ['--diagnostics', '-p', path]);
+    sighLog(saneSpawnSyncWithOutput('node_modules/.bin/tsc', ['--version']).stdout);
+    const result = saneSpawnSyncWithOutput('node_modules/.bin/tsc', ['--diagnostics', '-p', path]);
     if (result.success) {
         sighLog(result.stdout);
     }
@@ -440,7 +445,7 @@ function tslint(args) {
     const fixArgs = options.fix ? ['--fix'] : [];
     let success = true;
     for (const target of ['.', 'tools']) {
-        const result = saneSpawnWithOutput('node_modules/.bin/tslint', ['-p', target, ...fixArgs]);
+        const result = saneSpawnSyncWithOutput('node_modules/.bin/tslint', ['-p', target, ...fixArgs]);
         if (result.stdout) {
             sighLog(result.stdout);
         }
@@ -471,7 +476,7 @@ function lint(args) {
     return report.errorCount === 0;
 }
 function licenses() {
-    const result = saneSpawnWithOutput('npm', ['run', 'test:licenses']);
+    const result = saneSpawnSyncWithOutput('npm', ['run', 'test:licenses']);
     if (result.stdout) {
         sighLog(result.stdout);
     }
@@ -479,7 +484,7 @@ function licenses() {
 }
 function webpackPkg(pkg) {
     const fn = () => {
-        const result = saneSpawnWithOutput('npm', ['run', `build:${pkg}`]);
+        const result = saneSpawnSyncWithOutput('npm', ['run', `build:${pkg}`]);
         if (result.stdout) {
             sighLog(result.stdout);
         }
@@ -503,6 +508,17 @@ function spawnWasSuccessful(result, opts = {}) {
     }
     return false;
 }
+// make spawnSync work more or less the same way cross-platform
+function saneSpawnSync(cmd, args, opts) {
+    cmd = path.normalize(cmd);
+    opts = { stdio: 'inherit', ...opts, shell: true };
+    if (opts.logCmd) {
+        sighLog('+', cmd, args.join(' '));
+    }
+    // it's OK, I know what I'm doing
+    const result = _DO_NOT_USE_spawnSync(cmd, args, opts);
+    return spawnWasSuccessful(result, opts);
+}
 // make spawn work more or less the same way cross-platform
 function saneSpawn(cmd, args, opts) {
     cmd = path.normalize(cmd);
@@ -511,18 +527,17 @@ function saneSpawn(cmd, args, opts) {
         sighLog('+', cmd, args.join(' '));
     }
     // it's OK, I know what I'm doing
-    const result = _DO_NOT_USE_spawn(cmd, args, opts);
-    return spawnWasSuccessful(result, opts);
+    return _DO_NOT_USE_spawn(cmd, args, opts);
 }
 // make spawn work more or less the same way cross-platform
-function saneSpawnWithOutput(cmd, args, opts) {
+function saneSpawnSyncWithOutput(cmd, args, opts) {
     cmd = path.normalize(cmd);
     opts = { ...opts, shell: true };
     if (opts.logCmd) {
         sighLog('+', cmd, args.join(' '));
     }
     // it's OK, I know what I'm doing
-    const result = _DO_NOT_USE_spawn(cmd, args, opts);
+    const result = _DO_NOT_USE_spawnSync(cmd, args, opts);
     return { success: spawnWasSuccessful(result, opts), stdout: result.stdout.toString(), stderr: result.stderr.toString() };
 }
 function runTestsOrHealthOnCron(args) {
@@ -668,7 +683,7 @@ function runTests(args) {
             process.env.NODE_V8_COVERAGE = coverageDir;
         }
         const coveragePrefix = options.coverage ? ` node_modules/.bin/c8 -r html` : '';
-        const testResult = saneSpawn(`${coveragePrefix} node`, [
+        const testResult = saneSpawnSync(`${coveragePrefix} node`, [
             ...nodeFlags,
             '--trace-warnings',
             '--no-deprecation',
@@ -747,7 +762,7 @@ function health(args) {
         modifier(parsedConfig);
         // Write the modified TsLint config.
         fs.writeFileSync(pathToTsLintConfig, JSON.stringify(parsedConfig, null, '  '), 'utf-8');
-        const tslintOutput = saneSpawnWithOutput('node_modules/.bin/tslint', ['--project', '.'], { dontWarnOnFailure: true }).stdout;
+        const tslintOutput = saneSpawnSyncWithOutput('node_modules/.bin/tslint', ['--project', '.'], { dontWarnOnFailure: true }).stdout;
         // Recover original TsLint config.
         fs.writeFileSync(pathToTsLintConfig, tsLintConfig, 'utf-8');
         return tslintOutput.split('\n').filter(line => line.match(lineMatch));
@@ -755,13 +770,13 @@ function health(args) {
     const migrationFiles = () => [...findProjectFiles('src', /\b(artifacts|runtime[/\\]build)\b|webpack\.config\.js/, /\.js$/)];
     if (options.migration) {
         sighLog('JS files to migrate:\n');
-        return saneSpawn('node_modules/.bin/sloc', ['-details', '--keys source', ...migrationFiles()]);
+        return saneSpawnSync('node_modules/.bin/sloc', ['-details', '--keys source', ...migrationFiles()]);
     }
     if (options.nullChecks) {
-        return saneSpawn('node_modules/.bin/tsc', ['--strictNullChecks']);
+        return saneSpawnSync('node_modules/.bin/tsc', ['--strictNullChecks']);
     }
     if (options.types) {
-        return saneSpawn('node_modules/.bin/type-coverage', ['--strict', '--detail']);
+        return saneSpawnSync('node_modules/.bin/type-coverage', ['--strict', '--detail']);
     }
     const testOptions = ['--coverage'];
     if (options.all) {
@@ -770,7 +785,7 @@ function health(args) {
     // Generating coverage report from tests.
     const testResult = runSteps('test', testOptions);
     if (options.tests) {
-        return saneSpawn('node_modules/.bin/c8', ['report']);
+        return saneSpawnSync('node_modules/.bin/c8', ['report']);
     }
     const healthInformation = [];
     const line = () => sighLog('+---------------------+--------+--------+---------------------------+');
@@ -783,19 +798,19 @@ function health(args) {
     line();
     show('Category', 'Result', 'Points', 'Detailed report', true);
     line();
-    const slocOutput = saneSpawnWithOutput('node_modules/.bin/sloc', ['--detail', '--keys source', ...migrationFiles()]).stdout;
+    const slocOutput = saneSpawnSyncWithOutput('node_modules/.bin/sloc', ['--detail', '--keys source', ...migrationFiles()]).stdout;
     const jsLocCount = String(slocOutput).match(/Source *: *(\d+)/)[1];
     const jsLocPoints = Number(jsLocCount) / 5;
     show('JS LOC to migrate', jsLocCount, jsLocPoints.toFixed(1), 'health --migration');
-    const c8Output = saneSpawnWithOutput('node_modules/.bin/c8', ['report']).stdout;
+    const c8Output = saneSpawnSyncWithOutput('node_modules/.bin/c8', ['report']).stdout;
     const testCovPercent = String(c8Output).match(/All files *\| *([.\d]+)/)[1];
     const testCovPoints = (100 - Number(testCovPercent)) * 20;
     show('Test Coverage', testCovPercent + '%', testCovPoints.toFixed(1), 'health --tests');
-    const typeCoverageOutput = saneSpawnWithOutput('node_modules/.bin/type-coverage', ['--strict']).stdout;
+    const typeCoverageOutput = saneSpawnSyncWithOutput('node_modules/.bin/type-coverage', ['--strict']).stdout;
     const typeCovPercent = String(typeCoverageOutput).match(/(\d+\.\d+)%/)[1];
     const typeCovPoints = (100 - Number(typeCovPercent)) * 30;
     show('Type Coverage', typeCovPercent + '%', typeCovPoints.toFixed(1), 'health --types');
-    const nullChecksOutput = saneSpawnWithOutput('node_modules/.bin/tsc', ['--strictNullChecks'], { dontWarnOnFailure: true }).stdout;
+    const nullChecksOutput = saneSpawnSyncWithOutput('node_modules/.bin/tsc', ['--strictNullChecks'], { dontWarnOnFailure: true }).stdout;
     const nullChecksErrors = (String(nullChecksOutput).match(/error TS/g) || []).length;
     const nullChecksPoints = (nullChecksErrors / 10);
     show('Null Errors', nullChecksErrors, nullChecksPoints.toFixed(1), 'health --nullChecks');
@@ -829,19 +844,44 @@ function uploadCodeHealthStats(request, data, testResult) {
     });
     keepProcessAlive = true; // Tell the runner to not exit.
 }
-function spawnTool(toolPath, args) {
-    return saneSpawn('node', [...nodeFlags, '--no-warnings', toolPath, ...args]);
+// Single place to put all common node flags for running node tools.
+function prepNodeToolSpawn(toolPath, args) {
+    return [...nodeFlags, '--no-warnings', toolPath, ...args];
 }
-function devServer(args) {
+function spawnNodeToolSync(toolPath, args) {
+    return saneSpawnSync('node', prepNodeToolSpawn(toolPath, args));
+}
+function spawnNodeTool(toolPath, args) {
+    return saneSpawn('node', prepNodeToolSpawn(toolPath, args));
+}
+// Single place to put all optional dependencies for the devServer.
+function prepDevServerOptionalDeps() {
     getOptionalDependencies(['chokidar'], 'The devServer command');
-    return spawnTool('build/tools/dev_server/dev-server.js', args);
+}
+const devServerPath = 'build/tools/dev_server/dev-server.js';
+function devServer(args) {
+    prepDevServerOptionalDeps();
+    return spawnNodeToolSync(devServerPath, args);
+}
+function devServerAsync(args) {
+    prepDevServerOptionalDeps();
+    const devServerProcess = spawnNodeTool(devServerPath, args.slice(1));
+    process.on('exit', code => {
+        devServerProcess.kill();
+    });
+    sighLog('ALDS child process running; continuing.');
+    return true;
+}
+function testWdioShells(args) {
+    return saneSpawnSync('node_modules/.bin/wdio', ['--baseUrl',
+        'http://localhost:8786/', fixPathForWindows(path.resolve('shells/tests/wdio.conf.js')), ...args]);
 }
 /**
- * Runs a script with the given name and args. The first arg in the array is
+ * Runs a node.js script with the given name and args. The first arg in the array is
  * the name of the script to run. The rest of the args are passed to that script
  * when it is invoked.
  */
-function runScript(args) {
+function runNodeScript(args) {
     if (args.length === 0) {
         console.error('You must supply a script name.');
         return false;
@@ -852,11 +892,11 @@ function runScript(args) {
         console.error(`Unknown script name: ${scriptName}`);
         return false;
     }
-    return spawnTool(scriptPath, args.slice(1));
+    return spawnNodeToolSync(scriptPath, args.slice(1));
 }
 /** Returns the series of steps to run the given script. */
-function runScriptSteps(scriptName) {
-    const runFn = (args) => runScript([scriptName, ...args]);
+function runNodeScriptSteps(scriptName) {
+    const runFn = (args) => runNodeScript([scriptName, ...args]);
     return [peg, build, runFn];
 }
 // Looks up the steps for `command` and runs each with `args`.
