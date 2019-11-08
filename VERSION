@@ -1,5 +1,7 @@
-commit da0467fa6f38350a5e4aaa4d1c6f3259e7d8707b
-Author: shans <shane.stephens@gmail.com>
-Date:   Fri Nov 8 11:16:25 2019 +1100
+commit 58da750131ab8072200354c3f0e091de00939170
+Author: ianull <ianchang@google.com>
+Date:   Thu Nov 7 18:06:47 2019 -0800
 
-    Ng serialization (#4000)
+    Webpack worker.js reflecting source changes (#4021)
+    
+    Align worker.js with pipes-shell shell.js when populating app assets.
