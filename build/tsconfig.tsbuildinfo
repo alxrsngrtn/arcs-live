@@ -590,7 +590,7 @@
         "signature": "0ead5cabe16753b534a34a79fced3b13d5ec26ae271002f86a40c01c039bbf6c"
       },
       "../src/gen/runtime/manifest-parser.ts": {
-        "version": "4ade11401d2056d8a0c48c21bbc6157aea236264ae28e905413c900e4242b973",
+        "version": "39d8fd490c78553c9735d4a376e3b8d9211f811ad6c1ab5972be248909446369",
         "signature": "ff2c763c7895327196fd3eb358dcc775b25f27bdae513079cc287433af262427"
       },
       "../src/runtime/manifest-meta.ts": {
@@ -2485,7 +2485,7 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/manifest-test.ts": {
-        "version": "ae09a6bc5da503d6c8938e1348773fa6b634fe15788adecf9460c488312600e8",
+        "version": "468ae1b25ca3d9f36ccb9eb7f0e2d0ffac65457dfc0d947377c88a3488ec9400",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/multiplexer-test.ts": {
@@ -2581,7 +2581,7 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/wasm-test.ts": {
-        "version": "da7ee80bdf11bf3ab2c44b6c3bbab84c7cec832a6f3f8789631dea0a1483615f",
+        "version": "a28d8e6d314847246ec72c654be68153cf9c7a049aeb430006a7d5fb45e82697",
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
       },
       "../src/runtime/tests/recipe/comparable-test.ts": {

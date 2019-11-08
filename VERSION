@@ -1,7 +1,9 @@
-commit 58da750131ab8072200354c3f0e091de00939170
-Author: ianull <ianchang@google.com>
-Date:   Thu Nov 7 18:06:47 2019 -0800
+commit 95577dba2881602aa77c64281d9379bbb136cecc
+Author: Joshua Pratt <jp10010101010000@gmail.com>
+Date:   Fri Nov 8 13:22:25 2019 +1000
 
-    Webpack worker.js reflecting source changes (#4021)
+    Adds a small test for inline schema usage (#4036)
     
-    Align worker.js with pipes-shell shell.js when populating app assets.
+    * Add test for parsing inline schemas
+    
+    * Whitespace lint fix
