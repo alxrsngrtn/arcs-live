@@ -1,9 +1,5 @@
-commit 95577dba2881602aa77c64281d9379bbb136cecc
-Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Fri Nov 8 13:22:25 2019 +1000
+commit 94e61e4d326b515743357ba1aa2e5438dbd9016d
+Author: Jason Feinstein <jwf@google.com>
+Date:   Thu Nov 7 19:45:55 2019 -0800
 
-    Adds a small test for inline schema usage (#4036)
-    
-    * Add test for parsing inline schemas
-    
-    * Whitespace lint fix
+    Create arcs.util.Log (#4031)
