@@ -1,8 +1,5 @@
-commit 6e65a14a15f8fedddeae43368affe4cd90a135ee
+commit e44a2fea2760fcc5b398d8e852c9c36c7e141e99
 Author: Jason Feinstein <jwf@google.com>
-Date:   Fri Nov 8 00:20:20 2019 -0800
+Date:   Fri Nov 8 19:39:08 2019 -0800
 
-    Easymode ArcsSet (#4042)
-    
-    Creates ArcsSet, and ensures sets/entities return empty operations change objects during merge if nothing changed.
-    Ref: #4037
+    Create guardWith property delegate. (#4048)
