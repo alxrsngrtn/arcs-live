@@ -1,5 +1,9 @@
-commit e44a2fea2760fcc5b398d8e852c9c36c7e141e99
+commit 649fa0b50e934db3e71c71b1263386e8bcb2b1ff
 Author: Jason Feinstein <jwf@google.com>
-Date:   Fri Nov 8 19:39:08 2019 -0800
+Date:   Sat Nov 9 20:34:26 2019 -0800
 
-    Create guardWith property delegate. (#4048)
+    Add ktlint support (#4050)
+    
+    * Adds ktlint installation to tools/setup
+    * Adds kotlin-specific rules to .editorconfig
+    * Adds ktlint operation to tools/hooks/pre-commit
