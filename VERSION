@@ -1,9 +1,5 @@
-commit 649fa0b50e934db3e71c71b1263386e8bcb2b1ff
+commit 71d330ca93d199020f461158267bdee3cefe2b04
 Author: Jason Feinstein <jwf@google.com>
-Date:   Sat Nov 9 20:34:26 2019 -0800
+Date:   Sun Nov 10 07:42:50 2019 -0800
 
-    Add ktlint support (#4050)
-    
-    * Adds ktlint installation to tools/setup
-    * Adds kotlin-specific rules to .editorconfig
-    * Adds ktlint operation to tools/hooks/pre-commit
+    Make bazel download srcjars for libraries. (#4054)
