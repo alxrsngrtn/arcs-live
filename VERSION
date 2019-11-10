@@ -1,5 +1,5 @@
-commit 71d330ca93d199020f461158267bdee3cefe2b04
+commit b4f738e41865ef7d313f62afaf207b305f2090b3
 Author: Jason Feinstein <jwf@google.com>
-Date:   Sun Nov 10 07:42:50 2019 -0800
+Date:   Sun Nov 10 10:58:38 2019 -0800
 
-    Make bazel download srcjars for libraries. (#4054)
+    Fix issues from ktlint (#4051)
