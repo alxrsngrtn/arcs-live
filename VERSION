@@ -1,9 +1,11 @@
-commit fcfc41af634768804d00bfcacc57254988b528b3
-Author: Sarah Heimlich <heimlich@google.com>
-Date:   Mon Nov 11 08:51:09 2019 -0800
+commit 21da9fa88f96d2a619e2b1bac0f9cd5c7df09883
+Author: Ray Cromwell <cromwellian@gmail.com>
+Date:   Mon Nov 11 13:01:02 2019 -0800
 
-    Move to the new recipe syntax. (#4033)
+    Add wasm_kt_binary to kotlin.bzl (#4045)
     
-    * Move to the new recipe syntax.
+    * Add wasm_kt_binary to kotlin.bzl
     
-    * Updates for PR.
+    * fix visibility of alias
+    
+    * change names to satisfy test naming schema
