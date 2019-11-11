@@ -1,5 +1,5 @@
-commit b4f738e41865ef7d313f62afaf207b305f2090b3
+commit eafd20cd3051472dc27280c06dfb6b18d5bd923e
 Author: Jason Feinstein <jwf@google.com>
-Date:   Sun Nov 10 10:58:38 2019 -0800
+Date:   Sun Nov 10 16:33:35 2019 -0800
 
-    Fix issues from ktlint (#4051)
+    Add ktlint-execution to travis's test script. (#4053)
