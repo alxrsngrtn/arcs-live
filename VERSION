@@ -1,5 +1,9 @@
-commit cc2afa006c04637867dc3dff23e6c6c08b4e427f
+commit 1fa75bcb29d12ffa082f5567861ff59a2ba80d9a
 Author: Jason Feinstein <jwf@google.com>
-Date:   Sun Nov 10 19:54:17 2019 -0800
+Date:   Sun Nov 10 20:35:48 2019 -0800
 
-    Create ArcsSingleton and fix a few bugs. (#4049)
+    Add unit tests for StorageKey classes. (#4052)
+    
+    Also adds parsing capability for ReferenceModeStorageKey - something that was done by Shane in #4000.
+    
+    Ref #4037
