@@ -1,9 +1,9 @@
-commit 1fa75bcb29d12ffa082f5567861ff59a2ba80d9a
-Author: Jason Feinstein <jwf@google.com>
-Date:   Sun Nov 10 20:35:48 2019 -0800
+commit fcfc41af634768804d00bfcacc57254988b528b3
+Author: Sarah Heimlich <heimlich@google.com>
+Date:   Mon Nov 11 08:51:09 2019 -0800
 
-    Add unit tests for StorageKey classes. (#4052)
+    Move to the new recipe syntax. (#4033)
     
-    Also adds parsing capability for ReferenceModeStorageKey - something that was done by Shane in #4000.
+    * Move to the new recipe syntax.
     
-    Ref #4037
+    * Updates for PR.
