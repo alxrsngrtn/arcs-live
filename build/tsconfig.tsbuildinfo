@@ -378,7 +378,7 @@
         "signature": "258791e86fed379e98b34a9240cd1ebdc4611524641b84a33b1271513c839a5c"
       },
       "../src/platform/pec-industry-web.ts": {
-        "version": "17a70ea63e4af136784b9ba6c8d0f19435de6d8ec689767e8a33cbe69b5a42a8",
+        "version": "44de7c5be9b85e1c3c2f1dfbf81266d364be7e843f334ca11a1663c89f976c30",
         "signature": "1e6d82a4c8dae8a27518011976857afec7a5b0671ad7d64df86dbf4ce09b1a83"
       },
       "../src/platform/pec-industry.ts": {
@@ -2801,7 +2801,7 @@
         "signature": "30610a77f0a00651a242a4128fb87fabbfea5f5064e17607356e3bd35f69f3be"
       },
       "../src/tools/dev_server/dev-server.ts": {
-        "version": "da165d509cb03b1cd5a5d29d1297edc234757b1ca6e10cd93c90091010b4294d",
+        "version": "f16b2d591e0cc9b6c94f9d3c496ded099faadef6bdacfb31752a29cc5248949e",
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "../src/tools/tests/bundle-test.ts": {

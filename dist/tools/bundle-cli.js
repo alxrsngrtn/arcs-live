@@ -1400,7 +1400,7 @@ class Ni extends ii{constructor(e={}){void 0===e.modalityHandler&&(e.modalityHan
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-const Ai=e=>{const t=Mi(e.urlMap),n=e.resolve("https://$build/worker.js");let r;e.provisionObjectUrl(n).then(e=>r=e);return(e,i)=>{r||console.warn("workerBlob not available, falling back to network URL");const s=new Worker(r||n),o=new MessageChannel;return s.postMessage({id:`${e}:inner`,base:t,logLevel:window.logLevel},[o.port1]),o.port2}},Mi=e=>{const t={},{origin:n,pathname:r}=window.location,i=e=>("/"===e[0]?e=`${n}${e}`:e.indexOf("//")<0&&(e=`${n}${r.split("/").slice(0,-1).join("/")}/${e}`),e);return Object.keys(e).forEach(n=>{const r=e[n];t[n]="string"==typeof r?i(r):{...r,root:i(r.root)}}),t};
+const Ai=e=>{const t=Mi(e.urlMap),n=e.resolve("https://$build/worker.js"),r="https:"===location.protocol&&new URLSearchParams(window.location.search).has("use-cache");let i;r||e.provisionObjectUrl(n).then(e=>i=e);return(e,s)=>{i||r||console.warn("workerBlob not available, falling back to network URL");const o=new Worker(i||n),a=new MessageChannel;return o.postMessage({id:`${e}:inner`,base:t,logLevel:window.logLevel},[a.port1]),a.port2}},Mi=e=>{const t={},{origin:n,pathname:r}=window.location,i=e=>("/"===e[0]?e=`${n}${e}`:e.indexOf("//")<0&&(e=`${n}${r.split("/").slice(0,-1).join("/")}/${e}`),e);return Object.keys(e).forEach(n=>{const r=e[n];t[n]="string"==typeof r?i(r):{...r,root:i(r.root)}}),t};
 /**
  * @license
  * Copyright 2019 Google LLC.
