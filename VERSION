@@ -1,92 +1,11 @@
-commit e338f157b0bdcf674cc34b85ea734276d95a7c1d
-Author: ianull <ianchang@google.com>
-Date:   Mon Nov 11 13:08:11 2019 -0800
+commit 61cddf2aca05e546f2e62a8c0aeb7326247319bc
+Author: Sarah Heimlich <heimlich@google.com>
+Date:   Tue Nov 12 13:51:39 2019 -0800
 
-    Introduces Arcs Cache Manager (service worker) (#3901)
+    Adding Kotlin tutorial 4 (#4032)
     
-    * Introduce Arcs Cache Manager
+    * Adding Kotlin tutorial 4
     
-    Run as a service worker thread (default: off).
-    Use the url parameter ?use-cache to enable it.
+    * Moving tutorial to new recipe syntax.
     
-    * Pack Arcs Cache Manager in app assets
-    
-    Versioning Arcs Cache Manager by md5sum dist/** so that
-    the service worker thread can be aware of changes of the files
-    in the application assets then invalidates and rebuilds caches
-    upon (re)installing the application.
-    
-    * Load Arcs Cache Manager in pipes-shell
-    
-    Arcs Cache Manager is controlled by the url parameter 'use-cache'.
-    
-    * Dont use worker blob when Arcs Cache Manager is on
-    
-    Let Arcs Cache Manager manage all file/resource caching stuffs
-    at its responsible scope.
-    
-    * Add androidx.webkit package to dependencies
-    
-    Aligh the GH androidx.webkit deps path to the G3 one.
-    
-    * Support Arcs Cache Manager in the demo app
-    
-    Enable and play the Arcs Cache Manager by:
-    > adb shell "setprop debug.arcs.runtime.shell_url \
-    'https://appassets.androidplatform.net/assets/index.html?use-cache&'"
-    
-    Disable the Arcs Cache Manager by:
-    > adb shell "setprop debug.arcs.runtime.shell_url ''"
-    
-    * Add the use-cache runtime setting
-    
-    The property 'debug.arcs.runtime.use_cache_mgr' is introduced
-    to instruct the Arcs runtime to activate the Arcs Cache Manager
-    on the fly.
-    
-    Enable the Arcs Cache Manager:
-    adb shell "setprop debug.arcs.runtime.use_cache_mgr true"
-    
-    Disable the Arcs Cache Manager:
-    adb shell "setprop debug.arcs.runtime.use_cache_mgr ''"
-    
-    * Activate service worker only at https protocol
-    
-    Before the change, we use the url parameter 'use-cache' to decide to
-    register a new service worker who serves Arcs caches on the fly.
-    However service worker can support only https and http://localhost
-    origins but other protocols i.e. file:///.
-    
-    window.location.protocol should be referred together with the use-cache
-    parameter to decide whether to activate service worker.
-    
-    * Trace initialization of Arcs JS runtime
-    
-    Measured from Url page-started to page-finished.
-    
-    * Fix rebase build error
-    
-    * Build Arcs Cache Manager in Android apk bundle
-    
-    * Use relative path to support all protocols
-    
-    * Doc of Arcs Cache Manager
-    
-    * Fix lint issues
-    
-    * Clean up code on rebasing
-    
-    * Allow COR at the dev server
-    
-    To get around the same-origin policy where
-    the pipes-shell is loaded in https protocol with the url
-    https://https://appassets.androidplatform.net
-    then the shell requests Arcs manifests/recipes/particles
-    at remote workstation via adb-reverse socket connecting to
-    the workstation dev server at http://localhost:8386
-    
-    * Fix md5sum destinations and descs
-    
-    * Fix tslint issues
-    
-    * Improve styling and fix typos
+    * Clean-ups for PR
