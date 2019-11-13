@@ -2457,7 +2457,7 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/entity-test.ts": {
-        "version": "1f54111bec22da91a9dfeb83d7c2818fc67a9da78d57c801658a29461d365a47",
+        "version": "d478300f11fd5a5441fed53ebe0521d7e0fabc2ead0f33bc3f84367766de0cc5",
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
       },
       "../src/runtime/tests/handle-test.ts": {

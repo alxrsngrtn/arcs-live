@@ -1,8 +1,5 @@
-commit 0135ee98a1663206a3a53952cb74c82424b827d7
-Author: raulverag <42563960+raulverag@users.noreply.github.com>
-Date:   Wed Nov 13 16:32:28 2019 +1100
+commit cc1e1838323d674fcc0ed3cd14b3ba947042b509
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Thu Nov 14 09:15:50 2019 +1100
 
-    Configure travis to send email when cron fails (#4067)
-    
-    The travis docs say that no email will be sent for normal push builds, so this
-    shouldn't cause any irrelevant spam, but let's see what actually happens.
+    Stop Entity.debugLog test from spamming the output (#4068)
