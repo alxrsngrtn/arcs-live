@@ -1,5 +1,8 @@
-commit eaf0783bce42afb968485b0e6e770142ddbe2037
-Author: galganif <4754402+galganif@users.noreply.github.com>
-Date:   Wed Nov 13 16:30:39 2019 +1100
+commit 0135ee98a1663206a3a53952cb74c82424b827d7
+Author: raulverag <42563960+raulverag@users.noreply.github.com>
+Date:   Wed Nov 13 16:32:28 2019 +1100
 
-    check canWrite and canRead values in handle ops (#4011)
+    Configure travis to send email when cron fails (#4067)
+    
+    The travis docs say that no email will be sent for normal push builds, so this
+    shouldn't cause any irrelevant spam, but let's see what actually happens.
