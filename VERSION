@@ -1,11 +1,5 @@
-commit 61cddf2aca05e546f2e62a8c0aeb7326247319bc
-Author: Sarah Heimlich <heimlich@google.com>
-Date:   Tue Nov 12 13:51:39 2019 -0800
+commit 5b3fee6195538d34e37aa890dd73bd49e245fe87
+Author: Jason Feinstein <jwf@google.com>
+Date:   Tue Nov 12 16:22:15 2019 -0800
 
-    Adding Kotlin tutorial 4 (#4032)
-    
-    * Adding Kotlin tutorial 4
-    
-    * Moving tutorial to new recipe syntax.
-    
-    * Clean-ups for PR
+    licenses([notice]) all the things (#4062)
