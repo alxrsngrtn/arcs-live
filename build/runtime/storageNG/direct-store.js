@@ -33,9 +33,6 @@ export class DirectStore extends ActiveStore {
         this.pendingDriverModels = [];
         this.state = DirectStoreState.Idle;
     }
-    async getLocalData() {
-        return this.localModel.getData();
-    }
     async serializeContents() {
         await this.idle();
         return this.localModel.getData();

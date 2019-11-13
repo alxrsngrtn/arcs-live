@@ -7163,7 +7163,7 @@ class ActiveStore {
         Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.mode === activeStore.mode);
         await this.onProxyMessage({
             type: ProxyMessageType.ModelUpdate,
-            model: await activeStore.getLocalData()
+            model: await activeStore.serializeContents()
         });
     }
     async modelForSynchronization() {
@@ -7234,9 +7234,6 @@ class DirectStore extends _store_interface_js__WEBPACK_IMPORTED_MODULE_2__["Acti
         this.pendingRejects = [];
         this.pendingDriverModels = [];
         this.state = DirectStoreState.Idle;
-    }
-    async getLocalData() {
-        return this.localModel.getData();
     }
     async serializeContents() {
         await this.idle();
@@ -7714,15 +7711,6 @@ class ReferenceModeStore extends _store_interface_js__WEBPACK_IMPORTED_MODULE_2_
     registerStoreCallbacks() {
         this.backingStore.on(this.onBackingStore.bind(this));
         this.containerStore.on(this.onContainerStore.bind(this));
-    }
-    async getLocalData() {
-        const { pendingIds, model } = this.constructPendingIdsAndModel(this.containerStore.localModel.getData());
-        if (pendingIds.length === 0) {
-            return model();
-        }
-        else {
-            return new Promise(resolve => this.enqueueBlockingSend(pendingIds, () => resolve(model())));
-        }
     }
     /**
      * Messages are enqueued onto an object-wide queue and processed in order.

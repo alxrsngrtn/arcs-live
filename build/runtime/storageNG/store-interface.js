@@ -45,7 +45,7 @@ export class ActiveStore {
         assert(this.mode === activeStore.mode);
         await this.onProxyMessage({
             type: ProxyMessageType.ModelUpdate,
-            model: await activeStore.getLocalData()
+            model: await activeStore.serializeContents()
         });
     }
     async modelForSynchronization() {

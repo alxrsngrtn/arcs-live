@@ -298,16 +298,16 @@
         "signature": "143deeb20b288c4c57bd2dff7e4646a7ca6711fbf72d1d0024fa4ff572eb4075"
       },
       "../src/runtime/storageNG/store-interface.ts": {
-        "version": "cf4fcfe6bc95a9ac2173a047d70f68e29beffb27383ac4ac4bb1ac8c6fab1b4d",
-        "signature": "c76f5f8cbf95e0671e21b26f6eb15adde7260a7497227ea0c81aedc4cbf200f4"
+        "version": "14a659dd28c753a5f84ba19dc1964345e65319e87d34321e29065b96340429c4",
+        "signature": "8be9cb3438e7574679ffd784a4e40fb2e409083e7ec8cf2c1807627091d9eb5c"
       },
       "../src/runtime/util.ts": {
         "version": "d5aa2916c7fb7e6c0d5acd30c508be1572470ec9082cd24076b7c960065dc2dc",
         "signature": "961a2cb40c20210dc4a8e8257fad16693c468c7f15d9f128417abcdb7d5b79c1"
       },
       "../src/runtime/storageNG/direct-store.ts": {
-        "version": "0feb113c7e53211db01ecae2a3d8d98f5f003477947af2b220b1ae9d9da3a212",
-        "signature": "3b6583c5b2551dc679bb846f833bfd516aa8afd4e43cf96b456bb61a38bf3afb"
+        "version": "6e21dece9ea3cf1fb591af6d705d90a7d00310e6f6dc8157368da52d083517b2",
+        "signature": "06340b87be533c5f80a908d15220adfb250d47b2c5566a193a6800d5ef80604b"
       },
       "../src/runtime/storageNG/backing-store.ts": {
         "version": "736da72741c9d9bce43f14e6bb1e4c36ed0d2357d8b481501c7ad32258beb478",
@@ -322,8 +322,8 @@
         "signature": "df48195e13d66f55771ebe9456826a5af7dc2318d4a4d247eac711eaa4bd1f8c"
       },
       "../src/runtime/storageNG/reference-mode-store.ts": {
-        "version": "4844d493c9af69b931e46e48dade47890e482d812865727bb6a4b858a617e8ab",
-        "signature": "e42df213851614dd91cca6bb8c0c2b005287ae0464f8678110f1bd0d5fbb9ea8"
+        "version": "be5de90557ba7dacff3ffed09249ef8832e0a86244e16593010110e8f95230c0",
+        "signature": "6fb47dd478f5116caee656c935c9bf585abdbdd5196042a24593a9301e2b2ef8"
       },
       "../src/runtime/storageNG/store.ts": {
         "version": "70b3275ae2c11be418552877f41fec340b9b582d166e4cdc0741976e0ab09cd0",
@@ -2393,7 +2393,7 @@
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "../src/runtime/storageNG/tests/reference-mode-store-test.ts": {
-        "version": "a7ace0651f91bf69d70cc757763326890a2d5653e14f895335a2a264cd9ac272",
+        "version": "f8e5277ffdd0027d1e4eb0be5e104ca3426863a03323f1f869bf2d9050b9f3cf",
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "../src/runtime/storageNG/tests/storage-key-test.ts": {
@@ -2413,7 +2413,7 @@
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "../src/runtime/storageNG/tests/store-test.ts": {
-        "version": "e0fabd7a7985c379fe7236d032aae8c73b919cb5e75eb0d8b8984a45d438f508",
+        "version": "3de467514c95cfcba9e4f09603d66f581606a386c63fb56eff5dd95349f1ba3d",
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "../src/runtime/testing/callback-tracker.ts": {

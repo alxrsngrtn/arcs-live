@@ -8,7 +8,7 @@
  * http://polymer.github.io/PATENTS.txt
  */
 import { PropagatedException } from '../arc-exceptions.js';
-import { CRDTModel, CRDTTypeRecord, CRDTData } from '../crdt/crdt.js';
+import { CRDTModel, CRDTTypeRecord } from '../crdt/crdt.js';
 import { Driver } from './drivers/driver-factory.js';
 import { ActiveStore, ProxyCallback, ProxyMessage, StoreConstructorOptions } from './store-interface.js';
 export declare enum DirectStoreState {
@@ -29,7 +29,6 @@ export declare class DirectStore<T extends CRDTTypeRecord> extends ActiveStore<T
     private pendingDriverModels;
     private state;
     private constructor();
-    getLocalData(): Promise<CRDTData>;
     serializeContents(): Promise<T['data']>;
     idle(): Promise<void>;
     get versionToken(): string;
