@@ -11,6 +11,8 @@ import { UnifiedStore } from '../storageNG/unified-store.js';
 import { Arc } from '../arc.js';
 import { SingletonHandle, CollectionHandle } from '../storageNG/handle.js';
 import { Manifest } from '../manifest.js';
+import { StorageKey } from '../../runtime/storageNG/storage-key.js';
+import { ArcId } from '../../runtime/id.js';
 /**
  * Creates a singleton handle for a store for testing purposes. Returns an
  * appropriate OldHandle/HandleNG type depending on the storage migration flag.
@@ -21,3 +23,8 @@ export declare function singletonHandleForTest(arcOrManifest: Arc | Manifest, st
  * appropriate OldHandle/HandleNG type depending on the storage migration flag.
  */
 export declare function collectionHandleForTest(arcOrManifest: Arc | Manifest, store: UnifiedStore): Promise<CollectionHandle<any>>;
+/**
+ * Creates a storage key prefix for a store for testing purposes. Returns an
+ * appropriate string or NG storage key type depending on the storage migration flag.
+ */
+export declare function storageKeyPrefixForTest(): string | ((arcId: ArcId) => StorageKey);

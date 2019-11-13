@@ -39,6 +39,7 @@ export declare abstract class UnifiedStore implements Comparable<UnifiedStore>, 
     storeInfo: StoreInfo;
     constructor(storeInfo: StoreInfo);
     get id(): string;
+    get apiChannelMappingId(): string;
     get name(): string;
     get type(): Type;
     get originalId(): string;

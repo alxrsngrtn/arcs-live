@@ -18,7 +18,7 @@ import { Handle } from './recipe/handle.js';
 import { Recipe } from './recipe/recipe.js';
 import { compareComparables } from './recipe/comparable.js';
 import { StorageProviderFactory } from './storage/storage-provider-factory.js';
-import { ArcType, CollectionType, EntityType, InterfaceType, RelationType, Type, TypeVariable, SingletonType, ReferenceType } from './type.js';
+import { ArcType, CollectionType, EntityType, InterfaceType, RelationType, ReferenceType, SingletonType, Type, TypeVariable } from './type.js';
 import { Mutex } from './mutex.js';
 import { Runtime } from './runtime.js';
 import { VolatileMemory, VolatileStorageDriverProvider, VolatileStorageKey, VolatileDriver } from './storageNG/drivers/volatile.js';
@@ -448,6 +448,11 @@ export class Arc {
         if (Flags.useNewStorageStack) {
             if (typeof storageKey === 'string') {
                 throw new Error(`Can't use string storage keys with the new storage stack.`);
+            }
+            // Wrap entity types in a singleton.
+            if (type.isEntity) {
+                // TODO: Once recipes can handle singleton types this conversion can be removed.
+                type = new SingletonType(type);
             }
             store = new Store({ storageKey, exists: Exists.MayExist, type, id, name });
         }

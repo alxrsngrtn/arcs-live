@@ -3,6 +3,7 @@ import { ActiveStore } from '../storageNG/store.js';
 import { Flags } from '../flags.js';
 import { StorageProxy } from '../storageNG/storage-proxy.js';
 import { handleFor, Singleton, Collection } from '../handle.js';
+import { VolatileStorageKey } from '../../runtime/storageNG/drivers/volatile.js';
 /**
  * Creates a singleton handle for a store for testing purposes. Returns an
  * appropriate OldHandle/HandleNG type depending on the storage migration flag.
@@ -51,6 +52,16 @@ export async function collectionHandleForTest(arcOrManifest, store) {
             throw new Error('Expected Collection.');
         }
     }
+}
+/**
+ * Creates a storage key prefix for a store for testing purposes. Returns an
+ * appropriate string or NG storage key type depending on the storage migration flag.
+ */
+export function storageKeyPrefixForTest() {
+    if (Flags.useNewStorageStack) {
+        return arcId => new VolatileStorageKey(arcId, '');
+    }
+    return 'volatile://';
 }
 async function createStorageProxyForTest(arcOrManifest, store) {
     const activeStore = await store.activate();

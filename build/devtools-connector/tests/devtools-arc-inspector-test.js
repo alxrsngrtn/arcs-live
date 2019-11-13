@@ -14,6 +14,7 @@ import { MockSlotComposer } from '../../runtime/testing/mock-slot-composer.js';
 import { StubLoader } from '../../runtime/testing/stub-loader.js';
 import { Manifest } from '../../runtime/manifest.js';
 import { Runtime } from '../../runtime/runtime.js';
+import { storageKeyPrefixForTest } from '../../runtime/testing/handle-for-test.js';
 describe('DevtoolsArcInspector', () => {
     before(() => DevtoolsForTests.ensureStub());
     after(() => DevtoolsForTests.reset());
@@ -36,7 +37,7 @@ describe('DevtoolsArcInspector', () => {
         P
           foo = foo`);
         const runtime = new Runtime(loader, MockSlotComposer, context);
-        const arc = runtime.newArc('demo', 'volatile://', { inspectorFactory: devtoolsArcInspectorFactory });
+        const arc = runtime.newArc('demo', storageKeyPrefixForTest(), { inspectorFactory: devtoolsArcInspectorFactory });
         const foo = arc.context.findSchemaByName('Foo').entityClass();
         const fooStore = await arc.createStore(foo.type, undefined, 'fooStore');
         const recipe = arc.context.recipes[0];

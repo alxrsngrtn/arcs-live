@@ -3408,6 +3408,7 @@ class UnifiedStore {
     }
     // Series of StoreInfo getters to make migration easier.
     get id() { return this.storeInfo.id; }
+    get apiChannelMappingId() { return this.id; }
     get name() { return this.storeInfo.name; }
     get type() { return this.storeInfo.type; }
     get originalId() { return this.storeInfo.originalId; }
@@ -5597,6 +5598,9 @@ class Type {
     get isSingleton() {
         return false;
     }
+    get isEntity() {
+        return false;
+    }
     collectionOf() {
         return new CollectionType(this);
     }
@@ -5690,6 +5694,9 @@ class SingletonType extends Type {
     }
     get isSingleton() {
         return true;
+    }
+    getEntitySchema() {
+        return this.innerType.getEntitySchema();
     }
     toString(options = undefined) {
         return `![${this.innerType.toString(options)}]`;
@@ -29783,6 +29790,11 @@ class Arc {
             if (typeof storageKey === 'string') {
                 throw new Error(`Can't use string storage keys with the new storage stack.`);
             }
+            // Wrap entity types in a singleton.
+            if (type.isEntity) {
+                // TODO: Once recipes can handle singleton types this conversion can be removed.
+                type = new SingletonType(type);
+            }
             store = new Store({ storageKey, exists: Exists.MayExist, type, id, name });
         }
         else {
@@ -34315,9 +34327,18 @@ class ArcStoresFetcher {
         else if (store.get) {
             return store.get();
         }
-        else {
-            return `(don't know how to dereference)`;
+        else if (store instanceof Store) {
+            // tslint:disable-next-line: no-any
+            const crdtData = await (await store.activate()).serializeContents();
+            if (crdtData.values) {
+                if (Object.values(crdtData.values).length === 1) {
+                    // Single value, extract the value only (discard the version).
+                    return Object.values(crdtData.values)[0]['value'];
+                }
+            }
+            return crdtData;
         }
+        return `(don't know how to dereference)`;
     }
 }
 

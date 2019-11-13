@@ -136,6 +136,9 @@ export class Type {
     get isSingleton() {
         return false;
     }
+    get isEntity() {
+        return false;
+    }
     collectionOf() {
         return new CollectionType(this);
     }
@@ -240,6 +243,9 @@ export class SingletonType extends Type {
     }
     get isSingleton() {
         return true;
+    }
+    getEntitySchema() {
+        return this.innerType.getEntitySchema();
     }
     toString(options = undefined) {
         return `![${this.innerType.toString(options)}]`;
