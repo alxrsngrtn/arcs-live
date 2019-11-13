@@ -11,22 +11,31 @@ import { Driver, ReceiveMethod, StorageDriverProvider, Exists } from './driver-f
 import { StorageKey } from '../storage-key.js';
 import { Arc } from '../../arc.js';
 import { ArcId } from '../../id.js';
+import { RamDiskStorageKey } from './ramdisk.js';
+import { Dictionary } from '../../hot.js';
 declare type VolatileEntry<Data> = {
     data: Data;
     version: number;
     drivers: VolatileDriver<Data>[];
 };
+declare type VolatileEntryCollection<Data> = {
+    root: VolatileEntry<Data>;
+    locations: Dictionary<VolatileEntry<Data>>;
+};
 export declare class VolatileStorageKey extends StorageKey {
     readonly arcId: ArcId;
     readonly unique: string;
-    constructor(arcId: ArcId, unique: string);
+    readonly path: string;
+    constructor(arcId: ArcId, unique: string, path?: string);
     toString(): string;
     childWithComponent(component: string): VolatileStorageKey;
+    subKeyWithComponent(component: string): VolatileStorageKey;
     static fromString(key: string): VolatileStorageKey;
 }
 export declare class VolatileMemory {
-    entries: Map<string, VolatileEntry<unknown>>;
+    entries: Map<string, VolatileEntryCollection<unknown>>;
     token: string;
+    deserialize(data: any, unique: string): void;
 }
 export declare class VolatileDriver<Data> extends Driver<Data> {
     private memory;
@@ -35,7 +44,14 @@ export declare class VolatileDriver<Data> extends Driver<Data> {
     private receiver;
     private data;
     private id;
-    constructor(storageKey: StorageKey, exists: Exists, memory: VolatileMemory);
+    private path;
+    constructor(storageKey: VolatileStorageKey | RamDiskStorageKey, exists: Exists, memory: VolatileMemory);
+    private getOrCreateEntry;
+    private localData;
+    private localVersion;
+    private setLocalData;
+    private incrementLocalVersion;
+    private pushLocalDriver;
     registerReceiver(receiver: ReceiveMethod<Data>, token?: string): void;
     getToken(): string;
     send(model: Data, version: number): Promise<boolean>;

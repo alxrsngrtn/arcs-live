@@ -12,6 +12,8 @@ export declare abstract class StorageKey {
     constructor(protocol: string);
     abstract toString(): string;
     abstract childWithComponent(component: string): StorageKey;
+    subKeyWithComponent(component: string): StorageKey;
+    childKeyForBackingElement(id: string): StorageKey;
     childKeyForArcInfo(): StorageKey;
     childKeyForHandle(id: string): StorageKey;
 }

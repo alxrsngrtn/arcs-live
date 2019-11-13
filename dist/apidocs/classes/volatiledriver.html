@@ -104,6 +104,7 @@
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="volatiledriver.html#exists" class="tsd-kind-icon">exists</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="volatiledriver.html#id" class="tsd-kind-icon">id</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="volatiledriver.html#memory" class="tsd-kind-icon">memory</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="volatiledriver.html#path" class="tsd-kind-icon">path</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="volatiledriver.html#pendingmodel" class="tsd-kind-icon">pending<wbr>Model</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="volatiledriver.html#pendingversion" class="tsd-kind-icon">pending<wbr>Version</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="volatiledriver.html#receiver" class="tsd-kind-icon">receiver</a></li>
@@ -113,10 +114,16 @@
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="volatiledriver.html#getorcreateentry" class="tsd-kind-icon">get<wbr>OrCreate<wbr>Entry</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="volatiledriver.html#gettoken" class="tsd-kind-icon">get<wbr>Token</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="volatiledriver.html#incrementlocalversion" class="tsd-kind-icon">increment<wbr>Local<wbr>Version</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="volatiledriver.html#localdata" class="tsd-kind-icon">local<wbr>Data</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="volatiledriver.html#localversion" class="tsd-kind-icon">local<wbr>Version</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="volatiledriver.html#pushlocaldriver" class="tsd-kind-icon">push<wbr>Local<wbr>Driver</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="volatiledriver.html#read" class="tsd-kind-icon">read</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="volatiledriver.html#registerreceiver" class="tsd-kind-icon">register<wbr>Receiver</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="volatiledriver.html#send" class="tsd-kind-icon">send</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="volatiledriver.html#setlocaldata" class="tsd-kind-icon">set<wbr>Local<wbr>Data</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="volatiledriver.html#write" class="tsd-kind-icon">write</a></li>
 							</ul>
 						</section>
@@ -129,20 +136,20 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Volatile<wbr>Driver<span class="tsd-signature-symbol">(</span>storageKey<span class="tsd-signature-symbol">: </span><a href="storagekey.html" class="tsd-signature-type">StorageKey</a>, exists<span class="tsd-signature-symbol">: </span><a href="../enums/exists.html" class="tsd-signature-type">Exists</a>, memory<span class="tsd-signature-symbol">: </span><a href="volatilememory.html" class="tsd-signature-type">VolatileMemory</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="volatiledriver.html" class="tsd-signature-type">VolatileDriver</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Volatile<wbr>Driver<span class="tsd-signature-symbol">(</span>storageKey<span class="tsd-signature-symbol">: </span><a href="volatilestoragekey.html" class="tsd-signature-type">VolatileStorageKey</a><span class="tsd-signature-symbol"> | </span><a href="ramdiskstoragekey.html" class="tsd-signature-type">RamDiskStorageKey</a>, exists<span class="tsd-signature-symbol">: </span><a href="../enums/exists.html" class="tsd-signature-type">Exists</a>, memory<span class="tsd-signature-symbol">: </span><a href="volatilememory.html" class="tsd-signature-type">VolatileMemory</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="volatiledriver.html" class="tsd-signature-type">VolatileDriver</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Overrides <a href="driver.html">Driver</a>.<a href="driver.html#constructor">constructor</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0d950f1/src/runtime/storageNG/drivers/volatile.ts#L66">src/runtime/storageNG/drivers/volatile.ts:66</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b5bee21/src/runtime/storageNG/drivers/volatile.ts#L89">src/runtime/storageNG/drivers/volatile.ts:89</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>storageKey: <a href="storagekey.html" class="tsd-signature-type">StorageKey</a></h5>
+									<h5>storageKey: <a href="volatilestoragekey.html" class="tsd-signature-type">VolatileStorageKey</a><span class="tsd-signature-symbol"> | </span><a href="ramdiskstoragekey.html" class="tsd-signature-type">RamDiskStorageKey</a></h5>
 								</li>
 								<li>
 									<h5>exists: <a href="../enums/exists.html" class="tsd-signature-type">Exists</a></h5>
@@ -161,10 +168,10 @@
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
 					<a name="data" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagPrivate">Private</span> data</h3>
-					<div class="tsd-signature tsd-kind-icon">data<span class="tsd-signature-symbol">:</span> <a href="../globals.html#volatileentry" class="tsd-signature-type">VolatileEntry</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Data</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<div class="tsd-signature tsd-kind-icon">data<span class="tsd-signature-symbol">:</span> <a href="../globals.html#volatileentrycollection" class="tsd-signature-type">VolatileEntryCollection</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Data</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0d950f1/src/runtime/storageNG/drivers/volatile.ts#L65">src/runtime/storageNG/drivers/volatile.ts:65</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b5bee21/src/runtime/storageNG/drivers/volatile.ts#L87">src/runtime/storageNG/drivers/volatile.ts:87</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -175,7 +182,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="driver.html">Driver</a>.<a href="driver.html#exists">exists</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0d950f1/src/runtime/storageNG/drivers/driver-factory.ts#L35">src/runtime/storageNG/drivers/driver-factory.ts:35</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b5bee21/src/runtime/storageNG/drivers/driver-factory.ts#L35">src/runtime/storageNG/drivers/driver-factory.ts:35</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -185,7 +192,7 @@
 					<div class="tsd-signature tsd-kind-icon">id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0d950f1/src/runtime/storageNG/drivers/volatile.ts#L66">src/runtime/storageNG/drivers/volatile.ts:66</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b5bee21/src/runtime/storageNG/drivers/volatile.ts#L88">src/runtime/storageNG/drivers/volatile.ts:88</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -195,7 +202,17 @@
 					<div class="tsd-signature tsd-kind-icon">memory<span class="tsd-signature-symbol">:</span> <a href="volatilememory.html" class="tsd-signature-type">VolatileMemory</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0d950f1/src/runtime/storageNG/drivers/volatile.ts#L61">src/runtime/storageNG/drivers/volatile.ts:61</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b5bee21/src/runtime/storageNG/drivers/volatile.ts#L83">src/runtime/storageNG/drivers/volatile.ts:83</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+					<a name="path" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> path</h3>
+					<div class="tsd-signature tsd-kind-icon">path<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b5bee21/src/runtime/storageNG/drivers/volatile.ts#L89">src/runtime/storageNG/drivers/volatile.ts:89</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -205,7 +222,7 @@
 					<div class="tsd-signature tsd-kind-icon">pending<wbr>Model<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Data</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> =&nbsp;null</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0d950f1/src/runtime/storageNG/drivers/volatile.ts#L63">src/runtime/storageNG/drivers/volatile.ts:63</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b5bee21/src/runtime/storageNG/drivers/volatile.ts#L85">src/runtime/storageNG/drivers/volatile.ts:85</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -215,7 +232,7 @@
 					<div class="tsd-signature tsd-kind-icon">pending<wbr>Version<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;0</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0d950f1/src/runtime/storageNG/drivers/volatile.ts#L62">src/runtime/storageNG/drivers/volatile.ts:62</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b5bee21/src/runtime/storageNG/drivers/volatile.ts#L84">src/runtime/storageNG/drivers/volatile.ts:84</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -225,7 +242,7 @@
 					<div class="tsd-signature tsd-kind-icon">receiver<span class="tsd-signature-symbol">:</span> <a href="../globals.html#receivemethod" class="tsd-signature-type">ReceiveMethod</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Data</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0d950f1/src/runtime/storageNG/drivers/volatile.ts#L64">src/runtime/storageNG/drivers/volatile.ts:64</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b5bee21/src/runtime/storageNG/drivers/volatile.ts#L86">src/runtime/storageNG/drivers/volatile.ts:86</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -236,13 +253,41 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="driver.html">Driver</a>.<a href="driver.html#storagekey">storageKey</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0d950f1/src/runtime/storageNG/drivers/driver-factory.ts#L34">src/runtime/storageNG/drivers/driver-factory.ts:34</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b5bee21/src/runtime/storageNG/drivers/driver-factory.ts#L34">src/runtime/storageNG/drivers/driver-factory.ts:34</a></li>
 						</ul>
 					</aside>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
+					<a name="getorcreateentry" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> get<wbr>OrCreate<wbr>Entry</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>OrCreate<wbr>Entry<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">object</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b5bee21/src/runtime/storageNG/drivers/volatile.ts#L132">src/runtime/storageNG/drivers/volatile.ts:132</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">object</span></h4>
+							<ul class="tsd-parameters">
+								<li class="tsd-parameter">
+									<h5>data<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Data</span></h5>
+								</li>
+								<li class="tsd-parameter">
+									<h5>drivers<span class="tsd-signature-symbol">: </span><a href="volatiledriver.html" class="tsd-signature-type">VolatileDriver</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Data</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span></h5>
+								</li>
+								<li class="tsd-parameter">
+									<h5>version<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></h5>
+								</li>
+							</ul>
+						</li>
+					</ul>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 					<a name="gettoken" class="tsd-anchor"></a>
 					<h3>get<wbr>Token</h3>
@@ -254,10 +299,84 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="driver.html">Driver</a>.<a href="driver.html#gettoken">getToken</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0d950f1/src/runtime/storageNG/drivers/volatile.ts#L114">src/runtime/storageNG/drivers/volatile.ts:114</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b5bee21/src/runtime/storageNG/drivers/volatile.ts#L173">src/runtime/storageNG/drivers/volatile.ts:173</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
+					<a name="incrementlocalversion" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> increment<wbr>Local<wbr>Version</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">increment<wbr>Local<wbr>Version<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b5bee21/src/runtime/storageNG/drivers/volatile.ts#L157">src/runtime/storageNG/drivers/volatile.ts:157</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
+					<a name="localdata" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> local<wbr>Data</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">local<wbr>Data<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Data</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b5bee21/src/runtime/storageNG/drivers/volatile.ts#L145">src/runtime/storageNG/drivers/volatile.ts:145</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Data</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
+					<a name="localversion" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> local<wbr>Version</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">local<wbr>Version<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b5bee21/src/runtime/storageNG/drivers/volatile.ts#L149">src/runtime/storageNG/drivers/volatile.ts:149</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
+					<a name="pushlocaldriver" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> push<wbr>Local<wbr>Driver</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">push<wbr>Local<wbr>Driver<span class="tsd-signature-symbol">(</span>driver<span class="tsd-signature-symbol">: </span><a href="volatiledriver.html" class="tsd-signature-type">VolatileDriver</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Data</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b5bee21/src/runtime/storageNG/drivers/volatile.ts#L161">src/runtime/storageNG/drivers/volatile.ts:161</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>driver: <a href="volatiledriver.html" class="tsd-signature-type">VolatileDriver</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Data</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -272,7 +391,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="driver.html">Driver</a>.<a href="driver.html#read">read</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0d950f1/src/runtime/storageNG/drivers/volatile.ts#L139">src/runtime/storageNG/drivers/volatile.ts:139</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b5bee21/src/runtime/storageNG/drivers/volatile.ts#L200">src/runtime/storageNG/drivers/volatile.ts:200</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -296,7 +415,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="driver.html">Driver</a>.<a href="driver.html#registerreceiver">registerReceiver</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0d950f1/src/runtime/storageNG/drivers/volatile.ts#L106">src/runtime/storageNG/drivers/volatile.ts:106</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b5bee21/src/runtime/storageNG/drivers/volatile.ts#L165">src/runtime/storageNG/drivers/volatile.ts:165</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -323,7 +442,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="driver.html">Driver</a>.<a href="driver.html#send">send</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0d950f1/src/runtime/storageNG/drivers/volatile.ts#L116">src/runtime/storageNG/drivers/volatile.ts:116</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b5bee21/src/runtime/storageNG/drivers/volatile.ts#L175">src/runtime/storageNG/drivers/volatile.ts:175</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -339,6 +458,29 @@
 						</li>
 					</ul>
 				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
+					<a name="setlocaldata" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> set<wbr>Local<wbr>Data</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">set<wbr>Local<wbr>Data<span class="tsd-signature-symbol">(</span>data<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Data</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b5bee21/src/runtime/storageNG/drivers/volatile.ts#L153">src/runtime/storageNG/drivers/volatile.ts:153</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>data: <span class="tsd-signature-type">Data</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 					<a name="write" class="tsd-anchor"></a>
 					<h3>write</h3>
@@ -350,7 +492,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="driver.html">Driver</a>.<a href="driver.html#write">write</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0d950f1/src/runtime/storageNG/drivers/volatile.ts#L135">src/runtime/storageNG/drivers/volatile.ts:135</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b5bee21/src/runtime/storageNG/drivers/volatile.ts#L196">src/runtime/storageNG/drivers/volatile.ts:196</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -399,6 +541,9 @@
 								<a href="volatiledriver.html#memory" class="tsd-kind-icon">memory</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+								<a href="volatiledriver.html#path" class="tsd-kind-icon">path</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
 								<a href="volatiledriver.html#pendingmodel" class="tsd-kind-icon">pending<wbr>Model</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
@@ -410,8 +555,23 @@
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 								<a href="volatiledriver.html#storagekey" class="tsd-kind-icon">storage<wbr>Key</a>
 							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+								<a href="volatiledriver.html#getorcreateentry" class="tsd-kind-icon">get<wbr>OrCreate<wbr>Entry</a>
+							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 								<a href="volatiledriver.html#gettoken" class="tsd-kind-icon">get<wbr>Token</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+								<a href="volatiledriver.html#incrementlocalversion" class="tsd-kind-icon">increment<wbr>Local<wbr>Version</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+								<a href="volatiledriver.html#localdata" class="tsd-kind-icon">local<wbr>Data</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+								<a href="volatiledriver.html#localversion" class="tsd-kind-icon">local<wbr>Version</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+								<a href="volatiledriver.html#pushlocaldriver" class="tsd-kind-icon">push<wbr>Local<wbr>Driver</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 								<a href="volatiledriver.html#read" class="tsd-kind-icon">read</a>
@@ -421,6 +581,9 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 								<a href="volatiledriver.html#send" class="tsd-kind-icon">send</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+								<a href="volatiledriver.html#setlocaldata" class="tsd-kind-icon">set<wbr>Local<wbr>Data</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 								<a href="volatiledriver.html#write" class="tsd-kind-icon">write</a>

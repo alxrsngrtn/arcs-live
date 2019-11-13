@@ -245,6 +245,9 @@ export class DirectStore extends ActiveStore {
     on(callback) {
         const id = this.nextCallbackID++;
         this.callbacks.set(id, callback);
+        if (this.version > 0) {
+            noAwait(callback({ type: ProxyMessageType.ModelUpdate, model: this.localModel.getData(), id }));
+        }
         return id;
     }
     off(callback) {

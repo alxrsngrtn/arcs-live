@@ -38,9 +38,9 @@ describe('RamDisk + Store Integration', async () => {
         await activeStore.onProxyMessage({ type: ProxyMessageType.Operations, operations: [
                 { type: CountOpTypes.Increment, actor: 'them', version: { from: 0, to: 1 } }
             ], id: 1 });
-        const volatileEntry = runtime.getRamDiskMemory().entries.get(storageKey.toString());
-        assert.deepEqual(volatileEntry.data, activeStore['localModel'].getData());
-        assert.strictEqual(volatileEntry.version, 3);
+        const volatileEntry = runtime.getRamDiskMemory().entries.get(storageKey.unique);
+        assert.deepEqual(volatileEntry.root.data, activeStore['localModel'].getData());
+        assert.strictEqual(volatileEntry.root.version, 3);
     });
     it('will store operation updates from multiple sources', async () => {
         const runtime = new Runtime();
@@ -69,9 +69,9 @@ describe('RamDisk + Store Integration', async () => {
         assert.strictEqual(results.filter(a => !a).length, 0);
         await activeStore1.idle();
         await activeStore2.idle();
-        const volatileEntry = runtime.getRamDiskMemory().entries.get(storageKey.toString());
-        assert.deepEqual(volatileEntry.data, activeStore1['localModel'].getData());
-        assert.strictEqual(volatileEntry.version, 3);
+        const volatileEntry = runtime.getRamDiskMemory().entries.get(storageKey.unique);
+        assert.deepEqual(volatileEntry.root.data, activeStore1['localModel'].getData());
+        assert.strictEqual(volatileEntry.root.version, 3);
     });
     it('will store operation updates from multiple sources with some timing delays', async () => {
         // store1.onProxyMessage, DELAY, DELAY, DELAY, store1.onProxyMessage, store2.onProxyMessage, DELAY, DELAY, DELAY, store2.onProxyMessage, DELAY, DELAY, DELAY, DELAY, DELAY
@@ -103,9 +103,9 @@ describe('RamDisk + Store Integration', async () => {
         assert.strictEqual(results.filter(a => !a).length, 0);
         await activeStore1.idle();
         await activeStore2.idle();
-        const volatileEntry = runtime.getRamDiskMemory().entries.get(storageKey.toString());
-        assert.deepEqual(volatileEntry.data, activeStore1['localModel'].getData());
-        assert.strictEqual(volatileEntry.version, 4);
+        const volatileEntry = runtime.getRamDiskMemory().entries.get(storageKey.unique);
+        assert.deepEqual(volatileEntry.root.data, activeStore1['localModel'].getData());
+        assert.strictEqual(volatileEntry.root.version, 4);
     });
 });
 //# sourceMappingURL=ramdisk-store-integration-test.js.map

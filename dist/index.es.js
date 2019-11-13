@@ -2475,6 +2475,9 @@ class DirectStore extends ActiveStore {
     on(callback) {
         const id = this.nextCallbackID++;
         this.callbacks.set(id, callback);
+        if (this.version > 0) {
+            noAwait(callback({ type: ProxyMessageType.ModelUpdate, model: this.localModel.getData(), id }));
+        }
         return id;
     }
     off(callback) {
@@ -2527,10 +2530,13 @@ class BackingStore {
         }
     }
     async setupStore(muxId) {
-        const store = await DirectStore.construct({ ...this.options, storageKey: this.storageKey.childWithComponent(muxId) });
-        const id = store.on(msg => this.processStoreCallback(muxId, msg));
-        const record = { store, id, type: 'record' };
+        const store = await DirectStore.construct({ ...this.options, storageKey: this.storageKey.childKeyForBackingElement(muxId) });
+        const record = { store, id: 0, type: 'record' };
         this.stores[muxId] = record;
+        // Calling store.on may trigger an event; this will be delivered (via processStoreCallback) upstream and may in
+        // turn trigger a request for the localModel. It's important that there's a recorded store in place for the local
+        // model to be retrieved from, even though we don't have the correct id until store.on returns.
+        record.id = store.on(msg => this.processStoreCallback(muxId, msg));
         return record;
     }
     async onProxyMessage(message, muxId) {
@@ -3497,11 +3503,17 @@ class StorageKey {
     constructor(protocol) {
         this.protocol = protocol;
     }
+    subKeyWithComponent(component) {
+        return this.childWithComponent(component);
+    }
+    childKeyForBackingElement(id) {
+        return this.childWithComponent(id);
+    }
     childKeyForArcInfo() {
-        return this.childWithComponent('arc-info');
+        return this.subKeyWithComponent('arc-info');
     }
     childKeyForHandle(id) {
-        return this.childWithComponent(`handle/${id}`);
+        return this.subKeyWithComponent(`handle/${id}`);
     }
 }
 
@@ -24371,24 +24383,29 @@ class StorageStub extends UnifiedStore {
  * http://polymer.github.io/PATENTS.txt
  */
 class VolatileStorageKey extends StorageKey {
-    constructor(arcId, unique) {
+    constructor(arcId, unique, path = '') {
         super('volatile');
         this.arcId = arcId;
         this.unique = unique;
+        this.path = path;
     }
     toString() {
-        return `${this.protocol}://${this.arcId}/${this.unique}`;
+        return `${this.protocol}://${this.arcId}/${this.unique}@${this.path}`;
     }
     childWithComponent(component) {
+        return new VolatileStorageKey(this.arcId, this.unique, `${this.path}/${component}`);
+    }
+    // Note that subKeys lose path information.
+    subKeyWithComponent(component) {
         return new VolatileStorageKey(this.arcId, `${this.unique}/${component}`);
     }
     static fromString(key) {
-        const match = key.match(/^volatile:\/\/([^/]+)\/(.*)$/);
+        const match = key.match(/^volatile:\/\/([^/]+)\/([^@]*)@(.*)$/);
         if (!match) {
             throw new Error(`Not a valid VolatileStorageKey: ${key}.`);
         }
-        const [_, arcId, unique] = match;
-        return new VolatileStorageKey(ArcId.fromString(arcId), unique);
+        const [_, arcId, unique, path] = match;
+        return new VolatileStorageKey(ArcId.fromString(arcId), unique, path);
     }
 }
 class VolatileMemory {
@@ -24403,6 +24420,15 @@ class VolatileMemory {
         // is sufficient.
         this.token = Math.random() + '';
     }
+    deserialize(data, unique) {
+        assert(!this.entries.has(unique));
+        const entry = { root: null, locations: {} };
+        entry.root = { data: data.root, version: 0, drivers: [] };
+        for (const [key, value] of Object.entries(data.locations)) {
+            entry.locations[key] = { data: value, version: 0, drivers: [] };
+        }
+        this.entries.set(unique, entry);
+    }
 }
 let id = 0;
 class VolatileDriver extends Driver {
@@ -24411,32 +24437,35 @@ class VolatileDriver extends Driver {
         this.pendingVersion = 0;
         this.pendingModel = null;
         this.id = id++;
-        const keyAsString = storageKey.toString();
         this.memory = memory;
+        this.path = null;
+        if (storageKey instanceof VolatileStorageKey && storageKey.path !== '') {
+            this.path = storageKey.path;
+        }
         switch (exists) {
             case Exists.ShouldCreate:
-                if (this.memory.entries.has(keyAsString)) {
+                if (this.memory.entries.has(storageKey.unique)) {
                     throw new Error(`requested creation of memory location ${storageKey} can't proceed as location already exists`);
                 }
-                this.data = { data: null, version: 0, drivers: [] };
-                this.memory.entries.set(keyAsString, this.data);
+                this.data = { root: null, locations: {} };
+                this.memory.entries.set(storageKey.unique, this.data);
                 break;
             case Exists.ShouldExist:
-                if (!this.memory.entries.has(keyAsString)) {
+                if (!this.memory.entries.has(storageKey.unique)) {
                     throw new Error(`requested connection to memory location ${storageKey} can't proceed as location doesn't exist`);
                 }
             /* falls through */
             case Exists.MayExist:
                 {
-                    const data = this.memory.entries.get(keyAsString);
+                    const data = this.memory.entries.get(storageKey.unique);
                     if (data) {
                         this.data = data;
-                        this.pendingModel = data.data;
-                        this.pendingVersion = data.version;
+                        this.pendingModel = this.localData();
+                        this.pendingVersion = this.localVersion();
                     }
                     else {
-                        this.data = { data: null, version: 0, drivers: [] };
-                        this.memory.entries.set(keyAsString, this.data);
+                        this.data = { locations: {}, root: null };
+                        this.memory.entries.set(storageKey.unique, this.data);
                         this.memory.token = Math.random() + '';
                     }
                     break;
@@ -24444,7 +24473,34 @@ class VolatileDriver extends Driver {
             default:
                 throw new Error(`unknown Exists code ${exists}`);
         }
-        this.data.drivers.push(this);
+        this.pushLocalDriver(this);
+    }
+    getOrCreateEntry() {
+        if (this.path) {
+            if (!this.data.locations[this.path]) {
+                this.data.locations[this.path] = { data: null, version: 0, drivers: [] };
+            }
+            return this.data.locations[this.path];
+        }
+        if (!this.data.root) {
+            this.data.root = { data: null, version: 0, drivers: [] };
+        }
+        return this.data.root;
+    }
+    localData() {
+        return this.getOrCreateEntry().data;
+    }
+    localVersion() {
+        return this.getOrCreateEntry().version;
+    }
+    setLocalData(data) {
+        this.getOrCreateEntry().data = data;
+    }
+    incrementLocalVersion() {
+        this.getOrCreateEntry().version += 1;
+    }
+    pushLocalDriver(driver) {
+        this.getOrCreateEntry().drivers.push(driver);
     }
     registerReceiver(receiver, token) {
         this.receiver = receiver;
@@ -24459,16 +24515,18 @@ class VolatileDriver extends Driver {
         // a synchronous send / onReceive loop that can be established
         // between multiple Stores/Drivers writing to the same location.
         await 0;
-        if (this.data.version !== version - 1) {
+        if (this.localVersion() !== version - 1) {
             return false;
         }
-        this.data.data = model;
-        this.data.version += 1;
-        this.data.drivers.forEach(driver => {
+        this.setLocalData(model);
+        this.incrementLocalVersion();
+        this.getOrCreateEntry().drivers.forEach(driver => {
             if (driver === this) {
                 return;
             }
-            driver.receiver(model, this.data.version);
+            if (driver.receiver) {
+                driver.receiver(model, this.localVersion());
+            }
         });
         return true;
     }
@@ -29193,10 +29251,14 @@ ${this.arc.activeRecipe.toString()}`;
         if (Flags.useNewStorageStack) {
             for (const [key, value] of this.arc.volatileMemory.entries.entries()) {
                 this.memoryResourceNames.set(key, `VolatileMemoryResource${resourceNum}`);
+                const data = { root: value.root.data, locations: {} };
+                for (const [key, entry] of Object.entries(value.locations)) {
+                    data.locations[key] = entry.data;
+                }
                 serialization +=
                     `resource VolatileMemoryResource${resourceNum++} // ${key}\n` +
                         indent + 'start\n' +
-                        JSON.stringify(value.data).split('\n').map(line => indent + line).join('\n') + '\n';
+                        JSON.stringify(data).split('\n').map(line => indent + line).join('\n') + '\n';
             }
             return serialization;
         }
@@ -29232,8 +29294,8 @@ ${this.arc.activeRecipe.toString()}`;
                 break;
             case 'volatile':
                 if (Flags.useNewStorageStack) {
-                    const storageKey = store.storageKey.toString();
-                    this.handles += store.toManifestString({ handleTags, overrides: { name, source: this.memoryResourceNames.get(storageKey), origin: 'resource', includeKey: storageKey } }) + '\n';
+                    const storageKey = store.storageKey;
+                    this.handles += store.toManifestString({ handleTags, overrides: { name, source: this.memoryResourceNames.get(storageKey.unique), origin: 'resource', includeKey: storageKey.toString() } }) + '\n';
                 }
                 else {
                     // TODO(sjmiles): emit empty data for stores marked `volatile`: shell will supply data
@@ -29520,14 +29582,11 @@ class Arc {
         const arc = new Arc({ id, storageKey, slotComposer, pecFactories, loader, storageProviderFactory, context, inspectorFactory });
         await Promise.all(manifest.stores.map(async (storeStub) => {
             const tags = manifest.storeTags.get(storeStub);
+            if (storeStub.storageKey instanceof VolatileStorageKey) {
+                arc.volatileMemory.deserialize(storeStub.storeInfo.model, storeStub.storageKey.unique);
+            }
             const store = await storeStub.activate();
             await arc._registerStore(store.baseStore, tags);
-            if (store.baseStore.storageKey instanceof VolatileStorageKey) {
-                const driver = new VolatileDriver(store.baseStore.storageKey, Exists.MayExist, arc.volatileMemory);
-                driver.registerReceiver(() => true);
-                await driver.send(store.baseStore.storeInfo.model, 1);
-                // TODO(shans): Remove driver from driver list
-            }
         }));
         const recipe = manifest.activeRecipe.clone();
         const options = { errors: new Map() };

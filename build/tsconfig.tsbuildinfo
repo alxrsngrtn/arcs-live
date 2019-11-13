@@ -202,8 +202,8 @@
         "signature": "2e25d6a84e1f37aa6c260353854eb89d1c4f60d30cb6951d2673a033fa062ff3"
       },
       "../src/runtime/storageNG/storage-key.ts": {
-        "version": "7e3138cb62b2c1226cb54d6acf7aadcd07b984a3c66b44f90407f6a802fe3f19",
-        "signature": "b7fa49726506f2bc542e75950bd559b4b7631f6bb4944bc89e889b190c96ec6c"
+        "version": "3e7ccd988c6a23801748a6dddf748ff47faa20e0ec14b15a59a21be182f29936",
+        "signature": "331b05a1a3631480e76ed913eff5f1492f9b77f60f612a3b4aadcffd80d9731a"
       },
       "../src/runtime/recipe/handle.ts": {
         "version": "7af83547c4c70fc6392fac0ef16318cac3b20f7eac839f213e86fc57d1289cb3",
@@ -306,11 +306,11 @@
         "signature": "961a2cb40c20210dc4a8e8257fad16693c468c7f15d9f128417abcdb7d5b79c1"
       },
       "../src/runtime/storageNG/direct-store.ts": {
-        "version": "6e21dece9ea3cf1fb591af6d705d90a7d00310e6f6dc8157368da52d083517b2",
+        "version": "4ba8550f183cc7410bd02b103a11d8b3219f15d9685e0d0076ac6c02a29cb881",
         "signature": "06340b87be533c5f80a908d15220adfb250d47b2c5566a193a6800d5ef80604b"
       },
       "../src/runtime/storageNG/backing-store.ts": {
-        "version": "736da72741c9d9bce43f14e6bb1e4c36ed0d2357d8b481501c7ad32258beb478",
+        "version": "e907ee9f22665abf6093c83a6dd5818a93bd2427ad9d391937f06e6261cddfb2",
         "signature": "ba5c2f7f30ea7edf904470ed9e86a673a2a70b4ff55bcbb2d4f34b2e17b3e589"
       },
       "../src/runtime/crdt/crdt-entity.ts": {
@@ -373,9 +373,13 @@
         "version": "ec65df5484466272817ead3a152e757361caee0760f4f5f79b1789755bb084cb",
         "signature": "c8b35a7a2ace5fb01c87b3313b8f959dac49b72256142b366a83ae885b78c017"
       },
+      "../src/runtime/storageNG/drivers/ramdisk.ts": {
+        "version": "ffd0946975258754a2da722773422cc3313e7ccec56ceca9e334faedb26e7e99",
+        "signature": "819d99afd1bd571a9e5bd8294bfb41d5d34c8b716de41daa219df8a10d793fea"
+      },
       "../src/runtime/storageNG/drivers/volatile.ts": {
-        "version": "84736f0b99097057356dc2cb1190f507b0e768c541d23a64066fd9db5a46befb",
-        "signature": "258791e86fed379e98b34a9240cd1ebdc4611524641b84a33b1271513c839a5c"
+        "version": "c450c0100f2ae4b7ceb2c83ab7e08bc7cc68764d343fa6a64bdada5def154034",
+        "signature": "444c673f280653af98aa26c43bb4c691a659a3714aea7c772d356e087fb48cfd"
       },
       "../src/platform/pec-industry-web.ts": {
         "version": "44de7c5be9b85e1c3c2f1dfbf81266d364be7e843f334ca11a1663c89f976c30",
@@ -530,11 +534,11 @@
         "signature": "4e1c1ce43523008cb1c57815bc2b0ded2f99c43e05ae21ab1a7e109752a032ab"
       },
       "../src/runtime/arc-serializer.ts": {
-        "version": "f530f10afd3dd0277b3a1490539a1fc5c6df11a0c47bb390d4c2076cc2f24eda",
+        "version": "d5851471647bf407d2807944f85fc89251c8ccad51064524e76e4e543b04658a",
         "signature": "2d33089695309b957370d9f5da9fa76b1216da0c15c1353663acf098bf77cf32"
       },
       "../src/runtime/arc.ts": {
-        "version": "b5c4de99a6c9c2bfbff67e405a244a81f8022804a52d4a517d7e0af19d0b03f1",
+        "version": "66b4e286abcbd83f8ef45d22b4fbd2edaa1d3c4ee8c92ca344684d78d8464156",
         "signature": "dbba35ca1c2036123eab7d7fdab561d44931711f724f9f56775a09cd335426b6"
       },
       "../src/runtime/api-channel.ts": {
@@ -608,10 +612,6 @@
       "../src/runtime/storageNG/drivers/firebase.ts": {
         "version": "330efce9f72b49c1df6b15ac4fcc1dfae3f77a738fcdf96b7178920bd376bc14",
         "signature": "a0314b0c71feceb81e4ea800629972f50ddd67472b39df06001646f835e412ca"
-      },
-      "../src/runtime/storageNG/drivers/ramdisk.ts": {
-        "version": "acbd37be40623dacb3e812254cb0ab3233c6531954459d457e2632855bf17efb",
-        "signature": "819d99afd1bd571a9e5bd8294bfb41d5d34c8b716de41daa219df8a10d793fea"
       },
       "../src/runtime/storageNG/storage-key-parser.ts": {
         "version": "389c5a703bcf6596752edc4e8592577750fc0dc7ad2106a05b21d221de46281f",
@@ -2389,7 +2389,7 @@
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "../src/runtime/storageNG/tests/ramdisk-store-integration-test.ts": {
-        "version": "579dd197f31450bb0b52f59bbe17c5ec50f632a8161bbc3dd599b63d2bc749fb",
+        "version": "566161872bbf34d12d5a3a3197c19bac2f2dd402b4b17ddc29539f694aa75381",
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "../src/runtime/storageNG/tests/reference-mode-store-test.ts": {
@@ -2397,7 +2397,7 @@
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "../src/runtime/storageNG/tests/storage-key-test.ts": {
-        "version": "8d9e3dfb0c836fa4bc4a13fc2dc59252c5c0ae16abdc7730b7a6a409c5ee09cd",
+        "version": "fcf6c9666cd9b5b69cd1d0a3dc433941f234d7d5c32d19fafb837326cd8e48b9",
         "signature": "43a5176681925d9f51b139647154e4a52c2eb1b1a64bb428595000952bcbc7f1"
       },
       "../src/runtime/storageNG/tests/storage-proxy-test.ts": {
@@ -2409,7 +2409,7 @@
         "signature": "18ed1a63d0019c28cba80715295b3b2a0763daf0a90315d2414a70d753607613"
       },
       "../src/runtime/storageNG/tests/store-sequence-test.ts": {
-        "version": "0094ed4ec8c9ff2743d1ab13aa4bba7e2f11375ce9809483cbf35efd87479689",
+        "version": "ae4ec151ac351fc8460e75cd5a7af71ab4c184c4d96f7ec588969f266cdfcaa0",
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "../src/runtime/storageNG/tests/store-test.ts": {
@@ -2433,7 +2433,7 @@
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/runtime/tests/arc-test.ts": {
-        "version": "3592974ac11a608aa973e42d7de12d4bca62aaf93861b505a90028a715d92d4a",
+        "version": "ce89f9891e028f2372accda2b46426e5897d7a9319b5b1d0ae4b5a26ebf8bc03",
         "signature": "600636836c17982e77369e742e2b185b3a695f0407d06b57f41cbf45b0a11d8b"
       },
       "../src/runtime/tests/arcfmt-test.ts": {
@@ -3537,11 +3537,22 @@
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.2/util.d.ts"
       ],
+      "../src/runtime/storageNG/drivers/ramdisk.ts": [
+        "../src/runtime/storageNG/storage-key.ts",
+        "../src/runtime/runtime.ts",
+        "../src/runtime/storageNG/drivers/driver-factory.ts",
+        "../src/runtime/storageNG/drivers/volatile.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
       "../src/runtime/storageNG/drivers/volatile.ts": [
         "../src/runtime/storageNG/drivers/driver-factory.ts",
         "../src/runtime/storageNG/storage-key.ts",
         "../src/runtime/arc.ts",
         "../src/runtime/id.ts",
+        "../src/runtime/storageNG/drivers/ramdisk.ts",
+        "../src/runtime/hot.ts",
+        "../src/platform/assert-web.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.2/util.d.ts"
       ],
@@ -4180,14 +4191,6 @@
         "../src/platform/firebase-web.d.ts",
         "../src/runtime/runtime.ts",
         "../src/platform/assert-web.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/runtime/storageNG/drivers/ramdisk.ts": [
-        "../src/runtime/storageNG/storage-key.ts",
-        "../src/runtime/runtime.ts",
-        "../src/runtime/storageNG/drivers/driver-factory.ts",
-        "../src/runtime/storageNG/drivers/volatile.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.2/util.d.ts"
       ],
@@ -9526,19 +9529,14 @@
         "../src/runtime/storageNG/drivers/driver-factory.ts",
         "../src/runtime/storageNG/drivers/firebase.ts"
       ],
-      "../src/runtime/storageNG/drivers/ramdisk.ts": [
-        "../src/runtime/storageNG/storage-key.ts",
-        "../src/runtime/storageNG/drivers/driver-factory.ts",
-        "../src/runtime/storageNG/drivers/volatile.ts"
-      ],
-      "../src/runtime/storageNG/storage-key-parser.ts": [
-        "../src/runtime/storageNG/storage-key.ts"
-      ],
       "../src/runtime/storageNG/drivers/firebase.ts": [
         "../src/runtime/storageNG/storage-key.ts",
         "../src/platform/firebase-web.d.ts",
         "../src/runtime/runtime.ts",
         "../src/runtime/storageNG/drivers/driver-factory.ts"
+      ],
+      "../src/runtime/storageNG/storage-key-parser.ts": [
+        "../src/runtime/storageNG/storage-key.ts"
       ],
       "../src/runtime/storage/volatile-storage.ts": [
         "../src/runtime/hot.ts",
@@ -9791,6 +9789,19 @@
         "../src/runtime/arc-exceptions.ts",
         "../src/runtime/store.ts"
       ],
+      "../src/runtime/storageNG/drivers/ramdisk.ts": [
+        "../src/runtime/storageNG/storage-key.ts",
+        "../src/runtime/storageNG/drivers/driver-factory.ts",
+        "../src/runtime/storageNG/drivers/volatile.ts"
+      ],
+      "../src/runtime/storageNG/drivers/volatile.ts": [
+        "../src/runtime/id.ts",
+        "../src/runtime/storageNG/storage-key.ts",
+        "../src/runtime/storageNG/drivers/ramdisk.ts",
+        "../src/runtime/storageNG/drivers/driver-factory.ts",
+        "../src/runtime/arc.ts",
+        "../src/runtime/hot.ts"
+      ],
       "../src/runtime/recipe/recipe-resolver.ts": [
         "../src/runtime/recipe/recipe.ts",
         "../src/runtime/recipe/handle.ts",
@@ -9959,12 +9970,6 @@
       ],
       "../src/platform/pec-industry.ts": [
         "../src/platform/pec-industry-web.ts"
-      ],
-      "../src/runtime/storageNG/drivers/volatile.ts": [
-        "../src/runtime/id.ts",
-        "../src/runtime/storageNG/storage-key.ts",
-        "../src/runtime/storageNG/drivers/driver-factory.ts",
-        "../src/runtime/arc.ts"
       ],
       "../src/runtime/recipe/walker.ts": [
         "../src/runtime/arc.ts"
@@ -12055,6 +12060,7 @@
       "../src/runtime/modality-handler.ts",
       "../src/runtime/slot-composer.ts",
       "../src/runtime/testing/fake-slot-composer.ts",
+      "../src/runtime/storageNG/drivers/ramdisk.ts",
       "../src/runtime/storageNG/drivers/volatile.ts",
       "../src/platform/pec-industry-web.ts",
       "../src/platform/pec-industry.ts",
@@ -12114,7 +12120,6 @@
       "../node_modules/firebase/index.d.ts",
       "../src/platform/firebase-web.d.ts",
       "../src/runtime/storageNG/drivers/firebase.ts",
-      "../src/runtime/storageNG/drivers/ramdisk.ts",
       "../src/runtime/storageNG/storage-key-parser.ts",
       "../src/runtime/manifest.ts",
       "../src/platform/atob-web.ts",

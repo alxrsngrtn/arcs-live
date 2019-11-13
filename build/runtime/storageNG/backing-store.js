@@ -40,10 +40,13 @@ export class BackingStore {
         }
     }
     async setupStore(muxId) {
-        const store = await DirectStore.construct({ ...this.options, storageKey: this.storageKey.childWithComponent(muxId) });
-        const id = store.on(msg => this.processStoreCallback(muxId, msg));
-        const record = { store, id, type: 'record' };
+        const store = await DirectStore.construct({ ...this.options, storageKey: this.storageKey.childKeyForBackingElement(muxId) });
+        const record = { store, id: 0, type: 'record' };
         this.stores[muxId] = record;
+        // Calling store.on may trigger an event; this will be delivered (via processStoreCallback) upstream and may in
+        // turn trigger a request for the localModel. It's important that there's a recorded store in place for the local
+        // model to be retrieved from, even though we don't have the correct id until store.on returns.
+        record.id = store.on(msg => this.processStoreCallback(muxId, msg));
         return record;
     }
     async onProxyMessage(message, muxId) {

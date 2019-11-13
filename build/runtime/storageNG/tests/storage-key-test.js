@@ -15,7 +15,7 @@ import { RamDiskStorageKey } from '../drivers/ramdisk.js';
 import { ReferenceModeStorageKey } from '../reference-mode-storage-key.js';
 describe('StorageKey', () => {
     it('can round-trip VolatileStorageKey', () => {
-        const encoded = 'volatile://!1234:my-arc-id/first/second/';
+        const encoded = 'volatile://!1234:my-arc-id/first/second/@';
         const key = StorageKeyParser.parse(encoded);
         assert.instanceOf(key, VolatileStorageKey);
         assert.strictEqual(key.arcId.toString(), '!1234:my-arc-id');
@@ -41,7 +41,7 @@ describe('StorageKey', () => {
         assert.strictEqual(key.toString(), encoded);
     });
     it('can round-trip ReferenceModeStorageKey', () => {
-        const encoded = 'reference-mode://{firebase://my-project.test.domain:some-api-key/first/second/}{volatile://!1234:my-arc-id/first/second/}';
+        const encoded = 'reference-mode://{firebase://my-project.test.domain:some-api-key/first/second/}{volatile://!1234:my-arc-id/first/second/@}';
         const key = StorageKeyParser.parse(encoded);
         assert.instanceOf(key, ReferenceModeStorageKey);
         assert.instanceOf(key.storageKey, VolatileStorageKey);

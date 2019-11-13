@@ -149,7 +149,7 @@ describe('Store Sequence', async () => {
         const store2in = sequenceTest.registerInput('store2.onProxyMessage', 5, { type: ExpectedResponse.Constant, response: true });
         const store1Model = sequenceTest.registerSensor('store1.localModel');
         const store2Model = sequenceTest.registerSensor('store2.localModel');
-        const driverModel = sequenceTest.registerSensor('store1.driver.data.data');
+        const driverModel = sequenceTest.registerSensor('store1.driver.data.root.data');
         const store1changes = [
             { input: [incOp('me', 0)] },
             { input: [incOp('them', 0)] },
@@ -233,7 +233,7 @@ describe('Store Sequence', async () => {
         const store2in = sequenceTest.registerInput('store2.onProxyMessage', 5, { type: ExpectedResponse.Constant, response: true });
         const store1Model = sequenceTest.registerSensor('store1.localModel');
         const store2Model = sequenceTest.registerSensor('store2.localModel');
-        const driverModel = sequenceTest.registerSensor('store1.driver.data.data');
+        const driverModel = sequenceTest.registerSensor('store1.driver.data.root.data');
         const store1changes = [
             { input: [{ type: ProxyMessageType.ModelUpdate, model: makeModel({ 'me': 42 }, { 'me': 12 }) }] },
             { input: [incOp('them', 0)] }

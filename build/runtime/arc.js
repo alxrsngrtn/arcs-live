@@ -21,7 +21,7 @@ import { StorageProviderFactory } from './storage/storage-provider-factory.js';
 import { ArcType, CollectionType, EntityType, InterfaceType, RelationType, ReferenceType, SingletonType, Type, TypeVariable } from './type.js';
 import { Mutex } from './mutex.js';
 import { Runtime } from './runtime.js';
-import { VolatileMemory, VolatileStorageDriverProvider, VolatileStorageKey, VolatileDriver } from './storageNG/drivers/volatile.js';
+import { VolatileMemory, VolatileStorageDriverProvider, VolatileStorageKey } from './storageNG/drivers/volatile.js';
 import { DriverFactory, Exists } from './storageNG/drivers/driver-factory.js';
 import { Store } from './storageNG/store.js';
 import { Flags } from './flags.js';
@@ -191,14 +191,11 @@ export class Arc {
         const arc = new Arc({ id, storageKey, slotComposer, pecFactories, loader, storageProviderFactory, context, inspectorFactory });
         await Promise.all(manifest.stores.map(async (storeStub) => {
             const tags = manifest.storeTags.get(storeStub);
+            if (storeStub.storageKey instanceof VolatileStorageKey) {
+                arc.volatileMemory.deserialize(storeStub.storeInfo.model, storeStub.storageKey.unique);
+            }
             const store = await storeStub.activate();
             await arc._registerStore(store.baseStore, tags);
-            if (store.baseStore.storageKey instanceof VolatileStorageKey) {
-                const driver = new VolatileDriver(store.baseStore.storageKey, Exists.MayExist, arc.volatileMemory);
-                driver.registerReceiver(() => true);
-                await driver.send(store.baseStore.storeInfo.model, 1);
-                // TODO(shans): Remove driver from driver list
-            }
         }));
         const recipe = manifest.activeRecipe.clone();
         const options = { errors: new Map() };

@@ -1,5 +1,13 @@
-commit 0d950f197cee964b82c1365d28c4b97250ca24b1
-Author: galganif <4754402+galganif@users.noreply.github.com>
-Date:   Wed Nov 13 15:46:36 2019 +1100
+commit b5bee21ef52362881d2123d9d4576f4df1eec3e1
+Author: shans <shane.stephens@gmail.com>
+Date:   Wed Nov 13 15:56:57 2019 +1100
 
-    Remove getLocalData method as it is a duplicate of serializeContents. (#4005)
+    Allow reference-mode stores to round-trip through serialization (#4058)
+    
+    * Allow reference-mode stores to round-trip through serialization.
+    - VolatileStorageKeys now have a unique and a localPath component
+    - backing stores make use of a localPath
+    - localPaths are multiplexed into a single resource during serialization/deserialization
+    - reference-mode stores add stores for components during arc construction
+    
+    * remove some console statements and an empty line

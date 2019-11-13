@@ -93,6 +93,7 @@
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="volatilestoragekey.html#arcid" class="tsd-kind-icon">arc<wbr>Id</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="volatilestoragekey.html#path" class="tsd-kind-icon">path</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="volatilestoragekey.html#protocol" class="tsd-kind-icon">protocol</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="volatilestoragekey.html#unique" class="tsd-kind-icon">unique</a></li>
 							</ul>
@@ -101,8 +102,10 @@
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="volatilestoragekey.html#childkeyforarcinfo" class="tsd-kind-icon">child<wbr>Key<wbr>For<wbr>Arc<wbr>Info</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="volatilestoragekey.html#childkeyforbackingelement" class="tsd-kind-icon">child<wbr>Key<wbr>For<wbr>Backing<wbr>Element</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="volatilestoragekey.html#childkeyforhandle" class="tsd-kind-icon">child<wbr>Key<wbr>For<wbr>Handle</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="volatilestoragekey.html#childwithcomponent" class="tsd-kind-icon">child<wbr>With<wbr>Component</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="volatilestoragekey.html#subkeywithcomponent" class="tsd-kind-icon">sub<wbr>Key<wbr>With<wbr>Component</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="volatilestoragekey.html#tostring" class="tsd-kind-icon">to<wbr>String</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="volatilestoragekey.html#fromstring" class="tsd-kind-icon">from<wbr>String</a></li>
 							</ul>
@@ -116,14 +119,14 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Volatile<wbr>Storage<wbr>Key<span class="tsd-signature-symbol">(</span>arcId<span class="tsd-signature-symbol">: </span><a href="arcid.html" class="tsd-signature-type">ArcId</a>, unique<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="volatilestoragekey.html" class="tsd-signature-type">VolatileStorageKey</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Volatile<wbr>Storage<wbr>Key<span class="tsd-signature-symbol">(</span>arcId<span class="tsd-signature-symbol">: </span><a href="arcid.html" class="tsd-signature-type">ArcId</a>, unique<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, path<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="volatilestoragekey.html" class="tsd-signature-type">VolatileStorageKey</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Overrides <a href="storagekey.html">StorageKey</a>.<a href="storagekey.html#constructor">constructor</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0d950f1/src/runtime/storageNG/drivers/volatile.ts#L20">src/runtime/storageNG/drivers/volatile.ts:20</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b5bee21/src/runtime/storageNG/drivers/volatile.ts#L25">src/runtime/storageNG/drivers/volatile.ts:25</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -133,6 +136,9 @@
 								</li>
 								<li>
 									<h5>unique: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> path: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;&quot;&quot;</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="volatilestoragekey.html" class="tsd-signature-type">VolatileStorageKey</a></h4>
@@ -148,7 +154,17 @@
 					<div class="tsd-signature tsd-kind-icon">arc<wbr>Id<span class="tsd-signature-symbol">:</span> <a href="arcid.html" class="tsd-signature-type">ArcId</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0d950f1/src/runtime/storageNG/drivers/volatile.ts#L19">src/runtime/storageNG/drivers/volatile.ts:19</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b5bee21/src/runtime/storageNG/drivers/volatile.ts#L23">src/runtime/storageNG/drivers/volatile.ts:23</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="path" class="tsd-anchor"></a>
+					<h3>path</h3>
+					<div class="tsd-signature tsd-kind-icon">path<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b5bee21/src/runtime/storageNG/drivers/volatile.ts#L25">src/runtime/storageNG/drivers/volatile.ts:25</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -159,7 +175,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="storagekey.html">StorageKey</a>.<a href="storagekey.html#protocol">protocol</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0d950f1/src/runtime/storageNG/storage-key.ts#L12">src/runtime/storageNG/storage-key.ts:12</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b5bee21/src/runtime/storageNG/storage-key.ts#L12">src/runtime/storageNG/storage-key.ts:12</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -169,7 +185,7 @@
 					<div class="tsd-signature tsd-kind-icon">unique<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0d950f1/src/runtime/storageNG/drivers/volatile.ts#L20">src/runtime/storageNG/drivers/volatile.ts:20</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b5bee21/src/runtime/storageNG/drivers/volatile.ts#L24">src/runtime/storageNG/drivers/volatile.ts:24</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -187,9 +203,33 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="storagekey.html">StorageKey</a>.<a href="storagekey.html#childkeyforarcinfo">childKeyForArcInfo</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0d950f1/src/runtime/storageNG/storage-key.ts#L22">src/runtime/storageNG/storage-key.ts:22</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b5bee21/src/runtime/storageNG/storage-key.ts#L34">src/runtime/storageNG/storage-key.ts:34</a></li>
 								</ul>
 							</aside>
+							<h4 class="tsd-returns-title">Returns <a href="storagekey.html" class="tsd-signature-type">StorageKey</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a name="childkeyforbackingelement" class="tsd-anchor"></a>
+					<h3>child<wbr>Key<wbr>For<wbr>Backing<wbr>Element</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">child<wbr>Key<wbr>For<wbr>Backing<wbr>Element<span class="tsd-signature-symbol">(</span>id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="storagekey.html" class="tsd-signature-type">StorageKey</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="storagekey.html">StorageKey</a>.<a href="storagekey.html#childkeyforbackingelement">childKeyForBackingElement</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b5bee21/src/runtime/storageNG/storage-key.ts#L30">src/runtime/storageNG/storage-key.ts:30</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>id: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="storagekey.html" class="tsd-signature-type">StorageKey</a></h4>
 						</li>
 					</ul>
@@ -205,7 +245,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="storagekey.html">StorageKey</a>.<a href="storagekey.html#childkeyforhandle">childKeyForHandle</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0d950f1/src/runtime/storageNG/storage-key.ts#L26">src/runtime/storageNG/storage-key.ts:26</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b5bee21/src/runtime/storageNG/storage-key.ts#L38">src/runtime/storageNG/storage-key.ts:38</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -229,7 +269,31 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="storagekey.html">StorageKey</a>.<a href="storagekey.html#childwithcomponent">childWithComponent</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0d950f1/src/runtime/storageNG/drivers/volatile.ts#L32">src/runtime/storageNG/drivers/volatile.ts:32</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b5bee21/src/runtime/storageNG/drivers/volatile.ts#L38">src/runtime/storageNG/drivers/volatile.ts:38</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>component: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="volatilestoragekey.html" class="tsd-signature-type">VolatileStorageKey</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+					<a name="subkeywithcomponent" class="tsd-anchor"></a>
+					<h3>sub<wbr>Key<wbr>With<wbr>Component</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+						<li class="tsd-signature tsd-kind-icon">sub<wbr>Key<wbr>With<wbr>Component<span class="tsd-signature-symbol">(</span>component<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="volatilestoragekey.html" class="tsd-signature-type">VolatileStorageKey</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Overrides <a href="storagekey.html">StorageKey</a>.<a href="storagekey.html#subkeywithcomponent">subKeyWithComponent</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b5bee21/src/runtime/storageNG/drivers/volatile.ts#L43">src/runtime/storageNG/drivers/volatile.ts:43</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -253,7 +317,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="storagekey.html">StorageKey</a>.<a href="storagekey.html#tostring">toString</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0d950f1/src/runtime/storageNG/drivers/volatile.ts#L28">src/runtime/storageNG/drivers/volatile.ts:28</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b5bee21/src/runtime/storageNG/drivers/volatile.ts#L34">src/runtime/storageNG/drivers/volatile.ts:34</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
@@ -270,7 +334,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/0d950f1/src/runtime/storageNG/drivers/volatile.ts#L36">src/runtime/storageNG/drivers/volatile.ts:36</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/b5bee21/src/runtime/storageNG/drivers/volatile.ts#L47">src/runtime/storageNG/drivers/volatile.ts:47</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -306,6 +370,9 @@
 							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="volatilestoragekey.html#arcid" class="tsd-kind-icon">arc<wbr>Id</a>
 							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="volatilestoragekey.html#path" class="tsd-kind-icon">path</a>
+							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 								<a href="volatilestoragekey.html#protocol" class="tsd-kind-icon">protocol</a>
 							</li>
@@ -316,10 +383,16 @@
 								<a href="volatilestoragekey.html#childkeyforarcinfo" class="tsd-kind-icon">child<wbr>Key<wbr>For<wbr>Arc<wbr>Info</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+								<a href="volatilestoragekey.html#childkeyforbackingelement" class="tsd-kind-icon">child<wbr>Key<wbr>For<wbr>Backing<wbr>Element</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 								<a href="volatilestoragekey.html#childkeyforhandle" class="tsd-kind-icon">child<wbr>Key<wbr>For<wbr>Handle</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 								<a href="volatilestoragekey.html#childwithcomponent" class="tsd-kind-icon">child<wbr>With<wbr>Component</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+								<a href="volatilestoragekey.html#subkeywithcomponent" class="tsd-kind-icon">sub<wbr>Key<wbr>With<wbr>Component</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 								<a href="volatilestoragekey.html#tostring" class="tsd-kind-icon">to<wbr>String</a>

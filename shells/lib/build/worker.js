@@ -7447,6 +7447,9 @@ class DirectStore extends _store_interface_js__WEBPACK_IMPORTED_MODULE_2__["Acti
     on(callback) {
         const id = this.nextCallbackID++;
         this.callbacks.set(id, callback);
+        if (this.version > 0) {
+            Object(_util_js__WEBPACK_IMPORTED_MODULE_3__["noAwait"])(callback({ type: _store_interface_js__WEBPACK_IMPORTED_MODULE_2__["ProxyMessageType"].ModelUpdate, model: this.localModel.getData(), id }));
+        }
         return id;
     }
     off(callback) {
@@ -8233,10 +8236,13 @@ class BackingStore {
         }
     }
     async setupStore(muxId) {
-        const store = await _direct_store_js__WEBPACK_IMPORTED_MODULE_0__["DirectStore"].construct({ ...this.options, storageKey: this.storageKey.childWithComponent(muxId) });
-        const id = store.on(msg => this.processStoreCallback(muxId, msg));
-        const record = { store, id, type: 'record' };
+        const store = await _direct_store_js__WEBPACK_IMPORTED_MODULE_0__["DirectStore"].construct({ ...this.options, storageKey: this.storageKey.childKeyForBackingElement(muxId) });
+        const record = { store, id: 0, type: 'record' };
         this.stores[muxId] = record;
+        // Calling store.on may trigger an event; this will be delivered (via processStoreCallback) upstream and may in
+        // turn trigger a request for the localModel. It's important that there's a recorded store in place for the local
+        // model to be retrieved from, even though we don't have the correct id until store.on returns.
+        record.id = store.on(msg => this.processStoreCallback(muxId, msg));
         return record;
     }
     async onProxyMessage(message, muxId) {
@@ -8716,11 +8722,17 @@ class StorageKey {
     constructor(protocol) {
         this.protocol = protocol;
     }
+    subKeyWithComponent(component) {
+        return this.childWithComponent(component);
+    }
+    childKeyForBackingElement(id) {
+        return this.childWithComponent(id);
+    }
     childKeyForArcInfo() {
-        return this.childWithComponent('arc-info');
+        return this.subKeyWithComponent('arc-info');
     }
     childKeyForHandle(id) {
-        return this.childWithComponent(`handle/${id}`);
+        return this.subKeyWithComponent(`handle/${id}`);
     }
 }
 //# sourceMappingURL=storage-key.js.map
