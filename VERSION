@@ -1,5 +1,5 @@
-commit 5b3fee6195538d34e37aa890dd73bd49e245fe87
-Author: Jason Feinstein <jwf@google.com>
-Date:   Tue Nov 12 16:22:15 2019 -0800
+commit 2fa23a37f0709622702faaedb94b63c4566709d3
+Author: raulverag <42563960+raulverag@users.noreply.github.com>
+Date:   Wed Nov 13 13:28:08 2019 +1100
 
-    licenses([notice]) all the things (#4062)
+    tools/sigh testShells and testWdioShells no longer depends on the bazel build (#4065)

@@ -381,7 +381,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       if (1 !== this.__CE_state) return C.call(this, d);var e = A.call(this, d);C.call(this, d);null !== e && a.attributeChangedCallback(this, d, e, null, null);
     });M(Element.prototype, "removeAttributeNS", function (d, e) {
       if (1 !== this.__CE_state) return F.call(this, d, e);var g = D.call(this, d, e);F.call(this, d, e);var h = D.call(this, d, e);g !== h && a.attributeChangedCallback(this, e, g, h, d);
-    });oa ? c(HTMLElement.prototype, oa) : G ? c(Element.prototype, G) : console.warn("Custom Elements: `Element#insertAdjacentElement` was not patched.");pa ? f(HTMLElement.prototype, pa) : fa ? f(Element.prototype, fa) : console.warn("Custom Elements: `Element#insertAdjacentHTML` was not patched.");Z(a, Element.prototype, { prepend: ha, append: ia });Ha(a);
+    });oa ? c(HTMLElement.prototype, oa) : G && c(Element.prototype, G);pa ? f(HTMLElement.prototype, pa) : fa && f(Element.prototype, fa);Z(a, Element.prototype, { prepend: ha, append: ia });Ha(a);
   };var T = window.customElements;function Ja() {
     var a = new S();Ea(a);Fa(a);Z(a, DocumentFragment.prototype, { prepend: da, append: ea });Ga(a);Ia(a);a = new O(a);document.__CE_registry = a;Object.defineProperty(window, "customElements", { configurable: !0, enumerable: !0, value: a });
   }T && !T.forcePolyfill && "function" == typeof T.define && "function" == typeof T.get || Ja();window.__CE_installPolyfill = Ja; /*

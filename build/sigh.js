@@ -70,7 +70,7 @@ const steps = {
     health: [health],
     bundle: runNodeScriptSteps('bundle'),
     schema2wasm: runNodeScriptSteps('schema2wasm'),
-    devServer: [peg, build, devServer],
+    devServer: [peg, build, webpack, devServer],
     flowcheck: runNodeScriptSteps('flowcheck'),
     run: [peg, build, runNodeScript],
     licenses: [build],
