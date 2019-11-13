@@ -2733,19 +2733,19 @@
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "../src/tools/schema2graph.ts": {
-        "version": "723f73c5b7b6ef19e7d0985ec23c7ede5e7d83dc1830984c7a434adbe1dc0960",
-        "signature": "2c406dffd35b01653c6cae10dfd255374c99b0dbc211fc4c45ea8db1ac06f07f"
+        "version": "0fdd2a1eede16f33a69bdc902129ac4f28d94b1e0d798ec1264a623b4495695e",
+        "signature": "400d1df86b303c5d24466425d262c1311d6557d229f8dbc22321ea443c47fddf"
       },
       "../src/tools/schema2base.ts": {
-        "version": "bf83cdb42ea82b5ed08b9ea2abec88513cbcee20afe1914eec35d1135aaba4d5",
-        "signature": "cb384929e4815b2b0d193c04e8e0ed1c0dc26b5d1f141646506a2c033f7c0134"
+        "version": "bba232e664ddbe541aced50c2231f2fb5978f3ecdfcfa153ff7689710cdecbb3",
+        "signature": "93f61d0a8c1165350388cdc077dea18c16500cf0fc82528c6381148720886e70"
       },
       "../src/tools/schema2cpp.ts": {
-        "version": "cd8c81ef2a13292ab905833ba5d8478e399f116f821986df610a0eed076c7b6e",
+        "version": "482c6d7b75c5235cf5b60d945a18dc310abc65776b9549e2877d4dd2242ecc0e",
         "signature": "83ab8b3321d362bae33fceaeeec77280d5c39ff040d6517f45f04e715a036daa"
       },
       "../src/tools/schema2kotlin.ts": {
-        "version": "67f3cb8c6b8090ea4772be78ce401af574d11d071489f40d7f52042baec5d2fd",
+        "version": "0393855e685195f9d5f3e0d8cce75554f1490690ac94b92dbda524618afaf36a",
         "signature": "5b4ab1b3ee04aa06b7ed036714edd3ff58e3134f5f506943be302ec9b2000f41"
       },
       "../src/tools/schema2wasm.ts": {
@@ -2808,20 +2808,12 @@
         "version": "ff2ee4a03e9f1c5a154f594edc7563371d7e944ab2580749f455dd13424b88a0",
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
-      "../src/tools/tests/schema2base-test.ts": {
-        "version": "2fb5e07ecbc6d754f32a1678b747e61d59e68f7e64703f9c8aac7befd009243e",
-        "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
-      },
-      "../src/tools/tests/schema2cpp-test.ts": {
-        "version": "518cd6b491b29b297e212d28f95c4b7b3ad71c16633fe5dfeeb9f658a70f4302",
-        "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
-      },
       "../src/tools/tests/schema2graph-test.ts": {
-        "version": "c7e8041f80ef046151b0b76412b8cf9df044a069026b10bc114e3325824538bd",
+        "version": "cb283c4555d6f6a604e847765a9b80c48ab5f18cacf2f5e7df421009049f592a",
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
       },
-      "../src/tools/tests/schema2kotlin-test.ts": {
-        "version": "cf33b429a191269bd2d68a2ad812883861a880c6fc640325144ce6fac80a57bf",
+      "../src/tools/tests/schema2wasm-test.ts": {
+        "version": "e5b50dae493167e88c6fb152d94d2711008de47ddf90b26a42db996bbac75d82",
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
       },
       "../src/tracelib/tests/trace-test.ts": {
@@ -8641,23 +8633,6 @@
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.2/util.d.ts"
       ],
-      "../src/tools/tests/schema2base-test.ts": [
-        "../src/platform/chai-web.d.ts",
-        "../src/runtime/manifest.ts",
-        "../src/runtime/schema.ts",
-        "../src/runtime/hot.ts",
-        "../src/tools/schema2base.ts",
-        "../src/tools/schema2graph.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/tools/tests/schema2cpp-test.ts": [
-        "../src/platform/chai-web.d.ts",
-        "../src/runtime/manifest.ts",
-        "../src/tools/schema2cpp.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
       "../src/tools/tests/schema2graph-test.ts": [
         "../src/platform/chai-web.d.ts",
         "../src/runtime/manifest.ts",
@@ -8666,9 +8641,14 @@
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.2/util.d.ts"
       ],
-      "../src/tools/tests/schema2kotlin-test.ts": [
+      "../src/tools/tests/schema2wasm-test.ts": [
         "../src/platform/chai-web.d.ts",
         "../src/runtime/manifest.ts",
+        "../src/runtime/schema.ts",
+        "../src/runtime/hot.ts",
+        "../src/tools/schema2base.ts",
+        "../src/tools/schema2graph.ts",
+        "../src/tools/schema2cpp.ts",
         "../src/tools/schema2kotlin.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.2/util.d.ts"
@@ -12684,10 +12664,8 @@
       "../src/tools/dev_server/hot-reload-server.ts",
       "../src/tools/dev_server/dev-server.ts",
       "../src/tools/tests/bundle-test.ts",
-      "../src/tools/tests/schema2base-test.ts",
-      "../src/tools/tests/schema2cpp-test.ts",
       "../src/tools/tests/schema2graph-test.ts",
-      "../src/tools/tests/schema2kotlin-test.ts",
+      "../src/tools/tests/schema2wasm-test.ts",
       "../src/tracelib/tests/trace-test.ts",
       "../src/wasm/tests/wasm-api-tests.ts",
       "../node_modules/@types/long/index.d.ts",

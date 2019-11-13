@@ -1,9 +1,20 @@
-commit cfd32ade8f21204f7792b2552b4a8c0b36761ff4
-Author: galganif <4754402+galganif@users.noreply.github.com>
-Date:   Wed Nov 13 13:49:53 2019 +1100
+commit 7f5c94c98b4467f3fa4307748cad0fa9a25ab27b
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Wed Nov 13 13:53:15 2019 +1100
 
-    update devtools-connector tests to be compatible with new storage stack (#4015)
+    schema2cpp: abandon inheritance and use a simple template ctor (#4059)
     
-    * update devtools-connector tests to be compatible with new storage stack
+    * schema2cpp: abandon inheritance and use a simple template ctor
     
-    * move storageKeyForTest to testing util
+    Using inheritance to mirror the type lattice Just Doesn't Work(TM) in C++
+    because even completely abstract classes aren't really interfaces. So,
+    if two unrelated base classes have a common field, this introduces
+    ambiguity even if they are just declaring an accessor method and don't
+    have the field actually defined. Sigh.
+    
+    So, no more inheritance. All entity classes are stand-alone, but with a
+    template constructor which allows slicable entities to be implicitly
+    converted at call sites, which is reasonable (and actually a lot easier
+    to implement).
+    
+    * Removed TODO, added comment

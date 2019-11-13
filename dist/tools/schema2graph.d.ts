@@ -16,8 +16,6 @@ export declare class SchemaNode {
     descendants: Set<SchemaNode>;
     parents: SchemaNode[];
     children: SchemaNode[];
-    sharesParent: boolean;
-    extras: string[];
     refs: Map<string, SchemaNode>;
     constructor(schema: Schema, name: string);
 }
