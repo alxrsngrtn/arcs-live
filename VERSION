@@ -1,20 +1,41 @@
-commit 7f5c94c98b4467f3fa4307748cad0fa9a25ab27b
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Wed Nov 13 13:53:15 2019 +1100
+commit e60a9dc07c27c9014e43d332f91456dc132bf263
+Author: Joshua Pratt <jp10010101010000@gmail.com>
+Date:   Wed Nov 13 14:19:42 2019 +1000
 
-    schema2cpp: abandon inheritance and use a simple template ctor (#4059)
+    Port tests to new syntax  (#4057)
     
-    * schema2cpp: abandon inheritance and use a simple template ctor
+    * Port products
     
-    Using inheritance to mirror the type lattice Just Doesn't Work(TM) in C++
-    because even completely abstract classes aren't really interfaces. So,
-    if two unrelated base classes have a common field, this introduces
-    ambiguity even if they are just declaring an accessor method and don't
-    have the field actually defined. Sigh.
+    * Port processing
     
-    So, no more inheritance. All entity classes are stand-alone, but with a
-    template constructor which allows slicable entities to be implicitly
-    converted at call sites, which is reasonable (and actually a lot easier
-    to implement).
+    * Port restaurants
     
-    * Removed TODO, added comment
+    * Port TVMaze
+    
+    * Port List
+    
+    * Port Profile
+    
+    * Port Words
+    
+    * Port misc
+    
+    * Fix for parser bug and manifest-test improvement to show all failures
+    
+    * Patches for new syntax tests
+    
+    * Port social
+    
+    * Port words
+    
+    * Port suggestions
+    
+    * Port others
+    
+    * Port Restaurants
+    
+    * Fix
+    
+    * Fix for multiplexer
+    
+    * Make annotations optional

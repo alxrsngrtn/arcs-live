@@ -590,7 +590,7 @@
         "signature": "0ead5cabe16753b534a34a79fced3b13d5ec26ae271002f86a40c01c039bbf6c"
       },
       "../src/gen/runtime/manifest-parser.ts": {
-        "version": "39d8fd490c78553c9735d4a376e3b8d9211f811ad6c1ab5972be248909446369",
+        "version": "db3f9ba4823f128d57c2bb85fee2aac6b7f4348d0ea2f41c3edbd42aecf71a90",
         "signature": "ff2c763c7895327196fd3eb358dcc775b25f27bdae513079cc287433af262427"
       },
       "../src/runtime/manifest-meta.ts": {
@@ -1358,7 +1358,7 @@
         "signature": "70ec31185ba202997da2613e9400fff44ef0abf3c22f4794f67d658fe0c909b2"
       },
       "../src/planning/tests/planner-test.ts": {
-        "version": "56736ac3df01a0e694201af14fdaa012a587fa2de049da41e8ff8c95d06a18d9",
+        "version": "c95b0306c914f36f704f0f8112519e6d181858a065f19beb74cfb5cacbb50727",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/testing/manifest-integration-test-setup.ts": {
@@ -2485,7 +2485,7 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/manifest-test.ts": {
-        "version": "468ae1b25ca3d9f36ccb9eb7f0e2d0ffac65457dfc0d947377c88a3488ec9400",
+        "version": "9d8b94d9b4628c9a82c86c5fe8b1cba94e4e6f179ea30fe5987dddf8f0022426",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/multiplexer-test.ts": {

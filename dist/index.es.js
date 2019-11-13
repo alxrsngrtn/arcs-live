@@ -8285,7 +8285,7 @@ function peg$parse(input, options) {
             type: type,
             isOptional: !!isOptional,
             dependentConnections: [],
-            name: name || maybeTags[0] || expected(`either a name or tags to be supplied ${name} ${maybeTags}`),
+            name: name || (maybeTags && maybeTags[0]) || expected(`either a name or tags to be supplied ${name} ${maybeTags}`),
             tags: maybeTags || []
         });
     };
