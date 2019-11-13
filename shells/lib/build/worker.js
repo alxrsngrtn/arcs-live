@@ -6083,10 +6083,16 @@ class PreEntityMutationHandle extends Handle {
 // parameter here?
 class CollectionHandle extends PreEntityMutationHandle {
     async get(id) {
+        if (!this.canRead) {
+            throw new Error('Handle not readable');
+        }
         const values = await this.toCRDTList();
         return this.deserialize(values.find(element => element.id === id));
     }
     async add(entity) {
+        if (!this.canWrite) {
+            throw new Error('Handle not writeable');
+        }
         this.ensureEntityHasId(entity);
         this.clock[this.key] = (this.clock[this.key] || 0) + 1;
         const op = {
@@ -6101,6 +6107,9 @@ class CollectionHandle extends PreEntityMutationHandle {
         return Promise.all(entities.map(e => this.add(e))).then(array => array.every(Boolean));
     }
     async remove(entity) {
+        if (!this.canWrite) {
+            throw new Error('Handle not writeable');
+        }
         const op = {
             type: _crdt_crdt_collection_js__WEBPACK_IMPORTED_MODULE_2__["CollectionOpTypes"].Remove,
             removed: this.serialize(entity),
@@ -6110,6 +6119,9 @@ class CollectionHandle extends PreEntityMutationHandle {
         return this.storageProxy.applyOp(op);
     }
     async clear() {
+        if (!this.canWrite) {
+            throw new Error('Handle not writeable');
+        }
         const values = await this.toCRDTList();
         for (const value of values) {
             const removeOp = {
@@ -6125,6 +6137,9 @@ class CollectionHandle extends PreEntityMutationHandle {
         return true;
     }
     async toList() {
+        if (!this.canRead) {
+            throw new Error('Handle not readable');
+        }
         const list = await this.toCRDTList();
         return list.map(entry => this.deserialize(entry));
     }
@@ -6134,6 +6149,7 @@ class CollectionHandle extends PreEntityMutationHandle {
         return [...set];
     }
     async onUpdate(op, version) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.canRead, 'onUpdate should not be called for non-readable handles');
         this.clock = version;
         // FastForward cannot be expressed in terms of ordered added/removed, so pass a full model to
         // the particle.
@@ -6153,6 +6169,7 @@ class CollectionHandle extends PreEntityMutationHandle {
         }
     }
     async onSync() {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.canRead, 'onSync should not be called for non-readable handles');
         if (this.particle) {
             await this.particle.callOnHandleSync(this /*handle*/, this.toList() /*model*/, e => this.reportUserExceptionInHost(e, this.particle, 'onHandleSync'));
         }
@@ -6163,6 +6180,9 @@ class CollectionHandle extends PreEntityMutationHandle {
  */
 class SingletonHandle extends PreEntityMutationHandle {
     async set(entity) {
+        if (!this.canWrite) {
+            throw new Error('Handle not writeable');
+        }
         this.ensureEntityHasId(entity);
         this.clock[this.key] = (this.clock[this.key] || 0) + 1;
         const op = {
@@ -6174,6 +6194,9 @@ class SingletonHandle extends PreEntityMutationHandle {
         return this.storageProxy.applyOp(op);
     }
     async clear() {
+        if (!this.canWrite) {
+            throw new Error('Handle not writeable');
+        }
         const op = {
             type: _crdt_crdt_singleton_js__WEBPACK_IMPORTED_MODULE_3__["SingletonOpTypes"].Clear,
             actor: this.key,
@@ -6182,11 +6205,15 @@ class SingletonHandle extends PreEntityMutationHandle {
         return this.storageProxy.applyOp(op);
     }
     async get() {
+        if (!this.canRead) {
+            throw new Error('Handle not readable');
+        }
         const [value, versionMap] = await this.storageProxy.getParticleView();
         this.clock = versionMap;
         return value == null ? null : this.deserialize(value);
     }
     async onUpdate(op, version) {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.canRead, 'onUpdate should not be called for non-readable handles');
         this.clock = version;
         // Pass the change up to the particle.
         const update = { originator: (this.key === op.actor) };
@@ -6199,6 +6226,7 @@ class SingletonHandle extends PreEntityMutationHandle {
         }
     }
     async onSync() {
+        Object(_platform_assert_web_js__WEBPACK_IMPORTED_MODULE_0__["assert"])(this.canRead, 'onSync should not be called for non-readable handles');
         if (this.particle) {
             await this.particle.callOnHandleSync(this /*handle*/, this.get() /*model*/, e => this.reportUserExceptionInHost(e, this.particle, 'onHandleSync'));
         }
@@ -6695,6 +6723,9 @@ class StorageProxy {
         }
     }
     registerHandle(handle) {
+        if (!handle.canRead) {
+            return this.versionCopy();
+        }
         this.handles.push(handle);
         // Attach an event listener to the backing store when the first readable handle is registered.
         if (!this.listenerAttached) {

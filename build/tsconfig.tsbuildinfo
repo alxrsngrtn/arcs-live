@@ -290,11 +290,11 @@
         "signature": "3bfce18fbfc6ac240d363acafd4cb68b858916c7c360bc67c11b8ab2e151842b"
       },
       "../src/runtime/storageNG/handle.ts": {
-        "version": "b047eae7f1ea62898a66d538ffb0cf59ad1b7bf2dc9afff9b3346629e21451ab",
+        "version": "9c9b1c2ac174da5b7a8ec06db75abdd99f80b7ce80c53dcd0c8f85bce4596c7e",
         "signature": "0a7685ee36f79939e75a258878df8749e3724b6a5947658c369339d1de7c12c7"
       },
       "../src/runtime/storageNG/storage-proxy.ts": {
-        "version": "ad1a653f4dc062ebe6035e2cf3858a7d921804f6ff67a05673d3f8c2a28f8468",
+        "version": "9172f83c39e6e36a08e355865a88130c186305d10301030b46d686bda63f4d71",
         "signature": "143deeb20b288c4c57bd2dff7e4646a7ca6711fbf72d1d0024fa4ff572eb4075"
       },
       "../src/runtime/storageNG/store-interface.ts": {
@@ -2381,7 +2381,7 @@
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "../src/runtime/storageNG/tests/handle-test.ts": {
-        "version": "822595aea86e6fc45bfab7f4fd816139c2d32320927a315e7440ddcb5c350692",
+        "version": "38ae188738c24a8c9bf3702ff99da8f0e812e903654c9127fb17b57a4d74c300",
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "../src/runtime/storageNG/tests/ramdisk-backing-store-integration-test.ts": {

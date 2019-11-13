@@ -19,9 +19,9 @@ import { ProxyMessageType } from '../store.js';
 import { MockParticle, MockStore } from '../testing/test-storage.js';
 import { Manifest } from '../../manifest.js';
 import { Entity } from '../../entity.js';
-async function getCollectionHandle(primitiveType, particle) {
+async function getCollectionHandle(primitiveType, particle, canRead = true, canWrite = true) {
     const fakeParticle = (particle || new MockParticle());
-    const handle = handleNGFor('me', new StorageProxy('id', new MockStore(), new CollectionType(primitiveType)), IdGenerator.newSession(), fakeParticle, true, true);
+    const handle = handleNGFor('me', new StorageProxy('id', new MockStore(), new CollectionType(primitiveType)), IdGenerator.newSession(), fakeParticle, canRead, canWrite);
     // Initialize the model.
     await handle.storageProxy.onMessage({
         type: ProxyMessageType.ModelUpdate,
@@ -30,9 +30,9 @@ async function getCollectionHandle(primitiveType, particle) {
     });
     return handle;
 }
-async function getSingletonHandle(primitiveType, particle) {
+async function getSingletonHandle(primitiveType, particle, canRead = true, canWrite = true) {
     const fakeParticle = (particle || new MockParticle());
-    const handle = handleNGFor('me', new StorageProxy('id', new MockStore(), new SingletonType(primitiveType)), IdGenerator.newSession(), fakeParticle, true, true);
+    const handle = handleNGFor('me', new StorageProxy('id', new MockStore(), new SingletonType(primitiveType)), IdGenerator.newSession(), fakeParticle, canRead, canWrite);
     // Initialize the model.
     await handle.storageProxy.onMessage({
         type: ProxyMessageType.ModelUpdate,
@@ -68,6 +68,47 @@ describe('CollectionHandle', async () => {
         assert.sameDeepMembers(await containedIds(handle), ['A', 'B']);
         await handle.remove(newEntity('A'));
         assert.sameDeepMembers(await containedIds(handle), ['B']);
+    });
+    it('respects canWrite', async () => {
+        const handle = await getCollectionHandle(barType, new MockParticle(), true, false);
+        try {
+            await handle.add(newEntity('A'));
+            assert.fail('handle.add should not have succeeded');
+        }
+        catch (e) {
+            assert.match(e.toString(), /Error: Handle not writeable/);
+        }
+        try {
+            await handle.clear();
+            assert.fail('handle.clear should not have succeeded');
+        }
+        catch (e) {
+            assert.match(e.toString(), /Error: Handle not writeable/);
+        }
+        try {
+            await handle.remove(newEntity('A'));
+            assert.fail('handle.remove should not have succeeded');
+        }
+        catch (e) {
+            assert.match(e.toString(), /Error: Handle not writeable/);
+        }
+    });
+    it('respects canRead', async () => {
+        const handle = await getCollectionHandle(barType, new MockParticle(), false, true);
+        try {
+            await handle.get('A');
+            assert.fail('handle.get should not have succeeded');
+        }
+        catch (e) {
+            assert.match(e.toString(), /Error: Handle not readable/);
+        }
+        try {
+            await handle.toList();
+            assert.fail('handle.toList should not have succeeded');
+        }
+        catch (e) {
+            assert.match(e.toString(), /Error: Handle not readable/);
+        }
     });
     it('can get an element by ID', async () => {
         const handle = await getCollectionHandle(barType);
@@ -227,6 +268,33 @@ describe('SingletonHandle', async () => {
         // Use an op that does not increment the clock.
         await handle.clear();
         assert.deepEqual(capturedClock, versionMap);
+    });
+    it('respects canWrite', async () => {
+        const handle = await getSingletonHandle(barType, new MockParticle(), true, false);
+        try {
+            await handle.set(newEntity('A'));
+            assert.fail('handle.set should not have succeeded');
+        }
+        catch (e) {
+            assert.match(e.toString(), /Error: Handle not writeable/);
+        }
+        try {
+            await handle.clear();
+            assert.fail('handle.clear should not have succeeded');
+        }
+        catch (e) {
+            assert.match(e.toString(), /Error: Handle not writeable/);
+        }
+    });
+    it('respects canRead', async () => {
+        const handle = await getSingletonHandle(barType, new MockParticle(), false, true);
+        try {
+            await handle.get();
+            assert.fail('handle.get should not have succeeded');
+        }
+        catch (e) {
+            assert.match(e.toString(), /Error: Handle not readable/);
+        }
     });
 });
 //# sourceMappingURL=handle-test.js.map
