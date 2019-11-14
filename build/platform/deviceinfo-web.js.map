@@ -1,0 +1,1 @@
+{"version":3,"file":"deviceinfo-web.js","sourceRoot":"","sources":["../../src/platform/deviceinfo-web.ts"],"names":[],"mappings":"AAAA;;;;;;;;GAQG;AACH,MAAM,OAAO,UAAU;IACnB,uCAAuC;IACvC,MAAM,CAAC,mBAAmB;QACtB,OAAO,SAAS,CAAC,mBAAmB,CAAC;IACzC,CAAC;IACD,0CAA0C;IAC1C,MAAM,CAAC,YAAY;QACf,OAAO,SAAS,CAAC,cAAc,CAAC,CAAC;IACrC,CAAC;CACJ"}

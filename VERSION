@@ -1,13 +1,5 @@
-commit 6973da2bbeea165923b004ac82eddfb33ace4c1a
+commit eb4980a5f5325588e5fd035763923f3c74f2c8f8
 Author: Scott J. Miles <sjmiles@google.com>
-Date:   Thu Nov 14 13:09:31 2019 -0800
+Date:   Thu Nov 14 15:14:21 2019 -0800
 
-    ensure loader-node.ts version of loadBinaryFile returns an ArrayBuffer (#4064)
-    
-    * ensure load-node.ts version of loadBinaryFile returns an ArrayBuffer (as advertised)
-    
-    * clean up
-    
-    * Testing potential fix to ensure UTF8 encoding
-    
-    * add missing await
+    strip trailing slashes from .gitignore to standardize (and to match regex in travis.yml) (#4075)
