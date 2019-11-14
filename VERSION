@@ -1,5 +1,11 @@
-commit eb4980a5f5325588e5fd035763923f3c74f2c8f8
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Thu Nov 14 15:14:21 2019 -0800
+commit 784965ec2a0ed1906e53114955586eb057ad756a
+Author: Sarah Heimlich <heimlich@google.com>
+Date:   Thu Nov 14 15:16:58 2019 -0800
 
-    strip trailing slashes from .gitignore to standardize (and to match regex in travis.yml) (#4075)
+    Updating TTT to be the new recipe syntax. (#4034)
+    
+    * Updating TTT to be the new recipe syntax.
+    
+    * Updating more schema things.
+    
+    * Removing any.
