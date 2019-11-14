@@ -18,6 +18,7 @@ import { StorageProviderFactory } from './storage/storage-provider-factory.js';
 import { ArcInspectorFactory } from './arc-inspector.js';
 import { VolatileMemory } from './storageNG/drivers/volatile.js';
 import { StorageKey } from './storageNG/storage-key.js';
+import { Recipe } from './recipe/recipe.js';
 import { Loader } from '../platform/loader.js';
 export declare type RuntimeArcOptions = Readonly<{
     pecFactories?: PecFactory[];
@@ -28,6 +29,14 @@ export declare type RuntimeArcOptions = Readonly<{
     listenerClasses?: ArcInspectorFactory[];
     inspectorFactory?: ArcInspectorFactory;
 }>;
+declare type SpawnArgs = {
+    id: string;
+    serialization?: string;
+    context: Manifest;
+    composer: SlotComposer;
+    storage: string;
+    portFactories: [];
+};
 export declare class Runtime {
     readonly context: Manifest;
     readonly pecFactory: PecFactory;
@@ -36,12 +45,19 @@ export declare class Runtime {
     private composerClass;
     private readonly ramDiskMemory;
     readonly arcById: Map<string, Arc>;
+    /**
+     * `Runtime.getRuntime()` returns the most recently constructed Runtime object
+     * (or creates one if necessary). Therefore, the most recently created Runtime
+     * object represents the default runtime environemnt.
+     * Systems can use `Runtime.getRuntime()` to access this environment instead of
+     * plumbing `runtime` arguments through numerous functions.
+     * Some static methods on this class automatically use the default environment.
+     */
     static getRuntime(): Runtime;
     static clearRuntimeForTesting(): void;
     static newForNodeTesting(context?: Manifest): Runtime;
     /**
-     * `Runtime.getRuntime()` returns the most recently constructed Runtime object (or creates one),
-     * so calling `init` establishes a default environment (capturing the return value is optional).
+     * Call `init` to establish a default Runtime environment (capturing the return value is optional).
      * Systems can use `Runtime.getRuntime()` to access this environment instead of plumbing `runtime`
      * arguments through numerous functions.
      * Some static methods on this class automatically use the default environment.
@@ -61,7 +77,6 @@ export declare class Runtime {
     getCacheService(): RuntimeCacheService;
     getRamDiskMemory(): VolatileMemory;
     destroy(): void;
-    newArc(name: string, storageKeyPrefix: string | ((arcId: ArcId) => StorageKey), options?: RuntimeArcOptions): Arc;
     /**
      * Given an arc name, return either:
      * (1) the already running arc
@@ -69,6 +84,7 @@ export declare class Runtime {
      * (3) a newly created arc
      */
     runArc(name: string, storageKeyPrefix: string, options?: RuntimeArcOptions): Arc;
+    newArc(name: string, storageKeyPrefix: string | ((arcId: ArcId) => StorageKey), options?: RuntimeArcOptions): Arc;
     stop(name: string): void;
     findArcByParticleId(particleId: string): Arc;
     registerStore(store: UnifiedStore, tags: string[]): void;
@@ -89,5 +105,14 @@ export declare class Runtime {
      */
     static loadManifest(fileName: any, loader: any, options: any): Promise<Manifest>;
     parse(content: string, options?: any): Promise<Manifest>;
+    parseFile(path: string, options?: any): Promise<Manifest>;
+    resolveRecipe(arc: Arc, recipe: Recipe): Promise<Recipe | null>;
+    normalize(recipe: Recipe): boolean;
+    static isNormalized(recipe: Recipe): boolean;
+    spawnArc({ id, serialization, context, composer, storage, portFactories }: SpawnArgs): Promise<Arc>;
     static parse(content: string, options?: any): Promise<Manifest>;
+    static parseFile(path: string, options?: any): Promise<Manifest>;
+    static resolveRecipe(arc: Arc, recipe: Recipe): Promise<Recipe | null>;
+    static spawnArc(args: SpawnArgs): Promise<Arc>;
 }
+export {};

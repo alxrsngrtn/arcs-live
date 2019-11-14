@@ -1,5 +1,15 @@
-commit cc1e1838323d674fcc0ed3cd14b3ba947042b509
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Thu Nov 14 09:15:50 2019 +1100
+commit 0e7ce9601323fa669269357de197c910303723e4
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Wed Nov 13 16:42:54 2019 -0800
 
-    Stop Entity.debugLog test from spamming the output (#4068)
+    eliminate `shells/lib/utils/js` in favor of `runtime/runtime.js` (#3980)
+    
+    * eliminate `shells/lib/utils/js` in favor of `runtime/runtime.js`
+    
+    * s/resolve/resolveRecipe
+    
+    * simplify expression
+    
+    * fix typos
+    
+    * addressing comments

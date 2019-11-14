@@ -724,14 +724,14 @@ export class WasmParticle extends Particle {
         this.container.free(p);
     }
     /**
-     * @deprecated for contexts using UiBroker (e.g Kotlin)
+     * @deprecated for systems using UiBroker (e.g Kotlin)
      */
     // TODO
     renderHostedSlot(slotName, hostedSlotId, content) {
         throw new Error('renderHostedSlot not implemented for wasm particles');
     }
     /**
-     * @deprecated for contexts using UiBroker (e.g Kotlin)
+     * @deprecated for systems using UiBroker (e.g Kotlin)
      */
     // Actually renders the slot. May be invoked due to an external request via renderSlot(),
     // or directly from the wasm particle itself (e.g. in response to a data update).

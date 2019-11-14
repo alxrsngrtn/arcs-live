@@ -98,11 +98,11 @@ export declare class WasmParticle extends Particle {
      */
     renderSlot(slotName: string, contentTypes: string[]): void;
     /**
-     * @deprecated for contexts using UiBroker (e.g Kotlin)
+     * @deprecated for systems using UiBroker (e.g Kotlin)
      */
     renderHostedSlot(slotName: string, hostedSlotId: string, content: Content): void;
     /**
-     * @deprecated for contexts using UiBroker (e.g Kotlin)
+     * @deprecated for systems using UiBroker (e.g Kotlin)
      */
     renderImpl(slotNamePtr: WasmAddress, templatePtr: WasmAddress, modelPtr: WasmAddress): void;
     serviceRequest(callPtr: WasmAddress, argsPtr: WasmAddress, tagPtr: WasmAddress): Promise<void>;

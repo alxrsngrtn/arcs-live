@@ -369,6 +369,10 @@
         "version": "9642bf0a166d824818f8066a492c874bf4b6cda6cbd653ff8b05cf111c511d52",
         "signature": "2cbb7b40f60602ed3699823aa26e2f5915221dcf6b559d77444fd2c6db36b590"
       },
+      "../src/runtime/ui-slot-composer.ts": {
+        "version": "a24250de6235f26cbac33bbe7bca9d3c8f5487c50341c80fd32fd033dd9cb47a",
+        "signature": "bb53ceb028c131a6637f7fd96570682d64f3aecdee98255f6dbe34d4886e1aaf"
+      },
       "../src/runtime/testing/fake-slot-composer.ts": {
         "version": "ec65df5484466272817ead3a152e757361caee0760f4f5f79b1789755bb084cb",
         "signature": "c8b35a7a2ace5fb01c87b3313b8f959dac49b72256142b366a83ae885b78c017"
@@ -380,54 +384,6 @@
       "../src/runtime/storageNG/drivers/volatile.ts": {
         "version": "c450c0100f2ae4b7ceb2c83ab7e08bc7cc68764d343fa6a64bdada5def154034",
         "signature": "444c673f280653af98aa26c43bb4c691a659a3714aea7c772d356e087fb48cfd"
-      },
-      "../src/platform/pec-industry-web.ts": {
-        "version": "44de7c5be9b85e1c3c2f1dfbf81266d364be7e843f334ca11a1663c89f976c30",
-        "signature": "1e6d82a4c8dae8a27518011976857afec7a5b0671ad7d64df86dbf4ce09b1a83"
-      },
-      "../src/platform/pec-industry.ts": {
-        "version": "df40631db837e51cb1ad44ee0153ed818ff7fc7701f22ae11e4d5028ff48b04f",
-        "signature": "df40631db837e51cb1ad44ee0153ed818ff7fc7701f22ae11e4d5028ff48b04f"
-      },
-      "../src/runtime/runtime.ts": {
-        "version": "613467005212bfd4599f55a9ed42c47112f28899bf99a393ca4d6527aad40642",
-        "signature": "b5356e1a631df11ebe071ad211737a91dc2765a83b36234c1557785e145f364a"
-      },
-      "../src/runtime/storage/volatile-storage.ts": {
-        "version": "9d361a5637bb2a8d1ad715c200cda2946b6b70d2eeabd8abf815b44781b0bf02",
-        "signature": "3175e32233d4f57c1b12297513605c06eb7e7a2b23558d79c829272c77bb761e"
-      },
-      "../src/runtime/synthetic-types.ts": {
-        "version": "3a7f010bb2fb2b42de43fdae4b84a506717caa8830f48eb099153352afe7d33a",
-        "signature": "6bdc15e464571d6e0f3b775c9b852bf01b99ce8d1bcdf7b6d6abf078ddd1bbc3"
-      },
-      "../src/runtime/storage/synthetic-storage.ts": {
-        "version": "61e53c22fb11c0a5f9fa11b76f63cc194c03cdcce7576b55596422724effc88c",
-        "signature": "83e3fc4d3ee14cef72c5db6b9ef76261c71021b98ffd01b8914c8ba39696fac9"
-      },
-      "../src/runtime/mutex.ts": {
-        "version": "94deca042e1f398b75d078f763212d8ff7415d8388582a7d505e5e3d6119a6e5",
-        "signature": "44ddb198b48de15a6a020fbbb66b09334c6894c1f35e77e852ced1eaabe02e6a"
-      },
-      "../src/runtime/storage/storage-provider-factory.ts": {
-        "version": "f9e80343023e5cbd992f42f51b83daafaba84d8f35fc90e60208ecb2dc23eedc",
-        "signature": "2f38a817702e90c031039dfd5f5985c632d89a062b087dea8a750a0eef8a8fd6"
-      },
-      "../src/runtime/storage-stub.ts": {
-        "version": "759cceba5acc2ddf3cd524c168e13979ea07a8188ad127ccec5d0ac60a859ee5",
-        "signature": "c24c80fb524520ae169e711b9466a030a2124aa864cce5c49670ca49a6367d81"
-      },
-      "../src/runtime/storageNG/unified-store.ts": {
-        "version": "3c979cc52222711310bd30416cea6bf7e1d7540f179ae516b593b86f0c5a5c3b",
-        "signature": "53e7c28b80a818e243a6aa6edca800c203baa0d36d550072d7e24352a97abdf8"
-      },
-      "../src/runtime/description.ts": {
-        "version": "a5f8a14cfbc4054f99dc3abdcefc760dbce1deb7999cb52dba92d74c09ec0299",
-        "signature": "aab80fb531261ecd41b77200ac760238fa2ad2ca5457e432d7ceaade6a7de796"
-      },
-      "../src/runtime/message-channel.ts": {
-        "version": "96ccc99f9cbf555589e1c452c0ed9ded7111ebad03d941f2396de18475e46bc3",
-        "signature": "59a1760607913841399b890777249e591c5db3590d375162ee2967acf946fce8"
       },
       "../src/runtime/recipe/recipe-walker.ts": {
         "version": "acf65cc681f842c918d9e828e1642b84a1de5ba14420fb1ae56d9096ac8aae98",
@@ -441,297 +397,21 @@
         "version": "f7b9dfc043b55c20aa06cd5eb32ec0ef76579c39246c67f95d6ef719149d6496",
         "signature": "6523c69bef2039fc094b0a3552b3f5447f880613af8b2e246e967a2a3c56efd5"
       },
-      "../src/runtime/services.ts": {
-        "version": "06b9d6b591774df5a43955df1a7e461b6b5c91ad40ec0efd02e424e3884ac604",
-        "signature": "a37f1b0347d4dae7a16754e444957d55c425434f5abe1347c1617e7381a9bb2a"
-      },
-      "../src/runtime/particle-execution-host.ts": {
-        "version": "85c532fe485abb7e998b2350f1b04db3d39f6658a7603d4c2df631b956fdcca5",
-        "signature": "5deb12486bf926cbebd7f7ad7913b4d5019968e90cf2e34205f9a22ab177942c"
-      },
-      "../src/runtime/slot-consumer.ts": {
-        "version": "77ce6c663b9683dfcdbec1a047772a22dfdc300b616944a2005ab1498229da3e",
-        "signature": "9383c2e65e6847bffb97bbe218880ec66c5eb80902a5aea98ac981d692cddee0"
-      },
-      "../src/runtime/slot-proxy.ts": {
-        "version": "f49325a25c827941121d1c5264faee3a8deb2112a71b1ac90178595df63b765a",
-        "signature": "f7c7b4930e1380ac36b0231df33b5bb4ea03ccdadd937e8fe4119a89349fb3de"
-      },
-      "../src/runtime/particle.ts": {
-        "version": "7a774f04340edf17474e2b1a37954b40297016251d085a67149d0e9391705122",
-        "signature": "40654d87da461953afb1ef62061c7ff33c7a8d9e304a2346613dfa8af0e3ce80"
-      },
-      "../src/runtime/handle.ts": {
-        "version": "5cd47a36db5b12fc0fe3a63a8ce819138e0e83550ea998127577fc8669520fae",
-        "signature": "40ada3368f19a6abef052b489a1b4bf823f2576e2c2b76a26d4f0c8b48345261"
-      },
-      "../src/runtime/reference.ts": {
-        "version": "33f3c67f638ad3942056e326e13c783195a04040b9dddd76bab845b09d479329",
-        "signature": "072f4c0932f4478694a5d9e2736f2ca9b5bb4a6d83dfc35e845e37551437be98"
-      },
-      "../modalities/dom/components/xen/xen-state.d.ts": {
-        "version": "f61bb0ebc59780a5d2461fc7c65d2150be526cd048fcead3167d2d4bc9db106f",
-        "signature": "f61bb0ebc59780a5d2461fc7c65d2150be526cd048fcead3167d2d4bc9db106f"
-      },
-      "../src/runtime/dom-particle-base.ts": {
-        "version": "508bce8a494aade9f631c51d293bf09b9fe1b090aea1c286895988c329690a5c",
-        "signature": "8f41c6b2257312543373d110c55c71dc9dd82effdfed2713404c992d463a2172"
-      },
-      "../src/runtime/dom-particle.ts": {
-        "version": "940add6f2e461408eca564d5c716625f368a41023ea70789273e41b1187822a4",
-        "signature": "971875d3db9c59956461f7230ceda61a42143eda3b02d1809338b7e7c824228c"
-      },
-      "../src/runtime/transformation-dom-particle.ts": {
-        "version": "53d13eda0f89e5e825ab1d28d5965b4e17c25ad57c863c8f1f50461891b6219c",
-        "signature": "e5bb464839a888b49dfe103a8656eaab869f4cbbce52431c67e15e5f804b794d"
-      },
-      "../src/runtime/multiplexer-dom-particle.ts": {
-        "version": "b3741211fc69ed15d7a9b3a9ad483049b2b7fdae2a9cd3c3619e18f224c39f5d",
-        "signature": "91eb49952d74ed32935a8e7cadd8aa7c610bdfa9bbf7f41aab4fca638a6f5e5d"
-      },
-      "../src/runtime/ui-particle-base.ts": {
-        "version": "8743552b692a931243896aa84042e034d5a7a07cf76f77dc2e8382512806a991",
-        "signature": "06ea3270703a4459cd841b92824914bff227c7bbc99ee366efe9aa322954e533"
-      },
-      "../src/runtime/ui-particle.ts": {
-        "version": "030e1d43c020aca38f9309772d88b0dd4e90d08a48e085bb4a9da82704dfd578",
-        "signature": "5d6b2254a1672ba9fe608f38bead24500dd8203d68728c24dc3bb0c64f14daea"
-      },
-      "../src/runtime/ui-transformation-particle.ts": {
-        "version": "2b4f46eec76cf6a66c30a68eb2bf150f1a5d5fd73dc8c9214dce8f8fd17c4ed5",
-        "signature": "41c13adf4011d0f681542725c89446f40e3a6015bc486d34bec8f990796e2d20"
-      },
-      "../src/runtime/ui-multiplexer-particle.ts": {
-        "version": "af5945796232276af3cd1965f5c281d82ebbb5fc9ce9f461e05b389e20047ae5",
-        "signature": "2ebd638663af28dfcc5ed5b677489f3725329e1e214f2c802b8b80d9850d81ae"
-      },
-      "../src/runtime/html.ts": {
-        "version": "286e9f9a1f73f711b88e809792101496dbe36ef9ac0065735d2a60b2c0f3106f",
-        "signature": "f6a6a5cb6af33958926701844e0c5b72b33c23bafc13eb41ad96b42693654e6d"
-      },
-      "../src/platform/loader-base.ts": {
-        "version": "ee0207d38148373c73548ff76c4c22d261ddd24d5c6c2343b15ed0049fb72c1c",
-        "signature": "d54354336a1622eb3ea17867ca5b6a86c2f627b9af9f491e5aecc1dfcf85882b"
-      },
-      "../src/platform/loader-web.ts": {
-        "version": "0fdb875dbc07efa7ec270098e74c5739662da4d27940f315ce4c4fbcae82eb85",
-        "signature": "44148303dcedb930bdcb6bf137a7a45e2b58edb36b3b5e92b57c5f18d678c9af"
-      },
-      "../src/platform/loader.ts": {
-        "version": "e0b0bd12c98be2dcf8eb632dc589bf73cebcb665117beb0f034d771ce4ee1d58",
-        "signature": "e0b0bd12c98be2dcf8eb632dc589bf73cebcb665117beb0f034d771ce4ee1d58"
-      },
-      "../src/runtime/testing/stub-loader.ts": {
-        "version": "aa9499e215965606e7ac59ad489135897dfd04215155ca6a7cd510fd0de6c1a9",
-        "signature": "4060b3ffea37e409849235b3865de4dd73ea5a75b55f516b8f4b7d5374de9912"
-      },
-      "../src/runtime/fake-pec-factory.ts": {
-        "version": "b25b304534eafa4141392ebc876fdc5de9dfc40905b4e2bba3b35f7d988939bd",
-        "signature": "83e1cf700a82b34d08bc32d26ffb4ea1176d588c1b51928651708e3055b239a6"
-      },
-      "../src/runtime/interface-info.ts": {
-        "version": "e8b27692a529b5efd23909072223e7e4112d2101a2cdc2c626daa21a2584f4d2",
-        "signature": "4e1c1ce43523008cb1c57815bc2b0ded2f99c43e05ae21ab1a7e109752a032ab"
-      },
-      "../src/runtime/arc-serializer.ts": {
-        "version": "d5851471647bf407d2807944f85fc89251c8ccad51064524e76e4e543b04658a",
-        "signature": "2d33089695309b957370d9f5da9fa76b1216da0c15c1353663acf098bf77cf32"
-      },
-      "../src/runtime/arc.ts": {
-        "version": "66b4e286abcbd83f8ef45d22b4fbd2edaa1d3c4ee8c92ca344684d78d8464156",
-        "signature": "dbba35ca1c2036123eab7d7fdab561d44931711f724f9f56775a09cd335426b6"
-      },
-      "../src/runtime/api-channel.ts": {
-        "version": "327820c5faf9f760f6e6b4dce168067d8bc46d06551c65e9004b38365362b827",
-        "signature": "bf252ed91231f958fec3a70288c21024ecfa39551fe7943c0ef2e824410069dc"
-      },
-      "../src/runtime/bimap.ts": {
-        "version": "4ea68f15eecc1ed8295ce03350a14f625818d1cf137e38686781de48dc4e97e6",
-        "signature": "f56d407931090c16c3859eab94bc71f346fa140551b583d4631e9b05291fecbc"
-      },
-      "../src/runtime/wasm.ts": {
-        "version": "f727e8561e88f8fb4913400f9a7a434588e907060e27764c452f309eee9b6c74",
-        "signature": "2bd7cd216fc7a6328b159b790f65798d1d7c048fa807f3a19efb39ac5172822b"
-      },
-      "../src/runtime/particle-execution-context.ts": {
-        "version": "2c414cc8596939e00382bba4b0b2cf6dc4e5965bd230df18f3e4ec4a457221ec",
-        "signature": "20ba46875441eda72a22f259fbd1bb0afc1392bafe76c4c2cef1ecfc782fd444"
-      },
-      "../src/runtime/schema.ts": {
-        "version": "b10b39f1ffd2d696bf23e70953af3b3a3c6ab57e9565a664da4ba7f4cb06a1f9",
-        "signature": "cf22cac7a80d0c74928d0ab6606c78828b3c301b44c19cd4c91eefd4c6ef8202"
-      },
-      "../src/runtime/entity.ts": {
-        "version": "8175a03c49957770ef5b5edae1bd332b771de5b4e52e655de46abff36b6ba143",
-        "signature": "31397ccd869e47d3b0bfd15c9fe52de6bd9938c7a4c342aac8c419b326f19739"
-      },
-      "../src/runtime/crdt/crdt-count.ts": {
-        "version": "68c6b2d1ff6a7a1ce07662eebf71cc882a87fb2a490efb72efe603081ecd74e1",
-        "signature": "50f22c6414d93bc2b5f52da8ecccca67927c7b89aabb4e86903900a576ab1356"
-      },
-      "../src/runtime/type.ts": {
-        "version": "1bf0529950807dc3ca567211540e095c8a8d08660417a70d8f195214b9dcd1ff",
-        "signature": "97524710f0fe199856fe3a48c52a0b6c6526f96b91f283fed4c95ed403d4d1c4"
-      },
-      "../src/runtime/recipe/type-checker.ts": {
-        "version": "6f6f9dc80da70896907b888ce5fd1b8fecfb1a4b6eeda87068aefbda529766b9",
-        "signature": "58948d6859224dc8a5feea595678f2f563ecb685ba0751e51d41fc08dea547a2"
-      },
-      "../src/runtime/particle-check.ts": {
-        "version": "f2cf04daeb37b61472d02086b2e17ed2f7960bdd3696099bfaf69f51212ed220",
-        "signature": "5f81ab9527a7fce014911edd1abd6e86326348360a48f3344bb9eabb33b7753e"
-      },
-      "../src/runtime/particle-spec.ts": {
-        "version": "cd9b6dcbd850bf1f1d23d0d1be1c6a63375ce8cc98764afa0c229f44a1e3d08a",
-        "signature": "6cd5823d824c394bca84379191460f5d32d65c7550fe7cf37657932cd072ef52"
-      },
-      "../src/runtime/particle-claim.ts": {
-        "version": "a93ee9f35301cacbe3a63d18349700aff89f16ec14fbd833024138660c28aa31",
-        "signature": "75bc5f22059210323a192a97ea60f029862fe72a4f9e10e3b6dc71c02539198b"
-      },
-      "../src/runtime/manifest-ast-nodes.ts": {
-        "version": "dc31957970fae11c168883eb040880a20306e01f06e51c411e54c203bd080dae",
-        "signature": "0ead5cabe16753b534a34a79fced3b13d5ec26ae271002f86a40c01c039bbf6c"
-      },
-      "../src/gen/runtime/manifest-parser.ts": {
-        "version": "db3f9ba4823f128d57c2bb85fee2aac6b7f4348d0ea2f41c3edbd42aecf71a90",
-        "signature": "ff2c763c7895327196fd3eb358dcc775b25f27bdae513079cc287433af262427"
-      },
-      "../src/runtime/manifest-meta.ts": {
-        "version": "aa05cf11fe162354319889e5414c317da85b033641d03a7a11323496a466f29f",
-        "signature": "386225870fe7ff2b410dda3c36ac04396b8a67965f6edaa5f9fff1d1796548f6"
-      },
-      "../node_modules/firebase/index.d.ts": {
-        "version": "0f2d2e5881cf24c41ff41681e911d362966a0363ef61cdacfb0856ca71fdf037",
-        "signature": "0f2d2e5881cf24c41ff41681e911d362966a0363ef61cdacfb0856ca71fdf037"
-      },
-      "../src/platform/firebase-web.d.ts": {
-        "version": "e373b8f98d6b4d4f5216530816b61d7cbd661706f2bb4ec1b371a0de08d39009",
-        "signature": "e373b8f98d6b4d4f5216530816b61d7cbd661706f2bb4ec1b371a0de08d39009"
-      },
-      "../src/runtime/storageNG/drivers/firebase.ts": {
-        "version": "330efce9f72b49c1df6b15ac4fcc1dfae3f77a738fcdf96b7178920bd376bc14",
-        "signature": "a0314b0c71feceb81e4ea800629972f50ddd67472b39df06001646f835e412ca"
-      },
-      "../src/runtime/storageNG/storage-key-parser.ts": {
-        "version": "389c5a703bcf6596752edc4e8592577750fc0dc7ad2106a05b21d221de46281f",
-        "signature": "93434cbf1767b037b12096d97ac46742bbaad38dc6aab97a40f880343a8dc256"
-      },
-      "../src/runtime/manifest.ts": {
-        "version": "4c53aac3cdc9aaaad3ec59839918e74c07dc8cece5db90be6a7b6f93c51bde32",
-        "signature": "3f8d5f8a04ca62d6ea9d154a9c4a1e5a79dd87ea022a48e34c10ff3c84121b89"
-      },
-      "../src/platform/atob-web.ts": {
-        "version": "83bd58cde323a7612560e333b3542a3ab39d1f645c1e1e22e54f4a66622b9e7c",
-        "signature": "709e6aa04c295412d97701156e2091f3d6ac36e8fa8fc167b028aa03ee14a592"
-      },
-      "../src/platform/btoa-web.ts": {
-        "version": "3e70d11868bf281e94de5a9c494efe365282253218443524be3d7db216a5952d",
-        "signature": "083f28c7a4149cbfb4a4c8103ca0de7d50efaf8592e86eb20d6b895cbbbf8fb7"
-      },
-      "../src/runtime/storage/firebase/firebase-storage.ts": {
-        "version": "c31f2330462398e0908f6fd5ecec6c8cf01fc521f2fd2894ebbb660dd9a4c281",
-        "signature": "84fe193426a432c3e1ada9e860d975c8780a84748cc8ffd367e47ffd33a01e58"
-      },
-      "../src/runtime/storage/firebase/firebase-provider.ts": {
-        "version": "615074101793268ee4f87c23e6a4cc6bcf8ef2164804a4cf639bee0f510e0d6a",
-        "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
-      },
-      "../src/cli/spotify-importer.ts": {
-        "version": "52eb4756112bed6001e0c20423599830d4b2a9028003a4e80fa52895c40ea3c4",
-        "signature": "74b0fe35f5cadce1dcc19d5e93f21b31c387808566250dc8766480b9a320943d"
-      },
-      "../src/common/time/timeunit.ts": {
-        "version": "c222e33337caf591e79e1d24f608b0eb504a018d38d682d08862388c0b452f7d",
-        "signature": "d495f86afe6209c8b690b83584a75d2ee018a44a172969b909b048f31a8ec3f3"
-      },
-      "../src/common/time/instant.ts": {
-        "version": "cf28d0f48e52f2898184c7b7ef5ce8f1a4715c82de6b7fa5c3c2c1e033ddc8d7",
-        "signature": "ac8ad61b8f1a46a5487f60dc06d41c4bbe11ad7ceddbb6501f09ad7f179b19d3"
-      },
-      "../node_modules/@types/chai/index.d.ts": {
-        "version": "18b15124f823de4d821e310ad2f9ce45b89ae065c0ada7c95ed5d04e462d3d03",
-        "signature": "18b15124f823de4d821e310ad2f9ce45b89ae065c0ada7c95ed5d04e462d3d03"
-      },
-      "../src/platform/chai-web.d.ts": {
-        "version": "10915c17c8b568deb4dfc74b9df1b02882cb4bba0df0bef2fdca2b86ebc3b41d",
-        "signature": "10915c17c8b568deb4dfc74b9df1b02882cb4bba0df0bef2fdca2b86ebc3b41d"
-      },
-      "../src/common/time/tests/instant-tests.ts": {
-        "version": "730fe8684ef0916276758c8a3ed815fe319d6897b10e4d5b6ebc7431777b15f3",
-        "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
-      },
-      "../src/dataflow/analysis/deep-set.ts": {
-        "version": "23dd4acda310d6fa20d9085f9516945ba1ad8956e0ed25afcc12517008bcb1a8",
-        "signature": "a0d21f4f721ea2073868f27dc833906ce0ee79cc9a9ae7bfc4bef025c182fab1"
-      },
-      "../src/dataflow/analysis/ordered-set.ts": {
-        "version": "30af4be0f079563d9bfb0250aa08ceafc29aa12435b8f83dba60380b3812cb09",
-        "signature": "b86f23d23dc9af65eb5bff27e5d31e9187b97e6c2d595981a3c76ad50aa89cf1"
-      },
-      "../src/dataflow/analysis/graph-internals.ts": {
-        "version": "c0a0cde190761f62209a7abb8c4db787f6ce43518e0db89f70d83efbfff2c831",
-        "signature": "37f1e53eb225afaf5c37355b36f446e96131b4379d3dd1352f142c45574d7b2b"
-      },
-      "../src/dataflow/analysis/particle-node.ts": {
-        "version": "b81e84ccaa2008fc58ca4b77d630b66bd8ba2b3b206e1331a38ea6aa6a6b1b76",
-        "signature": "2075b73ee3851fba2cbea0767cb90d51279a8472e7134b60ddb8cb4568efa68b"
-      },
-      "../src/dataflow/analysis/handle-node.ts": {
-        "version": "58d97d8bf85a95586a9ce48349e65d5be455c1299449f65bd78c2185080145a8",
-        "signature": "40f74698ab2e8e69bc41034dce1b702caa4b6d465d4df7d3181609092b33ad9a"
-      },
-      "../src/dataflow/analysis/slot-node.ts": {
-        "version": "4b2f3d2585541ee69f2b5349d53d4356d87158f041d7abe58d24e84b33345a09",
-        "signature": "8e1f7966f39e3ed1ce6a00255ec54f176c7359f1cf0c1e4e11771e847776b687"
-      },
-      "../src/dataflow/analysis/flow-graph.ts": {
-        "version": "eefa21782bb91654ea5c2bb0e6b4734fec92e123eeea6c54521049d2e39b1273",
-        "signature": "e761d4b99dcf0322227dee4f643da6a181fe5ba789207d82a4b2a5b90041575b"
-      },
-      "../src/dataflow/analysis/analysis.ts": {
-        "version": "520ccd69f456aef7ee38f8c9d9345b3b1caf39a0535fe6a4723a27bd081a06f9",
-        "signature": "8e4f5167292f991945fa7d89db2d132aec1bf214927e8bd32966d37f986161e2"
-      },
-      "../src/dataflow/analysis/testing/flow-graph-testing.ts": {
-        "version": "78453bb89038c3c2c4627721f99731d13175be68d73fd019f57cfea5b69944e3",
-        "signature": "8f56eed4f4ddb93e7aa4bab322a1019e15622cb386aebf6e874bdd9e63c01745"
-      },
-      "../src/runtime/testing/test-util.ts": {
-        "version": "ebb2fa6249512c48982049e9d565a7a79fca355af941d02381c3ee2197fca1e2",
-        "signature": "aa657cc3c9324f71d7c84ac68f4e20b1eedea2e1e8b93efd81051208cf69c5f6"
-      },
-      "../src/dataflow/analysis/tests/analysis-test.ts": {
-        "version": "040b3e4a604a05a94b445251bea9854d8583fee11ccd723a6819a23339c0ba28",
-        "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
-      },
-      "../src/dataflow/analysis/tests/deep-set-test.ts": {
-        "version": "934c4a0ca04efc885906aae2ff1f8da5e3704653a7cf5304300e5bddd3c20e2d",
-        "signature": "43a5176681925d9f51b139647154e4a52c2eb1b1a64bb428595000952bcbc7f1"
-      },
-      "../src/runtime/testing/preconditions.ts": {
-        "version": "7e1d86c060f9e4b175b1f90c5f45b5a014cf79eaa8570ef3de16be4c5a44e537",
-        "signature": "535087ae214f316cbb0a3a17fb44a767c4789b7b69c4bd2c8d37fa8d5845a81f"
-      },
-      "../src/dataflow/analysis/tests/flow-graph-test.ts": {
-        "version": "6acce6ed0d8c5d68092654631b0d6825bb36780270281b1efb2ec7957f99d49f",
-        "signature": "43a5176681925d9f51b139647154e4a52c2eb1b1a64bb428595000952bcbc7f1"
-      },
-      "../src/dataflow/analysis/tests/graph-internals-test.ts": {
-        "version": "48cc70d9cccf1e79a2fda9ff500061e3c5e76644bbf52d7e264321bc7aaa0bbd",
-        "signature": "43a5176681925d9f51b139647154e4a52c2eb1b1a64bb428595000952bcbc7f1"
-      },
-      "../src/dataflow/analysis/tests/ordered-set-test.ts": {
-        "version": "97c3fb39d96cc7973aae7307baffe28385514ec6ce26aec85064bb97d85ba00f",
-        "signature": "43a5176681925d9f51b139647154e4a52c2eb1b1a64bb428595000952bcbc7f1"
-      },
-      "../src/dataflow/cli/flowcheck.ts": {
-        "version": "159656a09d16952adc4389b305a33d1f792497555b3b6153af2354d42a9bb563",
-        "signature": "43a5176681925d9f51b139647154e4a52c2eb1b1a64bb428595000952bcbc7f1"
+      "../src/platform/pec-industry-web.ts": {
+        "version": "44de7c5be9b85e1c3c2f1dfbf81266d364be7e843f334ca11a1663c89f976c30",
+        "signature": "1e6d82a4c8dae8a27518011976857afec7a5b0671ad7d64df86dbf4ce09b1a83"
+      },
+      "../src/platform/pec-industry.ts": {
+        "version": "df40631db837e51cb1ad44ee0153ed818ff7fc7701f22ae11e4d5028ff48b04f",
+        "signature": "df40631db837e51cb1ad44ee0153ed818ff7fc7701f22ae11e4d5028ff48b04f"
       },
       "../src/devtools-connector/abstract-devtools-channel.ts": {
         "version": "d71b6f49f51a89820bf5d1b589464a7da8a564f2af29c7985ad9c17ec956bb0a",
         "signature": "c031ca1b9ae58b3b9c445cd37d23db2df9e3f99ec2947818f80f8a7b3ea43c5d"
+      },
+      "../src/devtools-connector/arc-stores-fetcher.ts": {
+        "version": "ba5c06c12465002b21f6006b698fc2b1b3040f977400efffb9f2a96b1a818e46",
+        "signature": "22d8f47cd94df7ae078bcf0732beb124c1c24d3ddc5e7800c2b480a905aeb717"
       },
       "../src/platform/date-web.ts": {
         "version": "f0b9749dcbfa74d6bcaa81bd3145b7d86f3029b698f680650f8b61741317d6af",
@@ -877,13 +557,49 @@
         "version": "512a2a68c38d05dc84f4e73da6a3c6aa427eb426744faf6d1f4d093860ee5641",
         "signature": "2ae8da58b68c98f0a4a740cc1fa5cc81e566d02b1e6eb4bdbf175e46ed738b06"
       },
+      "../src/runtime/particle-check.ts": {
+        "version": "f2cf04daeb37b61472d02086b2e17ed2f7960bdd3696099bfaf69f51212ed220",
+        "signature": "5f81ab9527a7fce014911edd1abd6e86326348360a48f3344bb9eabb33b7753e"
+      },
+      "../src/dataflow/analysis/deep-set.ts": {
+        "version": "23dd4acda310d6fa20d9085f9516945ba1ad8956e0ed25afcc12517008bcb1a8",
+        "signature": "a0d21f4f721ea2073868f27dc833906ce0ee79cc9a9ae7bfc4bef025c182fab1"
+      },
+      "../src/dataflow/analysis/ordered-set.ts": {
+        "version": "30af4be0f079563d9bfb0250aa08ceafc29aa12435b8f83dba60380b3812cb09",
+        "signature": "b86f23d23dc9af65eb5bff27e5d31e9187b97e6c2d595981a3c76ad50aa89cf1"
+      },
+      "../src/dataflow/analysis/graph-internals.ts": {
+        "version": "c0a0cde190761f62209a7abb8c4db787f6ce43518e0db89f70d83efbfff2c831",
+        "signature": "37f1e53eb225afaf5c37355b36f446e96131b4379d3dd1352f142c45574d7b2b"
+      },
+      "../src/dataflow/analysis/particle-node.ts": {
+        "version": "b81e84ccaa2008fc58ca4b77d630b66bd8ba2b3b206e1331a38ea6aa6a6b1b76",
+        "signature": "2075b73ee3851fba2cbea0767cb90d51279a8472e7134b60ddb8cb4568efa68b"
+      },
+      "../src/dataflow/analysis/handle-node.ts": {
+        "version": "58d97d8bf85a95586a9ce48349e65d5be455c1299449f65bd78c2185080145a8",
+        "signature": "40f74698ab2e8e69bc41034dce1b702caa4b6d465d4df7d3181609092b33ad9a"
+      },
+      "../src/runtime/interface-info.ts": {
+        "version": "e8b27692a529b5efd23909072223e7e4112d2101a2cdc2c626daa21a2584f4d2",
+        "signature": "4e1c1ce43523008cb1c57815bc2b0ded2f99c43e05ae21ab1a7e109752a032ab"
+      },
+      "../src/dataflow/analysis/slot-node.ts": {
+        "version": "4b2f3d2585541ee69f2b5349d53d4356d87158f041d7abe58d24e84b33345a09",
+        "signature": "8e1f7966f39e3ed1ce6a00255ec54f176c7359f1cf0c1e4e11771e847776b687"
+      },
+      "../src/dataflow/analysis/flow-graph.ts": {
+        "version": "eefa21782bb91654ea5c2bb0e6b4734fec92e123eeea6c54521049d2e39b1273",
+        "signature": "e761d4b99dcf0322227dee4f643da6a181fe5ba789207d82a4b2a5b90041575b"
+      },
+      "../src/dataflow/analysis/analysis.ts": {
+        "version": "520ccd69f456aef7ee38f8c9d9345b3b1caf39a0535fe6a4723a27bd081a06f9",
+        "signature": "8e4f5167292f991945fa7d89db2d132aec1bf214927e8bd32966d37f986161e2"
+      },
       "../src/devtools-connector/arc-planner-invoker.ts": {
         "version": "f8c9ca6e02a41f6a593cdd34010a55a3b7ad1917cbcee6f152b22ac0962b66b8",
         "signature": "10fcbb9da4af9b476cc305777ef041fc1843e23c703fbc0a457d9455e5a55563"
-      },
-      "../src/devtools-connector/arc-stores-fetcher.ts": {
-        "version": "ba5c06c12465002b21f6006b698fc2b1b3040f977400efffb9f2a96b1a818e46",
-        "signature": "22d8f47cd94df7ae078bcf0732beb124c1c24d3ddc5e7800c2b480a905aeb717"
       },
       "../src/devtools-connector/testing/devtools-channel-stub.ts": {
         "version": "488583ee4a7aa3155a81d73fb1798a0f04e2e70834d2126580364435a6503e4a",
@@ -904,6 +620,294 @@
       "../src/devtools-connector/devtools-arc-inspector.ts": {
         "version": "bc6ca554c12bb50adbc7a857fda39751eadeba92024c482df29e5d68368e59ab",
         "signature": "914efdd9819f19afa229ed6da2f106eba0d791e2a1f9f4dad415d477e7eeec63"
+      },
+      "../src/runtime/runtime.ts": {
+        "version": "6351c5fc037e1a87c80ea5b0a4e16d9f17ec73a9b052009415838d74d63d2636",
+        "signature": "ce08b4a1bc4941fa914477d70fad30b746b869267ffb4a4a2cc5b3517a71e163"
+      },
+      "../src/runtime/storage/volatile-storage.ts": {
+        "version": "9d361a5637bb2a8d1ad715c200cda2946b6b70d2eeabd8abf815b44781b0bf02",
+        "signature": "3175e32233d4f57c1b12297513605c06eb7e7a2b23558d79c829272c77bb761e"
+      },
+      "../src/runtime/synthetic-types.ts": {
+        "version": "3a7f010bb2fb2b42de43fdae4b84a506717caa8830f48eb099153352afe7d33a",
+        "signature": "6bdc15e464571d6e0f3b775c9b852bf01b99ce8d1bcdf7b6d6abf078ddd1bbc3"
+      },
+      "../src/runtime/storage/synthetic-storage.ts": {
+        "version": "61e53c22fb11c0a5f9fa11b76f63cc194c03cdcce7576b55596422724effc88c",
+        "signature": "83e3fc4d3ee14cef72c5db6b9ef76261c71021b98ffd01b8914c8ba39696fac9"
+      },
+      "../src/runtime/mutex.ts": {
+        "version": "94deca042e1f398b75d078f763212d8ff7415d8388582a7d505e5e3d6119a6e5",
+        "signature": "44ddb198b48de15a6a020fbbb66b09334c6894c1f35e77e852ced1eaabe02e6a"
+      },
+      "../src/runtime/storage/storage-provider-factory.ts": {
+        "version": "f9e80343023e5cbd992f42f51b83daafaba84d8f35fc90e60208ecb2dc23eedc",
+        "signature": "2f38a817702e90c031039dfd5f5985c632d89a062b087dea8a750a0eef8a8fd6"
+      },
+      "../src/runtime/storage-stub.ts": {
+        "version": "759cceba5acc2ddf3cd524c168e13979ea07a8188ad127ccec5d0ac60a859ee5",
+        "signature": "c24c80fb524520ae169e711b9466a030a2124aa864cce5c49670ca49a6367d81"
+      },
+      "../src/runtime/storageNG/unified-store.ts": {
+        "version": "3c979cc52222711310bd30416cea6bf7e1d7540f179ae516b593b86f0c5a5c3b",
+        "signature": "53e7c28b80a818e243a6aa6edca800c203baa0d36d550072d7e24352a97abdf8"
+      },
+      "../src/runtime/description.ts": {
+        "version": "a5f8a14cfbc4054f99dc3abdcefc760dbce1deb7999cb52dba92d74c09ec0299",
+        "signature": "aab80fb531261ecd41b77200ac760238fa2ad2ca5457e432d7ceaade6a7de796"
+      },
+      "../src/runtime/message-channel.ts": {
+        "version": "96ccc99f9cbf555589e1c452c0ed9ded7111ebad03d941f2396de18475e46bc3",
+        "signature": "59a1760607913841399b890777249e591c5db3590d375162ee2967acf946fce8"
+      },
+      "../src/runtime/services.ts": {
+        "version": "06b9d6b591774df5a43955df1a7e461b6b5c91ad40ec0efd02e424e3884ac604",
+        "signature": "a37f1b0347d4dae7a16754e444957d55c425434f5abe1347c1617e7381a9bb2a"
+      },
+      "../src/runtime/particle-execution-host.ts": {
+        "version": "85c532fe485abb7e998b2350f1b04db3d39f6658a7603d4c2df631b956fdcca5",
+        "signature": "5deb12486bf926cbebd7f7ad7913b4d5019968e90cf2e34205f9a22ab177942c"
+      },
+      "../src/runtime/slot-consumer.ts": {
+        "version": "77ce6c663b9683dfcdbec1a047772a22dfdc300b616944a2005ab1498229da3e",
+        "signature": "9383c2e65e6847bffb97bbe218880ec66c5eb80902a5aea98ac981d692cddee0"
+      },
+      "../src/runtime/slot-proxy.ts": {
+        "version": "f49325a25c827941121d1c5264faee3a8deb2112a71b1ac90178595df63b765a",
+        "signature": "f7c7b4930e1380ac36b0231df33b5bb4ea03ccdadd937e8fe4119a89349fb3de"
+      },
+      "../src/runtime/particle.ts": {
+        "version": "7a774f04340edf17474e2b1a37954b40297016251d085a67149d0e9391705122",
+        "signature": "40654d87da461953afb1ef62061c7ff33c7a8d9e304a2346613dfa8af0e3ce80"
+      },
+      "../src/runtime/handle.ts": {
+        "version": "5cd47a36db5b12fc0fe3a63a8ce819138e0e83550ea998127577fc8669520fae",
+        "signature": "40ada3368f19a6abef052b489a1b4bf823f2576e2c2b76a26d4f0c8b48345261"
+      },
+      "../src/runtime/reference.ts": {
+        "version": "33f3c67f638ad3942056e326e13c783195a04040b9dddd76bab845b09d479329",
+        "signature": "072f4c0932f4478694a5d9e2736f2ca9b5bb4a6d83dfc35e845e37551437be98"
+      },
+      "../modalities/dom/components/xen/xen-state.d.ts": {
+        "version": "f61bb0ebc59780a5d2461fc7c65d2150be526cd048fcead3167d2d4bc9db106f",
+        "signature": "f61bb0ebc59780a5d2461fc7c65d2150be526cd048fcead3167d2d4bc9db106f"
+      },
+      "../src/runtime/dom-particle-base.ts": {
+        "version": "508bce8a494aade9f631c51d293bf09b9fe1b090aea1c286895988c329690a5c",
+        "signature": "8f41c6b2257312543373d110c55c71dc9dd82effdfed2713404c992d463a2172"
+      },
+      "../src/runtime/dom-particle.ts": {
+        "version": "940add6f2e461408eca564d5c716625f368a41023ea70789273e41b1187822a4",
+        "signature": "971875d3db9c59956461f7230ceda61a42143eda3b02d1809338b7e7c824228c"
+      },
+      "../src/runtime/transformation-dom-particle.ts": {
+        "version": "53d13eda0f89e5e825ab1d28d5965b4e17c25ad57c863c8f1f50461891b6219c",
+        "signature": "e5bb464839a888b49dfe103a8656eaab869f4cbbce52431c67e15e5f804b794d"
+      },
+      "../src/runtime/multiplexer-dom-particle.ts": {
+        "version": "b3741211fc69ed15d7a9b3a9ad483049b2b7fdae2a9cd3c3619e18f224c39f5d",
+        "signature": "91eb49952d74ed32935a8e7cadd8aa7c610bdfa9bbf7f41aab4fca638a6f5e5d"
+      },
+      "../src/runtime/ui-particle-base.ts": {
+        "version": "8743552b692a931243896aa84042e034d5a7a07cf76f77dc2e8382512806a991",
+        "signature": "06ea3270703a4459cd841b92824914bff227c7bbc99ee366efe9aa322954e533"
+      },
+      "../src/runtime/ui-particle.ts": {
+        "version": "030e1d43c020aca38f9309772d88b0dd4e90d08a48e085bb4a9da82704dfd578",
+        "signature": "5d6b2254a1672ba9fe608f38bead24500dd8203d68728c24dc3bb0c64f14daea"
+      },
+      "../src/runtime/ui-transformation-particle.ts": {
+        "version": "2b4f46eec76cf6a66c30a68eb2bf150f1a5d5fd73dc8c9214dce8f8fd17c4ed5",
+        "signature": "41c13adf4011d0f681542725c89446f40e3a6015bc486d34bec8f990796e2d20"
+      },
+      "../src/runtime/ui-multiplexer-particle.ts": {
+        "version": "af5945796232276af3cd1965f5c281d82ebbb5fc9ce9f461e05b389e20047ae5",
+        "signature": "2ebd638663af28dfcc5ed5b677489f3725329e1e214f2c802b8b80d9850d81ae"
+      },
+      "../src/runtime/html.ts": {
+        "version": "286e9f9a1f73f711b88e809792101496dbe36ef9ac0065735d2a60b2c0f3106f",
+        "signature": "f6a6a5cb6af33958926701844e0c5b72b33c23bafc13eb41ad96b42693654e6d"
+      },
+      "../src/platform/loader-base.ts": {
+        "version": "ee0207d38148373c73548ff76c4c22d261ddd24d5c6c2343b15ed0049fb72c1c",
+        "signature": "d54354336a1622eb3ea17867ca5b6a86c2f627b9af9f491e5aecc1dfcf85882b"
+      },
+      "../src/platform/loader-web.ts": {
+        "version": "0fdb875dbc07efa7ec270098e74c5739662da4d27940f315ce4c4fbcae82eb85",
+        "signature": "44148303dcedb930bdcb6bf137a7a45e2b58edb36b3b5e92b57c5f18d678c9af"
+      },
+      "../src/platform/loader.ts": {
+        "version": "e0b0bd12c98be2dcf8eb632dc589bf73cebcb665117beb0f034d771ce4ee1d58",
+        "signature": "e0b0bd12c98be2dcf8eb632dc589bf73cebcb665117beb0f034d771ce4ee1d58"
+      },
+      "../src/runtime/testing/stub-loader.ts": {
+        "version": "aa9499e215965606e7ac59ad489135897dfd04215155ca6a7cd510fd0de6c1a9",
+        "signature": "4060b3ffea37e409849235b3865de4dd73ea5a75b55f516b8f4b7d5374de9912"
+      },
+      "../src/runtime/fake-pec-factory.ts": {
+        "version": "b25b304534eafa4141392ebc876fdc5de9dfc40905b4e2bba3b35f7d988939bd",
+        "signature": "83e1cf700a82b34d08bc32d26ffb4ea1176d588c1b51928651708e3055b239a6"
+      },
+      "../src/runtime/arc-serializer.ts": {
+        "version": "d5851471647bf407d2807944f85fc89251c8ccad51064524e76e4e543b04658a",
+        "signature": "2d33089695309b957370d9f5da9fa76b1216da0c15c1353663acf098bf77cf32"
+      },
+      "../src/runtime/arc.ts": {
+        "version": "66b4e286abcbd83f8ef45d22b4fbd2edaa1d3c4ee8c92ca344684d78d8464156",
+        "signature": "dbba35ca1c2036123eab7d7fdab561d44931711f724f9f56775a09cd335426b6"
+      },
+      "../src/runtime/api-channel.ts": {
+        "version": "327820c5faf9f760f6e6b4dce168067d8bc46d06551c65e9004b38365362b827",
+        "signature": "bf252ed91231f958fec3a70288c21024ecfa39551fe7943c0ef2e824410069dc"
+      },
+      "../src/runtime/bimap.ts": {
+        "version": "4ea68f15eecc1ed8295ce03350a14f625818d1cf137e38686781de48dc4e97e6",
+        "signature": "f56d407931090c16c3859eab94bc71f346fa140551b583d4631e9b05291fecbc"
+      },
+      "../src/runtime/wasm.ts": {
+        "version": "7334e084368f2f51c36b66ec7af0bfcee2e79ecc218f82535d384f714c5eb0fb",
+        "signature": "bb728cb0cdf289d7424ea6b71f018b9f4a69402970b3d9f0038b3aca95a87bed"
+      },
+      "../src/runtime/particle-execution-context.ts": {
+        "version": "2c414cc8596939e00382bba4b0b2cf6dc4e5965bd230df18f3e4ec4a457221ec",
+        "signature": "20ba46875441eda72a22f259fbd1bb0afc1392bafe76c4c2cef1ecfc782fd444"
+      },
+      "../src/runtime/schema.ts": {
+        "version": "b10b39f1ffd2d696bf23e70953af3b3a3c6ab57e9565a664da4ba7f4cb06a1f9",
+        "signature": "cf22cac7a80d0c74928d0ab6606c78828b3c301b44c19cd4c91eefd4c6ef8202"
+      },
+      "../src/runtime/entity.ts": {
+        "version": "8175a03c49957770ef5b5edae1bd332b771de5b4e52e655de46abff36b6ba143",
+        "signature": "31397ccd869e47d3b0bfd15c9fe52de6bd9938c7a4c342aac8c419b326f19739"
+      },
+      "../src/runtime/crdt/crdt-count.ts": {
+        "version": "68c6b2d1ff6a7a1ce07662eebf71cc882a87fb2a490efb72efe603081ecd74e1",
+        "signature": "50f22c6414d93bc2b5f52da8ecccca67927c7b89aabb4e86903900a576ab1356"
+      },
+      "../src/runtime/type.ts": {
+        "version": "1bf0529950807dc3ca567211540e095c8a8d08660417a70d8f195214b9dcd1ff",
+        "signature": "97524710f0fe199856fe3a48c52a0b6c6526f96b91f283fed4c95ed403d4d1c4"
+      },
+      "../src/runtime/recipe/type-checker.ts": {
+        "version": "6f6f9dc80da70896907b888ce5fd1b8fecfb1a4b6eeda87068aefbda529766b9",
+        "signature": "58948d6859224dc8a5feea595678f2f563ecb685ba0751e51d41fc08dea547a2"
+      },
+      "../src/runtime/particle-spec.ts": {
+        "version": "cd9b6dcbd850bf1f1d23d0d1be1c6a63375ce8cc98764afa0c229f44a1e3d08a",
+        "signature": "6cd5823d824c394bca84379191460f5d32d65c7550fe7cf37657932cd072ef52"
+      },
+      "../src/runtime/particle-claim.ts": {
+        "version": "a93ee9f35301cacbe3a63d18349700aff89f16ec14fbd833024138660c28aa31",
+        "signature": "75bc5f22059210323a192a97ea60f029862fe72a4f9e10e3b6dc71c02539198b"
+      },
+      "../src/runtime/manifest-ast-nodes.ts": {
+        "version": "dc31957970fae11c168883eb040880a20306e01f06e51c411e54c203bd080dae",
+        "signature": "0ead5cabe16753b534a34a79fced3b13d5ec26ae271002f86a40c01c039bbf6c"
+      },
+      "../src/gen/runtime/manifest-parser.ts": {
+        "version": "db3f9ba4823f128d57c2bb85fee2aac6b7f4348d0ea2f41c3edbd42aecf71a90",
+        "signature": "ff2c763c7895327196fd3eb358dcc775b25f27bdae513079cc287433af262427"
+      },
+      "../src/runtime/manifest-meta.ts": {
+        "version": "aa05cf11fe162354319889e5414c317da85b033641d03a7a11323496a466f29f",
+        "signature": "386225870fe7ff2b410dda3c36ac04396b8a67965f6edaa5f9fff1d1796548f6"
+      },
+      "../node_modules/firebase/index.d.ts": {
+        "version": "0f2d2e5881cf24c41ff41681e911d362966a0363ef61cdacfb0856ca71fdf037",
+        "signature": "0f2d2e5881cf24c41ff41681e911d362966a0363ef61cdacfb0856ca71fdf037"
+      },
+      "../src/platform/firebase-web.d.ts": {
+        "version": "e373b8f98d6b4d4f5216530816b61d7cbd661706f2bb4ec1b371a0de08d39009",
+        "signature": "e373b8f98d6b4d4f5216530816b61d7cbd661706f2bb4ec1b371a0de08d39009"
+      },
+      "../src/runtime/storageNG/drivers/firebase.ts": {
+        "version": "330efce9f72b49c1df6b15ac4fcc1dfae3f77a738fcdf96b7178920bd376bc14",
+        "signature": "a0314b0c71feceb81e4ea800629972f50ddd67472b39df06001646f835e412ca"
+      },
+      "../src/runtime/storageNG/storage-key-parser.ts": {
+        "version": "389c5a703bcf6596752edc4e8592577750fc0dc7ad2106a05b21d221de46281f",
+        "signature": "93434cbf1767b037b12096d97ac46742bbaad38dc6aab97a40f880343a8dc256"
+      },
+      "../src/runtime/manifest.ts": {
+        "version": "4c53aac3cdc9aaaad3ec59839918e74c07dc8cece5db90be6a7b6f93c51bde32",
+        "signature": "3f8d5f8a04ca62d6ea9d154a9c4a1e5a79dd87ea022a48e34c10ff3c84121b89"
+      },
+      "../src/platform/atob-web.ts": {
+        "version": "83bd58cde323a7612560e333b3542a3ab39d1f645c1e1e22e54f4a66622b9e7c",
+        "signature": "709e6aa04c295412d97701156e2091f3d6ac36e8fa8fc167b028aa03ee14a592"
+      },
+      "../src/platform/btoa-web.ts": {
+        "version": "3e70d11868bf281e94de5a9c494efe365282253218443524be3d7db216a5952d",
+        "signature": "083f28c7a4149cbfb4a4c8103ca0de7d50efaf8592e86eb20d6b895cbbbf8fb7"
+      },
+      "../src/runtime/storage/firebase/firebase-storage.ts": {
+        "version": "c31f2330462398e0908f6fd5ecec6c8cf01fc521f2fd2894ebbb660dd9a4c281",
+        "signature": "84fe193426a432c3e1ada9e860d975c8780a84748cc8ffd367e47ffd33a01e58"
+      },
+      "../src/runtime/storage/firebase/firebase-provider.ts": {
+        "version": "615074101793268ee4f87c23e6a4cc6bcf8ef2164804a4cf639bee0f510e0d6a",
+        "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
+      },
+      "../src/cli/spotify-importer.ts": {
+        "version": "52eb4756112bed6001e0c20423599830d4b2a9028003a4e80fa52895c40ea3c4",
+        "signature": "74b0fe35f5cadce1dcc19d5e93f21b31c387808566250dc8766480b9a320943d"
+      },
+      "../src/common/time/timeunit.ts": {
+        "version": "c222e33337caf591e79e1d24f608b0eb504a018d38d682d08862388c0b452f7d",
+        "signature": "d495f86afe6209c8b690b83584a75d2ee018a44a172969b909b048f31a8ec3f3"
+      },
+      "../src/common/time/instant.ts": {
+        "version": "cf28d0f48e52f2898184c7b7ef5ce8f1a4715c82de6b7fa5c3c2c1e033ddc8d7",
+        "signature": "ac8ad61b8f1a46a5487f60dc06d41c4bbe11ad7ceddbb6501f09ad7f179b19d3"
+      },
+      "../node_modules/@types/chai/index.d.ts": {
+        "version": "18b15124f823de4d821e310ad2f9ce45b89ae065c0ada7c95ed5d04e462d3d03",
+        "signature": "18b15124f823de4d821e310ad2f9ce45b89ae065c0ada7c95ed5d04e462d3d03"
+      },
+      "../src/platform/chai-web.d.ts": {
+        "version": "10915c17c8b568deb4dfc74b9df1b02882cb4bba0df0bef2fdca2b86ebc3b41d",
+        "signature": "10915c17c8b568deb4dfc74b9df1b02882cb4bba0df0bef2fdca2b86ebc3b41d"
+      },
+      "../src/common/time/tests/instant-tests.ts": {
+        "version": "730fe8684ef0916276758c8a3ed815fe319d6897b10e4d5b6ebc7431777b15f3",
+        "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
+      },
+      "../src/dataflow/analysis/testing/flow-graph-testing.ts": {
+        "version": "78453bb89038c3c2c4627721f99731d13175be68d73fd019f57cfea5b69944e3",
+        "signature": "8f56eed4f4ddb93e7aa4bab322a1019e15622cb386aebf6e874bdd9e63c01745"
+      },
+      "../src/runtime/testing/test-util.ts": {
+        "version": "ebb2fa6249512c48982049e9d565a7a79fca355af941d02381c3ee2197fca1e2",
+        "signature": "aa657cc3c9324f71d7c84ac68f4e20b1eedea2e1e8b93efd81051208cf69c5f6"
+      },
+      "../src/dataflow/analysis/tests/analysis-test.ts": {
+        "version": "040b3e4a604a05a94b445251bea9854d8583fee11ccd723a6819a23339c0ba28",
+        "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
+      },
+      "../src/dataflow/analysis/tests/deep-set-test.ts": {
+        "version": "934c4a0ca04efc885906aae2ff1f8da5e3704653a7cf5304300e5bddd3c20e2d",
+        "signature": "43a5176681925d9f51b139647154e4a52c2eb1b1a64bb428595000952bcbc7f1"
+      },
+      "../src/runtime/testing/preconditions.ts": {
+        "version": "7e1d86c060f9e4b175b1f90c5f45b5a014cf79eaa8570ef3de16be4c5a44e537",
+        "signature": "535087ae214f316cbb0a3a17fb44a767c4789b7b69c4bd2c8d37fa8d5845a81f"
+      },
+      "../src/dataflow/analysis/tests/flow-graph-test.ts": {
+        "version": "6acce6ed0d8c5d68092654631b0d6825bb36780270281b1efb2ec7957f99d49f",
+        "signature": "43a5176681925d9f51b139647154e4a52c2eb1b1a64bb428595000952bcbc7f1"
+      },
+      "../src/dataflow/analysis/tests/graph-internals-test.ts": {
+        "version": "48cc70d9cccf1e79a2fda9ff500061e3c5e76644bbf52d7e264321bc7aaa0bbd",
+        "signature": "43a5176681925d9f51b139647154e4a52c2eb1b1a64bb428595000952bcbc7f1"
+      },
+      "../src/dataflow/analysis/tests/ordered-set-test.ts": {
+        "version": "97c3fb39d96cc7973aae7307baffe28385514ec6ce26aec85064bb97d85ba00f",
+        "signature": "43a5176681925d9f51b139647154e4a52c2eb1b1a64bb428595000952bcbc7f1"
+      },
+      "../src/dataflow/cli/flowcheck.ts": {
+        "version": "159656a09d16952adc4389b305a33d1f792497555b3b6153af2354d42a9bb563",
+        "signature": "43a5176681925d9f51b139647154e4a52c2eb1b1a64bb428595000952bcbc7f1"
       },
       "../src/devtools-connector/devtools-planner-inspector.ts": {
         "version": "3863db2e75b60ef692448032d9c6cf007f299200287c78947dd70279c8e5c500",
@@ -2292,10 +2296,6 @@
         "version": "d82120dcff015db66a34769d98b66e10316d8ede6a9348bd71cb816706ccaa40",
         "signature": "aff514b5ca3f500524542842c93fa7ade3927c4166596d8d37b3ad1fa3d1d014"
       },
-      "../src/runtime/ui-slot-composer.ts": {
-        "version": "a24250de6235f26cbac33bbe7bca9d3c8f5487c50341c80fd32fd033dd9cb47a",
-        "signature": "bb53ceb028c131a6637f7fd96570682d64f3aecdee98255f6dbe34d4886e1aaf"
-      },
       "../src/runtime/webassembly.d.ts": {
         "version": "69c071da516d4ec2a68db95444e55e425fc2057136133f7015954ee8e6f3af14",
         "signature": "69c071da516d4ec2a68db95444e55e425fc2057136133f7015954ee8e6f3af14"
@@ -3528,6 +3528,19 @@
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.2/util.d.ts"
       ],
+      "../src/runtime/ui-slot-composer.ts": [
+        "../src/platform/assert-web.ts",
+        "../src/runtime/arc.ts",
+        "../src/runtime/description.ts",
+        "../src/runtime/modality-handler.ts",
+        "../src/runtime/modality.ts",
+        "../src/runtime/recipe/particle.ts",
+        "../src/runtime/slot-consumer.ts",
+        "../src/runtime/slot-context.ts",
+        "../src/platform/logs-factory.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
       "../src/runtime/testing/fake-slot-composer.ts": [
         "../src/runtime/modality-handler.ts",
         "../src/runtime/slot-composer.ts",
@@ -3553,132 +3566,6 @@
         "../src/runtime/storageNG/drivers/ramdisk.ts",
         "../src/runtime/hot.ts",
         "../src/platform/assert-web.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/platform/pec-industry-web.ts": [
-        "../src/runtime/particle-execution-context.ts",
-        "../src/runtime/id.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/platform/pec-industry.ts": [
-        "../src/platform/pec-industry-web.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/runtime/runtime.ts": [
-        "../src/platform/assert-web.ts",
-        "../src/runtime/description.ts",
-        "../src/runtime/manifest.ts",
-        "../src/runtime/arc.ts",
-        "../src/runtime/storageNG/unified-store.ts",
-        "../src/runtime/runtime-cache.ts",
-        "../src/runtime/id.ts",
-        "../src/runtime/particle-execution-context.ts",
-        "../src/runtime/slot-composer.ts",
-        "../src/runtime/storage/storage-provider-factory.ts",
-        "../src/runtime/arc-inspector.ts",
-        "../src/runtime/testing/fake-slot-composer.ts",
-        "../src/runtime/storageNG/drivers/volatile.ts",
-        "../src/runtime/storageNG/storage-key.ts",
-        "../src/platform/loader.ts",
-        "../src/platform/pec-industry.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/runtime/storage/volatile-storage.ts": [
-        "../src/platform/assert-web.ts",
-        "../src/runtime/id.ts",
-        "../src/runtime/type.ts",
-        "../src/runtime/storage/crdt-collection-model.ts",
-        "../src/runtime/storage/key-base.ts",
-        "../src/runtime/storage/storage-provider-base.ts",
-        "../src/runtime/hot.ts",
-        "../src/runtime/runtime.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/runtime/synthetic-types.ts": [
-        "../src/runtime/id.ts",
-        "../src/runtime/type.ts",
-        "../src/runtime/storage/crdt-collection-model.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/runtime/storage/synthetic-storage.ts": [
-        "../src/platform/assert-web.ts",
-        "../src/runtime/storage/crdt-collection-model.ts",
-        "../src/runtime/id.ts",
-        "../src/runtime/manifest.ts",
-        "../src/runtime/recipe/handle.ts",
-        "../src/runtime/synthetic-types.ts",
-        "../src/runtime/type.ts",
-        "../src/runtime/util.ts",
-        "../src/runtime/storage/key-base.ts",
-        "../src/runtime/storage/storage-provider-base.ts",
-        "../src/runtime/storage/storage-provider-factory.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/runtime/mutex.ts": [
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/runtime/storage/storage-provider-factory.ts": [
-        "../src/runtime/storage/storage-provider-base.ts",
-        "../src/runtime/storage/volatile-storage.ts",
-        "../src/runtime/storage/synthetic-storage.ts",
-        "../src/runtime/id.ts",
-        "../src/runtime/type.ts",
-        "../src/runtime/storage/key-base.ts",
-        "../src/runtime/hot.ts",
-        "../src/runtime/mutex.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/runtime/storage-stub.ts": [
-        "../src/platform/assert-web.ts",
-        "../src/runtime/recipe/comparable.ts",
-        "../src/runtime/particle-claim.ts",
-        "../src/runtime/storage/storage-provider-factory.ts",
-        "../src/runtime/type.ts",
-        "../src/runtime/storage/volatile-storage.ts",
-        "../src/runtime/storageNG/unified-store.ts",
-        "../src/runtime/storageNG/store.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/runtime/storageNG/unified-store.ts": [
-        "../src/runtime/recipe/comparable.ts",
-        "../src/runtime/type.ts",
-        "../src/runtime/storageNG/storage-key.ts",
-        "../src/runtime/storage-stub.ts",
-        "../src/platform/assert-web.ts",
-        "../src/runtime/store.ts",
-        "../src/runtime/arc-exceptions.ts",
-        "../src/runtime/storageNG/store.ts",
-        "../src/runtime/particle-claim.ts",
-        "../src/runtime/crdt/crdt.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/runtime/description.ts": [
-        "../src/platform/assert-web.ts",
-        "../src/runtime/arc.ts",
-        "../src/runtime/storageNG/unified-store.ts",
-        "../src/runtime/description-formatter.ts",
-        "../src/runtime/recipe/particle.ts",
-        "../src/runtime/relevance.ts",
-        "../src/runtime/type.ts",
-        "../src/runtime/storage/storage-provider-base.ts",
-        "../src/runtime/recipe/handle.ts",
-        "../src/runtime/recipe/recipe.ts",
-        "../src/runtime/hot.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/runtime/message-channel.ts": [
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.2/util.d.ts"
       ],
@@ -3720,726 +3607,14 @@
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.2/util.d.ts"
       ],
-      "../src/runtime/services.ts": [
-        "../src/runtime/hot.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/runtime/particle-execution-host.ts": [
-        "../src/platform/assert-web.ts",
-        "../src/runtime/api-channel.ts",
-        "../src/runtime/arc-exceptions.ts",
-        "../src/runtime/storageNG/unified-store.ts",
-        "../src/runtime/hot.ts",
-        "../src/runtime/manifest.ts",
-        "../src/runtime/storage-stub.ts",
-        "../src/runtime/message-channel.ts",
-        "../src/runtime/recipe/handle.ts",
-        "../src/runtime/recipe/particle.ts",
-        "../src/runtime/recipe/recipe-resolver.ts",
-        "../src/runtime/slot-composer.ts",
-        "../src/runtime/slot-consumer.ts",
-        "../src/runtime/storage/storage-provider-base.ts",
-        "../src/runtime/type.ts",
-        "../src/runtime/services.ts",
-        "../src/runtime/util.ts",
-        "../src/runtime/arc.ts",
-        "../src/runtime/crdt/crdt.ts",
-        "../src/runtime/storageNG/store.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/runtime/slot-consumer.ts": [
-        "../src/platform/assert-web.ts",
-        "../src/runtime/arc.ts",
-        "../src/runtime/hot.ts",
-        "../src/runtime/description.ts",
-        "../src/runtime/recipe/particle.ts",
-        "../src/runtime/recipe/slot-connection.ts",
-        "../src/runtime/slot-context.ts",
-        "../src/runtime/particle-execution-host.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/runtime/slot-proxy.ts": [
-        "../src/runtime/hot.ts",
-        "../src/runtime/particle.ts",
-        "../src/runtime/api-channel.ts",
-        "../src/runtime/slot-consumer.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/runtime/particle.ts": [
-        "../src/runtime/handle.ts",
-        "../src/runtime/hot.ts",
+      "../src/platform/pec-industry-web.ts": [
         "../src/runtime/particle-execution-context.ts",
-        "../src/runtime/particle-spec.ts",
-        "../src/runtime/relevance.ts",
-        "../src/runtime/slot-proxy.ts",
-        "../src/runtime/slot-consumer.ts",
-        "../src/runtime/entity.ts",
-        "../src/runtime/storageNG/handle.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/runtime/handle.ts": [
-        "../src/platform/assert-web.ts",
-        "../src/runtime/arc-exceptions.ts",
-        "../src/runtime/particle-spec.ts",
-        "../src/runtime/particle.ts",
-        "../src/runtime/reference.ts",
-        "../src/runtime/storage-proxy.ts",
-        "../src/runtime/type.ts",
-        "../src/runtime/entity.ts",
-        "../src/runtime/store.ts",
-        "../src/runtime/id.ts",
-        "../src/runtime/symbols.ts",
-        "../src/runtime/storageNG/handle.ts",
-        "../src/runtime/crdt/crdt.ts",
-        "../src/runtime/storageNG/storage-proxy.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/runtime/reference.ts": [
-        "../src/platform/assert-web.ts",
-        "../src/runtime/handle.ts",
-        "../src/runtime/particle-execution-context.ts",
-        "../src/runtime/type.ts",
-        "../src/runtime/entity.ts",
-        "../src/runtime/storage-proxy.ts",
-        "../src/runtime/symbols.ts",
-        "../src/runtime/storageNG/handle.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../modalities/dom/components/xen/xen-state.d.ts": [
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/runtime/dom-particle-base.ts": [
-        "../src/runtime/entity.ts",
-        "../src/runtime/handle.ts",
-        "../src/runtime/particle.ts",
-        "../src/runtime/slot-proxy.ts",
-        "../src/runtime/slot-consumer.ts",
-        "../src/runtime/storageNG/handle.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/runtime/dom-particle.ts": [
-        "../modalities/dom/components/xen/xen-state.d.ts",
-        "../src/runtime/dom-particle-base.ts",
-        "../src/runtime/handle.ts",
-        "../src/runtime/hot.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/runtime/transformation-dom-particle.ts": [
-        "../src/runtime/dom-particle.ts",
-        "../src/runtime/entity.ts",
-        "../src/runtime/slot-consumer.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/runtime/multiplexer-dom-particle.ts": [
-        "../src/platform/assert-web.ts",
-        "../src/runtime/particle-spec.ts",
-        "../src/runtime/transformation-dom-particle.ts",
-        "../src/runtime/handle.ts",
-        "../src/runtime/particle-execution-context.ts",
-        "../src/runtime/type.ts",
-        "../src/runtime/slot-consumer.ts",
-        "../src/runtime/hot.ts",
-        "../src/runtime/entity.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/runtime/ui-particle-base.ts": [
-        "../src/runtime/entity.ts",
-        "../src/runtime/handle.ts",
-        "../src/runtime/particle.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/runtime/ui-particle.ts": [
-        "../modalities/dom/components/xen/xen-state.d.ts",
-        "../src/runtime/ui-particle-base.ts",
-        "../src/runtime/handle.ts",
-        "../src/runtime/hot.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/runtime/ui-transformation-particle.ts": [
-        "../src/runtime/ui-particle.ts",
-        "../src/runtime/entity.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/runtime/ui-multiplexer-particle.ts": [
-        "../src/runtime/particle-spec.ts",
-        "../src/runtime/ui-transformation-particle.ts",
-        "../src/runtime/handle.ts",
-        "../src/runtime/particle-execution-context.ts",
-        "../src/runtime/type.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/runtime/html.ts": [
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/platform/loader-base.ts": [
-        "../src/platform/assert-web.ts",
-        "../src/platform/fetch-web.ts",
-        "../src/runtime/converters/jsonldToManifest.ts",
-        "../src/runtime/particle-execution-context.ts",
-        "../src/runtime/reference.ts",
-        "../src/runtime/particle-spec.ts",
-        "../src/runtime/particle.ts",
-        "../src/runtime/dom-particle.ts",
-        "../src/runtime/transformation-dom-particle.ts",
-        "../src/runtime/multiplexer-dom-particle.ts",
-        "../src/runtime/ui-particle.ts",
-        "../src/runtime/ui-multiplexer-particle.ts",
-        "../src/runtime/html.ts",
-        "../src/platform/logs-factory.ts",
-        "../src/runtime/hot.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/platform/loader-web.ts": [
-        "../src/platform/logs-factory.ts",
-        "../src/platform/loader-base.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/platform/loader.ts": [
-        "../src/platform/loader-web.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/runtime/testing/stub-loader.ts": [
-        "../src/platform/loader.ts",
-        "../src/runtime/hot.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/runtime/fake-pec-factory.ts": [
-        "../src/platform/loader.ts",
-        "../src/runtime/message-channel.ts",
-        "../src/runtime/particle-execution-context.ts",
-        "../src/runtime/testing/stub-loader.ts",
         "../src/runtime/id.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.2/util.d.ts"
       ],
-      "../src/runtime/interface-info.ts": [
-        "../src/platform/assert-web.ts",
-        "../src/runtime/hot.ts",
-        "../src/runtime/recipe/type-checker.ts",
-        "../src/runtime/type.ts",
-        "../src/runtime/particle-spec.ts",
-        "../src/runtime/manifest-ast-nodes.ts",
-        "../src/runtime/flags.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/runtime/arc-serializer.ts": [
-        "../src/runtime/flags.ts",
-        "../src/runtime/storageNG/unified-store.ts",
-        "../src/runtime/type.ts",
-        "../src/runtime/storageNG/storage-key.ts",
-        "../src/runtime/storage/key-base.ts",
-        "../src/runtime/storage/storage-provider-base.ts",
-        "../src/runtime/particle-spec.ts",
-        "../src/runtime/recipe/recipe.ts",
-        "../src/runtime/storage/storage-provider-factory.ts",
-        "../src/runtime/manifest.ts",
-        "../src/runtime/id.ts",
-        "../src/runtime/storageNG/drivers/volatile.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/runtime/arc.ts": [
-        "../src/platform/assert-web.ts",
-        "../src/runtime/arc-inspector.ts",
-        "../src/runtime/fake-pec-factory.ts",
-        "../src/runtime/id.ts",
-        "../src/platform/loader.ts",
-        "../src/runtime/hot.ts",
-        "../src/runtime/manifest.ts",
-        "../src/runtime/message-channel.ts",
-        "../src/runtime/modality.ts",
-        "../src/runtime/particle-execution-host.ts",
-        "../src/runtime/particle-spec.ts",
-        "../src/runtime/storage-stub.ts",
-        "../src/runtime/recipe/handle.ts",
-        "../src/runtime/recipe/particle.ts",
-        "../src/runtime/recipe/recipe.ts",
-        "../src/runtime/recipe/slot.ts",
-        "../src/runtime/recipe/comparable.ts",
-        "../src/runtime/slot-composer.ts",
-        "../src/runtime/storage/storage-provider-base.ts",
-        "../src/runtime/storage/storage-provider-factory.ts",
-        "../src/runtime/type.ts",
-        "../src/runtime/particle-execution-context.ts",
-        "../src/runtime/interface-info.ts",
-        "../src/runtime/mutex.ts",
-        "../src/runtime/runtime.ts",
-        "../src/runtime/storageNG/drivers/volatile.ts",
-        "../src/runtime/storageNG/drivers/driver-factory.ts",
-        "../src/runtime/storageNG/storage-key.ts",
-        "../src/runtime/storageNG/store.ts",
-        "../src/runtime/storage/key-base.ts",
-        "../src/runtime/storageNG/unified-store.ts",
-        "../src/runtime/flags.ts",
-        "../src/runtime/crdt/crdt.ts",
-        "../src/runtime/arc-serializer.ts",
-        "../src/runtime/storageNG/reference-mode-storage-key.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/runtime/api-channel.ts": [
-        "../src/platform/assert-web.ts",
-        "../src/runtime/arc.ts",
-        "../src/runtime/storageNG/unified-store.ts",
-        "../src/runtime/arc-inspector.ts",
-        "../src/runtime/handle.ts",
-        "../src/runtime/particle-spec.ts",
-        "../src/runtime/particle.ts",
-        "../src/runtime/recipe/handle.ts",
-        "../src/runtime/recipe/particle.ts",
-        "../src/runtime/storage-proxy.ts",
-        "../src/runtime/slot-consumer.ts",
-        "../src/runtime/storage/crdt-collection-model.ts",
-        "../src/runtime/type.ts",
-        "../src/runtime/arc-exceptions.ts",
-        "../src/runtime/hot.ts",
-        "../src/runtime/util.ts",
-        "../src/runtime/message-channel.ts",
-        "../src/runtime/storageNG/storage-proxy.ts",
-        "../src/runtime/crdt/crdt.ts",
-        "../src/runtime/storageNG/store.ts",
-        "../src/runtime/storage/storage-provider-base.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/runtime/bimap.ts": [
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/runtime/wasm.ts": [
-        "../src/platform/assert-web.ts",
-        "../src/runtime/schema.ts",
-        "../src/platform/loader.ts",
-        "../src/runtime/entity.ts",
-        "../src/runtime/reference.ts",
-        "../src/runtime/type.ts",
-        "../src/runtime/handle.ts",
-        "../src/runtime/particle.ts",
-        "../src/runtime/slot-consumer.ts",
-        "../src/runtime/hot.ts",
-        "../src/runtime/api-channel.ts",
-        "../src/runtime/arc-exceptions.ts",
-        "../src/runtime/particle-execution-context.ts",
-        "../src/runtime/bimap.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/runtime/particle-execution-context.ts": [
-        "../src/platform/assert-web.ts",
-        "../src/runtime/api-channel.ts",
-        "../src/runtime/handle.ts",
-        "../src/runtime/id.ts",
-        "../src/runtime/hot.ts",
-        "../src/platform/loader.ts",
-        "../src/runtime/particle-spec.ts",
-        "../src/runtime/particle.ts",
-        "../src/runtime/slot-proxy.ts",
-        "../src/runtime/slot-consumer.ts",
-        "../src/runtime/storage-proxy.ts",
-        "../src/runtime/storageNG/handle.ts",
-        "../src/runtime/storageNG/storage-proxy.ts",
-        "../src/runtime/crdt/crdt.ts",
-        "../src/runtime/storageNG/store.ts",
-        "../src/runtime/arc-exceptions.ts",
-        "../src/runtime/type.ts",
-        "../src/runtime/message-channel.ts",
-        "../src/runtime/wasm.ts",
-        "../src/runtime/store.ts",
-        "../src/runtime/flags.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/runtime/schema.ts": [
-        "../src/runtime/entity.ts",
-        "../src/runtime/particle-execution-context.ts",
-        "../src/runtime/type.ts",
-        "../src/runtime/hot.ts",
-        "../src/runtime/crdt/crdt-entity.ts",
-        "../src/runtime/crdt/crdt-collection.ts",
-        "../src/runtime/crdt/crdt-singleton.ts",
-        "../src/runtime/flags.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/runtime/entity.ts": [
-        "../src/platform/assert-web.ts",
-        "../src/runtime/schema.ts",
-        "../src/runtime/type.ts",
-        "../src/runtime/particle-execution-context.ts",
-        "../src/runtime/reference.ts",
-        "../src/runtime/recipe/type-checker.ts",
-        "../src/runtime/handle.ts",
-        "../src/runtime/storage-proxy.ts",
-        "../src/runtime/id.ts",
-        "../src/runtime/hot.ts",
-        "../src/runtime/symbols.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/runtime/crdt/crdt-count.ts": [
-        "../src/runtime/crdt/crdt.ts",
-        "../src/runtime/hot.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/runtime/type.ts": [
-        "../src/runtime/entity.ts",
-        "../src/runtime/id.ts",
-        "../src/runtime/interface-info.ts",
-        "../src/runtime/slot-info.ts",
-        "../src/runtime/synthetic-types.ts",
-        "../src/runtime/type-variable-info.ts",
-        "../src/runtime/hot.ts",
-        "../src/runtime/crdt/crdt.ts",
-        "../src/runtime/crdt/crdt-count.ts",
-        "../src/runtime/crdt/crdt-collection.ts",
-        "../src/runtime/crdt/crdt-singleton.ts",
-        "../src/runtime/crdt/crdt-entity.ts",
-        "../src/runtime/storageNG/handle.ts",
-        "../src/runtime/particle-execution-context.ts",
-        "../src/runtime/flags.ts",
-        "../src/runtime/schema.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/runtime/recipe/type-checker.ts": [
-        "../src/runtime/type.ts",
-        "../src/runtime/manifest-ast-nodes.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/runtime/particle-check.ts": [
-        "../src/runtime/manifest-ast-nodes.ts",
-        "../src/runtime/particle-spec.ts",
-        "../src/platform/assert-web.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/runtime/particle-spec.ts": [
-        "../src/platform/assert-web.ts",
-        "../src/runtime/modality.ts",
-        "../src/runtime/manifest-ast-nodes.ts",
-        "../src/runtime/recipe/type-checker.ts",
-        "../src/runtime/type-variable-info.ts",
-        "../src/runtime/schema.ts",
-        "../src/runtime/type.ts",
-        "../src/runtime/hot.ts",
-        "../src/runtime/particle-check.ts",
-        "../src/runtime/particle-claim.ts",
-        "../src/runtime/flags.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/runtime/particle-claim.ts": [
-        "../src/runtime/particle-spec.ts",
-        "../src/runtime/manifest-ast-nodes.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/runtime/manifest-ast-nodes.ts": [
-        "../src/runtime/particle-claim.ts",
-        "../src/runtime/particle-check.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/gen/runtime/manifest-parser.ts": [
-        "../src/runtime/manifest-ast-nodes.ts",
-        "../src/runtime/flags.ts",
-        "../src/runtime/particle-check.ts",
-        "../src/runtime/particle-claim.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/runtime/manifest-meta.ts": [
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../node_modules/firebase/index.d.ts": [
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/platform/firebase-web.d.ts": [
-        "../node_modules/firebase/index.d.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/runtime/storageNG/drivers/firebase.ts": [
-        "../src/runtime/storageNG/drivers/driver-factory.ts",
-        "../src/runtime/storageNG/storage-key.ts",
-        "../src/platform/firebase-web.d.ts",
-        "../src/runtime/runtime.ts",
-        "../src/platform/assert-web.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/runtime/storageNG/storage-key-parser.ts": [
-        "../src/runtime/storageNG/storage-key.ts",
-        "../src/runtime/storageNG/drivers/volatile.ts",
-        "../src/runtime/storageNG/drivers/firebase.ts",
-        "../src/runtime/storageNG/drivers/ramdisk.ts",
-        "../src/runtime/storageNG/reference-mode-storage-key.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/runtime/manifest.ts": [
-        "../src/gen/runtime/manifest-parser.ts",
-        "../src/platform/assert-web.ts",
-        "../src/platform/digest-web.ts",
-        "../src/runtime/id.ts",
-        "../src/runtime/interface-info.ts",
-        "../src/runtime/hot.ts",
-        "../src/platform/loader.ts",
-        "../src/runtime/manifest-meta.ts",
-        "../src/runtime/manifest-ast-nodes.ts",
-        "../src/runtime/particle-spec.ts",
-        "../src/runtime/recipe/comparable.ts",
-        "../src/runtime/recipe/connection-constraint.ts",
-        "../src/runtime/recipe/handle.ts",
-        "../src/runtime/recipe/particle.ts",
-        "../src/runtime/recipe/slot.ts",
-        "../src/runtime/recipe/handle-connection.ts",
-        "../src/runtime/recipe/recipe-util.ts",
-        "../src/runtime/recipe/recipe.ts",
-        "../src/runtime/recipe/search.ts",
-        "../src/runtime/recipe/type-checker.ts",
-        "../src/runtime/storage/storage-provider-factory.ts",
-        "../src/runtime/schema.ts",
-        "../src/runtime/type.ts",
-        "../src/runtime/particle-claim.ts",
-        "../src/runtime/storage/volatile-storage.ts",
-        "../src/runtime/storageNG/unified-store.ts",
-        "../src/runtime/storage-stub.ts",
-        "../src/runtime/flags.ts",
-        "../src/runtime/storageNG/store.ts",
-        "../src/runtime/storageNG/storage-key.ts",
-        "../src/runtime/storageNG/drivers/driver-factory.ts",
-        "../src/runtime/storageNG/storage-key-parser.ts",
-        "../src/runtime/storageNG/drivers/volatile.ts",
-        "../src/runtime/storageNG/drivers/ramdisk.ts",
-        "../src/runtime/crdt/crdt-singleton.ts",
-        "../src/runtime/entity.ts",
-        "../src/runtime/storage-proxy.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/platform/atob-web.ts": [
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/platform/btoa-web.ts": [
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/runtime/storage/firebase/firebase-storage.ts": [
-        "../src/platform/assert-web.ts",
-        "../src/platform/atob-web.ts",
-        "../src/platform/btoa-web.ts",
-        "../src/platform/firebase-web.d.ts",
-        "../src/runtime/id.ts",
-        "../src/runtime/hot.ts",
-        "../src/runtime/type.ts",
-        "../src/runtime/util.ts",
-        "../src/runtime/storage/crdt-collection-model.ts",
-        "../src/runtime/storage/key-base.ts",
-        "../src/runtime/storage/storage-provider-base.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/runtime/storage/firebase/firebase-provider.ts": [
-        "../src/runtime/storage/storage-provider-factory.ts",
-        "../src/runtime/storage/firebase/firebase-storage.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/cli/spotify-importer.ts": [
-        "../node_modules/@types/node/fs.d.ts",
-        "../src/runtime/id.ts",
-        "../src/runtime/manifest.ts",
-        "../src/runtime/type.ts",
-        "../src/runtime/storage/storage-provider-factory.ts",
-        "../src/runtime/storage/firebase/firebase-storage.ts",
-        "../src/runtime/storage/firebase/firebase-provider.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/common/time/timeunit.ts": [
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/common/time/instant.ts": [
-        "../src/common/time/timeunit.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../node_modules/@types/chai/index.d.ts": [
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/platform/chai-web.d.ts": [
-        "../node_modules/@types/chai/index.d.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/common/time/tests/instant-tests.ts": [
-        "../src/platform/chai-web.d.ts",
-        "../src/common/time/instant.ts",
-        "../src/common/time/timeunit.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/dataflow/analysis/deep-set.ts": [
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/dataflow/analysis/ordered-set.ts": [
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/dataflow/analysis/graph-internals.ts": [
-        "../src/runtime/particle-claim.ts",
-        "../src/runtime/particle-check.ts",
-        "../src/dataflow/analysis/deep-set.ts",
-        "../src/dataflow/analysis/ordered-set.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/dataflow/analysis/particle-node.ts": [
-        "../src/dataflow/analysis/graph-internals.ts",
-        "../src/runtime/particle-claim.ts",
-        "../src/runtime/recipe/particle.ts",
-        "../src/platform/assert-web.ts",
-        "../src/runtime/particle-spec.ts",
-        "../src/runtime/recipe/handle-connection.ts",
-        "../src/runtime/type.ts",
-        "../src/runtime/recipe/type-checker.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/dataflow/analysis/handle-node.ts": [
-        "../src/dataflow/analysis/graph-internals.ts",
-        "../src/dataflow/analysis/particle-node.ts",
-        "../src/runtime/recipe/handle-connection.ts",
-        "../src/platform/assert-web.ts",
-        "../src/runtime/recipe/handle.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/dataflow/analysis/slot-node.ts": [
-        "../src/dataflow/analysis/graph-internals.ts",
-        "../src/runtime/interface-info.ts",
-        "../src/dataflow/analysis/particle-node.ts",
-        "../src/runtime/recipe/slot-connection.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/dataflow/analysis/flow-graph.ts": [
-        "../src/runtime/recipe/recipe.ts",
-        "../src/dataflow/analysis/particle-node.ts",
-        "../src/dataflow/analysis/handle-node.ts",
-        "../src/dataflow/analysis/slot-node.ts",
-        "../src/dataflow/analysis/graph-internals.ts",
-        "../src/runtime/manifest.ts",
-        "../src/platform/assert-web.ts",
-        "../src/runtime/particle-check.ts",
-        "../src/runtime/particle-spec.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/dataflow/analysis/analysis.ts": [
-        "../src/dataflow/analysis/flow-graph.ts",
-        "../src/platform/assert-web.ts",
-        "../src/dataflow/analysis/graph-internals.ts",
-        "../src/runtime/recipe/recipe.ts",
-        "../src/runtime/manifest.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/dataflow/analysis/testing/flow-graph-testing.ts": [
-        "../src/platform/chai-web.d.ts",
-        "../src/runtime/manifest.ts",
-        "../src/dataflow/analysis/flow-graph.ts",
-        "../src/runtime/particle-check.ts",
-        "../src/dataflow/analysis/graph-internals.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/runtime/testing/test-util.ts": [
-        "../src/platform/chai-web.d.ts",
-        "../src/runtime/arc.ts",
-        "../src/runtime/type.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/dataflow/analysis/tests/analysis-test.ts": [
-        "../src/platform/chai-web.d.ts",
-        "../src/dataflow/analysis/analysis.ts",
-        "../src/dataflow/analysis/testing/flow-graph-testing.ts",
-        "../src/runtime/testing/test-util.ts",
-        "../src/dataflow/analysis/graph-internals.ts",
-        "../src/dataflow/analysis/flow-graph.ts",
-        "../src/runtime/flags.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/dataflow/analysis/tests/deep-set-test.ts": [
-        "../src/dataflow/analysis/deep-set.ts",
-        "../src/platform/chai-web.d.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/runtime/testing/preconditions.ts": [
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/dataflow/analysis/tests/flow-graph-test.ts": [
-        "../src/platform/chai-web.d.ts",
-        "../src/runtime/testing/preconditions.ts",
-        "../src/dataflow/analysis/particle-node.ts",
-        "../src/dataflow/analysis/testing/flow-graph-testing.ts",
-        "../src/dataflow/analysis/graph-internals.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/dataflow/analysis/tests/graph-internals-test.ts": [
-        "../src/dataflow/analysis/graph-internals.ts",
-        "../src/platform/chai-web.d.ts",
-        "../src/dataflow/analysis/testing/flow-graph-testing.ts",
-        "../src/runtime/particle-claim.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/dataflow/analysis/tests/ordered-set-test.ts": [
-        "../src/dataflow/analysis/ordered-set.ts",
-        "../src/platform/chai-web.d.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/dataflow/cli/flowcheck.ts": [
-        "../src/dataflow/analysis/flow-graph.ts",
-        "../src/dataflow/analysis/analysis.ts",
-        "../src/runtime/runtime.ts",
+      "../src/platform/pec-industry.ts": [
+        "../src/platform/pec-industry-web.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.2/util.d.ts"
       ],
@@ -4447,6 +3622,18 @@
         "../src/platform/assert-web.ts",
         "../src/runtime/arc.ts",
         "../src/runtime/hot.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/devtools-connector/arc-stores-fetcher.ts": [
+        "../src/runtime/arc.ts",
+        "../src/devtools-connector/abstract-devtools-channel.ts",
+        "../src/runtime/manifest.ts",
+        "../src/runtime/storage/storage-provider-base.ts",
+        "../src/runtime/type.ts",
+        "../src/runtime/storageNG/storage-key.ts",
+        "../src/runtime/storageNG/store.ts",
+        "../src/runtime/storageNG/unified-store.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.2/util.d.ts"
       ],
@@ -4845,6 +4032,91 @@
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.2/util.d.ts"
       ],
+      "../src/runtime/particle-check.ts": [
+        "../src/runtime/manifest-ast-nodes.ts",
+        "../src/runtime/particle-spec.ts",
+        "../src/platform/assert-web.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/dataflow/analysis/deep-set.ts": [
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/dataflow/analysis/ordered-set.ts": [
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/dataflow/analysis/graph-internals.ts": [
+        "../src/runtime/particle-claim.ts",
+        "../src/runtime/particle-check.ts",
+        "../src/dataflow/analysis/deep-set.ts",
+        "../src/dataflow/analysis/ordered-set.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/dataflow/analysis/particle-node.ts": [
+        "../src/dataflow/analysis/graph-internals.ts",
+        "../src/runtime/particle-claim.ts",
+        "../src/runtime/recipe/particle.ts",
+        "../src/platform/assert-web.ts",
+        "../src/runtime/particle-spec.ts",
+        "../src/runtime/recipe/handle-connection.ts",
+        "../src/runtime/type.ts",
+        "../src/runtime/recipe/type-checker.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/dataflow/analysis/handle-node.ts": [
+        "../src/dataflow/analysis/graph-internals.ts",
+        "../src/dataflow/analysis/particle-node.ts",
+        "../src/runtime/recipe/handle-connection.ts",
+        "../src/platform/assert-web.ts",
+        "../src/runtime/recipe/handle.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/runtime/interface-info.ts": [
+        "../src/platform/assert-web.ts",
+        "../src/runtime/hot.ts",
+        "../src/runtime/recipe/type-checker.ts",
+        "../src/runtime/type.ts",
+        "../src/runtime/particle-spec.ts",
+        "../src/runtime/manifest-ast-nodes.ts",
+        "../src/runtime/flags.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/dataflow/analysis/slot-node.ts": [
+        "../src/dataflow/analysis/graph-internals.ts",
+        "../src/runtime/interface-info.ts",
+        "../src/dataflow/analysis/particle-node.ts",
+        "../src/runtime/recipe/slot-connection.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/dataflow/analysis/flow-graph.ts": [
+        "../src/runtime/recipe/recipe.ts",
+        "../src/dataflow/analysis/particle-node.ts",
+        "../src/dataflow/analysis/handle-node.ts",
+        "../src/dataflow/analysis/slot-node.ts",
+        "../src/dataflow/analysis/graph-internals.ts",
+        "../src/runtime/manifest.ts",
+        "../src/platform/assert-web.ts",
+        "../src/runtime/particle-check.ts",
+        "../src/runtime/particle-spec.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/dataflow/analysis/analysis.ts": [
+        "../src/dataflow/analysis/flow-graph.ts",
+        "../src/platform/assert-web.ts",
+        "../src/dataflow/analysis/graph-internals.ts",
+        "../src/runtime/recipe/recipe.ts",
+        "../src/runtime/manifest.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
       "../src/devtools-connector/arc-planner-invoker.ts": [
         "../src/runtime/arc.ts",
         "../src/runtime/hot.ts",
@@ -4858,18 +4130,6 @@
         "../src/planning/strategies/rulesets.ts",
         "../src/planning/strategizer.ts",
         "../src/dataflow/analysis/analysis.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/devtools-connector/arc-stores-fetcher.ts": [
-        "../src/runtime/arc.ts",
-        "../src/devtools-connector/abstract-devtools-channel.ts",
-        "../src/runtime/manifest.ts",
-        "../src/runtime/storage/storage-provider-base.ts",
-        "../src/runtime/type.ts",
-        "../src/runtime/storageNG/storage-key.ts",
-        "../src/runtime/storageNG/store.ts",
-        "../src/runtime/storageNG/unified-store.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.2/util.d.ts"
       ],
@@ -4910,6 +4170,764 @@
         "../src/devtools-connector/tracing-adapter.ts",
         "../src/runtime/recipe/slot.ts",
         "../src/devtools-connector/hot-code-reloader.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/runtime/runtime.ts": [
+        "../src/platform/assert-web.ts",
+        "../src/runtime/description.ts",
+        "../src/runtime/manifest.ts",
+        "../src/runtime/arc.ts",
+        "../src/runtime/storageNG/unified-store.ts",
+        "../src/runtime/runtime-cache.ts",
+        "../src/runtime/id.ts",
+        "../src/runtime/particle-execution-context.ts",
+        "../src/runtime/slot-composer.ts",
+        "../src/runtime/ui-slot-composer.ts",
+        "../src/runtime/storage/storage-provider-factory.ts",
+        "../src/runtime/arc-inspector.ts",
+        "../src/runtime/testing/fake-slot-composer.ts",
+        "../src/runtime/storageNG/drivers/volatile.ts",
+        "../src/runtime/storageNG/storage-key.ts",
+        "../src/runtime/recipe/recipe.ts",
+        "../src/runtime/recipe/recipe-resolver.ts",
+        "../src/platform/loader.ts",
+        "../src/platform/pec-industry.ts",
+        "../src/platform/logs-factory.ts",
+        "../src/devtools-connector/devtools-arc-inspector.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/runtime/storage/volatile-storage.ts": [
+        "../src/platform/assert-web.ts",
+        "../src/runtime/id.ts",
+        "../src/runtime/type.ts",
+        "../src/runtime/storage/crdt-collection-model.ts",
+        "../src/runtime/storage/key-base.ts",
+        "../src/runtime/storage/storage-provider-base.ts",
+        "../src/runtime/hot.ts",
+        "../src/runtime/runtime.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/runtime/synthetic-types.ts": [
+        "../src/runtime/id.ts",
+        "../src/runtime/type.ts",
+        "../src/runtime/storage/crdt-collection-model.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/runtime/storage/synthetic-storage.ts": [
+        "../src/platform/assert-web.ts",
+        "../src/runtime/storage/crdt-collection-model.ts",
+        "../src/runtime/id.ts",
+        "../src/runtime/manifest.ts",
+        "../src/runtime/recipe/handle.ts",
+        "../src/runtime/synthetic-types.ts",
+        "../src/runtime/type.ts",
+        "../src/runtime/util.ts",
+        "../src/runtime/storage/key-base.ts",
+        "../src/runtime/storage/storage-provider-base.ts",
+        "../src/runtime/storage/storage-provider-factory.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/runtime/mutex.ts": [
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/runtime/storage/storage-provider-factory.ts": [
+        "../src/runtime/storage/storage-provider-base.ts",
+        "../src/runtime/storage/volatile-storage.ts",
+        "../src/runtime/storage/synthetic-storage.ts",
+        "../src/runtime/id.ts",
+        "../src/runtime/type.ts",
+        "../src/runtime/storage/key-base.ts",
+        "../src/runtime/hot.ts",
+        "../src/runtime/mutex.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/runtime/storage-stub.ts": [
+        "../src/platform/assert-web.ts",
+        "../src/runtime/recipe/comparable.ts",
+        "../src/runtime/particle-claim.ts",
+        "../src/runtime/storage/storage-provider-factory.ts",
+        "../src/runtime/type.ts",
+        "../src/runtime/storage/volatile-storage.ts",
+        "../src/runtime/storageNG/unified-store.ts",
+        "../src/runtime/storageNG/store.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/runtime/storageNG/unified-store.ts": [
+        "../src/runtime/recipe/comparable.ts",
+        "../src/runtime/type.ts",
+        "../src/runtime/storageNG/storage-key.ts",
+        "../src/runtime/storage-stub.ts",
+        "../src/platform/assert-web.ts",
+        "../src/runtime/store.ts",
+        "../src/runtime/arc-exceptions.ts",
+        "../src/runtime/storageNG/store.ts",
+        "../src/runtime/particle-claim.ts",
+        "../src/runtime/crdt/crdt.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/runtime/description.ts": [
+        "../src/platform/assert-web.ts",
+        "../src/runtime/arc.ts",
+        "../src/runtime/storageNG/unified-store.ts",
+        "../src/runtime/description-formatter.ts",
+        "../src/runtime/recipe/particle.ts",
+        "../src/runtime/relevance.ts",
+        "../src/runtime/type.ts",
+        "../src/runtime/storage/storage-provider-base.ts",
+        "../src/runtime/recipe/handle.ts",
+        "../src/runtime/recipe/recipe.ts",
+        "../src/runtime/hot.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/runtime/message-channel.ts": [
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/runtime/services.ts": [
+        "../src/runtime/hot.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/runtime/particle-execution-host.ts": [
+        "../src/platform/assert-web.ts",
+        "../src/runtime/api-channel.ts",
+        "../src/runtime/arc-exceptions.ts",
+        "../src/runtime/storageNG/unified-store.ts",
+        "../src/runtime/hot.ts",
+        "../src/runtime/manifest.ts",
+        "../src/runtime/storage-stub.ts",
+        "../src/runtime/message-channel.ts",
+        "../src/runtime/recipe/handle.ts",
+        "../src/runtime/recipe/particle.ts",
+        "../src/runtime/recipe/recipe-resolver.ts",
+        "../src/runtime/slot-composer.ts",
+        "../src/runtime/slot-consumer.ts",
+        "../src/runtime/storage/storage-provider-base.ts",
+        "../src/runtime/type.ts",
+        "../src/runtime/services.ts",
+        "../src/runtime/util.ts",
+        "../src/runtime/arc.ts",
+        "../src/runtime/crdt/crdt.ts",
+        "../src/runtime/storageNG/store.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/runtime/slot-consumer.ts": [
+        "../src/platform/assert-web.ts",
+        "../src/runtime/arc.ts",
+        "../src/runtime/hot.ts",
+        "../src/runtime/description.ts",
+        "../src/runtime/recipe/particle.ts",
+        "../src/runtime/recipe/slot-connection.ts",
+        "../src/runtime/slot-context.ts",
+        "../src/runtime/particle-execution-host.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/runtime/slot-proxy.ts": [
+        "../src/runtime/hot.ts",
+        "../src/runtime/particle.ts",
+        "../src/runtime/api-channel.ts",
+        "../src/runtime/slot-consumer.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/runtime/particle.ts": [
+        "../src/runtime/handle.ts",
+        "../src/runtime/hot.ts",
+        "../src/runtime/particle-execution-context.ts",
+        "../src/runtime/particle-spec.ts",
+        "../src/runtime/relevance.ts",
+        "../src/runtime/slot-proxy.ts",
+        "../src/runtime/slot-consumer.ts",
+        "../src/runtime/entity.ts",
+        "../src/runtime/storageNG/handle.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/runtime/handle.ts": [
+        "../src/platform/assert-web.ts",
+        "../src/runtime/arc-exceptions.ts",
+        "../src/runtime/particle-spec.ts",
+        "../src/runtime/particle.ts",
+        "../src/runtime/reference.ts",
+        "../src/runtime/storage-proxy.ts",
+        "../src/runtime/type.ts",
+        "../src/runtime/entity.ts",
+        "../src/runtime/store.ts",
+        "../src/runtime/id.ts",
+        "../src/runtime/symbols.ts",
+        "../src/runtime/storageNG/handle.ts",
+        "../src/runtime/crdt/crdt.ts",
+        "../src/runtime/storageNG/storage-proxy.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/runtime/reference.ts": [
+        "../src/platform/assert-web.ts",
+        "../src/runtime/handle.ts",
+        "../src/runtime/particle-execution-context.ts",
+        "../src/runtime/type.ts",
+        "../src/runtime/entity.ts",
+        "../src/runtime/storage-proxy.ts",
+        "../src/runtime/symbols.ts",
+        "../src/runtime/storageNG/handle.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../modalities/dom/components/xen/xen-state.d.ts": [
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/runtime/dom-particle-base.ts": [
+        "../src/runtime/entity.ts",
+        "../src/runtime/handle.ts",
+        "../src/runtime/particle.ts",
+        "../src/runtime/slot-proxy.ts",
+        "../src/runtime/slot-consumer.ts",
+        "../src/runtime/storageNG/handle.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/runtime/dom-particle.ts": [
+        "../modalities/dom/components/xen/xen-state.d.ts",
+        "../src/runtime/dom-particle-base.ts",
+        "../src/runtime/handle.ts",
+        "../src/runtime/hot.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/runtime/transformation-dom-particle.ts": [
+        "../src/runtime/dom-particle.ts",
+        "../src/runtime/entity.ts",
+        "../src/runtime/slot-consumer.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/runtime/multiplexer-dom-particle.ts": [
+        "../src/platform/assert-web.ts",
+        "../src/runtime/particle-spec.ts",
+        "../src/runtime/transformation-dom-particle.ts",
+        "../src/runtime/handle.ts",
+        "../src/runtime/particle-execution-context.ts",
+        "../src/runtime/type.ts",
+        "../src/runtime/slot-consumer.ts",
+        "../src/runtime/hot.ts",
+        "../src/runtime/entity.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/runtime/ui-particle-base.ts": [
+        "../src/runtime/entity.ts",
+        "../src/runtime/handle.ts",
+        "../src/runtime/particle.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/runtime/ui-particle.ts": [
+        "../modalities/dom/components/xen/xen-state.d.ts",
+        "../src/runtime/ui-particle-base.ts",
+        "../src/runtime/handle.ts",
+        "../src/runtime/hot.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/runtime/ui-transformation-particle.ts": [
+        "../src/runtime/ui-particle.ts",
+        "../src/runtime/entity.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/runtime/ui-multiplexer-particle.ts": [
+        "../src/runtime/particle-spec.ts",
+        "../src/runtime/ui-transformation-particle.ts",
+        "../src/runtime/handle.ts",
+        "../src/runtime/particle-execution-context.ts",
+        "../src/runtime/type.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/runtime/html.ts": [
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/platform/loader-base.ts": [
+        "../src/platform/assert-web.ts",
+        "../src/platform/fetch-web.ts",
+        "../src/runtime/converters/jsonldToManifest.ts",
+        "../src/runtime/particle-execution-context.ts",
+        "../src/runtime/reference.ts",
+        "../src/runtime/particle-spec.ts",
+        "../src/runtime/particle.ts",
+        "../src/runtime/dom-particle.ts",
+        "../src/runtime/transformation-dom-particle.ts",
+        "../src/runtime/multiplexer-dom-particle.ts",
+        "../src/runtime/ui-particle.ts",
+        "../src/runtime/ui-multiplexer-particle.ts",
+        "../src/runtime/html.ts",
+        "../src/platform/logs-factory.ts",
+        "../src/runtime/hot.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/platform/loader-web.ts": [
+        "../src/platform/logs-factory.ts",
+        "../src/platform/loader-base.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/platform/loader.ts": [
+        "../src/platform/loader-web.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/runtime/testing/stub-loader.ts": [
+        "../src/platform/loader.ts",
+        "../src/runtime/hot.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/runtime/fake-pec-factory.ts": [
+        "../src/platform/loader.ts",
+        "../src/runtime/message-channel.ts",
+        "../src/runtime/particle-execution-context.ts",
+        "../src/runtime/testing/stub-loader.ts",
+        "../src/runtime/id.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/runtime/arc-serializer.ts": [
+        "../src/runtime/flags.ts",
+        "../src/runtime/storageNG/unified-store.ts",
+        "../src/runtime/type.ts",
+        "../src/runtime/storageNG/storage-key.ts",
+        "../src/runtime/storage/key-base.ts",
+        "../src/runtime/storage/storage-provider-base.ts",
+        "../src/runtime/particle-spec.ts",
+        "../src/runtime/recipe/recipe.ts",
+        "../src/runtime/storage/storage-provider-factory.ts",
+        "../src/runtime/manifest.ts",
+        "../src/runtime/id.ts",
+        "../src/runtime/storageNG/drivers/volatile.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/runtime/arc.ts": [
+        "../src/platform/assert-web.ts",
+        "../src/runtime/arc-inspector.ts",
+        "../src/runtime/fake-pec-factory.ts",
+        "../src/runtime/id.ts",
+        "../src/platform/loader.ts",
+        "../src/runtime/hot.ts",
+        "../src/runtime/manifest.ts",
+        "../src/runtime/message-channel.ts",
+        "../src/runtime/modality.ts",
+        "../src/runtime/particle-execution-host.ts",
+        "../src/runtime/particle-spec.ts",
+        "../src/runtime/storage-stub.ts",
+        "../src/runtime/recipe/handle.ts",
+        "../src/runtime/recipe/particle.ts",
+        "../src/runtime/recipe/recipe.ts",
+        "../src/runtime/recipe/slot.ts",
+        "../src/runtime/recipe/comparable.ts",
+        "../src/runtime/slot-composer.ts",
+        "../src/runtime/storage/storage-provider-base.ts",
+        "../src/runtime/storage/storage-provider-factory.ts",
+        "../src/runtime/type.ts",
+        "../src/runtime/particle-execution-context.ts",
+        "../src/runtime/interface-info.ts",
+        "../src/runtime/mutex.ts",
+        "../src/runtime/runtime.ts",
+        "../src/runtime/storageNG/drivers/volatile.ts",
+        "../src/runtime/storageNG/drivers/driver-factory.ts",
+        "../src/runtime/storageNG/storage-key.ts",
+        "../src/runtime/storageNG/store.ts",
+        "../src/runtime/storage/key-base.ts",
+        "../src/runtime/storageNG/unified-store.ts",
+        "../src/runtime/flags.ts",
+        "../src/runtime/crdt/crdt.ts",
+        "../src/runtime/arc-serializer.ts",
+        "../src/runtime/storageNG/reference-mode-storage-key.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/runtime/api-channel.ts": [
+        "../src/platform/assert-web.ts",
+        "../src/runtime/arc.ts",
+        "../src/runtime/storageNG/unified-store.ts",
+        "../src/runtime/arc-inspector.ts",
+        "../src/runtime/handle.ts",
+        "../src/runtime/particle-spec.ts",
+        "../src/runtime/particle.ts",
+        "../src/runtime/recipe/handle.ts",
+        "../src/runtime/recipe/particle.ts",
+        "../src/runtime/storage-proxy.ts",
+        "../src/runtime/slot-consumer.ts",
+        "../src/runtime/storage/crdt-collection-model.ts",
+        "../src/runtime/type.ts",
+        "../src/runtime/arc-exceptions.ts",
+        "../src/runtime/hot.ts",
+        "../src/runtime/util.ts",
+        "../src/runtime/message-channel.ts",
+        "../src/runtime/storageNG/storage-proxy.ts",
+        "../src/runtime/crdt/crdt.ts",
+        "../src/runtime/storageNG/store.ts",
+        "../src/runtime/storage/storage-provider-base.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/runtime/bimap.ts": [
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/runtime/wasm.ts": [
+        "../src/platform/assert-web.ts",
+        "../src/runtime/schema.ts",
+        "../src/platform/loader.ts",
+        "../src/runtime/entity.ts",
+        "../src/runtime/reference.ts",
+        "../src/runtime/type.ts",
+        "../src/runtime/handle.ts",
+        "../src/runtime/particle.ts",
+        "../src/runtime/slot-consumer.ts",
+        "../src/runtime/hot.ts",
+        "../src/runtime/api-channel.ts",
+        "../src/runtime/arc-exceptions.ts",
+        "../src/runtime/particle-execution-context.ts",
+        "../src/runtime/bimap.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/runtime/particle-execution-context.ts": [
+        "../src/platform/assert-web.ts",
+        "../src/runtime/api-channel.ts",
+        "../src/runtime/handle.ts",
+        "../src/runtime/id.ts",
+        "../src/runtime/hot.ts",
+        "../src/platform/loader.ts",
+        "../src/runtime/particle-spec.ts",
+        "../src/runtime/particle.ts",
+        "../src/runtime/slot-proxy.ts",
+        "../src/runtime/slot-consumer.ts",
+        "../src/runtime/storage-proxy.ts",
+        "../src/runtime/storageNG/handle.ts",
+        "../src/runtime/storageNG/storage-proxy.ts",
+        "../src/runtime/crdt/crdt.ts",
+        "../src/runtime/storageNG/store.ts",
+        "../src/runtime/arc-exceptions.ts",
+        "../src/runtime/type.ts",
+        "../src/runtime/message-channel.ts",
+        "../src/runtime/wasm.ts",
+        "../src/runtime/store.ts",
+        "../src/runtime/flags.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/runtime/schema.ts": [
+        "../src/runtime/entity.ts",
+        "../src/runtime/particle-execution-context.ts",
+        "../src/runtime/type.ts",
+        "../src/runtime/hot.ts",
+        "../src/runtime/crdt/crdt-entity.ts",
+        "../src/runtime/crdt/crdt-collection.ts",
+        "../src/runtime/crdt/crdt-singleton.ts",
+        "../src/runtime/flags.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/runtime/entity.ts": [
+        "../src/platform/assert-web.ts",
+        "../src/runtime/schema.ts",
+        "../src/runtime/type.ts",
+        "../src/runtime/particle-execution-context.ts",
+        "../src/runtime/reference.ts",
+        "../src/runtime/recipe/type-checker.ts",
+        "../src/runtime/handle.ts",
+        "../src/runtime/storage-proxy.ts",
+        "../src/runtime/id.ts",
+        "../src/runtime/hot.ts",
+        "../src/runtime/symbols.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/runtime/crdt/crdt-count.ts": [
+        "../src/runtime/crdt/crdt.ts",
+        "../src/runtime/hot.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/runtime/type.ts": [
+        "../src/runtime/entity.ts",
+        "../src/runtime/id.ts",
+        "../src/runtime/interface-info.ts",
+        "../src/runtime/slot-info.ts",
+        "../src/runtime/synthetic-types.ts",
+        "../src/runtime/type-variable-info.ts",
+        "../src/runtime/hot.ts",
+        "../src/runtime/crdt/crdt.ts",
+        "../src/runtime/crdt/crdt-count.ts",
+        "../src/runtime/crdt/crdt-collection.ts",
+        "../src/runtime/crdt/crdt-singleton.ts",
+        "../src/runtime/crdt/crdt-entity.ts",
+        "../src/runtime/storageNG/handle.ts",
+        "../src/runtime/particle-execution-context.ts",
+        "../src/runtime/flags.ts",
+        "../src/runtime/schema.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/runtime/recipe/type-checker.ts": [
+        "../src/runtime/type.ts",
+        "../src/runtime/manifest-ast-nodes.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/runtime/particle-spec.ts": [
+        "../src/platform/assert-web.ts",
+        "../src/runtime/modality.ts",
+        "../src/runtime/manifest-ast-nodes.ts",
+        "../src/runtime/recipe/type-checker.ts",
+        "../src/runtime/type-variable-info.ts",
+        "../src/runtime/schema.ts",
+        "../src/runtime/type.ts",
+        "../src/runtime/hot.ts",
+        "../src/runtime/particle-check.ts",
+        "../src/runtime/particle-claim.ts",
+        "../src/runtime/flags.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/runtime/particle-claim.ts": [
+        "../src/runtime/particle-spec.ts",
+        "../src/runtime/manifest-ast-nodes.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/runtime/manifest-ast-nodes.ts": [
+        "../src/runtime/particle-claim.ts",
+        "../src/runtime/particle-check.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/gen/runtime/manifest-parser.ts": [
+        "../src/runtime/manifest-ast-nodes.ts",
+        "../src/runtime/flags.ts",
+        "../src/runtime/particle-check.ts",
+        "../src/runtime/particle-claim.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/runtime/manifest-meta.ts": [
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../node_modules/firebase/index.d.ts": [
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/platform/firebase-web.d.ts": [
+        "../node_modules/firebase/index.d.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/runtime/storageNG/drivers/firebase.ts": [
+        "../src/runtime/storageNG/drivers/driver-factory.ts",
+        "../src/runtime/storageNG/storage-key.ts",
+        "../src/platform/firebase-web.d.ts",
+        "../src/runtime/runtime.ts",
+        "../src/platform/assert-web.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/runtime/storageNG/storage-key-parser.ts": [
+        "../src/runtime/storageNG/storage-key.ts",
+        "../src/runtime/storageNG/drivers/volatile.ts",
+        "../src/runtime/storageNG/drivers/firebase.ts",
+        "../src/runtime/storageNG/drivers/ramdisk.ts",
+        "../src/runtime/storageNG/reference-mode-storage-key.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/runtime/manifest.ts": [
+        "../src/gen/runtime/manifest-parser.ts",
+        "../src/platform/assert-web.ts",
+        "../src/platform/digest-web.ts",
+        "../src/runtime/id.ts",
+        "../src/runtime/interface-info.ts",
+        "../src/runtime/hot.ts",
+        "../src/platform/loader.ts",
+        "../src/runtime/manifest-meta.ts",
+        "../src/runtime/manifest-ast-nodes.ts",
+        "../src/runtime/particle-spec.ts",
+        "../src/runtime/recipe/comparable.ts",
+        "../src/runtime/recipe/connection-constraint.ts",
+        "../src/runtime/recipe/handle.ts",
+        "../src/runtime/recipe/particle.ts",
+        "../src/runtime/recipe/slot.ts",
+        "../src/runtime/recipe/handle-connection.ts",
+        "../src/runtime/recipe/recipe-util.ts",
+        "../src/runtime/recipe/recipe.ts",
+        "../src/runtime/recipe/search.ts",
+        "../src/runtime/recipe/type-checker.ts",
+        "../src/runtime/storage/storage-provider-factory.ts",
+        "../src/runtime/schema.ts",
+        "../src/runtime/type.ts",
+        "../src/runtime/particle-claim.ts",
+        "../src/runtime/storage/volatile-storage.ts",
+        "../src/runtime/storageNG/unified-store.ts",
+        "../src/runtime/storage-stub.ts",
+        "../src/runtime/flags.ts",
+        "../src/runtime/storageNG/store.ts",
+        "../src/runtime/storageNG/storage-key.ts",
+        "../src/runtime/storageNG/drivers/driver-factory.ts",
+        "../src/runtime/storageNG/storage-key-parser.ts",
+        "../src/runtime/storageNG/drivers/volatile.ts",
+        "../src/runtime/storageNG/drivers/ramdisk.ts",
+        "../src/runtime/crdt/crdt-singleton.ts",
+        "../src/runtime/entity.ts",
+        "../src/runtime/storage-proxy.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/platform/atob-web.ts": [
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/platform/btoa-web.ts": [
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/runtime/storage/firebase/firebase-storage.ts": [
+        "../src/platform/assert-web.ts",
+        "../src/platform/atob-web.ts",
+        "../src/platform/btoa-web.ts",
+        "../src/platform/firebase-web.d.ts",
+        "../src/runtime/id.ts",
+        "../src/runtime/hot.ts",
+        "../src/runtime/type.ts",
+        "../src/runtime/util.ts",
+        "../src/runtime/storage/crdt-collection-model.ts",
+        "../src/runtime/storage/key-base.ts",
+        "../src/runtime/storage/storage-provider-base.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/runtime/storage/firebase/firebase-provider.ts": [
+        "../src/runtime/storage/storage-provider-factory.ts",
+        "../src/runtime/storage/firebase/firebase-storage.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/cli/spotify-importer.ts": [
+        "../node_modules/@types/node/fs.d.ts",
+        "../src/runtime/id.ts",
+        "../src/runtime/manifest.ts",
+        "../src/runtime/type.ts",
+        "../src/runtime/storage/storage-provider-factory.ts",
+        "../src/runtime/storage/firebase/firebase-storage.ts",
+        "../src/runtime/storage/firebase/firebase-provider.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/common/time/timeunit.ts": [
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/common/time/instant.ts": [
+        "../src/common/time/timeunit.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../node_modules/@types/chai/index.d.ts": [
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/platform/chai-web.d.ts": [
+        "../node_modules/@types/chai/index.d.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/common/time/tests/instant-tests.ts": [
+        "../src/platform/chai-web.d.ts",
+        "../src/common/time/instant.ts",
+        "../src/common/time/timeunit.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/dataflow/analysis/testing/flow-graph-testing.ts": [
+        "../src/platform/chai-web.d.ts",
+        "../src/runtime/manifest.ts",
+        "../src/dataflow/analysis/flow-graph.ts",
+        "../src/runtime/particle-check.ts",
+        "../src/dataflow/analysis/graph-internals.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/runtime/testing/test-util.ts": [
+        "../src/platform/chai-web.d.ts",
+        "../src/runtime/arc.ts",
+        "../src/runtime/type.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/dataflow/analysis/tests/analysis-test.ts": [
+        "../src/platform/chai-web.d.ts",
+        "../src/dataflow/analysis/analysis.ts",
+        "../src/dataflow/analysis/testing/flow-graph-testing.ts",
+        "../src/runtime/testing/test-util.ts",
+        "../src/dataflow/analysis/graph-internals.ts",
+        "../src/dataflow/analysis/flow-graph.ts",
+        "../src/runtime/flags.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/dataflow/analysis/tests/deep-set-test.ts": [
+        "../src/dataflow/analysis/deep-set.ts",
+        "../src/platform/chai-web.d.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/runtime/testing/preconditions.ts": [
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/dataflow/analysis/tests/flow-graph-test.ts": [
+        "../src/platform/chai-web.d.ts",
+        "../src/runtime/testing/preconditions.ts",
+        "../src/dataflow/analysis/particle-node.ts",
+        "../src/dataflow/analysis/testing/flow-graph-testing.ts",
+        "../src/dataflow/analysis/graph-internals.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/dataflow/analysis/tests/graph-internals-test.ts": [
+        "../src/dataflow/analysis/graph-internals.ts",
+        "../src/platform/chai-web.d.ts",
+        "../src/dataflow/analysis/testing/flow-graph-testing.ts",
+        "../src/runtime/particle-claim.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/dataflow/analysis/tests/ordered-set-test.ts": [
+        "../src/dataflow/analysis/ordered-set.ts",
+        "../src/platform/chai-web.d.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/dataflow/cli/flowcheck.ts": [
+        "../src/dataflow/analysis/flow-graph.ts",
+        "../src/dataflow/analysis/analysis.ts",
+        "../src/runtime/runtime.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.2/util.d.ts"
       ],
@@ -7429,19 +7447,6 @@
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.2/util.d.ts"
       ],
-      "../src/runtime/ui-slot-composer.ts": [
-        "../src/platform/assert-web.ts",
-        "../src/runtime/arc.ts",
-        "../src/runtime/description.ts",
-        "../src/runtime/modality-handler.ts",
-        "../src/runtime/modality.ts",
-        "../src/runtime/recipe/particle.ts",
-        "../src/runtime/slot-consumer.ts",
-        "../src/runtime/slot-context.ts",
-        "../src/platform/logs-factory.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
       "../src/runtime/webassembly.d.ts": [
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.2/util.d.ts"
@@ -8967,87 +8972,6 @@
         "../src/runtime/id.ts",
         "../src/runtime/storageNG/storage-key.ts"
       ],
-      "../src/planning/recipe-index.ts": [
-        "../src/runtime/arc.ts",
-        "../src/runtime/recipe/recipe.ts",
-        "../src/runtime/recipe/handle.ts",
-        "../src/runtime/recipe/particle.ts",
-        "../src/runtime/particle-spec.ts",
-        "../src/runtime/recipe/slot.ts",
-        "../src/runtime/recipe/handle-connection.ts"
-      ],
-      "../src/planning/plan/plan-producer.ts": [
-        "../src/runtime/arc.ts",
-        "../src/planning/plan/planning-result.ts",
-        "../src/planning/planner.ts",
-        "../src/planning/recipe-index.ts",
-        "../src/planning/speculator.ts",
-        "../src/runtime/storage/storage-provider-base.ts",
-        "../src/planning/planner-inspector.ts",
-        "../src/planning/plan/suggestion.ts",
-        "../src/planning/strategizer.ts"
-      ],
-      "../src/planning/plan/planificator.ts": [
-        "../src/planning/planner-inspector.ts",
-        "../src/runtime/arc.ts",
-        "../src/planning/plan/planning-result.ts",
-        "../src/planning/plan/plan-consumer.ts",
-        "../src/planning/plan/plan-producer.ts",
-        "../src/planning/plan/replan-queue.ts",
-        "../src/runtime/hot.ts",
-        "../src/runtime/storageNG/unified-store.ts",
-        "../src/runtime/storage/storage-provider-base.ts",
-        "../src/runtime/storage/key-base.ts"
-      ],
-      "../src/planning/arcs-planning.ts": [
-        "../src/planning/planner.ts",
-        "../src/planning/plan/planificator.ts",
-        "../src/planning/planning-modality-handler.ts"
-      ],
-      "../src/planning/plan/replan-queue.ts": [
-        "../src/planning/plan/plan-producer.ts",
-        "../src/runtime/hot.ts"
-      ],
-      "../src/devtools-connector/arc-planner-invoker.ts": [
-        "../src/runtime/arc.ts",
-        "../src/devtools-connector/abstract-devtools-channel.ts",
-        "../src/runtime/recipe/recipe.ts",
-        "../src/planning/strategizer.ts",
-        "../src/runtime/recipe/walker.ts",
-        "../src/runtime/manifest.ts",
-        "../src/runtime/hot.ts"
-      ],
-      "../src/devtools-connector/devtools-arc-inspector.ts": [
-        "../src/runtime/arc-inspector.ts"
-      ],
-      "../src/planning/strategies/coalesce-recipes.ts": [
-        "../src/runtime/arc.ts",
-        "../src/planning/strategizer.ts"
-      ],
-      "../src/planning/planner.ts": [
-        "../src/runtime/recipe/walker.ts",
-        "../src/runtime/recipe/recipe.ts",
-        "../src/planning/strategizer.ts",
-        "../src/planning/speculator.ts",
-        "../src/planning/planner-inspector.ts",
-        "../src/runtime/arc.ts",
-        "../src/planning/plan/suggestion.ts",
-        "../src/runtime/hot.ts"
-      ],
-      "../src/planning/strategies/search-tokens-to-particles.ts": [
-        "../src/runtime/arc.ts",
-        "../src/planning/strategizer.ts"
-      ],
-      "../src/planning/strategies/rulesets.ts": [
-        "../src/planning/strategizer.ts"
-      ],
-      "../src/planning/strategies/init-population.ts": [
-        "../src/planning/recipe-index.ts",
-        "../src/runtime/arc.ts",
-        "../src/runtime/recipe/walker.ts",
-        "../src/runtime/recipe/recipe.ts",
-        "../src/planning/strategizer.ts"
-      ],
       "../src/cli/spotify-importer.ts": [
         "../src/runtime/storage/firebase/firebase-provider.ts"
       ],
@@ -9088,89 +9012,10 @@
         "../src/tools/schema2graph.ts",
         "../src/tools/schema2base.ts"
       ],
-      "../src/devtools-connector/arc-stores-fetcher.ts": [
-        "../src/runtime/arc.ts",
-        "../src/devtools-connector/abstract-devtools-channel.ts"
-      ],
-      "../src/planning/plan/suggestion.ts": [
-        "../src/runtime/hot.ts",
-        "../src/runtime/manifest.ts",
-        "../src/platform/loader.ts",
-        "../src/runtime/recipe/recipe.ts",
-        "../src/runtime/relevance.ts",
-        "../src/runtime/description.ts",
-        "../src/runtime/modality.ts",
-        "../src/runtime/description-formatter.ts",
-        "../src/runtime/recipe/search.ts",
-        "../src/runtime/arc.ts",
-        "../src/planning/plan/suggest-filter.ts"
-      ],
-      "../src/devtools-connector/devtools-planner-inspector.ts": [
-        "../src/planning/planner-inspector.ts"
-      ],
-      "../src/planning/planner-inspector.ts": [
-        "../src/runtime/arc.ts",
-        "../src/planning/plan/planning-result.ts",
-        "../src/planning/plan/suggestion.ts",
-        "../src/planning/plan/plan-consumer.ts"
-      ],
-      "../src/planning/plan/plan-consumer.ts": [
-        "../src/planning/plan/suggestion.ts",
-        "../src/runtime/arc.ts",
-        "../src/planning/plan/planning-result.ts",
-        "../src/planning/plan/suggest-filter.ts",
-        "../src/planning/suggestion-composer.ts",
-        "../src/planning/planner-inspector.ts",
-        "../src/runtime/hot.ts"
-      ],
-      "../src/planning/suggestion-composer.ts": [
-        "../src/planning/suggest-dom-consumer.ts",
-        "../src/runtime/arc.ts",
-        "../src/runtime/slot-composer.ts",
-        "../src/planning/planning-modality-handler.ts",
-        "../src/planning/plan/suggestion.ts"
-      ],
-      "../src/planning/headless-suggest-dom-consumer.ts": [
-        "../src/runtime/arc.ts",
-        "../src/planning/plan/suggestion.ts",
-        "../src/planning/suggest-dom-consumer.ts"
-      ],
-      "../src/planning/planning-modality-handler.ts": [
-        "../src/planning/suggest-dom-consumer.ts",
-        "../src/runtime/slot-consumer.ts",
-        "../src/runtime/description-formatter.ts",
-        "../src/runtime/modality-handler.ts"
-      ],
-      "../src/planning/suggest-dom-consumer.ts": [
-        "../src/planning/plan/suggestion.ts",
-        "../src/runtime/arc.ts",
-        "../src/runtime/slot-consumer.ts",
-        "../src/runtime/slot-dom-consumer.ts"
-      ],
-      "../src/planning/plan/planning-result.ts": [
-        "../src/planning/plan/suggestion.ts",
-        "../src/runtime/storage/storage-provider-base.ts",
-        "../src/runtime/arc.ts"
-      ],
       "../src/dataflow/analysis/testing/flow-graph-testing.ts": [
         "../src/dataflow/analysis/flow-graph.ts",
         "../src/runtime/particle-check.ts",
         "../src/dataflow/analysis/graph-internals.ts"
-      ],
-      "../src/dataflow/analysis/analysis.ts": [
-        "../src/runtime/recipe/recipe.ts",
-        "../src/runtime/manifest.ts",
-        "../src/dataflow/analysis/flow-graph.ts",
-        "../src/dataflow/analysis/graph-internals.ts"
-      ],
-      "../src/dataflow/analysis/flow-graph.ts": [
-        "../src/dataflow/analysis/particle-node.ts",
-        "../src/dataflow/analysis/handle-node.ts",
-        "../src/dataflow/analysis/slot-node.ts",
-        "../src/dataflow/analysis/graph-internals.ts",
-        "../src/runtime/recipe/recipe.ts",
-        "../src/runtime/manifest.ts",
-        "../src/runtime/particle-check.ts"
       ],
       "../src/runtime/arc.ts": [
         "../src/runtime/id.ts",
@@ -9196,120 +9041,46 @@
         "../src/runtime/interface-info.ts",
         "../src/runtime/arc-serializer.ts"
       ],
-      "../src/runtime/ui-slot-composer.ts": [
-        "../src/runtime/modality-handler.ts",
-        "../src/runtime/modality.ts",
-        "../src/runtime/slot-context.ts",
-        "../src/runtime/slot-consumer.ts",
-        "../src/runtime/recipe/particle.ts",
-        "../src/runtime/arc.ts"
-      ],
       "../src/planning/simple-planner.ts": [
         "../src/runtime/recipe/recipe.ts",
         "../src/runtime/arc.ts"
+      ],
+      "../src/planning/plan/planificator.ts": [
+        "../src/planning/planner-inspector.ts",
+        "../src/runtime/arc.ts",
+        "../src/planning/plan/planning-result.ts",
+        "../src/planning/plan/plan-consumer.ts",
+        "../src/planning/plan/plan-producer.ts",
+        "../src/planning/plan/replan-queue.ts",
+        "../src/runtime/hot.ts",
+        "../src/runtime/storageNG/unified-store.ts",
+        "../src/runtime/storage/storage-provider-base.ts",
+        "../src/runtime/storage/key-base.ts"
+      ],
+      "../src/planning/arcs-planning.ts": [
+        "../src/planning/planner.ts",
+        "../src/planning/plan/planificator.ts",
+        "../src/planning/planning-modality-handler.ts"
+      ],
+      "../src/planning/plan/plan-producer.ts": [
+        "../src/runtime/arc.ts",
+        "../src/planning/plan/planning-result.ts",
+        "../src/planning/planner.ts",
+        "../src/planning/recipe-index.ts",
+        "../src/planning/speculator.ts",
+        "../src/runtime/storage/storage-provider-base.ts",
+        "../src/planning/planner-inspector.ts",
+        "../src/planning/plan/suggestion.ts",
+        "../src/planning/strategizer.ts"
+      ],
+      "../src/planning/plan/replan-queue.ts": [
+        "../src/planning/plan/plan-producer.ts",
+        "../src/runtime/hot.ts"
       ],
       "../src/runtime/testing/mock-slot-composer.ts": [
         "../src/runtime/slot-composer.ts",
         "../src/runtime/recipe/particle.ts",
         "../src/runtime/testing/fake-slot-composer.ts"
-      ],
-      "../src/devtools-connector/hot-code-reloader.ts": [
-        "../src/runtime/arc.ts",
-        "../src/devtools-connector/abstract-devtools-channel.ts",
-        "../src/runtime/recipe/particle.ts"
-      ],
-      "../src/planning/strategies/find-hosted-particle.ts": [
-        "../src/planning/strategizer.ts"
-      ],
-      "../src/planning/strategies/match-particle-by-verb.ts": [
-        "../src/planning/strategizer.ts"
-      ],
-      "../src/planning/strategies/group-handle-connections.ts": [
-        "../src/planning/strategizer.ts",
-        "../src/runtime/arc.ts"
-      ],
-      "../src/planning/strategizer.ts": [
-        "../src/runtime/hot.ts",
-        "../src/runtime/recipe/walker.ts",
-        "../src/runtime/recipe/recipe.ts",
-        "../src/runtime/recipe/recipe-walker.ts",
-        "../src/runtime/arc.ts"
-      ],
-      "../src/planning/strategies/search-tokens-to-handles.ts": [
-        "../src/planning/strategizer.ts"
-      ],
-      "../src/planning/strategies/name-unnamed-connections.ts": [
-        "../src/planning/strategizer.ts"
-      ],
-      "../src/planning/strategies/find-required-particle.ts": [
-        "../src/runtime/recipe/walker.ts",
-        "../src/runtime/recipe/recipe.ts",
-        "../src/planning/strategizer.ts"
-      ],
-      "../src/planning/strategies/match-recipe-by-verb.ts": [
-        "../src/runtime/recipe/walker.ts",
-        "../src/runtime/recipe/recipe.ts",
-        "../src/runtime/hot.ts",
-        "../src/runtime/particle-spec.ts",
-        "../src/runtime/manifest-ast-nodes.ts",
-        "../src/runtime/recipe/particle.ts",
-        "../src/planning/strategizer.ts",
-        "../src/runtime/recipe/handle.ts",
-        "../src/runtime/recipe/slot.ts"
-      ],
-      "../src/planning/strategies/map-slots.ts": [
-        "../src/planning/strategizer.ts"
-      ],
-      "../src/planning/strategies/init-search.ts": [
-        "../src/runtime/recipe/walker.ts",
-        "../src/runtime/recipe/recipe.ts",
-        "../src/planning/strategizer.ts"
-      ],
-      "../src/planning/strategies/create-description-handle.ts": [
-        "../src/planning/strategizer.ts"
-      ],
-      "../src/planning/strategies/resolve-recipe.ts": [
-        "../src/planning/strategizer.ts"
-      ],
-      "../src/planning/strategies/match-free-handles-to-connections.ts": [
-        "../src/planning/strategizer.ts"
-      ],
-      "../src/planning/strategies/create-handle-group.ts": [
-        "../src/planning/strategizer.ts"
-      ],
-      "../src/planning/strategies/convert-constraints-to-connections.ts": [
-        "../src/planning/strategizer.ts",
-        "../src/runtime/recipe/walker.ts",
-        "../src/runtime/recipe/recipe.ts"
-      ],
-      "../src/planning/strategies/assign-handles.ts": [
-        "../src/runtime/storageNG/unified-store.ts",
-        "../src/planning/strategizer.ts"
-      ],
-      "../src/planning/strategies/add-missing-handles.ts": [
-        "../src/planning/strategizer.ts"
-      ],
-      "../src/planning/speculator.ts": [
-        "../src/runtime/arc.ts",
-        "../src/runtime/recipe/recipe.ts",
-        "../src/runtime/relevance.ts"
-      ],
-      "../src/devtools-connector/abstract-devtools-channel.ts": [
-        "../src/runtime/hot.ts",
-        "../src/runtime/arc.ts"
-      ],
-      "../src/platform/devtools-channel-node.ts": [
-        "../node_modules/@types/ws/index.d.ts",
-        "../src/devtools-connector/abstract-devtools-channel.ts"
-      ],
-      "../src/devtools-connector/tracing-adapter.ts": [
-        "../src/devtools-connector/abstract-devtools-channel.ts"
-      ],
-      "../src/devtools-connector/testing/devtools-channel-stub.ts": [
-        "../src/devtools-connector/abstract-devtools-channel.ts"
-      ],
-      "../src/devtools-connector/devtools-connection.ts": [
-        "../src/devtools-connector/testing/devtools-channel-stub.ts"
       ],
       "../src/runtime/testing/test-util.ts": [
         "../src/runtime/arc.ts"
@@ -9362,25 +9133,6 @@
         "../src/runtime/id.ts",
         "../src/runtime/synthetic-types.ts"
       ],
-      "../src/dataflow/analysis/particle-node.ts": [
-        "../src/dataflow/analysis/graph-internals.ts",
-        "../src/runtime/recipe/particle.ts",
-        "../src/runtime/particle-spec.ts",
-        "../src/runtime/recipe/handle-connection.ts",
-        "../src/runtime/type.ts"
-      ],
-      "../src/dataflow/analysis/slot-node.ts": [
-        "../src/dataflow/analysis/graph-internals.ts",
-        "../src/runtime/interface-info.ts",
-        "../src/dataflow/analysis/particle-node.ts",
-        "../src/runtime/recipe/slot-connection.ts"
-      ],
-      "../src/dataflow/analysis/handle-node.ts": [
-        "../src/dataflow/analysis/particle-node.ts",
-        "../src/runtime/recipe/handle.ts",
-        "../src/dataflow/analysis/graph-internals.ts",
-        "../src/runtime/recipe/handle-connection.ts"
-      ],
       "../src/runtime/particle-spec.ts": [
         "../src/runtime/type.ts",
         "../src/runtime/manifest-ast-nodes.ts",
@@ -9399,19 +9151,9 @@
         "../src/runtime/particle-spec.ts",
         "../src/runtime/manifest-ast-nodes.ts"
       ],
-      "../src/dataflow/analysis/graph-internals.ts": [
-        "../src/dataflow/analysis/ordered-set.ts",
-        "../src/dataflow/analysis/deep-set.ts",
-        "../src/runtime/particle-claim.ts",
-        "../src/runtime/particle-check.ts"
-      ],
       "../src/runtime/manifest-ast-nodes.ts": [
         "../src/runtime/particle-claim.ts",
         "../src/runtime/particle-check.ts"
-      ],
-      "../src/runtime/particle-check.ts": [
-        "../src/runtime/particle-spec.ts",
-        "../src/runtime/manifest-ast-nodes.ts"
       ],
       "../src/runtime/recipe/type-checker.ts": [
         "../src/runtime/type.ts",
@@ -9522,7 +9264,8 @@
         "../src/runtime/storageNG/drivers/volatile.ts",
         "../src/runtime/id.ts",
         "../src/runtime/storageNG/storage-key.ts",
-        "../src/runtime/storageNG/unified-store.ts"
+        "../src/runtime/storageNG/unified-store.ts",
+        "../src/runtime/recipe/recipe.ts"
       ],
       "../src/runtime/storageNG/testing/mock-firebase.ts": [
         "../src/runtime/storageNG/storage-key.ts",
@@ -9585,6 +9328,123 @@
         "../src/runtime/description-formatter.ts",
         "../src/runtime/recipe/handle.ts"
       ],
+      "../src/planning/planner.ts": [
+        "../src/runtime/recipe/walker.ts",
+        "../src/runtime/recipe/recipe.ts",
+        "../src/planning/strategizer.ts",
+        "../src/planning/speculator.ts",
+        "../src/planning/planner-inspector.ts",
+        "../src/runtime/arc.ts",
+        "../src/planning/plan/suggestion.ts",
+        "../src/runtime/hot.ts"
+      ],
+      "../src/devtools-connector/arc-planner-invoker.ts": [
+        "../src/runtime/arc.ts",
+        "../src/devtools-connector/abstract-devtools-channel.ts",
+        "../src/runtime/recipe/recipe.ts",
+        "../src/planning/strategizer.ts",
+        "../src/runtime/recipe/walker.ts",
+        "../src/runtime/manifest.ts",
+        "../src/runtime/hot.ts"
+      ],
+      "../src/devtools-connector/devtools-arc-inspector.ts": [
+        "../src/runtime/arc-inspector.ts"
+      ],
+      "../src/planning/recipe-index.ts": [
+        "../src/runtime/arc.ts",
+        "../src/runtime/recipe/recipe.ts",
+        "../src/runtime/recipe/handle.ts",
+        "../src/runtime/recipe/particle.ts",
+        "../src/runtime/particle-spec.ts",
+        "../src/runtime/recipe/slot.ts",
+        "../src/runtime/recipe/handle-connection.ts"
+      ],
+      "../src/planning/strategies/coalesce-recipes.ts": [
+        "../src/runtime/arc.ts",
+        "../src/planning/strategizer.ts"
+      ],
+      "../src/planning/strategies/search-tokens-to-particles.ts": [
+        "../src/runtime/arc.ts",
+        "../src/planning/strategizer.ts"
+      ],
+      "../src/planning/strategies/rulesets.ts": [
+        "../src/planning/strategizer.ts"
+      ],
+      "../src/planning/strategies/init-population.ts": [
+        "../src/planning/recipe-index.ts",
+        "../src/runtime/arc.ts",
+        "../src/runtime/recipe/walker.ts",
+        "../src/runtime/recipe/recipe.ts",
+        "../src/planning/strategizer.ts"
+      ],
+      "../src/planning/plan/suggestion.ts": [
+        "../src/runtime/hot.ts",
+        "../src/runtime/manifest.ts",
+        "../src/platform/loader.ts",
+        "../src/runtime/recipe/recipe.ts",
+        "../src/runtime/relevance.ts",
+        "../src/runtime/description.ts",
+        "../src/runtime/modality.ts",
+        "../src/runtime/description-formatter.ts",
+        "../src/runtime/recipe/search.ts",
+        "../src/runtime/arc.ts",
+        "../src/planning/plan/suggest-filter.ts"
+      ],
+      "../src/devtools-connector/devtools-planner-inspector.ts": [
+        "../src/planning/planner-inspector.ts"
+      ],
+      "../src/planning/planner-inspector.ts": [
+        "../src/runtime/arc.ts",
+        "../src/planning/plan/planning-result.ts",
+        "../src/planning/plan/suggestion.ts",
+        "../src/planning/plan/plan-consumer.ts"
+      ],
+      "../src/planning/plan/plan-consumer.ts": [
+        "../src/planning/plan/suggestion.ts",
+        "../src/runtime/arc.ts",
+        "../src/planning/plan/planning-result.ts",
+        "../src/planning/plan/suggest-filter.ts",
+        "../src/planning/suggestion-composer.ts",
+        "../src/planning/planner-inspector.ts",
+        "../src/runtime/hot.ts"
+      ],
+      "../src/planning/suggestion-composer.ts": [
+        "../src/planning/suggest-dom-consumer.ts",
+        "../src/runtime/arc.ts",
+        "../src/runtime/slot-composer.ts",
+        "../src/planning/planning-modality-handler.ts",
+        "../src/planning/plan/suggestion.ts"
+      ],
+      "../src/planning/headless-suggest-dom-consumer.ts": [
+        "../src/runtime/arc.ts",
+        "../src/planning/plan/suggestion.ts",
+        "../src/planning/suggest-dom-consumer.ts"
+      ],
+      "../src/planning/planning-modality-handler.ts": [
+        "../src/planning/suggest-dom-consumer.ts",
+        "../src/runtime/slot-consumer.ts",
+        "../src/runtime/description-formatter.ts",
+        "../src/runtime/modality-handler.ts"
+      ],
+      "../src/planning/suggest-dom-consumer.ts": [
+        "../src/planning/plan/suggestion.ts",
+        "../src/runtime/arc.ts",
+        "../src/runtime/slot-consumer.ts",
+        "../src/runtime/slot-dom-consumer.ts"
+      ],
+      "../src/planning/plan/planning-result.ts": [
+        "../src/planning/plan/suggestion.ts",
+        "../src/runtime/storage/storage-provider-base.ts",
+        "../src/runtime/arc.ts"
+      ],
+      "../src/runtime/ui-slot-composer.ts": [
+        "../src/runtime/modality-handler.ts",
+        "../src/runtime/modality.ts",
+        "../src/runtime/slot-context.ts",
+        "../src/runtime/slot-consumer.ts",
+        "../src/runtime/recipe/particle.ts",
+        "../src/runtime/arc.ts"
+      ],
       "../src/runtime/slot-composer.ts": [
         "../src/runtime/modality-handler.ts",
         "../src/runtime/modality.ts",
@@ -9618,6 +9478,17 @@
         "../src/runtime/arc.ts",
         "../src/runtime/recipe/slot-connection.ts",
         "../src/runtime/slot-dom-consumer.ts"
+      ],
+      "../src/planning/strategies/search-tokens-to-handles.ts": [
+        "../src/planning/strategizer.ts"
+      ],
+      "../src/planning/strategies/assign-handles.ts": [
+        "../src/runtime/storageNG/unified-store.ts",
+        "../src/planning/strategizer.ts"
+      ],
+      "../src/devtools-connector/arc-stores-fetcher.ts": [
+        "../src/runtime/arc.ts",
+        "../src/devtools-connector/abstract-devtools-channel.ts"
       ],
       "../src/runtime/storage/storage-provider-base.ts": [
         "../src/runtime/store.ts",
@@ -9802,6 +9673,49 @@
         "../src/runtime/arc.ts",
         "../src/runtime/hot.ts"
       ],
+      "../src/dataflow/analysis/handle-node.ts": [
+        "../src/dataflow/analysis/particle-node.ts",
+        "../src/runtime/recipe/handle.ts",
+        "../src/dataflow/analysis/graph-internals.ts",
+        "../src/runtime/recipe/handle-connection.ts"
+      ],
+      "../src/dataflow/analysis/flow-graph.ts": [
+        "../src/dataflow/analysis/particle-node.ts",
+        "../src/dataflow/analysis/handle-node.ts",
+        "../src/dataflow/analysis/slot-node.ts",
+        "../src/dataflow/analysis/graph-internals.ts",
+        "../src/runtime/recipe/recipe.ts",
+        "../src/runtime/manifest.ts",
+        "../src/runtime/particle-check.ts"
+      ],
+      "../src/dataflow/analysis/analysis.ts": [
+        "../src/runtime/recipe/recipe.ts",
+        "../src/runtime/manifest.ts",
+        "../src/dataflow/analysis/flow-graph.ts",
+        "../src/dataflow/analysis/graph-internals.ts"
+      ],
+      "../src/planning/strategies/match-recipe-by-verb.ts": [
+        "../src/runtime/recipe/walker.ts",
+        "../src/runtime/recipe/recipe.ts",
+        "../src/runtime/hot.ts",
+        "../src/runtime/particle-spec.ts",
+        "../src/runtime/manifest-ast-nodes.ts",
+        "../src/runtime/recipe/particle.ts",
+        "../src/planning/strategizer.ts",
+        "../src/runtime/recipe/handle.ts",
+        "../src/runtime/recipe/slot.ts"
+      ],
+      "../src/planning/strategies/match-free-handles-to-connections.ts": [
+        "../src/planning/strategizer.ts"
+      ],
+      "../src/planning/strategies/create-handle-group.ts": [
+        "../src/planning/strategizer.ts"
+      ],
+      "../src/planning/strategies/convert-constraints-to-connections.ts": [
+        "../src/planning/strategizer.ts",
+        "../src/runtime/recipe/walker.ts",
+        "../src/runtime/recipe/recipe.ts"
+      ],
       "../src/runtime/recipe/recipe-resolver.ts": [
         "../src/runtime/recipe/recipe.ts",
         "../src/runtime/recipe/handle.ts",
@@ -9812,6 +9726,9 @@
         "../src/runtime/recipe/connection-constraint.ts",
         "../src/runtime/recipe/recipe-walker.ts",
         "../src/runtime/arc.ts"
+      ],
+      "../src/planning/strategies/resolve-recipe.ts": [
+        "../src/planning/strategizer.ts"
       ],
       "../src/runtime/recipe/recipe-walker.ts": [
         "../src/runtime/recipe/recipe.ts",
@@ -9829,6 +9746,45 @@
         "../src/runtime/recipe/connection-constraint.ts",
         "../src/runtime/recipe/walker.ts",
         "../src/runtime/recipe/recipe-walker.ts"
+      ],
+      "../src/planning/strategizer.ts": [
+        "../src/runtime/hot.ts",
+        "../src/runtime/recipe/walker.ts",
+        "../src/runtime/recipe/recipe.ts",
+        "../src/runtime/recipe/recipe-walker.ts",
+        "../src/runtime/arc.ts"
+      ],
+      "../src/planning/strategies/name-unnamed-connections.ts": [
+        "../src/planning/strategizer.ts"
+      ],
+      "../src/planning/strategies/find-required-particle.ts": [
+        "../src/runtime/recipe/walker.ts",
+        "../src/runtime/recipe/recipe.ts",
+        "../src/planning/strategizer.ts"
+      ],
+      "../src/planning/strategies/find-hosted-particle.ts": [
+        "../src/planning/strategizer.ts"
+      ],
+      "../src/planning/strategies/match-particle-by-verb.ts": [
+        "../src/planning/strategizer.ts"
+      ],
+      "../src/planning/strategies/map-slots.ts": [
+        "../src/planning/strategizer.ts"
+      ],
+      "../src/planning/strategies/init-search.ts": [
+        "../src/runtime/recipe/walker.ts",
+        "../src/runtime/recipe/recipe.ts",
+        "../src/planning/strategizer.ts"
+      ],
+      "../src/planning/strategies/group-handle-connections.ts": [
+        "../src/planning/strategizer.ts",
+        "../src/runtime/arc.ts"
+      ],
+      "../src/planning/strategies/create-description-handle.ts": [
+        "../src/planning/strategizer.ts"
+      ],
+      "../src/planning/strategies/add-missing-handles.ts": [
+        "../src/planning/strategizer.ts"
       ],
       "../src/runtime/description-formatter.ts": [
         "../src/runtime/recipe/particle.ts",
@@ -9850,6 +9806,19 @@
         "../src/runtime/recipe/slot-connection.ts",
         "../src/runtime/recipe/comparable.ts"
       ],
+      "../src/dataflow/analysis/particle-node.ts": [
+        "../src/dataflow/analysis/graph-internals.ts",
+        "../src/runtime/recipe/particle.ts",
+        "../src/runtime/particle-spec.ts",
+        "../src/runtime/recipe/handle-connection.ts",
+        "../src/runtime/type.ts"
+      ],
+      "../src/dataflow/analysis/slot-node.ts": [
+        "../src/dataflow/analysis/graph-internals.ts",
+        "../src/runtime/interface-info.ts",
+        "../src/dataflow/analysis/particle-node.ts",
+        "../src/runtime/recipe/slot-connection.ts"
+      ],
       "../src/runtime/recipe/particle.ts": [
         "../src/runtime/particle-spec.ts",
         "../src/runtime/recipe/handle-connection.ts",
@@ -9860,6 +9829,11 @@
         "../src/runtime/recipe/slot.ts",
         "../src/runtime/type.ts",
         "../src/runtime/recipe/comparable.ts"
+      ],
+      "../src/devtools-connector/hot-code-reloader.ts": [
+        "../src/runtime/arc.ts",
+        "../src/devtools-connector/abstract-devtools-channel.ts",
+        "../src/runtime/recipe/particle.ts"
       ],
       "../src/runtime/recipe/slot-utils.ts": [
         "../src/runtime/recipe/recipe.ts",
@@ -9872,6 +9846,11 @@
         "../src/runtime/recipe/particle.ts",
         "../src/runtime/arc.ts",
         "../src/runtime/recipe/recipe.ts"
+      ],
+      "../src/planning/speculator.ts": [
+        "../src/runtime/arc.ts",
+        "../src/runtime/recipe/recipe.ts",
+        "../src/runtime/relevance.ts"
       ],
       "../src/runtime/arc-inspector.ts": [
         "../src/runtime/arc.ts",
@@ -9954,6 +9933,16 @@
         "../src/runtime/hot.ts",
         "../src/runtime/particle-spec.ts"
       ],
+      "../src/runtime/particle-check.ts": [
+        "../src/runtime/particle-spec.ts",
+        "../src/runtime/manifest-ast-nodes.ts"
+      ],
+      "../src/dataflow/analysis/graph-internals.ts": [
+        "../src/dataflow/analysis/ordered-set.ts",
+        "../src/dataflow/analysis/deep-set.ts",
+        "../src/runtime/particle-claim.ts",
+        "../src/runtime/particle-check.ts"
+      ],
       "../src/runtime/synthetic-types.ts": [
         "../src/runtime/id.ts",
         "../src/runtime/type.ts",
@@ -9970,6 +9959,23 @@
       ],
       "../src/platform/pec-industry.ts": [
         "../src/platform/pec-industry-web.ts"
+      ],
+      "../src/devtools-connector/abstract-devtools-channel.ts": [
+        "../src/runtime/hot.ts",
+        "../src/runtime/arc.ts"
+      ],
+      "../src/platform/devtools-channel-node.ts": [
+        "../node_modules/@types/ws/index.d.ts",
+        "../src/devtools-connector/abstract-devtools-channel.ts"
+      ],
+      "../src/devtools-connector/tracing-adapter.ts": [
+        "../src/devtools-connector/abstract-devtools-channel.ts"
+      ],
+      "../src/devtools-connector/testing/devtools-channel-stub.ts": [
+        "../src/devtools-connector/abstract-devtools-channel.ts"
+      ],
+      "../src/devtools-connector/devtools-connection.ts": [
+        "../src/devtools-connector/testing/devtools-channel-stub.ts"
       ],
       "../src/runtime/recipe/walker.ts": [
         "../src/runtime/arc.ts"
@@ -9993,9 +9999,6 @@
       "../src/runtime/testing/sequence.ts": [
         "../src/runtime/hot.ts"
       ],
-      "../src/tracelib/trace.ts": [
-        "../src/runtime/hot.ts"
-      ],
       "../src/runtime/crdt/crdt-count.ts": [
         "../src/runtime/hot.ts",
         "../src/runtime/crdt/crdt.ts"
@@ -10005,6 +10008,9 @@
       ],
       "../src/services/tests/clock-test.ts": [
         "../src/services/clock-service.ts"
+      ],
+      "../src/tracelib/trace.ts": [
+        "../src/runtime/hot.ts"
       ],
       "../src/runtime/crdt/crdt.ts": [
         "../src/runtime/hot.ts"
@@ -12059,97 +12065,17 @@
       "../src/runtime/headless-slot-dom-consumer.ts",
       "../src/runtime/modality-handler.ts",
       "../src/runtime/slot-composer.ts",
+      "../src/runtime/ui-slot-composer.ts",
       "../src/runtime/testing/fake-slot-composer.ts",
       "../src/runtime/storageNG/drivers/ramdisk.ts",
       "../src/runtime/storageNG/drivers/volatile.ts",
-      "../src/platform/pec-industry-web.ts",
-      "../src/platform/pec-industry.ts",
-      "../src/runtime/runtime.ts",
-      "../src/runtime/storage/volatile-storage.ts",
-      "../src/runtime/synthetic-types.ts",
-      "../src/runtime/storage/synthetic-storage.ts",
-      "../src/runtime/mutex.ts",
-      "../src/runtime/storage/storage-provider-factory.ts",
-      "../src/runtime/storage-stub.ts",
-      "../src/runtime/storageNG/unified-store.ts",
-      "../src/runtime/description.ts",
-      "../src/runtime/message-channel.ts",
       "../src/runtime/recipe/recipe-walker.ts",
       "../src/runtime/recipe/slot-utils.ts",
       "../src/runtime/recipe/recipe-resolver.ts",
-      "../src/runtime/services.ts",
-      "../src/runtime/particle-execution-host.ts",
-      "../src/runtime/slot-consumer.ts",
-      "../src/runtime/slot-proxy.ts",
-      "../src/runtime/particle.ts",
-      "../src/runtime/handle.ts",
-      "../src/runtime/reference.ts",
-      "../modalities/dom/components/xen/xen-state.d.ts",
-      "../src/runtime/dom-particle-base.ts",
-      "../src/runtime/dom-particle.ts",
-      "../src/runtime/transformation-dom-particle.ts",
-      "../src/runtime/multiplexer-dom-particle.ts",
-      "../src/runtime/ui-particle-base.ts",
-      "../src/runtime/ui-particle.ts",
-      "../src/runtime/ui-transformation-particle.ts",
-      "../src/runtime/ui-multiplexer-particle.ts",
-      "../src/runtime/html.ts",
-      "../src/platform/loader-base.ts",
-      "../src/platform/loader-web.ts",
-      "../src/platform/loader.ts",
-      "../src/runtime/testing/stub-loader.ts",
-      "../src/runtime/fake-pec-factory.ts",
-      "../src/runtime/interface-info.ts",
-      "../src/runtime/arc-serializer.ts",
-      "../src/runtime/arc.ts",
-      "../src/runtime/api-channel.ts",
-      "../src/runtime/bimap.ts",
-      "../src/runtime/wasm.ts",
-      "../src/runtime/particle-execution-context.ts",
-      "../src/runtime/schema.ts",
-      "../src/runtime/entity.ts",
-      "../src/runtime/crdt/crdt-count.ts",
-      "../src/runtime/type.ts",
-      "../src/runtime/recipe/type-checker.ts",
-      "../src/runtime/particle-check.ts",
-      "../src/runtime/particle-spec.ts",
-      "../src/runtime/particle-claim.ts",
-      "../src/runtime/manifest-ast-nodes.ts",
-      "../src/gen/runtime/manifest-parser.ts",
-      "../src/runtime/manifest-meta.ts",
-      "../node_modules/firebase/index.d.ts",
-      "../src/platform/firebase-web.d.ts",
-      "../src/runtime/storageNG/drivers/firebase.ts",
-      "../src/runtime/storageNG/storage-key-parser.ts",
-      "../src/runtime/manifest.ts",
-      "../src/platform/atob-web.ts",
-      "../src/platform/btoa-web.ts",
-      "../src/runtime/storage/firebase/firebase-storage.ts",
-      "../src/runtime/storage/firebase/firebase-provider.ts",
-      "../src/cli/spotify-importer.ts",
-      "../src/common/time/timeunit.ts",
-      "../src/common/time/instant.ts",
-      "../node_modules/@types/chai/index.d.ts",
-      "../src/platform/chai-web.d.ts",
-      "../src/common/time/tests/instant-tests.ts",
-      "../src/dataflow/analysis/deep-set.ts",
-      "../src/dataflow/analysis/ordered-set.ts",
-      "../src/dataflow/analysis/graph-internals.ts",
-      "../src/dataflow/analysis/particle-node.ts",
-      "../src/dataflow/analysis/handle-node.ts",
-      "../src/dataflow/analysis/slot-node.ts",
-      "../src/dataflow/analysis/flow-graph.ts",
-      "../src/dataflow/analysis/analysis.ts",
-      "../src/dataflow/analysis/testing/flow-graph-testing.ts",
-      "../src/runtime/testing/test-util.ts",
-      "../src/dataflow/analysis/tests/analysis-test.ts",
-      "../src/dataflow/analysis/tests/deep-set-test.ts",
-      "../src/runtime/testing/preconditions.ts",
-      "../src/dataflow/analysis/tests/flow-graph-test.ts",
-      "../src/dataflow/analysis/tests/graph-internals-test.ts",
-      "../src/dataflow/analysis/tests/ordered-set-test.ts",
-      "../src/dataflow/cli/flowcheck.ts",
+      "../src/platform/pec-industry-web.ts",
+      "../src/platform/pec-industry.ts",
       "../src/devtools-connector/abstract-devtools-channel.ts",
+      "../src/devtools-connector/arc-stores-fetcher.ts",
       "../src/platform/date-web.ts",
       "../src/platform/deviceinfo-web.ts",
       "../src/tracelib/trace.ts",
@@ -12186,13 +12112,94 @@
       "../src/planning/plan/plan-consumer.ts",
       "../src/planning/planner-inspector.ts",
       "../src/planning/planner.ts",
+      "../src/runtime/particle-check.ts",
+      "../src/dataflow/analysis/deep-set.ts",
+      "../src/dataflow/analysis/ordered-set.ts",
+      "../src/dataflow/analysis/graph-internals.ts",
+      "../src/dataflow/analysis/particle-node.ts",
+      "../src/dataflow/analysis/handle-node.ts",
+      "../src/runtime/interface-info.ts",
+      "../src/dataflow/analysis/slot-node.ts",
+      "../src/dataflow/analysis/flow-graph.ts",
+      "../src/dataflow/analysis/analysis.ts",
       "../src/devtools-connector/arc-planner-invoker.ts",
-      "../src/devtools-connector/arc-stores-fetcher.ts",
       "../src/devtools-connector/testing/devtools-channel-stub.ts",
       "../src/devtools-connector/devtools-connection.ts",
       "../src/devtools-connector/tracing-adapter.ts",
       "../src/devtools-connector/hot-code-reloader.ts",
       "../src/devtools-connector/devtools-arc-inspector.ts",
+      "../src/runtime/runtime.ts",
+      "../src/runtime/storage/volatile-storage.ts",
+      "../src/runtime/synthetic-types.ts",
+      "../src/runtime/storage/synthetic-storage.ts",
+      "../src/runtime/mutex.ts",
+      "../src/runtime/storage/storage-provider-factory.ts",
+      "../src/runtime/storage-stub.ts",
+      "../src/runtime/storageNG/unified-store.ts",
+      "../src/runtime/description.ts",
+      "../src/runtime/message-channel.ts",
+      "../src/runtime/services.ts",
+      "../src/runtime/particle-execution-host.ts",
+      "../src/runtime/slot-consumer.ts",
+      "../src/runtime/slot-proxy.ts",
+      "../src/runtime/particle.ts",
+      "../src/runtime/handle.ts",
+      "../src/runtime/reference.ts",
+      "../modalities/dom/components/xen/xen-state.d.ts",
+      "../src/runtime/dom-particle-base.ts",
+      "../src/runtime/dom-particle.ts",
+      "../src/runtime/transformation-dom-particle.ts",
+      "../src/runtime/multiplexer-dom-particle.ts",
+      "../src/runtime/ui-particle-base.ts",
+      "../src/runtime/ui-particle.ts",
+      "../src/runtime/ui-transformation-particle.ts",
+      "../src/runtime/ui-multiplexer-particle.ts",
+      "../src/runtime/html.ts",
+      "../src/platform/loader-base.ts",
+      "../src/platform/loader-web.ts",
+      "../src/platform/loader.ts",
+      "../src/runtime/testing/stub-loader.ts",
+      "../src/runtime/fake-pec-factory.ts",
+      "../src/runtime/arc-serializer.ts",
+      "../src/runtime/arc.ts",
+      "../src/runtime/api-channel.ts",
+      "../src/runtime/bimap.ts",
+      "../src/runtime/wasm.ts",
+      "../src/runtime/particle-execution-context.ts",
+      "../src/runtime/schema.ts",
+      "../src/runtime/entity.ts",
+      "../src/runtime/crdt/crdt-count.ts",
+      "../src/runtime/type.ts",
+      "../src/runtime/recipe/type-checker.ts",
+      "../src/runtime/particle-spec.ts",
+      "../src/runtime/particle-claim.ts",
+      "../src/runtime/manifest-ast-nodes.ts",
+      "../src/gen/runtime/manifest-parser.ts",
+      "../src/runtime/manifest-meta.ts",
+      "../node_modules/firebase/index.d.ts",
+      "../src/platform/firebase-web.d.ts",
+      "../src/runtime/storageNG/drivers/firebase.ts",
+      "../src/runtime/storageNG/storage-key-parser.ts",
+      "../src/runtime/manifest.ts",
+      "../src/platform/atob-web.ts",
+      "../src/platform/btoa-web.ts",
+      "../src/runtime/storage/firebase/firebase-storage.ts",
+      "../src/runtime/storage/firebase/firebase-provider.ts",
+      "../src/cli/spotify-importer.ts",
+      "../src/common/time/timeunit.ts",
+      "../src/common/time/instant.ts",
+      "../node_modules/@types/chai/index.d.ts",
+      "../src/platform/chai-web.d.ts",
+      "../src/common/time/tests/instant-tests.ts",
+      "../src/dataflow/analysis/testing/flow-graph-testing.ts",
+      "../src/runtime/testing/test-util.ts",
+      "../src/dataflow/analysis/tests/analysis-test.ts",
+      "../src/dataflow/analysis/tests/deep-set-test.ts",
+      "../src/runtime/testing/preconditions.ts",
+      "../src/dataflow/analysis/tests/flow-graph-test.ts",
+      "../src/dataflow/analysis/tests/graph-internals-test.ts",
+      "../src/dataflow/analysis/tests/ordered-set-test.ts",
+      "../src/dataflow/cli/flowcheck.ts",
       "../src/devtools-connector/devtools-planner-inspector.ts",
       "../src/runtime/testing/handle-for-test.ts",
       "../src/devtools-connector/tests/arc-stores-fetcher-test.ts",
@@ -12540,7 +12547,6 @@
       "../src/platform/tests/loader-test.ts",
       "../src/runtime/keymgmt/base64.ts",
       "../src/runtime/bytes.ts",
-      "../src/runtime/ui-slot-composer.ts",
       "../src/runtime/webassembly.d.ts",
       "../src/runtime/keymgmt/keys.ts",
       "../src/runtime/keymgmt/testing/cryptotestutils.ts",

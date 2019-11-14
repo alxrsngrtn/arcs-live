@@ -6,11 +6,11 @@ import 'firebase/storage';
 import fetch from 'node-fetch';
 import vm from 'vm';
 import fs from 'fs';
+import os from 'os';
+import WebSocket from 'ws';
 import idb from 'idb';
 import rs from 'jsrsasign';
 import WebCrypto from 'node-webcrypto-ossl';
-import WebSocket from 'ws';
-import os from 'os';
 
 /**
  * @license
@@ -27860,14 +27860,14 @@ class WasmParticle extends Particle$1 {
         this.container.free(p);
     }
     /**
-     * @deprecated for contexts using UiBroker (e.g Kotlin)
+     * @deprecated for systems using UiBroker (e.g Kotlin)
      */
     // TODO
     renderHostedSlot(slotName, hostedSlotId, content) {
         throw new Error('renderHostedSlot not implemented for wasm particles');
     }
     /**
-     * @deprecated for contexts using UiBroker (e.g Kotlin)
+     * @deprecated for systems using UiBroker (e.g Kotlin)
      */
     // Actually renders the slot. May be invoked due to an external request via renderSlot(),
     // or directly from the wasm particle itself (e.g. in response to a data update).
@@ -30053,313 +30053,6 @@ class RuntimeCacheService {
 
 /**
  * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-/**
- * Represents a single slot in the rendering system.
- */
-class SlotContext {
-    constructor(id, sourceSlotConsumer = null) {
-        this.slotConsumers = [];
-        this.id = id;
-        this.sourceSlotConsumer = sourceSlotConsumer;
-    }
-    addSlotConsumer(slotConsumer) {
-        this.slotConsumers.push(slotConsumer);
-        slotConsumer.slotContext = this;
-    }
-    clearSlotConsumers() {
-        this.slotConsumers.forEach(slotConsumer => slotConsumer.slotContext = null);
-        this.slotConsumers.length = 0;
-    }
-}
-/**
- * Represents a slot created by a transformation particle in the inner arc.
- *
- * Render calls for that slot are routed to the transformation particle,
- * which receives them as innerArcRender calls.
- *
- * TODO:
- * Today startRender/stopRender calls for particles rendering into this slot are governed by the
- * availability of the container on the transformation particle. This should be optional and only
- * used if the purpose of the innerArc is rendering to the outer arc. It should be possible for
- * the particle which doesn't consume a slot to create an inner arc with hosted slots, which
- * today is not feasible.
- */
-class HostedSlotContext extends SlotContext {
-    constructor(id, transformationSlotConsumer, storeId) {
-        super(id, transformationSlotConsumer);
-        this._containerAvailable = false;
-        assert(transformationSlotConsumer);
-        this.storeId = storeId;
-        transformationSlotConsumer.addHostedSlotContexts(this);
-    }
-    onRenderSlot(consumer, content, handler) {
-        this.sourceSlotConsumer.arc.pec.innerArcRender(this.sourceSlotConsumer.consumeConn.particle, this.sourceSlotConsumer.consumeConn.name, this.id, consumer.formatHostedContent(content));
-    }
-    addSlotConsumer(consumer) {
-        super.addSlotConsumer(consumer);
-        if (this.containerAvailable)
-            consumer.startRender();
-    }
-    get containerAvailable() { return this._containerAvailable; }
-    set containerAvailable(containerAvailable) {
-        if (this._containerAvailable === containerAvailable)
-            return;
-        this._containerAvailable = containerAvailable;
-        for (const consumer of this.slotConsumers) {
-            if (containerAvailable) {
-                consumer.startRender();
-            }
-            else {
-                consumer.stopRender();
-            }
-        }
-    }
-}
-/**
- * Represents a slot provided by a particle through a provide connection or one of the root slots
- * provided by the shell. Holds container (eg div element) and its additional info.
- * Must be initialized either with a container (for root slots provided by the shell) or
- * tuple of sourceSlotConsumer and spec (ProvidedSlotSpec) of the slot.
- */
-class ProvidedSlotContext extends SlotContext {
-    constructor(id, name, tags, container, spec, sourceSlotConsumer = null) {
-        super(id, sourceSlotConsumer);
-        this.tags = [];
-        assert(Boolean(container) !== Boolean(spec), `Exactly one of either container or slotSpec may be set`);
-        assert(Boolean(spec) === Boolean(spec), `Spec and source slot can only be set together`);
-        this.name = name;
-        this.tags = tags || [];
-        this._container = container;
-        // The context's accompanying ProvidedSlotSpec (see particle-spec.js).
-        // Initialized to a default spec, if the container is one of the shell provided top root-contexts.
-        this.spec = spec || new ProvideSlotConnectionSpec({ name });
-        if (this.sourceSlotConsumer) {
-            this.sourceSlotConsumer.directlyProvidedSlotContexts.push(this);
-        }
-        // The list of handles this context is restricted to.
-        this.handles = this.spec && this.sourceSlotConsumer
-            ? this.spec.handles.map(handle => this.sourceSlotConsumer.consumeConn.particle.connections[handle].handle).filter(a => a !== undefined)
-            : [];
-    }
-    onRenderSlot(consumer, content, handler) {
-        consumer.setContent(content, handler);
-    }
-    get container() {
-        return this._container;
-    }
-    get containerAvailable() {
-        return Boolean(this._container);
-    }
-    static createContextForContainer(id, name, container, tags) {
-        return new ProvidedSlotContext(id, name, tags, container, null);
-    }
-    isSameContainer(container) {
-        if (this.spec.isSet) {
-            if (Boolean(this.container) !== Boolean(container)) {
-                return false;
-            }
-            if (!this.container) {
-                return true;
-            }
-            return Object.keys(this.container).length === Object.keys(container).length &&
-                Object.keys(this.container).every(key => Object.keys(container).some(newKey => newKey === key)) &&
-                Object.values(this.container).every(currentContainer => Object.values(container).some(newContainer => newContainer === currentContainer));
-        }
-        return (!container && !this.container) || (this.container === container);
-    }
-    set container(container) {
-        if (this.isSameContainer(container)) {
-            return;
-        }
-        const originalContainer = this.container;
-        this._container = container;
-        this.slotConsumers.forEach(slotConsumer => slotConsumer.onContainerUpdate(this.container, originalContainer));
-    }
-    addSlotConsumer(slotConsumer) {
-        super.addSlotConsumer(slotConsumer);
-        if (this.container) {
-            slotConsumer.onContainerUpdate(this.container, null);
-        }
-    }
-}
-
-/**
- * @license
- * Copyright (c) 2017 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-class SlotComposer {
-    /**
-     * |options| must contain:
-     * - modalityName: the UI modality the slot-composer renders to (for example: dom).
-     * - modalityHandler: the handler for UI modality the slot-composer renders to.
-     * - rootContainer: the top level container to be used for slots.
-     * and may contain:
-     * - containerKind: the type of container wrapping each slot-context's container  (for example, div).
-     */
-    constructor(options) {
-        this._consumers = [];
-        this._contexts = [];
-        //    assert(options.modalityHandler && options.modalityHandler.constructor === ModalityHandler,
-        //           `Missing or invalid modality handler: ${options.modalityHandler}`);
-        assert(options.modalityHandler, `Missing or invalid modality handler: ${options.modalityHandler}`);
-        // TODO: Support rootContext for backward compatibility, remove when unused.
-        options.rootContainer = options.rootContainer || options.rootContext || (options.containers || Object).root;
-        assert((options.rootContainer !== undefined)
-            !==
-                (options.noRoot === true), 'Root container is mandatory unless it is explicitly skipped');
-        this._containerKind = options.containerKind;
-        if (options.modalityName) {
-            this.modality = Modality.create([options.modalityName]);
-        }
-        this.modalityHandler = options.modalityHandler;
-        if (options.noRoot) {
-            return;
-        }
-        const containerByName = options.containers
-            || this.modalityHandler.slotConsumerClass.findRootContainers(options.rootContainer) || {};
-        if (Object.keys(containerByName).length === 0) {
-            // fallback to single 'root' slot using the rootContainer.
-            containerByName['root'] = options.rootContainer;
-        }
-        Object.keys(containerByName).forEach(slotName => {
-            this._contexts.push(ProvidedSlotContext.createContextForContainer(`rootslotid-${slotName}`, slotName, containerByName[slotName], [`${slotName}`]));
-        });
-    }
-    get consumers() { return this._consumers; }
-    get containerKind() { return this._containerKind; }
-    getSlotConsumer(particle, slotName) {
-        return this.consumers.find(s => s.consumeConn.particle === particle && s.consumeConn.name === slotName);
-    }
-    findContainerByName(name) {
-        const contexts = this.findContextsByName(name);
-        if (contexts.length === 0) {
-            // TODO this is a no-op, but throwing here breaks tests
-            console.warn(`No containers for '${name}'`);
-        }
-        else if (contexts.length === 1) {
-            return contexts[0].container;
-        }
-        console.warn(`Ambiguous containers for '${name}'`);
-        return undefined;
-    }
-    findContextsByName(name) {
-        const providedSlotContexts = this._contexts.filter(ctx => ctx instanceof ProvidedSlotContext);
-        return providedSlotContexts.filter(ctx => ctx.name === name);
-    }
-    findContextById(slotId) {
-        return this._contexts.find(({ id }) => id === slotId);
-    }
-    createHostedSlot(innerArc, transformationParticle, transformationSlotName, storeId) {
-        const transformationSlotConsumer = this.getSlotConsumer(transformationParticle, transformationSlotName);
-        assert(transformationSlotConsumer, `Transformation particle ${transformationParticle.name} with consumed ${transformationSlotName} not found`);
-        const hostedSlotId = innerArc.generateID('slot').toString();
-        this._contexts.push(new HostedSlotContext(hostedSlotId, transformationSlotConsumer, storeId));
-        return hostedSlotId;
-    }
-    _addSlotConsumer(slot) {
-        slot.startRenderCallback = slot.arc.pec.startRender.bind(slot.arc.pec);
-        slot.stopRenderCallback = slot.arc.pec.stopRender.bind(slot.arc.pec);
-        this._consumers.push(slot);
-    }
-    async initializeRecipe(arc, recipeParticles) {
-        const newConsumers = [];
-        // Create slots for each of the recipe's particles slot connections.
-        recipeParticles.forEach(p => {
-            p.getSlandleConnections().forEach(cs => {
-                if (!cs.targetSlot) {
-                    assert(!cs.getSlotSpec().isRequired, `No target slot for particle's ${p.name} required consumed slot: ${cs.name}.`);
-                    return;
-                }
-                const slotConsumer = new this.modalityHandler.slotConsumerClass(arc, cs, this._containerKind);
-                const providedContexts = slotConsumer.createProvidedContexts();
-                this._contexts = this._contexts.concat(providedContexts);
-                newConsumers.push(slotConsumer);
-            });
-        });
-        // Set context for each of the slots.
-        newConsumers.forEach(consumer => {
-            this._addSlotConsumer(consumer);
-            const context = this.findContextById(consumer.consumeConn.targetSlot.id);
-            assert(context, `No context found for ${consumer.consumeConn.getQualifiedName()}`);
-            context.addSlotConsumer(consumer);
-        });
-        // Calculate the Descriptions only once per-Arc
-        const allArcs = this.consumers.map(consumer => consumer.arc);
-        const uniqueArcs = [...new Set(allArcs).values()];
-        // get arc -> description
-        const descriptions = await Promise.all(uniqueArcs.map(arc => Description.create(arc)));
-        // create a mapping from the zipped uniqueArcs and descriptions
-        const consumerByArc = new Map(descriptions.map((description, index) => [uniqueArcs[index], description]));
-        // ... and apply to each consumer
-        for (const consumer of this.consumers) {
-            consumer.description = consumerByArc.get(consumer.arc);
-        }
-    }
-    renderSlot(particle, slotName, content) {
-        const slotConsumer = this.getSlotConsumer(particle, slotName);
-        assert(slotConsumer, `Cannot find slot (or hosted slot) ${slotName} for particle ${particle.name}`);
-        // Content object as received by the particle execution host is frozen.
-        // SlotComposer attach properties to this object, so we need to clone it at the top level.
-        content = { ...content };
-        slotConsumer.slotContext.onRenderSlot(slotConsumer, content, async (eventlet) => {
-            slotConsumer.arc.pec.sendEvent(particle, slotName, eventlet);
-            // This code is a temporary hack implemented in #2011 which allows to route UI events from
-            // multiplexer to hosted particles. Multiplexer assembles UI from multiple pieces rendered
-            // by hosted particles. Hosted particles can render DOM elements with a key containing a
-            // handle ID of the store, which contains the entity they render. The code below attempts
-            // to find the hosted particle using the store matching the 'key' attribute on the event,
-            // which has been extracted from DOM.
-            // TODO: FIXIT!
-            if (eventlet.data && eventlet.data.key) {
-                // We fire off multiple async operations and don't wait.
-                for (const ctx of slotConsumer.hostedSlotContexts) {
-                    if (!ctx.storeId)
-                        continue;
-                    for (const hostedConsumer of ctx.slotConsumers) {
-                        const store = hostedConsumer.arc.findStoreById(ctx.storeId);
-                        assert(store);
-                        // TODO(shans): clean this up when we have interfaces for Singleton, Collection, etc
-                        // tslint:disable-next-line: no-any
-                        store.get().then(value => {
-                            if (value && (value.id === eventlet.data.key)) {
-                                hostedConsumer.arc.pec.sendEvent(hostedConsumer.consumeConn.particle, hostedConsumer.consumeConn.name, eventlet);
-                            }
-                        });
-                    }
-                }
-            }
-        });
-    }
-    getAvailableContexts() {
-        return this._contexts;
-    }
-    dispose() {
-        this.consumers.forEach(consumer => consumer.dispose());
-        this._contexts.forEach(context => {
-            context.clearSlotConsumers();
-            if (context instanceof ProvidedSlotContext && context.container) {
-                this.modalityHandler.slotConsumerClass.clear(context.container);
-            }
-        });
-        this._contexts = this._contexts.filter(c => !c.sourceSlotConsumer);
-        this._consumers.length = 0;
-    }
-}
-
-/**
- * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
  * This code may only be used under the BSD style license found at
  * http://polymer.github.io/LICENSE.txt
@@ -31041,6 +30734,145 @@ Predicates.alwaysFalse = () => false;
 
 /**
  * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+/**
+ * Represents a single slot in the rendering system.
+ */
+class SlotContext {
+    constructor(id, sourceSlotConsumer = null) {
+        this.slotConsumers = [];
+        this.id = id;
+        this.sourceSlotConsumer = sourceSlotConsumer;
+    }
+    addSlotConsumer(slotConsumer) {
+        this.slotConsumers.push(slotConsumer);
+        slotConsumer.slotContext = this;
+    }
+    clearSlotConsumers() {
+        this.slotConsumers.forEach(slotConsumer => slotConsumer.slotContext = null);
+        this.slotConsumers.length = 0;
+    }
+}
+/**
+ * Represents a slot created by a transformation particle in the inner arc.
+ *
+ * Render calls for that slot are routed to the transformation particle,
+ * which receives them as innerArcRender calls.
+ *
+ * TODO:
+ * Today startRender/stopRender calls for particles rendering into this slot are governed by the
+ * availability of the container on the transformation particle. This should be optional and only
+ * used if the purpose of the innerArc is rendering to the outer arc. It should be possible for
+ * the particle which doesn't consume a slot to create an inner arc with hosted slots, which
+ * today is not feasible.
+ */
+class HostedSlotContext extends SlotContext {
+    constructor(id, transformationSlotConsumer, storeId) {
+        super(id, transformationSlotConsumer);
+        this._containerAvailable = false;
+        assert(transformationSlotConsumer);
+        this.storeId = storeId;
+        transformationSlotConsumer.addHostedSlotContexts(this);
+    }
+    onRenderSlot(consumer, content, handler) {
+        this.sourceSlotConsumer.arc.pec.innerArcRender(this.sourceSlotConsumer.consumeConn.particle, this.sourceSlotConsumer.consumeConn.name, this.id, consumer.formatHostedContent(content));
+    }
+    addSlotConsumer(consumer) {
+        super.addSlotConsumer(consumer);
+        if (this.containerAvailable)
+            consumer.startRender();
+    }
+    get containerAvailable() { return this._containerAvailable; }
+    set containerAvailable(containerAvailable) {
+        if (this._containerAvailable === containerAvailable)
+            return;
+        this._containerAvailable = containerAvailable;
+        for (const consumer of this.slotConsumers) {
+            if (containerAvailable) {
+                consumer.startRender();
+            }
+            else {
+                consumer.stopRender();
+            }
+        }
+    }
+}
+/**
+ * Represents a slot provided by a particle through a provide connection or one of the root slots
+ * provided by the shell. Holds container (eg div element) and its additional info.
+ * Must be initialized either with a container (for root slots provided by the shell) or
+ * tuple of sourceSlotConsumer and spec (ProvidedSlotSpec) of the slot.
+ */
+class ProvidedSlotContext extends SlotContext {
+    constructor(id, name, tags, container, spec, sourceSlotConsumer = null) {
+        super(id, sourceSlotConsumer);
+        this.tags = [];
+        assert(Boolean(container) !== Boolean(spec), `Exactly one of either container or slotSpec may be set`);
+        assert(Boolean(spec) === Boolean(spec), `Spec and source slot can only be set together`);
+        this.name = name;
+        this.tags = tags || [];
+        this._container = container;
+        // The context's accompanying ProvidedSlotSpec (see particle-spec.js).
+        // Initialized to a default spec, if the container is one of the shell provided top root-contexts.
+        this.spec = spec || new ProvideSlotConnectionSpec({ name });
+        if (this.sourceSlotConsumer) {
+            this.sourceSlotConsumer.directlyProvidedSlotContexts.push(this);
+        }
+        // The list of handles this context is restricted to.
+        this.handles = this.spec && this.sourceSlotConsumer
+            ? this.spec.handles.map(handle => this.sourceSlotConsumer.consumeConn.particle.connections[handle].handle).filter(a => a !== undefined)
+            : [];
+    }
+    onRenderSlot(consumer, content, handler) {
+        consumer.setContent(content, handler);
+    }
+    get container() {
+        return this._container;
+    }
+    get containerAvailable() {
+        return Boolean(this._container);
+    }
+    static createContextForContainer(id, name, container, tags) {
+        return new ProvidedSlotContext(id, name, tags, container, null);
+    }
+    isSameContainer(container) {
+        if (this.spec.isSet) {
+            if (Boolean(this.container) !== Boolean(container)) {
+                return false;
+            }
+            if (!this.container) {
+                return true;
+            }
+            return Object.keys(this.container).length === Object.keys(container).length &&
+                Object.keys(this.container).every(key => Object.keys(container).some(newKey => newKey === key)) &&
+                Object.values(this.container).every(currentContainer => Object.values(container).some(newContainer => newContainer === currentContainer));
+        }
+        return (!container && !this.container) || (this.container === container);
+    }
+    set container(container) {
+        if (this.isSameContainer(container)) {
+            return;
+        }
+        const originalContainer = this.container;
+        this._container = container;
+        this.slotConsumers.forEach(slotConsumer => slotConsumer.onContainerUpdate(this.container, originalContainer));
+    }
+    addSlotConsumer(slotConsumer) {
+        super.addSlotConsumer(slotConsumer);
+        if (this.container) {
+            slotConsumer.onContainerUpdate(this.container, null);
+        }
+    }
+}
+
+/**
+ * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
  * This code may only be used under the BSD style license found at
  * http://polymer.github.io/LICENSE.txt
@@ -31613,6 +31445,473 @@ class ModalityHandler {
 ModalityHandler.headlessHandler = new ModalityHandler(HeadlessSlotDomConsumer);
 ModalityHandler.basicHandler = new ModalityHandler(SlotConsumer, DescriptionFormatter);
 ModalityHandler.domHandler = new ModalityHandler(SlotDomConsumer, DescriptionDomFormatter);
+
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+// TODO(wkorman): Consider outputting preamble in the specified color via ANSI escape codes.
+const logFactory = (preamble, color, log = 'log') => {
+    return console[log].bind(console, `(${preamble})`);
+};
+
+/**
+ * @license
+ * Copyright 2019 Google LLC.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+const getGlobal = () => {
+    if (typeof self !== 'undefined') {
+        return self;
+    }
+    if (typeof window !== 'undefined') {
+        return window;
+    }
+    if (typeof global !== 'undefined') {
+        return global;
+    }
+    throw new Error('unable to locate global object');
+};
+const getLogLevel = () => {
+    // acquire global scope
+    const g = getGlobal();
+    // use specified logLevel otherwise 0
+    return ('logLevel' in g) ? g['logLevel'] : 0;
+};
+console.log(`log-factory: binding logFactory to level [${getLogLevel()}]`);
+const stubFactory = () => () => { };
+const logsFactory = (preamble, color = '') => {
+    const level = getLogLevel();
+    const logs = {};
+    ['log', 'warn', 'error', 'group', 'groupCollapsed', 'groupEnd'].
+        forEach(log => logs[log] = (level > 0 ? logFactory(preamble, color, log) : stubFactory));
+    return logs;
+};
+
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+const { log, warn } = logsFactory('UiSlotComposer', 'brown');
+class UiSlotComposer {
+    /**
+     * |options| must contain:
+     * - modalityName: the UI modality the slot-composer renders to (for example: dom).
+     * - modalityHandler: the handler for UI modality the slot-composer renders to.
+     * - rootContainer: the top level container to be used for slots.
+     * and may contain:
+     * - containerKind: the type of container wrapping each slot-context's container  (for example, div).
+     */
+    constructor(options) {
+        this._consumers = [];
+        this._contexts = [];
+        const opts = {
+            containers: { 'root': 'root-context' },
+            modalityHandler: ModalityHandler.basicHandler,
+            ...options
+        };
+        // TODO: Support rootContext for backward compatibility, remove when unused.
+        // options.rootContainer = options.rootContainer || options.rootContext || (options.containers || Object).root;
+        // assert((options.rootContainer !== undefined)
+        //        !==
+        //        (options.noRoot === true),
+        //   'Root container is mandatory unless it is explicitly skipped');
+        // this._containerKind = options.containerKind;
+        // if (options.modalityName) {
+        //   this.modality = Modality.create([options.modalityName]);
+        // }
+        this.modalityHandler = opts.modalityHandler;
+        //if (opts.noRoot) {
+        //  return;
+        //}
+        const containerByName = opts.containers;
+        //if (Object.keys(containerByName).length === 0) {
+        // fallback to single 'root' slot using the rootContainer.
+        //containerByName['root'] = opts.rootContainer;
+        //}
+        Object.keys(containerByName).forEach(slotName => {
+            this._contexts.push(ProvidedSlotContext.createContextForContainer(`rootslotid-${slotName}`, slotName, containerByName[slotName], [`${slotName}`]));
+        });
+    }
+    // findRootContainers(rootContainer) {
+    //   return this.modalityHandler.slotConsumerClass.findRootContainers(rootContainer)
+    // }
+    get consumers() {
+        return this._consumers;
+    }
+    get containerKind() {
+        return this._containerKind;
+    }
+    getSlotConsumer(particle, slotName) {
+        return this.consumers.find(s => s.consumeConn.particle === particle && s.consumeConn.name === slotName);
+    }
+    findContainerByName(name) {
+        // const contexts = this.findContextsByName(name);
+        // if (contexts.length === 0) {
+        //   // TODO this is a no-op, but throwing here breaks tests
+        //   console.warn(`No containers for '${name}'`);
+        // } else if (contexts.length === 1) {
+        //   return contexts[0].container;
+        // }
+        // console.warn(`Ambiguous containers for '${name}'`);
+        return undefined;
+    }
+    // TODO(sjmiles): only returns ProvidedSlotContexts, why is it called 'findContexts'?
+    findContextsByName(name) {
+        const filter = ctx => (ctx instanceof ProvidedSlotContext) && (ctx.name === name);
+        return this._contexts.filter(filter);
+    }
+    findContextById(slotId) {
+        return this._contexts.find(({ id }) => id === slotId) || {};
+    }
+    createHostedSlot(innerArc, particle, slotName, storeId) {
+        const slotConsumer = this.getSlotConsumer(particle, slotName);
+        assert(slotConsumer, `Transformation particle ${particle.name} with consumed ${slotName} not found`);
+        // TODO(sjmiles): this slot-id is created dynamically and was not available to the particle
+        // who renderered the slot (i.e. the dom node or other container). The renderer identifies these
+        // slots by entity-id (`subid`) instead. But `subid` is not unique, we need more information to
+        // locate the output slot, so we embed the muxed-slot's id into our output-slot-id.
+        const hostedSlotId = `${slotConsumer.slotContext.id}___${innerArc.generateID('slot')}`;
+        //this._contexts.push(new HostedSlotContext(hostedSlotId, slotConsumer, storeId));
+        return hostedSlotId;
+    }
+    _addSlotConsumer(slot) {
+        const pec = slot.arc.pec;
+        slot.startRenderCallback = pec.startRender.bind(pec);
+        slot.stopRenderCallback = pec.stopRender.bind(pec);
+        this._consumers.push(slot);
+    }
+    async initializeRecipe(arc, recipeParticles) {
+        const newConsumers = [];
+        // Create slots for each of the recipe's particles slot connections.
+        recipeParticles.forEach(p => {
+            p.getSlandleConnections().forEach(cs => {
+                if (!cs.targetSlot) {
+                    assert(!cs.getSlotSpec().isRequired, `No target slot for particle's ${p.name} required consumed slot: ${cs.name}.`);
+                    return;
+                }
+                const slotConsumer = new this.modalityHandler.slotConsumerClass(arc, cs, this._containerKind);
+                const providedContexts = slotConsumer.createProvidedContexts();
+                this._contexts = this._contexts.concat(providedContexts);
+                newConsumers.push(slotConsumer);
+            });
+        });
+        // Set context for each of the slots.
+        newConsumers.forEach(consumer => {
+            this._addSlotConsumer(consumer);
+            const context = this.findContextById(consumer.consumeConn.targetSlot.id);
+            // TODO(sjmiles): disabling this assert for now because rendering to unregistered slots
+            // is allowed under new rendering factorisation. Maybe we bring this back as a validity
+            // test in the future, but it's not a requirement atm.
+            //assert(context, `No context found for ${consumer.consumeConn.getQualifiedName()}`);
+            if (context && context['addSlotConsumer']) {
+                context['addSlotConsumer'](consumer);
+            }
+        });
+        // Calculate the Descriptions only once per-Arc
+        const allArcs = this.consumers.map(consumer => consumer.arc);
+        const uniqueArcs = [...new Set(allArcs).values()];
+        // get arc -> description
+        const descriptions = await Promise.all(uniqueArcs.map(arc => Description.create(arc)));
+        // create a mapping from the zipped uniqueArcs and descriptions
+        const consumerByArc = new Map(descriptions.map((description, index) => [uniqueArcs[index], description]));
+        // ... and apply to each consumer
+        for (const consumer of this.consumers) {
+            consumer.description = consumerByArc.get(consumer.arc);
+        }
+    }
+    renderSlot(particle, slotName, content) {
+        warn('[unsupported] renderSlot', particle.spec.name);
+    }
+    getAvailableContexts() {
+        return this._contexts;
+    }
+    dispose() {
+        this.disposeConsumers();
+        this.disposeContexts();
+        this.disposeObserver();
+    }
+    disposeConsumers() {
+        this._consumers.forEach(consumer => consumer.dispose());
+        this._consumers.length = 0;
+    }
+    disposeContexts() {
+        this._contexts.forEach(context => {
+            context.clearSlotConsumers();
+            if (context instanceof ProvidedSlotContext && context.container) {
+                this.modalityHandler.slotConsumerClass.clear(context.container);
+            }
+        });
+        this._contexts = this._contexts.filter(c => !c.sourceSlotConsumer);
+    }
+    // TODO(sjmiles): experimental slotObserver stuff below here
+    observeSlots(slotObserver) {
+        this['slotObserver'] = slotObserver;
+        // TODO(sjmiles): this is weird, fix
+        slotObserver.dispatch = (pid, eventlet) => {
+            console.log('ui-slot-composer dispatch for pid', pid, eventlet);
+            this.sendEvent(pid, eventlet);
+        };
+    }
+    // TODO(sjmiles): maybe better implemented as a slot dispose (arc dispose?) notification to
+    // let client code clean up (so `slotObserver` details [like dispose()] can be hidden here)
+    disposeObserver() {
+        const observer = this['slotObserver'];
+        if (observer) {
+            observer.dispose();
+        }
+    }
+    sendEvent(particleId, eventlet) {
+        log('sendEvent:', particleId, eventlet);
+        const consumer = this._findConsumer(particleId);
+        if (consumer) {
+            const particle = consumer.consumeConn.particle;
+            const arc = consumer.arc;
+            if (arc) {
+                //log('firing PEC event for', particle.name);
+                // TODO(sjmiles): we need `arc` and `particle` here even though
+                // the two are bound together, simplify
+                log('... found consumer, particle, and arc to delegate sendEvent');
+                arc.pec.sendEvent(particle, /*slotName*/ '', eventlet);
+            }
+        }
+        else {
+            warn('...found no consumer!');
+        }
+    }
+    _findConsumer(id) {
+        return this.consumers.find(consumer => consumer.consumeConn.particle.id.toString() === id);
+    }
+    // TODO(sjmiles): needs factoring
+    delegateOutput(arc, particle, content) {
+        const observer = this['slotObserver'];
+        if (observer && content) {
+            // we scan connections for container and slotMap
+            const connections = particle.getSlandleConnections();
+            // assemble a renderPacket to send to slot observer
+            const packet = {};
+            // identify parent container
+            const container = connections[0];
+            if (container) {
+                Object.assign(packet, {
+                    containerSlotName: container.targetSlot.name,
+                    containerSlotId: container.targetSlot.id,
+                });
+            }
+            // Set modality according to particle spec
+            // TODO(sjmiles): in the short term, Particle may also include modality hints in `content`
+            const modality = particle.recipe.modality;
+            if (!modality.all) {
+                Object.assign(packet, {
+                    modality: modality.names.join(',')
+                });
+            }
+            // build slot id map
+            const slotMap = {};
+            connections.forEach(({ providedSlots }) => {
+                Object.values(providedSlots).forEach(({ name, id }) => slotMap[name] = id);
+            });
+            // finalize packet
+            const pid = particle.id.toString();
+            Object.assign(packet, {
+                particle: {
+                    name: particle.name,
+                    id: pid
+                },
+                slotMap,
+                // TODO(sjmiles): there is no clear concept for a particle's output channel, so there is no proper ID
+                // to use. The `particle.id` works for now, but it probably should be a combo of `particle.id` and the
+                // consumed slot id (neither of which are unique by themselves).
+                outputSlotId: pid,
+                content
+            });
+            //console.log(`RenderEx:delegateOutput for %c[${particle.spec.name}]::[${particle.id}]`, 'color: darkgreen; font-weight: bold;');
+            observer.observe(packet, arc);
+        }
+    }
+}
+
+/**
+ * @license
+ * Copyright (c) 2017 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class SlotComposer {
+    /**
+     * |options| must contain:
+     * - modalityName: the UI modality the slot-composer renders to (for example: dom).
+     * - modalityHandler: the handler for UI modality the slot-composer renders to.
+     * - rootContainer: the top level container to be used for slots.
+     * and may contain:
+     * - containerKind: the type of container wrapping each slot-context's container  (for example, div).
+     */
+    constructor(options) {
+        this._consumers = [];
+        this._contexts = [];
+        //    assert(options.modalityHandler && options.modalityHandler.constructor === ModalityHandler,
+        //           `Missing or invalid modality handler: ${options.modalityHandler}`);
+        assert(options.modalityHandler, `Missing or invalid modality handler: ${options.modalityHandler}`);
+        // TODO: Support rootContext for backward compatibility, remove when unused.
+        options.rootContainer = options.rootContainer || options.rootContext || (options.containers || Object).root;
+        assert((options.rootContainer !== undefined)
+            !==
+                (options.noRoot === true), 'Root container is mandatory unless it is explicitly skipped');
+        this._containerKind = options.containerKind;
+        if (options.modalityName) {
+            this.modality = Modality.create([options.modalityName]);
+        }
+        this.modalityHandler = options.modalityHandler;
+        if (options.noRoot) {
+            return;
+        }
+        const containerByName = options.containers
+            || this.modalityHandler.slotConsumerClass.findRootContainers(options.rootContainer) || {};
+        if (Object.keys(containerByName).length === 0) {
+            // fallback to single 'root' slot using the rootContainer.
+            containerByName['root'] = options.rootContainer;
+        }
+        Object.keys(containerByName).forEach(slotName => {
+            this._contexts.push(ProvidedSlotContext.createContextForContainer(`rootslotid-${slotName}`, slotName, containerByName[slotName], [`${slotName}`]));
+        });
+    }
+    get consumers() { return this._consumers; }
+    get containerKind() { return this._containerKind; }
+    getSlotConsumer(particle, slotName) {
+        return this.consumers.find(s => s.consumeConn.particle === particle && s.consumeConn.name === slotName);
+    }
+    findContainerByName(name) {
+        const contexts = this.findContextsByName(name);
+        if (contexts.length === 0) {
+            // TODO this is a no-op, but throwing here breaks tests
+            console.warn(`No containers for '${name}'`);
+        }
+        else if (contexts.length === 1) {
+            return contexts[0].container;
+        }
+        console.warn(`Ambiguous containers for '${name}'`);
+        return undefined;
+    }
+    findContextsByName(name) {
+        const providedSlotContexts = this._contexts.filter(ctx => ctx instanceof ProvidedSlotContext);
+        return providedSlotContexts.filter(ctx => ctx.name === name);
+    }
+    findContextById(slotId) {
+        return this._contexts.find(({ id }) => id === slotId);
+    }
+    createHostedSlot(innerArc, transformationParticle, transformationSlotName, storeId) {
+        const transformationSlotConsumer = this.getSlotConsumer(transformationParticle, transformationSlotName);
+        assert(transformationSlotConsumer, `Transformation particle ${transformationParticle.name} with consumed ${transformationSlotName} not found`);
+        const hostedSlotId = innerArc.generateID('slot').toString();
+        this._contexts.push(new HostedSlotContext(hostedSlotId, transformationSlotConsumer, storeId));
+        return hostedSlotId;
+    }
+    _addSlotConsumer(slot) {
+        slot.startRenderCallback = slot.arc.pec.startRender.bind(slot.arc.pec);
+        slot.stopRenderCallback = slot.arc.pec.stopRender.bind(slot.arc.pec);
+        this._consumers.push(slot);
+    }
+    async initializeRecipe(arc, recipeParticles) {
+        const newConsumers = [];
+        // Create slots for each of the recipe's particles slot connections.
+        recipeParticles.forEach(p => {
+            p.getSlandleConnections().forEach(cs => {
+                if (!cs.targetSlot) {
+                    assert(!cs.getSlotSpec().isRequired, `No target slot for particle's ${p.name} required consumed slot: ${cs.name}.`);
+                    return;
+                }
+                const slotConsumer = new this.modalityHandler.slotConsumerClass(arc, cs, this._containerKind);
+                const providedContexts = slotConsumer.createProvidedContexts();
+                this._contexts = this._contexts.concat(providedContexts);
+                newConsumers.push(slotConsumer);
+            });
+        });
+        // Set context for each of the slots.
+        newConsumers.forEach(consumer => {
+            this._addSlotConsumer(consumer);
+            const context = this.findContextById(consumer.consumeConn.targetSlot.id);
+            assert(context, `No context found for ${consumer.consumeConn.getQualifiedName()}`);
+            context.addSlotConsumer(consumer);
+        });
+        // Calculate the Descriptions only once per-Arc
+        const allArcs = this.consumers.map(consumer => consumer.arc);
+        const uniqueArcs = [...new Set(allArcs).values()];
+        // get arc -> description
+        const descriptions = await Promise.all(uniqueArcs.map(arc => Description.create(arc)));
+        // create a mapping from the zipped uniqueArcs and descriptions
+        const consumerByArc = new Map(descriptions.map((description, index) => [uniqueArcs[index], description]));
+        // ... and apply to each consumer
+        for (const consumer of this.consumers) {
+            consumer.description = consumerByArc.get(consumer.arc);
+        }
+    }
+    renderSlot(particle, slotName, content) {
+        const slotConsumer = this.getSlotConsumer(particle, slotName);
+        assert(slotConsumer, `Cannot find slot (or hosted slot) ${slotName} for particle ${particle.name}`);
+        // Content object as received by the particle execution host is frozen.
+        // SlotComposer attach properties to this object, so we need to clone it at the top level.
+        content = { ...content };
+        slotConsumer.slotContext.onRenderSlot(slotConsumer, content, async (eventlet) => {
+            slotConsumer.arc.pec.sendEvent(particle, slotName, eventlet);
+            // This code is a temporary hack implemented in #2011 which allows to route UI events from
+            // multiplexer to hosted particles. Multiplexer assembles UI from multiple pieces rendered
+            // by hosted particles. Hosted particles can render DOM elements with a key containing a
+            // handle ID of the store, which contains the entity they render. The code below attempts
+            // to find the hosted particle using the store matching the 'key' attribute on the event,
+            // which has been extracted from DOM.
+            // TODO: FIXIT!
+            if (eventlet.data && eventlet.data.key) {
+                // We fire off multiple async operations and don't wait.
+                for (const ctx of slotConsumer.hostedSlotContexts) {
+                    if (!ctx.storeId)
+                        continue;
+                    for (const hostedConsumer of ctx.slotConsumers) {
+                        const store = hostedConsumer.arc.findStoreById(ctx.storeId);
+                        assert(store);
+                        // TODO(shans): clean this up when we have interfaces for Singleton, Collection, etc
+                        // tslint:disable-next-line: no-any
+                        store.get().then(value => {
+                            if (value && (value.id === eventlet.data.key)) {
+                                hostedConsumer.arc.pec.sendEvent(hostedConsumer.consumeConn.particle, hostedConsumer.consumeConn.name, eventlet);
+                            }
+                        });
+                    }
+                }
+            }
+        });
+    }
+    getAvailableContexts() {
+        return this._contexts;
+    }
+    dispose() {
+        this.consumers.forEach(consumer => consumer.dispose());
+        this._contexts.forEach(context => {
+            context.clearSlotConsumers();
+            if (context instanceof ProvidedSlotContext && context.container) {
+                this.modalityHandler.slotConsumerClass.clear(context.container);
+            }
+        });
+        this._contexts = this._contexts.filter(c => !c.sourceSlotConsumer);
+        this._consumers.length = 0;
+    }
+}
 
 /**
  * @license
@@ -33077,57 +33376,6 @@ const html = (strings, ...values) => (strings[0] + values.map((v, i) => v + stri
 
 /**
  * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-// TODO(wkorman): Consider outputting preamble in the specified color via ANSI escape codes.
-const logFactory = (preamble, color, log = 'log') => {
-    return console[log].bind(console, `(${preamble})`);
-};
-
-/**
- * @license
- * Copyright 2019 Google LLC.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-const getGlobal = () => {
-    if (typeof self !== 'undefined') {
-        return self;
-    }
-    if (typeof window !== 'undefined') {
-        return window;
-    }
-    if (typeof global !== 'undefined') {
-        return global;
-    }
-    throw new Error('unable to locate global object');
-};
-const getLogLevel = () => {
-    // acquire global scope
-    const g = getGlobal();
-    // use specified logLevel otherwise 0
-    return ('logLevel' in g) ? g['logLevel'] : 0;
-};
-console.log(`log-factory: binding logFactory to level [${getLogLevel()}]`);
-const stubFactory = () => () => { };
-const logsFactory = (preamble, color = '') => {
-    const level = getLogLevel();
-    const logs = {};
-    ['log', 'warn', 'error', 'group', 'groupCollapsed', 'groupEnd'].
-        forEach(log => logs[log] = (level > 0 ? logFactory(preamble, color, log) : stubFactory));
-    return logs;
-};
-
-/**
- * @license
  * Copyright (c) 2017 Google Inc. All rights reserved.
  * This code may only be used under the BSD style license found at
  * http://polymer.github.io/LICENSE.txt
@@ -33135,7 +33383,7 @@ const logsFactory = (preamble, color = '') => {
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-const { warn } = logsFactory('Loader', 'green');
+const { warn: warn$1 } = logsFactory('Loader', 'green');
 const isString = s => (typeof s === 'string');
 const isSchemaOrgUrl = (s) => /\/\/schema.org\//.test(s);
 // a qualified url is an absolute path with `https` protocol
@@ -33330,7 +33578,7 @@ class LoaderBase {
         let particleClass = null;
         const userClass = await this.requireParticle(spec.implFile || '', spec.implBlobUrl);
         if (!userClass) {
-            warn(`[${spec.implFile}]::defineParticle() returned no particle.`);
+            warn$1(`[${spec.implFile}]::defineParticle() returned no particle.`);
         }
         else {
             particleClass = userClass;
@@ -33451,887 +33699,6 @@ const pecIndustry = loader => {
         return channel.port2;
     };
 };
-
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-let runtime = null;
-// To start with, this class will simply hide the runtime classes that are
-// currently imported by ArcsLib.js. Once that refactoring is done, we can
-// think about what the api should actually look like.
-class Runtime {
-    constructor(loader, composerClass, context, pecFactory) {
-        this.arcById = new Map();
-        this.cacheService = new RuntimeCacheService();
-        this.loader = loader;
-        this.pecFactory = pecFactory;
-        this.composerClass = composerClass;
-        this.context = context || new Manifest({ id: 'manifest:default' });
-        this.ramDiskMemory = new VolatileMemory();
-        runtime = this;
-        // user information. One persona per runtime for now.
-    }
-    static getRuntime() {
-        if (!runtime) {
-            runtime = new Runtime();
-        }
-        return runtime;
-    }
-    static clearRuntimeForTesting() {
-        if (runtime) {
-            runtime.destroy();
-            runtime = null;
-        }
-    }
-    static newForNodeTesting(context) {
-        return new Runtime(new Loader(), FakeSlotComposer, context);
-    }
-    /**
-     * `Runtime.getRuntime()` returns the most recently constructed Runtime object (or creates one),
-     * so calling `init` establishes a default environment (capturing the return value is optional).
-     * Systems can use `Runtime.getRuntime()` to access this environment instead of plumbing `runtime`
-     * arguments through numerous functions.
-     * Some static methods on this class automatically use the default environment.
-     */
-    static init(root, urls) {
-        const map = { ...Runtime.mapFromRootPath(root), ...urls };
-        const loader = new Loader(map);
-        const pecFactory = pecIndustry(loader);
-        return new Runtime(loader, SlotComposer, null, pecFactory);
-    }
-    static mapFromRootPath(root) {
-        // TODO(sjmiles): this is a commonly-used map, but it's not generic enough to live here.
-        // Shells that use this default should be provide it to `init` themselves.
-        return {
-            // important: path to `worker.js`
-            'https://$build/': `${root}/shells/lib/build/`,
-            // these are optional (?)
-            'https://$arcs/': `${root}/`,
-            'https://$particles/': {
-                root,
-                path: '/particles/',
-                buildDir: '/bazel-bin',
-                buildOutputRegex: /\.wasm$/.source
-            }
-        };
-    }
-    getCacheService() {
-        return this.cacheService;
-    }
-    getRamDiskMemory() {
-        return this.ramDiskMemory;
-    }
-    destroy() {
-    }
-    // TODO(shans): Clean up once old storage is removed.
-    // Note that this incorrectly assumes every storage key can be of the form `prefix` + `arcId`.
-    // Should ids be provided to the Arc constructor, or should they be constructed by the Arc?
-    // How best to provide default storage to an arc given whatever we decide?
-    newArc(name, storageKeyPrefix, options) {
-        const { loader, context } = this;
-        const id = IdGenerator.newSession().newArcId(name);
-        const slotComposer = this.composerClass ? new this.composerClass() : null;
-        const storageKey = (typeof storageKeyPrefix === 'string')
-            ? `${storageKeyPrefix}${id.toString()}` : storageKeyPrefix(id);
-        return new Arc({ id, storageKey, loader, slotComposer, context, ...options });
-    }
-    // Stuff the shell needs
-    /**
-     * Given an arc name, return either:
-     * (1) the already running arc
-     * (2) a deserialized arc (TODO: needs implementation)
-     * (3) a newly created arc
-     */
-    runArc(name, storageKeyPrefix, options) {
-        if (!this.arcById.has(name)) {
-            // TODO: Support deserializing serialized arcs.
-            this.arcById.set(name, this.newArc(name, storageKeyPrefix, options));
-        }
-        return this.arcById.get(name);
-    }
-    stop(name) {
-        assert(this.arcById.has(name), `Cannot stop nonexistent arc ${name}`);
-        this.arcById.get(name).dispose();
-        this.arcById.delete(name);
-    }
-    findArcByParticleId(particleId) {
-        return [...this.arcById.values()].find(arc => !!arc.activeRecipe.findParticle(particleId));
-    }
-    // TODO: This is a temporary method to allow sharing stores with other Arcs.
-    registerStore(store, tags) {
-        if (!this.context.findStoreById(store.id) && tags.includes('shared')) {
-            this.context['_addStore'](store, tags);
-        }
-    }
-    // Temporary method to allow sharing stores with other Arcs.
-    unregisterStore(storeId, tags) {
-        // #shared tag indicates that a store was made available to all arcs.
-        if (!tags.includes('shared')) {
-            return;
-        }
-        const index = this.context.stores.findIndex(store => store.id === storeId);
-        if (index >= 0) {
-            const store = this.context.stores[index];
-            this.context.storeTags.delete(store);
-            this.context.stores.splice(index, 1);
-        }
-    }
-    /**
-     * Given an arc, returns it's description as a string.
-     */
-    static async getArcDescription(arc) {
-        // Verify that it's one of my arcs, and make this non-static, once I have
-        // Runtime objects in the calling code.
-        return (await Description.create(arc)).getArcDescription();
-    }
-    /**
-     * Parse a textual manifest and return a Manifest object. See the Manifest
-     * class for the options accepted.
-     */
-    static async parseManifest(content, options) {
-        return Manifest.parse(content, options);
-    }
-    /**
-     * Load and parse a manifest from a resource (not strictly a file) and return
-     * a Manifest object. The loader determines the semantics of the fileName. See
-     * the Manifest class for details.
-     */
-    static async loadManifest(fileName, loader, options) {
-        return Manifest.load(fileName, loader, options);
-    }
-    // stuff the strategizer needs
-    // stuff from shells/lib/utils
-    // TODO(sjmiles): there is redundancy vs `parse/loadManifest` above, but this is
-    // temporary until we polish the Utils integration.
-    async parse(content, options) {
-        const { loader } = this;
-        // TODO(sjmiles): this method of generating a manifest id is ad-hoc,
-        // maybe should be using one of the id generators, or even better
-        // we could eliminate it if the Manifest object takes care of this.
-        const id = `in-memory-${Math.floor((Math.random() + 1) * 1e6)}.manifest`;
-        // TODO(sjmiles): this is a virtual manifest, the fileName is invented
-        const localOptions = { id, fileName: `./${id}`, loader };
-        return Manifest.parse(content, { ...localOptions, ...options });
-    }
-    static async parse(content, options) {
-        return this.getRuntime().parse(content, options);
-    }
-}
-
-/**
- * Implementation of KeyStorage using a Map, used for testing only.
- */
-class WebCryptoMemoryKeyStorage {
-    constructor() {
-        this.storageMap = new Map();
-    }
-    find(keyFingerPrint) {
-        return Promise.resolve(this.storageMap.get(keyFingerPrint));
-    }
-    async write(keyFingerprint, key) {
-        this.storageMap.set(keyFingerprint, key);
-        return Promise.resolve(keyFingerprint);
-    }
-    static getInstance() {
-        return new WebCryptoMemoryKeyStorage();
-    }
-}
-
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-const crypto = new WebCrypto();
-
-/* eslint-disable header/header */
-/**
- * @license
- * ISC License (ISC)
- *
- * Copyright 2017 Rhett Robinson
- *
- * Permission to use, copy, modify, and/or distribute this software for any purpose
- * with or without fee is hereby granted, provided that the above copyright notice
- * and this permission notice appear in all copies.
- *
- *     THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
- * REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
- * FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
- *     INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS
- * OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
- * TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF
- * THIS SOFTWARE.
- */
-// Originally forked from https://github.com/rrhett/typescript-base64-arraybuffer/blob/master/src/base64.ts
-// For the base64 encoding pieces.
-/*
- * Most of the key management operatins deals with ArrayBuffers/TypedArrays. Although atob and btoa are built into
- * JS, they are not convenient to use for ArrayBuffers.
- */
-const alphabet = [
-    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
-    'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
-    'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
-    'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f',
-    'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n',
-    'o', 'p', 'q', 'r', 's', 't', 'u', 'v',
-    'w', 'x', 'y', 'z', '0', '1', '2', '3',
-    '4', '5', '6', '7', '8', '9', '+', '/'
-];
-const values = {};
-for (let i = 0; i < 64; ++i) {
-    values[alphabet[i]] = i;
-}
-function encode(bytes) {
-    const array = new Uint8Array(bytes);
-    const base64 = [];
-    let index = 0;
-    let quantum;
-    let value;
-    /* tslint:disable:no-bitwise */
-    // Grab as many sets of 3 bytes as we can, that form 24 bits.
-    while (index + 2 < array.byteLength) {
-        quantum = (array[index] << 16) | (array[index + 1] << 8) | array[index + 2];
-        // 24 bits will become 4 base64 chars.
-        value = (quantum >> 18) & 0x3f;
-        base64.push(alphabet[value]);
-        value = (quantum >> 12) & 0x3f;
-        base64.push(alphabet[value]);
-        value = (quantum >> 6) & 0x3f;
-        base64.push(alphabet[value]);
-        value = quantum & 0x3f;
-        base64.push(alphabet[value]);
-        index += 3;
-    }
-    // At this point, there are 0, 1 or 2 bytes left.
-    if (index + 1 === array.byteLength) {
-        // 8 bits; shift by 4 to pad on the right with 0s to make 12 bits total.
-        quantum = array[index] << 4;
-        value = (quantum >> 6) & 0x3f;
-        base64.push(alphabet[value]);
-        value = quantum & 0x3f;
-        base64.push(alphabet[value]);
-        base64.push('==');
-    }
-    else if (index + 2 === array.byteLength) {
-        // 16 bits; shift by 2 to pad on the right with 0s to make 18 bits total.
-        quantum = (array[index] << 10) | (array[index + 1] << 2);
-        value = (quantum >> 12) & 0x3f;
-        base64.push(alphabet[value]);
-        value = (quantum >> 6) & 0x3f;
-        base64.push(alphabet[value]);
-        value = quantum & 0x3f;
-        base64.push(alphabet[value]);
-        base64.push('=');
-    }
-    /* tslint:enable:no-bitwise */
-    return base64.join('');
-}
-function decode(str) {
-    let size = str.length;
-    if (size === 0) {
-        return new Uint8Array(new ArrayBuffer(0));
-    }
-    if (size % 4 !== 0) {
-        throw new Error('Bad length: ' + size);
-    }
-    if (!str.match(/^[a-zA-Z0-9+/]+={0,2}$/)) {
-        throw new Error('Invalid base64 encoded value');
-    }
-    // Every 4 base64 chars = 24 bits = 3 bytes. But, we also need to figure out
-    // padding, if any.
-    let bytes = 3 * (size / 4);
-    let numPad = 0;
-    if (str.charAt(size - 1) === '=') {
-        numPad++;
-        bytes--;
-    }
-    if (str.charAt(size - 2) === '=') {
-        numPad++;
-        bytes--;
-    }
-    const buffer = new Uint8Array(new ArrayBuffer(bytes));
-    let index = 0;
-    let bufferIndex = 0;
-    let quantum;
-    if (numPad > 0) {
-        size -= 4; // handle the last one specially
-    }
-    /* tslint:disable:no-bitwise */
-    while (index < size) {
-        quantum = 0;
-        for (let i = 0; i < 4; ++i) {
-            quantum = (quantum << 6) | values[str.charAt(index + i)];
-        }
-        // quantum is now a 24-bit value.
-        buffer[bufferIndex++] = (quantum >> 16) & 0xff;
-        buffer[bufferIndex++] = (quantum >> 8) & 0xff;
-        buffer[bufferIndex++] = quantum & 0xff;
-        index += 4;
-    }
-    if (numPad > 0) {
-        // if numPad == 1, there is one =, and we have 18 bits with 2 0s at end.
-        // if numPad == 2, there is two ==, and we have 12 bits with 4 0s at end.
-        // First, grab my quantum.
-        quantum = 0;
-        for (let i = 0; i < 4 - numPad; ++i) {
-            quantum = (quantum << 6) | values[str.charAt(index + i)];
-        }
-        if (numPad === 1) {
-            // quantum is 18 bits, but really represents two bytes.
-            quantum = quantum >> 2;
-            buffer[bufferIndex++] = (quantum >> 8) & 0xff;
-            buffer[bufferIndex++] = quantum & 0xff;
-        }
-        else {
-            // quantum is 12 bits, but really represents only one byte.
-            quantum = quantum >> 4;
-            buffer[bufferIndex++] = quantum & 0xff;
-        }
-    }
-    /* tslint:enable:no-bitwise */
-    return buffer;
-}
-
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-const DEVICE_KEY_ALGORITHM = 'RSA-OAEP';
-const X509_CERTIFICATE_ALGORITHM = 'RSA-OAEP';
-const X509_CERTIFICATE_HASH_ALGORITHM = 'SHA-1';
-const DEVICE_KEY_HASH_ALGORITHM = 'SHA-512';
-const STORAGE_KEY_ALGORITHM = 'AES-GCM';
-const ARCS_CRYPTO_STORE_NAME = 'ArcsKeyManagementStore';
-const ARCS_CRYPTO_INDEXDB_NAME = 'ArcsKeyManagement';
-/**
- * A CryptoKey or CryptoKeyPair that is capable of being stored in IndexDB key storage.
- */
-class WebCryptoStorableKey {
-    constructor(key) {
-        this.key = key;
-    }
-    algorithm() {
-        return this.key.algorithm ? this.key.algorithm.name :
-            this.key.publicKey.algorithm.name;
-    }
-    storableKey() {
-        return this.key;
-    }
-}
-/**
- * An AES-GCM symmetric key in raw formatted encrypted using an RSA-OAEP public key.
- * We use a symmetrically derived key for the shared secret instead of just random numbers. There are two
- * reasons for this.
- *
- * First, WebCrypto treats CryptoKeys specially in that the material is can be setup to
- * never be exposed the application, so when we generate these secrets, we can hide them from JS by declaring
- * them non-extractable or usable for wrapping or encrypting only.
- *
- * Secondly, we eventually want to move off of RSA-OAEP and use ECDH, and ECDH doesn't support encryption or wrapping
- * of randomly generated bits.
- */
-class WebCryptoWrappedKey {
-    constructor(wrappedKeyData, wrappedBy) {
-        this.wrappedKeyData = wrappedKeyData;
-        this.wrappedBy = wrappedBy;
-    }
-    algorithm() {
-        return this.wrappedBy.algorithm();
-    }
-    unwrap(privKey) {
-        const webPrivKey = privKey;
-        return crypto.subtle.unwrapKey('raw', this.wrappedKeyData, webPrivKey.cryptoKey(), {
-            name: privKey.algorithm()
-        }, {
-            name: STORAGE_KEY_ALGORITHM,
-        }, true, ['encrypt', 'decrypt']).then(key => new WebCryptoSessionKey(key));
-    }
-    rewrap(privKey, pubKey) {
-        return this.unwrap(privKey).then(skey => skey.disposeToWrappedKeyUsing(pubKey));
-    }
-    export() {
-        return encode(this.wrappedKeyData.buffer);
-    }
-    fingerprint() {
-        return Promise.resolve(encode(this.wrappedKeyData.buffer));
-    }
-}
-/**
- * An implementation of PrivateKey using WebCrypto.
- */
-class WebCryptoPrivateKey extends WebCryptoStorableKey {
-    constructor(key) {
-        super(key);
-    }
-    cryptoKey() {
-        return this.storableKey();
-    }
-}
-/**
- * An implementation of PublicKey using WebCrypto.
- */
-class WebCryptoPublicKey extends WebCryptoStorableKey {
-    constructor(key) {
-        super(key);
-    }
-    cryptoKey() {
-        return this.storableKey();
-    }
-    static digest(str) {
-        return WebCryptoPublicKey.sha256(str);
-    }
-    static hex(buffer) {
-        const hexCodes = [];
-        const view = new DataView(buffer);
-        for (let i = 0; i < view.byteLength; i += 4) {
-            // Using getUint32 reduces the number of iterations needed (we process 4 bytes each time)
-            const value = view.getUint32(i);
-            // toString(16) will give the hex representation of the number without padding
-            const stringValue = value.toString(16);
-            // We use concatenation and slice for padding
-            const padding = '00000000';
-            const paddedValue = (padding + stringValue).slice(-padding.length);
-            hexCodes.push(paddedValue);
-        }
-        // Join all the hex strings into one
-        return hexCodes.join('');
-    }
-    static sha256(str) {
-        // We transform the string into an arraybuffer.
-        const buffer = new Uint8Array(str.split('').map(x => x.charCodeAt(0)));
-        return crypto.subtle.digest('SHA-256', buffer).then((hash) => WebCryptoPublicKey.hex(hash));
-    }
-    fingerprint() {
-        return crypto.subtle.exportKey('jwk', this.cryptoKey())
-            // Use the modulus 'n' as the fingerprint since 'e' is fixed
-            .then(key => WebCryptoPublicKey.digest(key['n']));
-    }
-}
-class WebCryptoSessionKey {
-    constructor(sessionKey) {
-        this.sessionKey = sessionKey;
-    }
-    // Visible/Used for testing only.
-    decrypt(buffer, iv) {
-        return crypto.subtle.decrypt({
-            name: this.algorithm(),
-            iv,
-        }, this.sessionKey, buffer);
-    }
-    // Visible/Used for testing only.
-    encrypt(buffer, iv) {
-        return crypto.subtle.encrypt({
-            name: this.algorithm(),
-            iv
-        }, this.sessionKey, buffer);
-    }
-    /**
-     * This encodes the session key as a hexadecimal string.
-     * TODO: this is a temporary hack for the provisioning App's QR-scanning procedure which will be
-     * removed once the the key-blessing algorithm is implemented.
-     */
-    export() {
-        return crypto.subtle.exportKey('raw', this.sessionKey).then((raw) => {
-            const buf = new Uint8Array(raw);
-            let res = '';
-            buf.forEach((x) => res += (x < 16 ? '0' : '') + x.toString(16));
-            return res;
-        });
-    }
-    algorithm() {
-        return this.sessionKey.algorithm.name;
-    }
-    /**
-     * Encrypts this session key with the private key, and makes a best effort to destroy the session
-     * key material (presumably erased during garbage collection).
-     * @param pkey
-     */
-    disposeToWrappedKeyUsing(pkey) {
-        try {
-            const webPkey = pkey;
-            const rawWrappedKey = crypto.subtle.wrapKey('raw', this.sessionKey, pkey.cryptoKey(), {
-                //these are the wrapping key's algorithm options
-                name: webPkey.algorithm(),
-            });
-            return rawWrappedKey.then(rawKey => new WebCryptoWrappedKey(new Uint8Array(rawKey), pkey));
-        }
-        finally {
-            // Hopefully this frees the underlying key material
-            this.sessionKey = null;
-        }
-    }
-    isDisposed() {
-        return this.sessionKey != null;
-    }
-}
-class WebCryptoDeviceKey extends WebCryptoStorableKey {
-    algorithm() {
-        return this.publicKey().algorithm();
-    }
-    constructor(key) {
-        super(key);
-    }
-    privateKey() {
-        return new WebCryptoPrivateKey(this.key.privateKey);
-    }
-    publicKey() {
-        return new WebCryptoPublicKey(this.key.publicKey);
-    }
-    /**
-     * Returns a fingerprint of the public key of the devicekey pair.
-     */
-    fingerprint() {
-        return this.publicKey().fingerprint();
-    }
-}
-/**
- * Implementation of KeyGenerator using WebCrypto interface.
- */
-class WebCryptoKeyGenerator {
-    generateWrappedStorageKey(deviceKey) {
-        const generatedKey = crypto.subtle.generateKey({ name: 'AES-GCM', length: 256 }, true, ['encrypt', 'decrypt', 'wrapKey', 'unwrapKey']);
-        return generatedKey.then(key => new WebCryptoSessionKey(key))
-            .then(skey => skey.disposeToWrappedKeyUsing(deviceKey.publicKey()));
-    }
-    static getInstance() {
-        // TODO: may want to reuse instance in future
-        return new WebCryptoKeyGenerator();
-    }
-    generateAndStoreRecoveryKey() {
-        // TODO: Implement
-        throw new Error('Not implemented');
-    }
-    generateDeviceKey() {
-        const generatedKey = crypto.subtle.generateKey({
-            hash: { name: DEVICE_KEY_HASH_ALGORITHM },
-            // TODO: Note, RSA-OAEP is deprecated, we should move to ECDH in the future, but it
-            // doesn't use key-wrapping, instead it uses a different mechanism: key-derivation.
-            name: DEVICE_KEY_ALGORITHM,
-            modulusLength: 2048,
-            // exponent is only allowed to be 3 or 65537 for RSA
-            publicExponent: new Uint8Array([0x01, 0x00, 0x01]),
-        }, 
-        // false means the key material is not visible to the application
-        false, ['encrypt', 'decrypt', 'wrapKey', 'unwrapKey']);
-        return generatedKey.then(key => new WebCryptoDeviceKey(key));
-    }
-    /**
-     * Decodes X509 PEM certificates, extracts their key material, and returns a PublicKey.
-     * @param pemKey
-     */
-    importKey(pemKey) {
-        const key = rs.KEYUTIL.getKey(pemKey);
-        const jwk = rs.KEYUTIL.getJWKFromKey(key);
-        return crypto.subtle.importKey('jwk', jwk, {
-            name: X509_CERTIFICATE_ALGORITHM,
-            hash: { name: X509_CERTIFICATE_HASH_ALGORITHM }
-        }, true, ['encrypt', 'wrapKey']).then(ikey => new WebCryptoPublicKey(ikey));
-    }
-    async importWrappedKey(wrappedKey, wrappedBy) {
-        const decodedKey = decode(wrappedKey);
-        return Promise.resolve(new WebCryptoWrappedKey(decodedKey, wrappedBy));
-    }
-}
-/**
- * The Web Crypto spec states that IndexDB may be used to store CryptoKey objects without ever exposing
- * key material to the application: https://www.w3.org/TR/WebCryptoAPI/#concepts-key-storage
- */
-class WebCryptoKeyIndexedDBStorage {
-    async runOnStore(fn) {
-        try {
-            const db = await idb.open(ARCS_CRYPTO_INDEXDB_NAME, 1, upgradeDB => upgradeDB.createObjectStore(ARCS_CRYPTO_STORE_NAME, { keyPath: 'keyFingerPrint' }));
-            const tx = db.transaction(ARCS_CRYPTO_STORE_NAME, 'readwrite');
-            const store = tx.objectStore(ARCS_CRYPTO_STORE_NAME);
-            const result = await fn(store);
-            await tx.complete;
-            db.close();
-            return Promise.resolve(result);
-        }
-        catch (e) {
-            return Promise.reject(e);
-        }
-    }
-    async find(keyId) {
-        const result = await this.runOnStore(async (store) => {
-            return store.get(keyId);
-        });
-        if (!result) {
-            return Promise.resolve(null);
-        }
-        if (result.key && result.key['privateKey'] && result.key['publicKey']) {
-            return Promise.resolve(new WebCryptoDeviceKey(result.key));
-        }
-        else if (result.key instanceof CryptoKey) {
-            return Promise.resolve(new WebCryptoPublicKey(result.key));
-        }
-        else if (result.key instanceof Uint8Array) {
-            const wrappedBy = await this.find(result.wrappingKeyFingerprint);
-            return Promise.resolve(new WebCryptoWrappedKey(result.key, wrappedBy));
-        }
-        throw new Error('Unrecognized key type found in keystore.');
-    }
-    async write(keyFingerPrint, key) {
-        if (key instanceof WebCryptoStorableKey) {
-            const skey = key;
-            await this.runOnStore(async (store) => {
-                return store.put({ keyFingerPrint, key: skey.storableKey() });
-            });
-            return keyFingerPrint;
-        }
-        else if (key instanceof WebCryptoWrappedKey) {
-            const wrappedKey = key;
-            const wrappingKeyFingerprint = await wrappedKey.wrappedBy.fingerprint();
-            await this.runOnStore(async (store) => {
-                return store.put({ keyFingerPrint, key: wrappedKey.wrappedKeyData,
-                    wrappingKeyFingerprint });
-            });
-            return keyFingerPrint;
-        }
-        throw new Error('Can\'t write key that isn\'t StorableKey or WrappedKey.');
-    }
-    static getInstance() {
-        // TODO: If IndexDB open/close is expensive, we may want to reuse instances.
-        return new WebCryptoKeyIndexedDBStorage();
-    }
-}
-
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-class KeyManager {
-    static getGenerator() {
-        return WebCryptoKeyGenerator.getInstance();
-        // return AndroidWebViewKeyGenerator.getInstance()
-    }
-    static getStorage() {
-        // TODO: move this hackery to the platform/ directory for node vs worker vs web?
-        const globalScope = typeof window !== 'undefined' ? window : (typeof self !== 'undefined' ? self : global);
-        return globalScope['indexedDB'] != null ? WebCryptoKeyIndexedDBStorage.getInstance() : WebCryptoMemoryKeyStorage.getInstance();
-        // return AndroidWebViewKeyStorage.getInstance()
-    }
-}
-
-var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
-
-/**
- * @license
- * Copyright 2019 Google LLC.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-commonjsGlobal.logLevel = 2;
-
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-
-// Debugging is initialized either by /devtools/src/run-mark-connected.js, which is
-// injected by the devtools extension content script in the browser env,
-// or used directly when debugging nodeJS.
-
-// Data needs to be referenced via a global object, otherwise extension and
-// Arcs have different instances.
-const root = typeof window === 'object' ? window : global;
-
-if (!root._arcDebugPromise) {
-  root._arcDebugPromise = new Promise(resolve => {
-    root._arcDebugPromiseResolve = resolve;
-  });
-}
-
-class DevtoolsBroker {
-  static get onceConnected() {
-    return root._arcDebugPromise;
-  }
-  static markConnected() {
-    root._arcDebugPromiseResolve();
-  }
-}
-
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-class AbstractDevtoolsChannel {
-    constructor() {
-        this.debouncedMessages = [];
-        this.messageListeners = new Map();
-        this.timer = null;
-    }
-    send(message) {
-        this.ensureNoCycle(message);
-        this.debouncedMessages.push(message);
-        // Temporary workaround for WebRTC slicing messages above 2^18 characters.
-        // Need to find a proper fix. Is there some config in WebRTC to fix this?
-        // If not prefer to slice messages based on their serialized form.
-        // Maybe zip them for transport?
-        if (this.debouncedMessages.length > 10) {
-            this._empty();
-        }
-        else if (!this.timer) {
-            this.timer = setTimeout(() => this._empty(), 100);
-        }
-    }
-    listen(arcOrId, messageType, listener) {
-        assert(messageType);
-        assert(arcOrId);
-        const arcId = typeof arcOrId === 'string' ? arcOrId : arcOrId.id.toString();
-        const key = `${arcId}/${messageType}`;
-        let listeners = this.messageListeners.get(key);
-        if (!listeners) {
-            this.messageListeners.set(key, listeners = []);
-        }
-        listeners.push(listener);
-    }
-    forArc(arc) {
-        return new ArcDevtoolsChannel(arc, this);
-    }
-    async _handleMessage(msg) {
-        const listeners = this.messageListeners.get(`${msg.arcId}/${msg.messageType}`);
-        if (!listeners) {
-            console.warn(`No one is listening to ${msg.messageType} message`);
-        }
-        else {
-            await Promise.all(listeners.map(l => l(msg)));
-        }
-    }
-    _empty() {
-        this._flush(this.debouncedMessages);
-        this.debouncedMessages = [];
-        clearTimeout(this.timer);
-        this.timer = null;
-    }
-    _flush(_messages) {
-        throw new Error('Not implemented in an abstract class');
-    }
-    // tslint:disable-next-line: no-any
-    ensureNoCycle(object, objectPath = []) {
-        if (!object || typeof object !== 'object')
-            return;
-        assert(objectPath.indexOf(object) === -1, 'Message cannot contain a cycle');
-        objectPath.push(object);
-        (Array.isArray(object) ? object : Object.values(object)).forEach(element => this.ensureNoCycle(element, objectPath));
-        objectPath.pop();
-    }
-}
-class ArcDevtoolsChannel {
-    constructor(arc, channel) {
-        this.channel = channel;
-        this.arcId = arc.id.toString();
-    }
-    send(message) {
-        this.channel.send({
-            meta: { arcId: this.arcId },
-            ...message
-        });
-    }
-    listen(messageType, callback) {
-        this.channel.listen(this.arcId, messageType, callback);
-    }
-}
-
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-class DevtoolsChannel extends AbstractDevtoolsChannel {
-    constructor() {
-        super();
-        this.server = new WebSocket.Server({ port: 8787 });
-        this.server.on('connection', (ws) => {
-            this.socket = ws;
-            this.socket.on('message', (msg) => {
-                if (msg === 'init') {
-                    DevtoolsBroker.markConnected();
-                }
-                else {
-                    void this._handleMessage(JSON.parse(msg));
-                }
-            });
-        });
-    }
-    _flush(messages) {
-        if (this.socket) {
-            this.socket.send(JSON.stringify(messages));
-        }
-    }
-}
-
-/**
- * @license
- * Copyright (c) 2018 Google Inc. All rights reserved.
- * This code may only be used under the BSD style license found at
- * http://polymer.github.io/LICENSE.txt
- * Code distributed by Google as part of this project is also
- * subject to an additional IP rights grant found at
- * http://polymer.github.io/PATENTS.txt
- */
-let channel = null;
-let isConnected = false;
-let onceConnectedResolve = null;
-let onceConnected = new Promise(resolve => onceConnectedResolve = resolve);
-DevtoolsBroker.onceConnected.then(() => {
-    DevtoolsConnection.ensure();
-    onceConnectedResolve(channel);
-    isConnected = true;
-});
-class DevtoolsConnection {
-    static get isConnected() {
-        return isConnected;
-    }
-    static get onceConnected() {
-        return onceConnected;
-    }
-    static get() {
-        return channel;
-    }
-    static ensure() {
-        if (!channel)
-            channel = new DevtoolsChannel();
-    }
-}
 
 /**
  * @license
@@ -37168,7 +36535,7 @@ class Relevance {
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-const { log } = logsFactory('planner', 'olive');
+const { log: log$1 } = logsFactory('planner', 'olive');
 const suggestionByHash = () => Runtime.getRuntime().getCacheService().getOrCreateCache('suggestionByHash');
 class Planner {
     // TODO: Use context.arc instead of arc
@@ -39166,6 +38533,192 @@ class ArcPlannerInvoker {
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
+
+// Debugging is initialized either by /devtools/src/run-mark-connected.js, which is
+// injected by the devtools extension content script in the browser env,
+// or used directly when debugging nodeJS.
+
+// Data needs to be referenced via a global object, otherwise extension and
+// Arcs have different instances.
+const root = typeof window === 'object' ? window : global;
+
+if (!root._arcDebugPromise) {
+  root._arcDebugPromise = new Promise(resolve => {
+    root._arcDebugPromiseResolve = resolve;
+  });
+}
+
+class DevtoolsBroker {
+  static get onceConnected() {
+    return root._arcDebugPromise;
+  }
+  static markConnected() {
+    root._arcDebugPromiseResolve();
+  }
+}
+
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class AbstractDevtoolsChannel {
+    constructor() {
+        this.debouncedMessages = [];
+        this.messageListeners = new Map();
+        this.timer = null;
+    }
+    send(message) {
+        this.ensureNoCycle(message);
+        this.debouncedMessages.push(message);
+        // Temporary workaround for WebRTC slicing messages above 2^18 characters.
+        // Need to find a proper fix. Is there some config in WebRTC to fix this?
+        // If not prefer to slice messages based on their serialized form.
+        // Maybe zip them for transport?
+        if (this.debouncedMessages.length > 10) {
+            this._empty();
+        }
+        else if (!this.timer) {
+            this.timer = setTimeout(() => this._empty(), 100);
+        }
+    }
+    listen(arcOrId, messageType, listener) {
+        assert(messageType);
+        assert(arcOrId);
+        const arcId = typeof arcOrId === 'string' ? arcOrId : arcOrId.id.toString();
+        const key = `${arcId}/${messageType}`;
+        let listeners = this.messageListeners.get(key);
+        if (!listeners) {
+            this.messageListeners.set(key, listeners = []);
+        }
+        listeners.push(listener);
+    }
+    forArc(arc) {
+        return new ArcDevtoolsChannel(arc, this);
+    }
+    async _handleMessage(msg) {
+        const listeners = this.messageListeners.get(`${msg.arcId}/${msg.messageType}`);
+        if (!listeners) {
+            console.warn(`No one is listening to ${msg.messageType} message`);
+        }
+        else {
+            await Promise.all(listeners.map(l => l(msg)));
+        }
+    }
+    _empty() {
+        this._flush(this.debouncedMessages);
+        this.debouncedMessages = [];
+        clearTimeout(this.timer);
+        this.timer = null;
+    }
+    _flush(_messages) {
+        throw new Error('Not implemented in an abstract class');
+    }
+    // tslint:disable-next-line: no-any
+    ensureNoCycle(object, objectPath = []) {
+        if (!object || typeof object !== 'object')
+            return;
+        assert(objectPath.indexOf(object) === -1, 'Message cannot contain a cycle');
+        objectPath.push(object);
+        (Array.isArray(object) ? object : Object.values(object)).forEach(element => this.ensureNoCycle(element, objectPath));
+        objectPath.pop();
+    }
+}
+class ArcDevtoolsChannel {
+    constructor(arc, channel) {
+        this.channel = channel;
+        this.arcId = arc.id.toString();
+    }
+    send(message) {
+        this.channel.send({
+            meta: { arcId: this.arcId },
+            ...message
+        });
+    }
+    listen(messageType, callback) {
+        this.channel.listen(this.arcId, messageType, callback);
+    }
+}
+
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class DevtoolsChannel extends AbstractDevtoolsChannel {
+    constructor() {
+        super();
+        this.server = new WebSocket.Server({ port: 8787 });
+        this.server.on('connection', (ws) => {
+            this.socket = ws;
+            this.socket.on('message', (msg) => {
+                if (msg === 'init') {
+                    DevtoolsBroker.markConnected();
+                }
+                else {
+                    void this._handleMessage(JSON.parse(msg));
+                }
+            });
+        });
+    }
+    _flush(messages) {
+        if (this.socket) {
+            this.socket.send(JSON.stringify(messages));
+        }
+    }
+}
+
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+let channel = null;
+let isConnected = false;
+let onceConnectedResolve = null;
+let onceConnected = new Promise(resolve => onceConnectedResolve = resolve);
+DevtoolsBroker.onceConnected.then(() => {
+    DevtoolsConnection.ensure();
+    onceConnectedResolve(channel);
+    isConnected = true;
+});
+class DevtoolsConnection {
+    static get isConnected() {
+        return isConnected;
+    }
+    static get onceConnected() {
+        return onceConnected;
+    }
+    static get() {
+        return channel;
+    }
+    static ensure() {
+        if (!channel)
+            channel = new DevtoolsChannel();
+    }
+}
+
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
 let streamingToDevtools = false;
 function enableTracingAdapter(devtoolsChannel) {
     if (!streamingToDevtools) {
@@ -39404,6 +38957,762 @@ class DevtoolsArcInspector {
 
 /**
  * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+const { warn: warn$2 } = logsFactory('Runtime', 'orange');
+let runtime = null;
+// To start with, this class will simply hide the runtime classes that are
+// currently imported by ArcsLib.js. Once that refactoring is done, we can
+// think about what the api should actually look like.
+class Runtime {
+    constructor(loader, composerClass, context, pecFactory) {
+        this.arcById = new Map();
+        this.cacheService = new RuntimeCacheService();
+        this.loader = loader;
+        this.pecFactory = pecFactory;
+        this.composerClass = composerClass;
+        this.context = context || new Manifest({ id: 'manifest:default' });
+        this.ramDiskMemory = new VolatileMemory();
+        runtime = this;
+        // user information. One persona per runtime for now.
+    }
+    /**
+     * `Runtime.getRuntime()` returns the most recently constructed Runtime object
+     * (or creates one if necessary). Therefore, the most recently created Runtime
+     * object represents the default runtime environemnt.
+     * Systems can use `Runtime.getRuntime()` to access this environment instead of
+     * plumbing `runtime` arguments through numerous functions.
+     * Some static methods on this class automatically use the default environment.
+     */
+    static getRuntime() {
+        if (!runtime) {
+            runtime = new Runtime();
+        }
+        return runtime;
+    }
+    static clearRuntimeForTesting() {
+        if (runtime) {
+            runtime.destroy();
+            runtime = null;
+        }
+    }
+    static newForNodeTesting(context) {
+        return new Runtime(new Loader(), FakeSlotComposer, context);
+    }
+    /**
+     * Call `init` to establish a default Runtime environment (capturing the return value is optional).
+     * Systems can use `Runtime.getRuntime()` to access this environment instead of plumbing `runtime`
+     * arguments through numerous functions.
+     * Some static methods on this class automatically use the default environment.
+     */
+    static init(root, urls) {
+        const map = { ...Runtime.mapFromRootPath(root), ...urls };
+        const loader = new Loader(map);
+        const pecFactory = pecIndustry(loader);
+        // TODO(sjmiles): UiSlotComposer type shenanigans are temporary pending complete replacement
+        // of SlotComposer by UiSlotComposer. Also it's weird that `new Runtime(..., UiSlotComposer, ...)`
+        // doesn't bother tslint at all when done in other modules.
+        return new Runtime(loader, UiSlotComposer, null, pecFactory);
+    }
+    static mapFromRootPath(root) {
+        // TODO(sjmiles): this is a commonly-used map, but it's not generic enough to live here.
+        // Shells that use this default should be provide it to `init` themselves.
+        return {
+            // important: path to `worker.js`
+            'https://$build/': `${root}/shells/lib/build/`,
+            // these are optional (?)
+            'https://$arcs/': `${root}/`,
+            'https://$particles/': {
+                root,
+                path: '/particles/',
+                buildDir: '/bazel-bin',
+                buildOutputRegex: /\.wasm$/.source
+            }
+        };
+    }
+    getCacheService() {
+        return this.cacheService;
+    }
+    getRamDiskMemory() {
+        return this.ramDiskMemory;
+    }
+    destroy() {
+    }
+    /**
+     * Given an arc name, return either:
+     * (1) the already running arc
+     * (2) a deserialized arc (TODO: needs implementation)
+     * (3) a newly created arc
+     */
+    runArc(name, storageKeyPrefix, options) {
+        if (!this.arcById.has(name)) {
+            // TODO: Support deserializing serialized arcs.
+            this.arcById.set(name, this.newArc(name, storageKeyPrefix, options));
+        }
+        return this.arcById.get(name);
+    }
+    // TODO(shans): Clean up once old storage is removed.
+    // Note that this incorrectly assumes every storage key can be of the form `prefix` + `arcId`.
+    // Should ids be provided to the Arc constructor, or should they be constructed by the Arc?
+    // How best to provide default storage to an arc given whatever we decide?
+    newArc(name, storageKeyPrefix, options) {
+        const { loader, context } = this;
+        const id = IdGenerator.newSession().newArcId(name);
+        const slotComposer = this.composerClass ? new this.composerClass() : null;
+        const storageKey = (typeof storageKeyPrefix === 'string')
+            ? `${storageKeyPrefix}${id.toString()}` : storageKeyPrefix(id);
+        return new Arc({ id, storageKey, loader, slotComposer, context, ...options });
+    }
+    stop(name) {
+        assert(this.arcById.has(name), `Cannot stop nonexistent arc ${name}`);
+        this.arcById.get(name).dispose();
+        this.arcById.delete(name);
+    }
+    findArcByParticleId(particleId) {
+        return [...this.arcById.values()].find(arc => !!arc.activeRecipe.findParticle(particleId));
+    }
+    // TODO: This is a temporary method to allow sharing stores with other Arcs.
+    registerStore(store, tags) {
+        if (!this.context.findStoreById(store.id) && tags.includes('shared')) {
+            this.context['_addStore'](store, tags);
+        }
+    }
+    // Temporary method to allow sharing stores with other Arcs.
+    unregisterStore(storeId, tags) {
+        // #shared tag indicates that a store was made available to all arcs.
+        if (!tags.includes('shared')) {
+            return;
+        }
+        const index = this.context.stores.findIndex(store => store.id === storeId);
+        if (index >= 0) {
+            const store = this.context.stores[index];
+            this.context.storeTags.delete(store);
+            this.context.stores.splice(index, 1);
+        }
+    }
+    /**
+     * Given an arc, returns it's description as a string.
+     */
+    static async getArcDescription(arc) {
+        // Verify that it's one of my arcs, and make this non-static, once I have
+        // Runtime objects in the calling code.
+        return (await Description.create(arc)).getArcDescription();
+    }
+    /**
+     * Parse a textual manifest and return a Manifest object. See the Manifest
+     * class for the options accepted.
+     */
+    static async parseManifest(content, options) {
+        return Manifest.parse(content, options);
+    }
+    /**
+     * Load and parse a manifest from a resource (not strictly a file) and return
+     * a Manifest object. The loader determines the semantics of the fileName. See
+     * the Manifest class for details.
+     */
+    static async loadManifest(fileName, loader, options) {
+        return Manifest.load(fileName, loader, options);
+    }
+    // TODO(sjmiles): there is redundancy vs `parse/loadManifest` above, but
+    // this is temporary until we polish the Utils->Runtime integration.
+    // TODO(sjmiles): These methods represent boilerplate factored out of
+    // various shells.These needs could be filled other ways or represented
+    // by other modules. Suggestions welcome.
+    async parse(content, options) {
+        const { loader } = this;
+        // TODO(sjmiles): this method of generating a manifest id is ad-hoc,
+        // maybe should be using one of the id generators, or even better
+        // we could eliminate it if the Manifest object takes care of this.
+        const id = `in-memory-${Math.floor((Math.random() + 1) * 1e6)}.manifest`;
+        // TODO(sjmiles): this is a virtual manifest, the fileName is invented
+        const opts = { id, fileName: `./${id}`, loader, ...options };
+        return Manifest.parse(content, opts);
+    }
+    async parseFile(path, options) {
+        const content = await this.loader.loadResource(path);
+        const opts = { id: path, fileName: path, loader: this.loader, ...options };
+        return this.parse(content, opts);
+    }
+    async resolveRecipe(arc, recipe) {
+        if (this.normalize(recipe)) {
+            if (recipe.isResolved()) {
+                return recipe;
+            }
+            const resolver = new RecipeResolver(arc);
+            const plan = await resolver.resolve(recipe);
+            if (plan && plan.isResolved()) {
+                return plan;
+            }
+            warn$2('failed to resolve:\n', (plan || recipe).toString({ showUnresolved: true }));
+        }
+        return null;
+    }
+    normalize(recipe) {
+        if (Runtime.isNormalized(recipe)) {
+            return true;
+        }
+        const errors = new Map();
+        if (recipe.normalize({ errors })) {
+            return true;
+        }
+        warn$2('failed to normalize:\n', errors, recipe.toString());
+        return false;
+    }
+    static isNormalized(recipe) {
+        return Object.isFrozen(recipe);
+    }
+    // TODO(sjmiles): redundant vs. newArc, but has some impedance mismatch
+    // strategy is to merge first, unify second
+    async spawnArc({ id, serialization, context, composer, storage, portFactories }) {
+        const params = {
+            id: IdGenerator.newSession().newArcId(id),
+            fileName: './serialized.manifest',
+            serialization,
+            context,
+            storageKey: storage || 'volatile',
+            slotComposer: composer,
+            pecFactories: [this.pecFactory, ...(portFactories || [])],
+            loader: this.loader,
+            // TODO(sjmiles): maybe doesn't belong here, but empirically it's
+            // wanted in (almost?) all Arc instantiations
+            inspectorFactory: devtoolsArcInspectorFactory
+        };
+        return serialization ? Arc.deserialize(params) : new Arc(params);
+    }
+    // static interface for the default runtime environment
+    static async parse(content, options) {
+        return this.getRuntime().parse(content, options);
+    }
+    static async parseFile(path, options) {
+        return this.getRuntime().parseFile(path, options);
+    }
+    static async resolveRecipe(arc, recipe) {
+        return this.getRuntime().resolveRecipe(arc, recipe);
+    }
+    static async spawnArc(args) {
+        return this.getRuntime().spawnArc(args);
+    }
+}
+
+/**
+ * Implementation of KeyStorage using a Map, used for testing only.
+ */
+class WebCryptoMemoryKeyStorage {
+    constructor() {
+        this.storageMap = new Map();
+    }
+    find(keyFingerPrint) {
+        return Promise.resolve(this.storageMap.get(keyFingerPrint));
+    }
+    async write(keyFingerprint, key) {
+        this.storageMap.set(keyFingerprint, key);
+        return Promise.resolve(keyFingerprint);
+    }
+    static getInstance() {
+        return new WebCryptoMemoryKeyStorage();
+    }
+}
+
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+const crypto = new WebCrypto();
+
+/* eslint-disable header/header */
+/**
+ * @license
+ * ISC License (ISC)
+ *
+ * Copyright 2017 Rhett Robinson
+ *
+ * Permission to use, copy, modify, and/or distribute this software for any purpose
+ * with or without fee is hereby granted, provided that the above copyright notice
+ * and this permission notice appear in all copies.
+ *
+ *     THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+ * REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
+ * FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+ *     INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS
+ * OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
+ * TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF
+ * THIS SOFTWARE.
+ */
+// Originally forked from https://github.com/rrhett/typescript-base64-arraybuffer/blob/master/src/base64.ts
+// For the base64 encoding pieces.
+/*
+ * Most of the key management operatins deals with ArrayBuffers/TypedArrays. Although atob and btoa are built into
+ * JS, they are not convenient to use for ArrayBuffers.
+ */
+const alphabet = [
+    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
+    'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
+    'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
+    'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f',
+    'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n',
+    'o', 'p', 'q', 'r', 's', 't', 'u', 'v',
+    'w', 'x', 'y', 'z', '0', '1', '2', '3',
+    '4', '5', '6', '7', '8', '9', '+', '/'
+];
+const values = {};
+for (let i = 0; i < 64; ++i) {
+    values[alphabet[i]] = i;
+}
+function encode(bytes) {
+    const array = new Uint8Array(bytes);
+    const base64 = [];
+    let index = 0;
+    let quantum;
+    let value;
+    /* tslint:disable:no-bitwise */
+    // Grab as many sets of 3 bytes as we can, that form 24 bits.
+    while (index + 2 < array.byteLength) {
+        quantum = (array[index] << 16) | (array[index + 1] << 8) | array[index + 2];
+        // 24 bits will become 4 base64 chars.
+        value = (quantum >> 18) & 0x3f;
+        base64.push(alphabet[value]);
+        value = (quantum >> 12) & 0x3f;
+        base64.push(alphabet[value]);
+        value = (quantum >> 6) & 0x3f;
+        base64.push(alphabet[value]);
+        value = quantum & 0x3f;
+        base64.push(alphabet[value]);
+        index += 3;
+    }
+    // At this point, there are 0, 1 or 2 bytes left.
+    if (index + 1 === array.byteLength) {
+        // 8 bits; shift by 4 to pad on the right with 0s to make 12 bits total.
+        quantum = array[index] << 4;
+        value = (quantum >> 6) & 0x3f;
+        base64.push(alphabet[value]);
+        value = quantum & 0x3f;
+        base64.push(alphabet[value]);
+        base64.push('==');
+    }
+    else if (index + 2 === array.byteLength) {
+        // 16 bits; shift by 2 to pad on the right with 0s to make 18 bits total.
+        quantum = (array[index] << 10) | (array[index + 1] << 2);
+        value = (quantum >> 12) & 0x3f;
+        base64.push(alphabet[value]);
+        value = (quantum >> 6) & 0x3f;
+        base64.push(alphabet[value]);
+        value = quantum & 0x3f;
+        base64.push(alphabet[value]);
+        base64.push('=');
+    }
+    /* tslint:enable:no-bitwise */
+    return base64.join('');
+}
+function decode(str) {
+    let size = str.length;
+    if (size === 0) {
+        return new Uint8Array(new ArrayBuffer(0));
+    }
+    if (size % 4 !== 0) {
+        throw new Error('Bad length: ' + size);
+    }
+    if (!str.match(/^[a-zA-Z0-9+/]+={0,2}$/)) {
+        throw new Error('Invalid base64 encoded value');
+    }
+    // Every 4 base64 chars = 24 bits = 3 bytes. But, we also need to figure out
+    // padding, if any.
+    let bytes = 3 * (size / 4);
+    let numPad = 0;
+    if (str.charAt(size - 1) === '=') {
+        numPad++;
+        bytes--;
+    }
+    if (str.charAt(size - 2) === '=') {
+        numPad++;
+        bytes--;
+    }
+    const buffer = new Uint8Array(new ArrayBuffer(bytes));
+    let index = 0;
+    let bufferIndex = 0;
+    let quantum;
+    if (numPad > 0) {
+        size -= 4; // handle the last one specially
+    }
+    /* tslint:disable:no-bitwise */
+    while (index < size) {
+        quantum = 0;
+        for (let i = 0; i < 4; ++i) {
+            quantum = (quantum << 6) | values[str.charAt(index + i)];
+        }
+        // quantum is now a 24-bit value.
+        buffer[bufferIndex++] = (quantum >> 16) & 0xff;
+        buffer[bufferIndex++] = (quantum >> 8) & 0xff;
+        buffer[bufferIndex++] = quantum & 0xff;
+        index += 4;
+    }
+    if (numPad > 0) {
+        // if numPad == 1, there is one =, and we have 18 bits with 2 0s at end.
+        // if numPad == 2, there is two ==, and we have 12 bits with 4 0s at end.
+        // First, grab my quantum.
+        quantum = 0;
+        for (let i = 0; i < 4 - numPad; ++i) {
+            quantum = (quantum << 6) | values[str.charAt(index + i)];
+        }
+        if (numPad === 1) {
+            // quantum is 18 bits, but really represents two bytes.
+            quantum = quantum >> 2;
+            buffer[bufferIndex++] = (quantum >> 8) & 0xff;
+            buffer[bufferIndex++] = quantum & 0xff;
+        }
+        else {
+            // quantum is 12 bits, but really represents only one byte.
+            quantum = quantum >> 4;
+            buffer[bufferIndex++] = quantum & 0xff;
+        }
+    }
+    /* tslint:enable:no-bitwise */
+    return buffer;
+}
+
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+const DEVICE_KEY_ALGORITHM = 'RSA-OAEP';
+const X509_CERTIFICATE_ALGORITHM = 'RSA-OAEP';
+const X509_CERTIFICATE_HASH_ALGORITHM = 'SHA-1';
+const DEVICE_KEY_HASH_ALGORITHM = 'SHA-512';
+const STORAGE_KEY_ALGORITHM = 'AES-GCM';
+const ARCS_CRYPTO_STORE_NAME = 'ArcsKeyManagementStore';
+const ARCS_CRYPTO_INDEXDB_NAME = 'ArcsKeyManagement';
+/**
+ * A CryptoKey or CryptoKeyPair that is capable of being stored in IndexDB key storage.
+ */
+class WebCryptoStorableKey {
+    constructor(key) {
+        this.key = key;
+    }
+    algorithm() {
+        return this.key.algorithm ? this.key.algorithm.name :
+            this.key.publicKey.algorithm.name;
+    }
+    storableKey() {
+        return this.key;
+    }
+}
+/**
+ * An AES-GCM symmetric key in raw formatted encrypted using an RSA-OAEP public key.
+ * We use a symmetrically derived key for the shared secret instead of just random numbers. There are two
+ * reasons for this.
+ *
+ * First, WebCrypto treats CryptoKeys specially in that the material is can be setup to
+ * never be exposed the application, so when we generate these secrets, we can hide them from JS by declaring
+ * them non-extractable or usable for wrapping or encrypting only.
+ *
+ * Secondly, we eventually want to move off of RSA-OAEP and use ECDH, and ECDH doesn't support encryption or wrapping
+ * of randomly generated bits.
+ */
+class WebCryptoWrappedKey {
+    constructor(wrappedKeyData, wrappedBy) {
+        this.wrappedKeyData = wrappedKeyData;
+        this.wrappedBy = wrappedBy;
+    }
+    algorithm() {
+        return this.wrappedBy.algorithm();
+    }
+    unwrap(privKey) {
+        const webPrivKey = privKey;
+        return crypto.subtle.unwrapKey('raw', this.wrappedKeyData, webPrivKey.cryptoKey(), {
+            name: privKey.algorithm()
+        }, {
+            name: STORAGE_KEY_ALGORITHM,
+        }, true, ['encrypt', 'decrypt']).then(key => new WebCryptoSessionKey(key));
+    }
+    rewrap(privKey, pubKey) {
+        return this.unwrap(privKey).then(skey => skey.disposeToWrappedKeyUsing(pubKey));
+    }
+    export() {
+        return encode(this.wrappedKeyData.buffer);
+    }
+    fingerprint() {
+        return Promise.resolve(encode(this.wrappedKeyData.buffer));
+    }
+}
+/**
+ * An implementation of PrivateKey using WebCrypto.
+ */
+class WebCryptoPrivateKey extends WebCryptoStorableKey {
+    constructor(key) {
+        super(key);
+    }
+    cryptoKey() {
+        return this.storableKey();
+    }
+}
+/**
+ * An implementation of PublicKey using WebCrypto.
+ */
+class WebCryptoPublicKey extends WebCryptoStorableKey {
+    constructor(key) {
+        super(key);
+    }
+    cryptoKey() {
+        return this.storableKey();
+    }
+    static digest(str) {
+        return WebCryptoPublicKey.sha256(str);
+    }
+    static hex(buffer) {
+        const hexCodes = [];
+        const view = new DataView(buffer);
+        for (let i = 0; i < view.byteLength; i += 4) {
+            // Using getUint32 reduces the number of iterations needed (we process 4 bytes each time)
+            const value = view.getUint32(i);
+            // toString(16) will give the hex representation of the number without padding
+            const stringValue = value.toString(16);
+            // We use concatenation and slice for padding
+            const padding = '00000000';
+            const paddedValue = (padding + stringValue).slice(-padding.length);
+            hexCodes.push(paddedValue);
+        }
+        // Join all the hex strings into one
+        return hexCodes.join('');
+    }
+    static sha256(str) {
+        // We transform the string into an arraybuffer.
+        const buffer = new Uint8Array(str.split('').map(x => x.charCodeAt(0)));
+        return crypto.subtle.digest('SHA-256', buffer).then((hash) => WebCryptoPublicKey.hex(hash));
+    }
+    fingerprint() {
+        return crypto.subtle.exportKey('jwk', this.cryptoKey())
+            // Use the modulus 'n' as the fingerprint since 'e' is fixed
+            .then(key => WebCryptoPublicKey.digest(key['n']));
+    }
+}
+class WebCryptoSessionKey {
+    constructor(sessionKey) {
+        this.sessionKey = sessionKey;
+    }
+    // Visible/Used for testing only.
+    decrypt(buffer, iv) {
+        return crypto.subtle.decrypt({
+            name: this.algorithm(),
+            iv,
+        }, this.sessionKey, buffer);
+    }
+    // Visible/Used for testing only.
+    encrypt(buffer, iv) {
+        return crypto.subtle.encrypt({
+            name: this.algorithm(),
+            iv
+        }, this.sessionKey, buffer);
+    }
+    /**
+     * This encodes the session key as a hexadecimal string.
+     * TODO: this is a temporary hack for the provisioning App's QR-scanning procedure which will be
+     * removed once the the key-blessing algorithm is implemented.
+     */
+    export() {
+        return crypto.subtle.exportKey('raw', this.sessionKey).then((raw) => {
+            const buf = new Uint8Array(raw);
+            let res = '';
+            buf.forEach((x) => res += (x < 16 ? '0' : '') + x.toString(16));
+            return res;
+        });
+    }
+    algorithm() {
+        return this.sessionKey.algorithm.name;
+    }
+    /**
+     * Encrypts this session key with the private key, and makes a best effort to destroy the session
+     * key material (presumably erased during garbage collection).
+     * @param pkey
+     */
+    disposeToWrappedKeyUsing(pkey) {
+        try {
+            const webPkey = pkey;
+            const rawWrappedKey = crypto.subtle.wrapKey('raw', this.sessionKey, pkey.cryptoKey(), {
+                //these are the wrapping key's algorithm options
+                name: webPkey.algorithm(),
+            });
+            return rawWrappedKey.then(rawKey => new WebCryptoWrappedKey(new Uint8Array(rawKey), pkey));
+        }
+        finally {
+            // Hopefully this frees the underlying key material
+            this.sessionKey = null;
+        }
+    }
+    isDisposed() {
+        return this.sessionKey != null;
+    }
+}
+class WebCryptoDeviceKey extends WebCryptoStorableKey {
+    algorithm() {
+        return this.publicKey().algorithm();
+    }
+    constructor(key) {
+        super(key);
+    }
+    privateKey() {
+        return new WebCryptoPrivateKey(this.key.privateKey);
+    }
+    publicKey() {
+        return new WebCryptoPublicKey(this.key.publicKey);
+    }
+    /**
+     * Returns a fingerprint of the public key of the devicekey pair.
+     */
+    fingerprint() {
+        return this.publicKey().fingerprint();
+    }
+}
+/**
+ * Implementation of KeyGenerator using WebCrypto interface.
+ */
+class WebCryptoKeyGenerator {
+    generateWrappedStorageKey(deviceKey) {
+        const generatedKey = crypto.subtle.generateKey({ name: 'AES-GCM', length: 256 }, true, ['encrypt', 'decrypt', 'wrapKey', 'unwrapKey']);
+        return generatedKey.then(key => new WebCryptoSessionKey(key))
+            .then(skey => skey.disposeToWrappedKeyUsing(deviceKey.publicKey()));
+    }
+    static getInstance() {
+        // TODO: may want to reuse instance in future
+        return new WebCryptoKeyGenerator();
+    }
+    generateAndStoreRecoveryKey() {
+        // TODO: Implement
+        throw new Error('Not implemented');
+    }
+    generateDeviceKey() {
+        const generatedKey = crypto.subtle.generateKey({
+            hash: { name: DEVICE_KEY_HASH_ALGORITHM },
+            // TODO: Note, RSA-OAEP is deprecated, we should move to ECDH in the future, but it
+            // doesn't use key-wrapping, instead it uses a different mechanism: key-derivation.
+            name: DEVICE_KEY_ALGORITHM,
+            modulusLength: 2048,
+            // exponent is only allowed to be 3 or 65537 for RSA
+            publicExponent: new Uint8Array([0x01, 0x00, 0x01]),
+        }, 
+        // false means the key material is not visible to the application
+        false, ['encrypt', 'decrypt', 'wrapKey', 'unwrapKey']);
+        return generatedKey.then(key => new WebCryptoDeviceKey(key));
+    }
+    /**
+     * Decodes X509 PEM certificates, extracts their key material, and returns a PublicKey.
+     * @param pemKey
+     */
+    importKey(pemKey) {
+        const key = rs.KEYUTIL.getKey(pemKey);
+        const jwk = rs.KEYUTIL.getJWKFromKey(key);
+        return crypto.subtle.importKey('jwk', jwk, {
+            name: X509_CERTIFICATE_ALGORITHM,
+            hash: { name: X509_CERTIFICATE_HASH_ALGORITHM }
+        }, true, ['encrypt', 'wrapKey']).then(ikey => new WebCryptoPublicKey(ikey));
+    }
+    async importWrappedKey(wrappedKey, wrappedBy) {
+        const decodedKey = decode(wrappedKey);
+        return Promise.resolve(new WebCryptoWrappedKey(decodedKey, wrappedBy));
+    }
+}
+/**
+ * The Web Crypto spec states that IndexDB may be used to store CryptoKey objects without ever exposing
+ * key material to the application: https://www.w3.org/TR/WebCryptoAPI/#concepts-key-storage
+ */
+class WebCryptoKeyIndexedDBStorage {
+    async runOnStore(fn) {
+        try {
+            const db = await idb.open(ARCS_CRYPTO_INDEXDB_NAME, 1, upgradeDB => upgradeDB.createObjectStore(ARCS_CRYPTO_STORE_NAME, { keyPath: 'keyFingerPrint' }));
+            const tx = db.transaction(ARCS_CRYPTO_STORE_NAME, 'readwrite');
+            const store = tx.objectStore(ARCS_CRYPTO_STORE_NAME);
+            const result = await fn(store);
+            await tx.complete;
+            db.close();
+            return Promise.resolve(result);
+        }
+        catch (e) {
+            return Promise.reject(e);
+        }
+    }
+    async find(keyId) {
+        const result = await this.runOnStore(async (store) => {
+            return store.get(keyId);
+        });
+        if (!result) {
+            return Promise.resolve(null);
+        }
+        if (result.key && result.key['privateKey'] && result.key['publicKey']) {
+            return Promise.resolve(new WebCryptoDeviceKey(result.key));
+        }
+        else if (result.key instanceof CryptoKey) {
+            return Promise.resolve(new WebCryptoPublicKey(result.key));
+        }
+        else if (result.key instanceof Uint8Array) {
+            const wrappedBy = await this.find(result.wrappingKeyFingerprint);
+            return Promise.resolve(new WebCryptoWrappedKey(result.key, wrappedBy));
+        }
+        throw new Error('Unrecognized key type found in keystore.');
+    }
+    async write(keyFingerPrint, key) {
+        if (key instanceof WebCryptoStorableKey) {
+            const skey = key;
+            await this.runOnStore(async (store) => {
+                return store.put({ keyFingerPrint, key: skey.storableKey() });
+            });
+            return keyFingerPrint;
+        }
+        else if (key instanceof WebCryptoWrappedKey) {
+            const wrappedKey = key;
+            const wrappingKeyFingerprint = await wrappedKey.wrappedBy.fingerprint();
+            await this.runOnStore(async (store) => {
+                return store.put({ keyFingerPrint, key: wrappedKey.wrappedKeyData,
+                    wrappingKeyFingerprint });
+            });
+            return keyFingerPrint;
+        }
+        throw new Error('Can\'t write key that isn\'t StorableKey or WrappedKey.');
+    }
+    static getInstance() {
+        // TODO: If IndexDB open/close is expensive, we may want to reuse instances.
+        return new WebCryptoKeyIndexedDBStorage();
+    }
+}
+
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+class KeyManager {
+    static getGenerator() {
+        return WebCryptoKeyGenerator.getInstance();
+        // return AndroidWebViewKeyGenerator.getInstance()
+    }
+    static getStorage() {
+        // TODO: move this hackery to the platform/ directory for node vs worker vs web?
+        const globalScope = typeof window !== 'undefined' ? window : (typeof self !== 'undefined' ? self : global);
+        return globalScope['indexedDB'] != null ? WebCryptoKeyIndexedDBStorage.getInstance() : WebCryptoMemoryKeyStorage.getInstance();
+        // return AndroidWebViewKeyStorage.getInstance()
+    }
+}
+
+var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
+
+/**
+ * @license
  * Copyright 2019 Google LLC.
  * This code may only be used under the BSD style license found at
  * http://polymer.github.io/LICENSE.txt
@@ -39411,118 +39720,7 @@ class DevtoolsArcInspector {
  * subject to an additional IP rights grant found at
  * http://polymer.github.io/PATENTS.txt
  */
-
-const log$1 = console.log.bind(console);
-const warn$1 = console.warn.bind(console);
-const env = {};
-
-const createPathMap = root => ({
-  'https://$arcs/': `${root}/`,
-  'https://$shells/': `${root}/shells/`,
-  'https://$build/': `${root}/shells/lib/build/`,
-  'https://$particles/': {
-    root,
-    path: '/particles/',
-    buildDir: '/bazel-bin',
-    buildOutputRegex: '\\.wasm$',
-  }
-});
-
-const init$1 = (root, urls) => {
-  const map = Object.assign(Utils.createPathMap(root), urls);
-  env.loader = new Loader(map);
-  env.pecFactory = pecIndustry(env.loader);
-  return env;
-};
-
-const parse$1 = async (content, options) => {
-  const id = `in-memory-${Math.floor((Math.random()+1)*1e6)}.manifest`;
-  const localOptions = {
-    id,
-    fileName: `./${id}`,
-    loader: env.loader
-  };
-  return _parse(content, localOptions, options);
-};
-
-const parseFile = async (path, options) => {
-  const localOptions = {
-    id: path,
-    fileName: path,
-    loader: env.loader
-  };
-  const content = await env.loader.loadResource(path);
-  return _parse(content, localOptions, options);
-};
-
-const _parse = async (content, localOptions, options) => {
-  if (localOptions && options) {
-    Object.assign(localOptions, options);
-  }
-  return Manifest.parse(content, localOptions);
-};
-
-const resolve = async (arc, recipe) =>{
-  if (normalize(recipe)) {
-    let plan = recipe;
-    if (!plan.isResolved()) {
-      const resolver = new RecipeResolver(arc);
-      //const errors = new Map();
-      plan = await resolver.resolve(recipe); //, {errors});
-      //console.warn(errors);
-      //if (plan) {
-      //  normalize(plan);
-      //}
-      if (!plan || !plan.isResolved()) {
-        warn$1('failed to resolve:\n', (plan || recipe).toString({showUnresolved: true}));
-        //log(arc.context, arc, arc.context.storeTags);
-        plan = null;
-      }
-    }
-    return plan;
-  }
-};
-
-const normalize = async (recipe) =>{
-  const errors = new Map();
-  if (isNormalized(recipe) || recipe.normalize({errors})) {
-    return true;
-  }
-  warn$1('failed to normalize:\n', errors, recipe.toString());
-  //warn('failed to normalize:\n', recipe.toString());
-  return false;
-};
-
-const isNormalized = recipe => {
-  return Object.isFrozen(recipe);
-};
-
-const spawn = async ({id, serialization, context, composer, storage, portFactories}) => {
-  const arcId = IdGenerator.newSession().newArcId(id);
-  const params = {
-    id: arcId,
-    fileName: './serialized.manifest',
-    serialization,
-    context,
-    storageKey: storage || 'volatile',
-    slotComposer: composer,
-    pecFactories: [].concat([env.pecFactory], portFactories || []),
-    loader: env.loader,
-    inspectorFactory: devtoolsArcInspectorFactory,
-  };
-  Object.assign(params, env.params);
-  return serialization ? Arc.deserialize(params) : new Arc(params);
-};
-
-const Utils = {
-  createPathMap,
-  init: init$1,
-  env,
-  parse: parse$1,
-  parseFile,
-  resolve,
-  spawn
-};
+commonjsGlobal.logLevel = 2;
 
 /**
  * @license
@@ -39582,7 +39780,7 @@ class SyntheticStores {
  * http://polymer.github.io/PATENTS.txt
  */
 
-const {log: log$2, warn: warn$2, error: error$1} = logsFactory('ArcHost', '#cade57');
+const {log: log$2, warn: warn$3, error: error$1} = logsFactory('ArcHost', '#cade57');
 
 class ArcHost {
   constructor(context, storage, composer, portFactories) {
@@ -39601,7 +39799,7 @@ class ArcHost {
   async spawn(config) {
     log$2('spawning arc', config);
     this.config = config;
-    const context = this.context || await Utils.parse(``);
+    const context = this.context || await Runtime.parse(``);
     const storage = config.storage || this.storage;
     this.serialization = await this.computeSerialization(config, storage);
     this.arc = await this._spawn(context, this.composer, storage, config.id, this.serialization, this.portFactories);
@@ -39640,14 +39838,14 @@ class ArcHost {
     return serialization;
   }
   async _spawn(context, composer, storage, id, serialization, portFactories) {
-    return await Utils.spawn({id, context, composer, serialization, storage: `${storage}/${id}`, portFactories});
+    return await Runtime.spawnArc({id, context, composer, serialization, storage: `${storage}/${id}`, portFactories});
   }
   async instantiateDefaultRecipe(arc, manifest) {
     log$2('instantiateDefaultRecipe');
     try {
-      manifest = await Utils.parse(manifest);
+      manifest = await Runtime.parse(manifest);
       const recipe = manifest.allRecipes[0];
-      const plan = await Utils.resolve(arc, recipe);
+      const plan = await Runtime.resolveRecipe(arc, recipe);
       if (plan) {
         await this.instantiatePlan(arc, plan);
       }
@@ -39776,7 +39974,7 @@ const Const = {
  * http://polymer.github.io/PATENTS.txt
  */
 
-const {log: log$3, warn: warn$3} = logsFactory('UserArcs', '#4f0433');
+const {log: log$3, warn: warn$4} = logsFactory('UserArcs', '#4f0433');
 
 class UserArcs {
   constructor(storage, userid) {
@@ -39833,7 +40031,7 @@ class UserArcs {
       log$3(`marshalled arcsStore for [${userid}]`);
       return store;
     }
-    warn$3(`failed to marshal arcsStore for [${userid}][${storage}]`);
+    warn$4(`failed to marshal arcsStore for [${userid}][${storage}]`);
   }
   async foundArcsStore(store) {
     log$3('foundArcsStore', Boolean(store));
@@ -39855,7 +40053,7 @@ class UserArcs {
  * http://polymer.github.io/PATENTS.txt
  */
 
-const {log: log$4, warn: warn$4, error: error$2} = logsFactory('SingleUserContext', '#f2ce14');
+const {log: log$4, warn: warn$5, error: error$2} = logsFactory('SingleUserContext', '#f2ce14');
 
 // SoloContext (?)
 const SingleUserContext = class {
@@ -39920,7 +40118,7 @@ const SingleUserContext = class {
       if (store) {
         await this.observeStore(store, key, info => this.onArcStoreChanged(key, info));
       } else {
-        warn$4(`failed to get SyntheticStore for arc at [${this.storage}, ${key}]\nhttps://github.com/PolymerLabs/arcs/issues/2304`);
+        warn$5(`failed to get SyntheticStore for arc at [${this.storage}, ${key}]\nhttps://github.com/PolymerLabs/arcs/issues/2304`);
       }
     //}
   }
@@ -40145,7 +40343,7 @@ const SingleUserContext = class {
  * http://polymer.github.io/PATENTS.txt
  */
 
-const {log: log$5, warn: warn$5} = logsFactory('UserContext', '#4f0433');
+const {log: log$5, warn: warn$6} = logsFactory('UserContext', '#4f0433');
 
 class UserContext {
   constructor() {
@@ -41093,7 +41291,7 @@ class DevtoolsPlannerInspector {
  * http://polymer.github.io/PATENTS.txt
  */
 
-const {log: log$7, warn: warn$6} = logsFactory('UserPlanner', '#4f0433');
+const {log: log$7, warn: warn$7} = logsFactory('UserPlanner', '#4f0433');
 
 class UserPlanner {
   constructor(userid, hostFactory, options) {
@@ -41113,7 +41311,7 @@ class UserPlanner {
   }
   async addArc(key) {
     if (this.runners[key]) {
-      warn$6(`marshalArc: already marshaled [${key}]`);
+      warn$7(`marshalArc: already marshaled [${key}]`);
       return;
     }
     this.runners[key] = true;
@@ -41125,7 +41323,7 @@ class UserPlanner {
       const planificator = await this.createPlanificator(this.userid, key, arc);
       this.runners[key] = {host, arc, planificator};
     } catch (x) {
-      warn$6(`marshalArc [${key}] failed: `, x);
+      warn$7(`marshalArc [${key}] failed: `, x);
       //
     }
   }
@@ -41202,11 +41400,11 @@ class PlannerShellInterface {
     // connect to DevTools if running with --explore
     await maybeConnectToDevTools();
     // create an arcs environment
-    Utils.init(assetsPath);
+    Runtime.init(assetsPath);
     // observe user's arc list
     const userArcs = new UserArcs(storage, userid);
     // base context (particles & recipes) from static manifest
-    const context = await Utils.parse(contextManifest);
+    const context = await Runtime.parse(contextManifest);
     // userContext continually updates context based on user's arcs
     const userContext = new UserContext();
     // wait for context to spin up
