@@ -37,7 +37,7 @@ describe('manifest parser', () => {
         SomeParticle
           a: writes #something
           b: reads #somethingElse
-          any #someOtherParticle`);
+          #someOtherParticle`);
     });
     it('parses trivial particles', () => {
         parse(`
@@ -67,8 +67,8 @@ describe('manifest parser', () => {
         X: writes Y
         X.a: writes Y.a
         &foo.bar: writes &far.#bash #fash
-        a: any b
-        a.a: any b.b
+        a: b
+        a.a: b.b
         X.a #tag: reads a.y`);
     });
     it('parses manifests with stores', () => {

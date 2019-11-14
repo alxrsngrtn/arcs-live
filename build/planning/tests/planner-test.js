@@ -143,7 +143,7 @@ describe('Planner', () => {
     `);
         assert.lengthOf(results, 1);
     }));
-    it('SLANDLES resolves particles with multiple consumed slots with the any direction', Flags.withPostSlandlesSyntax(async () => {
+    it('SLANDLES resolves particles with multiple consumed slots with the implicit any direction', Flags.withPostSlandlesSyntax(async () => {
         const results = await planFromManifest(`
       particle P1 in './some-particle.js'
         one: \`consumes Slot
@@ -151,11 +151,11 @@ describe('Planner', () => {
       recipe
         s0: \`slot 'slot-id0'
         P1
-          one: any s0
+          one: s0
     `);
         assert.lengthOf(results, 1);
     }));
-    it('SLANDLES resolves particles with multiple consumed set with the any direction', Flags.withPostSlandlesSyntax(async () => {
+    it('SLANDLES resolves particles with multiple consumed set with the implicit any direction', Flags.withPostSlandlesSyntax(async () => {
         const results = await planFromManifest(`
       particle P1 in './some-particle.js'
         one: \`consumes [Slot]
@@ -163,7 +163,7 @@ describe('Planner', () => {
       recipe
         s0: \`slot 'slot-id0'
         P1
-          one: any s0
+          one: s0
     `);
         assert.lengthOf(results, 1);
     }));
@@ -178,10 +178,10 @@ describe('Planner', () => {
         s0: \`slot 'slot-id0'
         s1: \`slot 'slot-id1'
         P1
-          inSlot: any s0
-          outSlot: any s1
+          inSlot: s0
+          outSlot: s1
         P2
-          inSlot: any s1
+          inSlot: s1
     `);
         assert.lengthOf(results, 1);
     }));
@@ -196,10 +196,10 @@ describe('Planner', () => {
         s0: \`slot 'slot-id0'
         s1: \`slot 'slot-id1'
         P1
-          inSlot: any s0
-          outSlot: any s1
+          inSlot: s0
+          outSlot: s1
         P2
-          inSlot: any s1
+          inSlot: s1
     `);
         assert.lengthOf(results, 1);
     }));
@@ -214,10 +214,10 @@ describe('Planner', () => {
         s0: \`slot 'slot-id0'
         s1: \`slot 'slot-id1'
         P1
-          inSlot: any s0
-          outSlot: any s1
+          inSlot: s0
+          outSlot: s1
         P2
-          inSlot: any s1
+          inSlot: s1
     `);
         assert.lengthOf(results, 0);
     }));
@@ -279,7 +279,7 @@ describe('Planner', () => {
       recipe
         s0: \`slot 'slot-id0'
         P1
-          one: any s0
+          one: s0
     `);
         assert.lengthOf(results, 1);
     }));

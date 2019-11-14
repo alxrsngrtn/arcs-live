@@ -1,15 +1,10 @@
-commit 0e7ce9601323fa669269357de197c910303723e4
-Author: Scott J. Miles <sjmiles@google.com>
-Date:   Wed Nov 13 16:42:54 2019 -0800
+commit d86fa8d4e237c06aae4bbb49bd9686ec37991324
+Author: Joshua Pratt <jp10010101010000@gmail.com>
+Date:   Thu Nov 14 12:29:00 2019 +1000
 
-    eliminate `shells/lib/utils/js` in favor of `runtime/runtime.js` (#3980)
+    Implement 'No any' syntax change for unification syntax (#4069)
     
-    * eliminate `shells/lib/utils/js` in favor of `runtime/runtime.js`
-    
-    * s/resolve/resolveRecipe
-    
-    * simplify expression
-    
-    * fix typos
-    
-    * addressing comments
+    * Remove the 'any' keyword from the unified (post slandles) syntax
+    * Remove anys from converted particles
+    * Convert a type-test to unified syntax while removing anys
+    * Clean up interface spec's tostring with no-any

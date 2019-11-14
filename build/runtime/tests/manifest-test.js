@@ -1646,7 +1646,7 @@ resource SomeName
       interface NoHandleType
         foo: reads writes
       interface NoHandleDirection
-        foo: any Foo
+        foo: Foo
       interface OnlyHandleDirection
         writes
       interface ManyHandles
@@ -1763,7 +1763,7 @@ resource SomeName
       recipe
         h0: create
         P
-          bar: any h0
+          bar: h0
     `);
         const [recipe] = manifest.recipes;
         assert(recipe.normalize());
@@ -1783,7 +1783,7 @@ resource SomeName
       recipe
         h0: create
         P
-          bar: any h0
+          bar: h0
     `);
         const [recipe] = manifest.recipes;
         assert(recipe.normalize());
@@ -1804,7 +1804,7 @@ resource SomeName
       recipe
         h0: create
         P
-          bar: any h0
+          bar: h0
     `);
         const [recipe] = manifest.recipes;
         assert(recipe.normalize());
@@ -1823,7 +1823,7 @@ resource SomeName
       recipe
         h0: create
         P
-          bar: any h0
+          bar: h0
     `);
         const [recipe] = manifest.recipes;
         assert(recipe.normalize());
@@ -1869,23 +1869,23 @@ resource SomeName
       recipe
         h0: create
         P
-          foo: any h0
+          foo: h0
         P2
-          foo: any h0
+          foo: h0
 
       recipe
         h0: create
         P2
-          foo: any h0
+          foo: h0
         P3
-          foo: any h0
+          foo: h0
 
       recipe
         h0: create
         P2
-          foo: any h0
+          foo: h0
         P4
-          foo: any h0
+          foo: h0
     `);
         const [validRecipe, suspiciouslyValidRecipe, invalidRecipe] = manifest.recipes;
         assert(validRecipe.normalize());
@@ -1913,9 +1913,9 @@ resource SomeName
       recipe
         h0: create
         P
-          foo: any h0
+          foo: h0
         P2
-          foo: any h0
+          foo: h0
     `);
         const [validRecipe] = manifest.recipes;
         assert(validRecipe.normalize());

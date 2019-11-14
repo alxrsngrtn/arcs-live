@@ -282,7 +282,7 @@ describe('A Strategy Sequence', () => {
           population: reads wishlist
         &showList
         Multiplexer2
-          hostedParticle: any AlsoOn
+          hostedParticle: AlsoOn
     `);
         let recipe = manifest.recipes[1];
         const arc = createTestArc(manifest);
@@ -465,7 +465,7 @@ describe('A Strategy Sequence', () => {
         i: reads S {}
         o: writes T {}
       recipe
-        A: any B
+        A: B
     `);
         let recipe = manifest.recipes[0];
         const arc = createTestArc(manifest);

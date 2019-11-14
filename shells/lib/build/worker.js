@@ -1478,7 +1478,8 @@ class ParticleSpec {
                 results.push(`${indent}${connection.direction}${connection.isOptional ? '?' : ''} ${connection.type.toString()} ${connection.name}${tags}`);
             }
             else {
-                results.push(`${indent}${connection.name}: ${_manifest_ast_nodes_js__WEBPACK_IMPORTED_MODULE_7__["preSlandlesDirectionToDirection"](connection.direction, connection.isOptional)} ${connection.type.toString()}${tags}`);
+                const dir = connection.direction === 'any' ? '' : `${_manifest_ast_nodes_js__WEBPACK_IMPORTED_MODULE_7__["preSlandlesDirectionToDirection"](connection.direction, connection.isOptional)} `;
+                results.push(`${indent}${connection.name}: ${dir}${connection.type.toString()}${tags}`);
             }
             for (const dependent of connection.dependentConnections) {
                 writeConnection(dependent, indent + '  ');
@@ -2918,9 +2919,15 @@ class InterfaceInfo {
                 return `  ${h.direction || 'any'} ${h.type.toString()} ${h.name ? h.name : '*'}`;
             }
             else {
-                const nameStr = h.name ? `${h.name}: ` : '';
-                const direction = _manifest_ast_nodes_js__WEBPACK_IMPORTED_MODULE_3__["preSlandlesDirectionToDirection"](h.direction || 'any');
-                return `  ${nameStr}${direction} ${h.type.toString()}`;
+                const parts = [];
+                if (h.name) {
+                    parts.push(`${h.name}:`);
+                }
+                if (h.direction !== undefined && h.direction !== 'any') {
+                    parts.push(_manifest_ast_nodes_js__WEBPACK_IMPORTED_MODULE_3__["preSlandlesDirectionToDirection"](h.direction));
+                }
+                parts.push(h.type.toString());
+                return `  ${parts.join(' ')}`;
             }
         }).join('\n');
     }

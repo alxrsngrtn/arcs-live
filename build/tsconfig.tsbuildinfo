@@ -582,7 +582,7 @@
         "signature": "40f74698ab2e8e69bc41034dce1b702caa4b6d465d4df7d3181609092b33ad9a"
       },
       "../src/runtime/interface-info.ts": {
-        "version": "e8b27692a529b5efd23909072223e7e4112d2101a2cdc2c626daa21a2584f4d2",
+        "version": "512b5f145cdcee1e31201ad91afb88828ae5ce386212aaa4a8bac2467aa1536b",
         "signature": "4e1c1ce43523008cb1c57815bc2b0ded2f99c43e05ae21ab1a7e109752a032ab"
       },
       "../src/dataflow/analysis/slot-node.ts": {
@@ -794,7 +794,7 @@
         "signature": "58948d6859224dc8a5feea595678f2f563ecb685ba0751e51d41fc08dea547a2"
       },
       "../src/runtime/particle-spec.ts": {
-        "version": "cd9b6dcbd850bf1f1d23d0d1be1c6a63375ce8cc98764afa0c229f44a1e3d08a",
+        "version": "31965ff23f33572f1eb1cf7389fca81540b63e2cc7c5470720cdb414d0716992",
         "signature": "6cd5823d824c394bca84379191460f5d32d65c7550fe7cf37657932cd072ef52"
       },
       "../src/runtime/particle-claim.ts": {
@@ -802,11 +802,11 @@
         "signature": "75bc5f22059210323a192a97ea60f029862fe72a4f9e10e3b6dc71c02539198b"
       },
       "../src/runtime/manifest-ast-nodes.ts": {
-        "version": "dc31957970fae11c168883eb040880a20306e01f06e51c411e54c203bd080dae",
-        "signature": "0ead5cabe16753b534a34a79fced3b13d5ec26ae271002f86a40c01c039bbf6c"
+        "version": "066c06cb670d5dfe645542bb4738421d87be097608f1ccca648fe2b1d72aec67",
+        "signature": "bc54671c4fc3d841f19468d50bbd5c14b754461aafd3f012a3d1388a0dfb3d4d"
       },
       "../src/gen/runtime/manifest-parser.ts": {
-        "version": "db3f9ba4823f128d57c2bb85fee2aac6b7f4348d0ea2f41c3edbd42aecf71a90",
+        "version": "45799de615f2a89ccafb715597769b55ee764bfe8b79a8fa95cf2c48ca4d420e",
         "signature": "ff2c763c7895327196fd3eb358dcc775b25f27bdae513079cc287433af262427"
       },
       "../src/runtime/manifest-meta.ts": {
@@ -1294,7 +1294,7 @@
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/planning/strategies/tests/convert-constraints-to-connections-test.ts": {
-        "version": "c6ea6cdd10b744a0648c7e68aab186ca12ff46ec13539a7204c3eb5c7a24892c",
+        "version": "97cfdade7b25c8c4b2b33a5d4d4344f05bae9d8c2e72d83af597e92f2215e7c3",
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
       },
       "../src/planning/strategies/tests/create-description-handle-test.ts": {
@@ -1354,7 +1354,7 @@
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/planning/strategies/tests/strategy-sequence-test.ts": {
-        "version": "690255444d832d300f3abf8801c11ab08141bc71abe94d84b75920e3c6c8bb33",
+        "version": "30e242156e226ccc892eb2fcc23cee6839e9e285dc291e960fbe67652dc74d68",
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
       },
       "../src/planning/testing/arcs-planning-testing.ts": {
@@ -1362,7 +1362,7 @@
         "signature": "70ec31185ba202997da2613e9400fff44ef0abf3c22f4794f67d658fe0c909b2"
       },
       "../src/planning/tests/planner-test.ts": {
-        "version": "c95b0306c914f36f704f0f8112519e6d181858a065f19beb74cfb5cacbb50727",
+        "version": "49213b98dbffc39e1d6902b3bbaec7066b94a401c76b678408852b2e9fb13703",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/testing/manifest-integration-test-setup.ts": {
@@ -1374,7 +1374,7 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/planning/tests/recipe-index-test.ts": {
-        "version": "adf57e65a9a081f57a02a2fa736da5e9525ba68a599ce2cd44e0d894dcfb4bdb",
+        "version": "b55a957753d77981039152f39b381c716cfd343b7982f07d61cf5f6d22cd0058",
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/planning/tests/simple-planner-test.ts": {
@@ -2345,7 +2345,7 @@
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "../src/runtime/manual_tests/firebase-test.ts": {
-        "version": "0c5b9f14f2e509c7b8e143c910506fdf695587d3c42a83a196cde5cb14ff25ae",
+        "version": "b203ea23b8b07a1aa44f3dfa9f447e3d9abb3551802e179d4cb73b8f45075ce8",
         "signature": "a90deb8990f6c2529c493943b6ef82b1212b3e1aae9c096af86b97605eb190c3"
       },
       "../src/runtime/manual_tests/loader-test.ts": {
@@ -2481,15 +2481,15 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/manifest-parser-test.ts": {
-        "version": "949446d9bfb8d006bba9c91d805d34db27a384239481f9b3a188322f7381b1e4",
+        "version": "3723b6644f6b8a8b6f4fd6cdb877982615f6eb1c337a1ee795d3007520f29e73",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/manifest-test.ts": {
-        "version": "9d8b94d9b4628c9a82c86c5fe8b1cba94e4e6f179ea30fe5987dddf8f0022426",
+        "version": "0ad4c3c6d2ae00e53816ff87ddd6cca3978c32c15fee84c552d64450751f3af1",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/multiplexer-test.ts": {
-        "version": "f21b51e1d9306948f264bf5acd8f546f13f073dee448e2bb582a7b6de22de197",
+        "version": "e0390e0e61ecc616472134cafff405c92332932c93aa7a32abdc44998e33bb0c",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/mutex-test.ts": {
@@ -2573,7 +2573,7 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/type-test.ts": {
-        "version": "66edb8c2c7aa6a020f024be180610799d3597c59602fa750047d9d8688a8f99e",
+        "version": "e28b1e3afef257eb2d1672e0242d1aba8c583bf3180be04b1092eb36e5b61b35",
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/runtime/tests/volatile-storage-test.ts": {

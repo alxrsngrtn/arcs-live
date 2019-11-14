@@ -449,7 +449,7 @@ export declare type InterfaceItem = Interface | InterfaceArgument | InterfaceSlo
 export interface InterfaceArgument extends BaseNode {
     kind: 'interface-argument';
     direction: Direction;
-    type: string;
+    type: ParticleHandleConnectionType;
     name: string;
 }
 export interface InterfaceInterface extends BaseNode {

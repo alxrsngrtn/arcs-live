@@ -251,21 +251,21 @@ describe('RecipeIndex', () => {
       recipe A
         thing: map
         A
-          thing: any thing
+          thing: thing
 
       particle B
         thing: writes Thing
       recipe B
         thing: create
         B
-          thing: any thing
+          thing: thing
 
       particle C
         thing: reads Thing
       recipe C
         thing: use
         C
-          thing: any thing
+          thing: thing
     `);
         const recipe = checkDefined(index.recipes.find(r => r.name === 'C'), 'missing recipe C');
         const handle = recipe.handles[0];
