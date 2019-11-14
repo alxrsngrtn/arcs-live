@@ -1,0 +1,13 @@
+commit 6973da2bbeea165923b004ac82eddfb33ace4c1a
+Author: Scott J. Miles <sjmiles@google.com>
+Date:   Thu Nov 14 13:09:31 2019 -0800
+
+    ensure loader-node.ts version of loadBinaryFile returns an ArrayBuffer (#4064)
+    
+    * ensure load-node.ts version of loadBinaryFile returns an ArrayBuffer (as advertised)
+    
+    * clean up
+    
+    * Testing potential fix to ensure UTF8 encoding
+    
+    * add missing await

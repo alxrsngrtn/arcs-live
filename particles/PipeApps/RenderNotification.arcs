@@ -1,0 +1,6 @@
+particle RenderNotification in './source/RenderNotification.js'
+  consume root
+  modality notification 
+
+recipe NotificationTest
+  RenderNotification

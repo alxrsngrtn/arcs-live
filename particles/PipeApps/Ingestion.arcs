@@ -1,0 +1,47 @@
+import './schemas/IncomingEntity.arcs'
+import './schemas/Person.arcs'
+
+schema Place
+  Text name
+  Text address
+
+schema Message
+  Text message
+
+external particle CaptureEntity
+  out [IncomingEntity] entities
+
+particle CopyEntities in './source/CopyEntities.js'
+  inout [IncomingEntity] source
+  out [Place] places
+  out [Person] people
+  out [Message] messages
+
+external particle ToastParticle
+  in [Message] alert
+
+recipe Ingestion
+  create #incomingEntities as incomingEntities
+  create #recentPlaces as recentPlaces
+  create #recentPeople as recentPeople
+  create #recentMessages as recentMessages
+  CaptureEntity
+    entities -> incomingEntities
+  CopyEntities
+    source <- incomingEntities
+    places -> recentPlaces
+    people -> recentPeople
+    messages -> recentMessages
+  ToastParticle
+    alert <- recentMessages
+  description `ingestion recipe`
+
+resource MessagesList
+  start
+  [{"message": "hello world!"}]
+store Messages of [Message] #demoMessages in MessagesList
+
+recipe Toast
+  map #demoMessages as demoMessages
+  ToastParticle
+    alert <- demoMessages

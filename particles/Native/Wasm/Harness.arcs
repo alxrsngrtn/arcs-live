@@ -1,0 +1,44 @@
+schema Data
+  Number num
+  Text txt
+  URL lnk
+  Boolean flg
+
+resource DataResource
+  start
+  [
+    {"num": 73, "txt": "abc", "lnk": "http://xyz", "flg": true}
+  ]
+store DataStore of Data in DataResource
+
+
+schema Info
+  Text for
+  Number val
+
+resource InfoResource
+  start
+  [
+    {"for": "xx", "val": -5.8},
+    {"val": 107},
+    {"for": "yy"}
+  ]
+store InfoStore of [Info] in InfoResource
+
+
+particle TestParticle in 'test_particle.wasm'
+  consume root
+  inout Data data
+  out Data res
+  inout [Info] info
+
+recipe KotlinTestRecipe
+  copy DataStore as h1
+  create as h2
+  copy InfoStore as h3
+  TestParticle
+    data <- h1
+    res -> h2
+    info = h3
+
+  description `Wasm Test Harness`
