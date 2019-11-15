@@ -63,5 +63,10 @@ export class RozSlotComposer extends FakeSlotComposer {
         this.received.push([particle.name, slotName, copy]);
         super.renderSlot(particle, slotName, content);
     }
+    /** Listener for experimental `output` implementation */
+    delegateOutput(arc, particle, content) {
+        const slotName = content && content.targetSlot && content.targetSlot.name || 'root';
+        this.received.push([particle.name, slotName, content]);
+    }
 }
 //# sourceMappingURL=fake-slot-composer.js.map

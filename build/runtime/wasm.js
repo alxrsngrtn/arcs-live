@@ -707,9 +707,13 @@ export class WasmParticle extends Particle {
     }
     // render request call-back from wasm
     onRenderOutput(templatePtr, modelPtr) {
-        const content = { templateName: 'default' };
-        content.template = this.container.read(templatePtr);
-        content.model = StringDecoder.decodeDictionary(this.container.read(modelPtr));
+        const content = {};
+        if (templatePtr) {
+            content.template = this.container.read(templatePtr);
+        }
+        if (modelPtr) {
+            content.model = StringDecoder.decodeDictionary(this.container.read(modelPtr));
+        }
         this.output(content);
     }
     /**

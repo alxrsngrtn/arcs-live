@@ -78,10 +78,6 @@ class TestLoader extends Loader {
             assert.deepStrictEqual(updates, [{ txt: 'update:sng', num: 3 }, { txt: 'update:col', num: 7 }]);
         });
         it('getTemplate / populateModel / renderSlot', async () => {
-            // TODO(alxr): Remove when tests are ready
-            if (env.includes('kotlin')) {
-                return;
-            }
             const { arc, stores, slotComposer } = await setup('RenderTest');
             const flags = stores.get('flags');
             await flags.set({ id: 'i1', rawData: { template: false, model: true } });
@@ -100,10 +96,6 @@ class TestLoader extends Loader {
             ]);
         });
         it('autoRender', async () => {
-            // TODO(alxr): Remove when tests are ready
-            if (env.includes('kotlin')) {
-                return;
-            }
             const { arc, stores, slotComposer } = await setup('AutoRenderTest');
             const data = stores.get('data');
             await data.set({ id: 'i1', rawData: { txt: 'update' } });

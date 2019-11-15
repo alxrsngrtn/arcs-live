@@ -1,10 +1,49 @@
-commit 47a34705315baf1cb77c66894efd37bbfc7bd829
-Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Fri Nov 15 12:49:57 2019 +1100
+commit 6ae7f0aaa414072b72ea44dee4b6216cdeb5464e
+Author: Alex Rosengarten <alxr@google.com>
+Date:   Fri Nov 15 11:48:29 2019 -0800
 
-    Trim and move test-util.ts up to src/testing level. (#4073)
+    Wasm API Tests: Rendering in Kotlin (#4047)
     
-    - Tests outside of src/runtime use it, so it shouldn't be under runtime.
-    - ResultInspector is only used by particle-api-test.ts; put it back there.
-    - assertSingletonWillChangeTo and assertSingletonIs provide very little utility and actually make some testing worse (e.g. null checking); remove them.
-    - Also fixed a bunch of floating assertThrowsAsync promises.
+    * modify fake slotComposer to listen to new rendering system
+    
+    * enabling first render test for kotlin
+    
+    * Adapting render for null cases
+    
+    * Updating render test -- now passing
+    
+    * enable kotlin test for autoRender
+    
+    * Specify render on handle sync and update
+    
+    * Default particle handle behavior is now to renderOutput
+    
+    * renderTest: more idiomatic kt
+    
+    * fix: sp
+    
+    * Documented Particle class
+    - added docs
+    - also converted {} to Unit
+    
+    * reducing variables
+    
+    * Added more comments to wasm interop
+    
+    * update connectHandle to match ABI
+    - added Direction enum
+    - TODO(alxr): Make direction meaningful for connections
+    
+    * Revert behavior: Handle update --> Rendering
+    
+    * Autoformat
+    
+    * Fixed LOTS of lint errors in interop
+    
+    * fixed kt lint errors in tests
+    
+    * Fixed particle lint erros
+    
+    * revert import change; hopefully doesn't fail lint
+    
+    * got ktlint and bazel build right

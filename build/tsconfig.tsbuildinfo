@@ -374,8 +374,8 @@
         "signature": "bb53ceb028c131a6637f7fd96570682d64f3aecdee98255f6dbe34d4886e1aaf"
       },
       "../src/runtime/testing/fake-slot-composer.ts": {
-        "version": "ec65df5484466272817ead3a152e757361caee0760f4f5f79b1789755bb084cb",
-        "signature": "c8b35a7a2ace5fb01c87b3313b8f959dac49b72256142b366a83ae885b78c017"
+        "version": "1d0f7032d1cd25dd3235ff8be28b0b0782b2bd687a87ec409c97c840de050265",
+        "signature": "473e6ca1386773176eaa20e446a6916ed890344918d1ef892f60ee0af73324a4"
       },
       "../src/runtime/storageNG/drivers/ramdisk.ts": {
         "version": "ffd0946975258754a2da722773422cc3313e7ccec56ceca9e334faedb26e7e99",
@@ -678,8 +678,8 @@
         "signature": "f7c7b4930e1380ac36b0231df33b5bb4ea03ccdadd937e8fe4119a89349fb3de"
       },
       "../src/runtime/particle.ts": {
-        "version": "7a774f04340edf17474e2b1a37954b40297016251d085a67149d0e9391705122",
-        "signature": "40654d87da461953afb1ef62061c7ff33c7a8d9e304a2346613dfa8af0e3ce80"
+        "version": "90ac11009dc989aaf842ad678d6d1808ed658052eb04fb904a318163d229b049",
+        "signature": "718a01c8b5dc370c83a0ef900066216cc420f51a56e05ebe4c6f18a4f2d82a8c"
       },
       "../src/runtime/handle.ts": {
         "version": "5cd47a36db5b12fc0fe3a63a8ce819138e0e83550ea998127577fc8669520fae",
@@ -766,7 +766,7 @@
         "signature": "f56d407931090c16c3859eab94bc71f346fa140551b583d4631e9b05291fecbc"
       },
       "../src/runtime/wasm.ts": {
-        "version": "7334e084368f2f51c36b66ec7af0bfcee2e79ecc218f82535d384f714c5eb0fb",
+        "version": "188aea2f4615c6790db35da91bd0ab70a5ac44efec5124e3184dd3bfdb6dc689",
         "signature": "bb728cb0cdf289d7424ea6b71f018b9f4a69402970b3d9f0038b3aca95a87bed"
       },
       "../src/runtime/particle-execution-context.ts": {
@@ -2821,7 +2821,7 @@
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/wasm/tests/wasm-api-tests.ts": {
-        "version": "562cfc1fe470e098488d5fff09c523320e6e931c7ea09c85173666a172688774",
+        "version": "64dcd7c3dd741f4c8f506f593ce721ae3ce449388de659e09a2d385a068e7cb3",
         "signature": "a2b75277977abae98ac357640599bb500a2621d1f3cfb443b830e8417680fdfb"
       },
       "../node_modules/@types/long/index.d.ts": {
@@ -3547,6 +3547,7 @@
         "../src/runtime/slot-context.ts",
         "../src/runtime/recipe/particle.ts",
         "../src/runtime/slot-consumer.ts",
+        "../src/runtime/arc.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.2/util.d.ts"
       ],
@@ -9448,7 +9449,8 @@
         "../src/runtime/slot-composer.ts",
         "../src/runtime/recipe/particle.ts",
         "../src/runtime/slot-consumer.ts",
-        "../src/runtime/slot-context.ts"
+        "../src/runtime/slot-context.ts",
+        "../src/runtime/arc.ts"
       ],
       "../src/runtime/slot-context.ts": [
         "../src/runtime/slot-consumer.ts",

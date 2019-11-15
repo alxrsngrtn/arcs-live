@@ -27157,7 +27157,7 @@ class Particle$1 {
         await this.invokeSafely(async (p) => p.onHandleUpdate(handle, update), onException);
     }
     /**
-     * Called for handles that are configued with notifyUpdate, when change events are received from
+     * Called for handles that are configured with notifyUpdate, when change events are received from
      * the backing store. For handles also configured with keepSynced these events will be correctly
      * ordered, with some potential skips if a desync occurs. For handles not configured with
      * keepSynced, all change events will be passed through as they are received.
@@ -28078,9 +28078,13 @@ class WasmParticle extends Particle$1 {
     }
     // render request call-back from wasm
     onRenderOutput(templatePtr, modelPtr) {
-        const content = { templateName: 'default' };
-        content.template = this.container.read(templatePtr);
-        content.model = StringDecoder.decodeDictionary(this.container.read(modelPtr));
+        const content = {};
+        if (templatePtr) {
+            content.template = this.container.read(templatePtr);
+        }
+        if (modelPtr) {
+            content.model = StringDecoder.decodeDictionary(this.container.read(modelPtr));
+        }
         this.output(content);
     }
     /**
