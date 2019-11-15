@@ -11,7 +11,6 @@ import { assert } from '../../platform/chai-web.js';
 import { Arc } from '../arc.js';
 import { Manifest } from '../manifest.js';
 import { StubLoader } from '../testing/stub-loader.js';
-import { assertSingletonWillChangeTo } from '../testing/test-util.js';
 import { EntityType, ReferenceType, CollectionType } from '../type.js';
 import { Id } from '../id.js';
 import { collectionHandleForTest, singletonHandleForTest } from '../testing/handle-for-test.js';
@@ -203,9 +202,11 @@ describe('references', () => {
         await arc.instantiate(recipe);
         const inputStore = arc._stores[0];
         await inputStore.set({ id: 'id:1', rawData: { value: 'what a result!' } });
+        await arc.idle;
         const refStore = arc._stores[1];
         const baseStoreType = new EntityType(manifest.schemas.Result);
-        await assertSingletonWillChangeTo(arc, refStore, 'storageKey', arc.storageProviderFactory.baseStorageKey(baseStoreType, 'volatile'));
+        const storageKey = arc.storageProviderFactory.baseStorageKey(baseStoreType, 'volatile');
+        assert.deepStrictEqual((await refStore.get()).rawData, { id: 'id:1', storageKey });
     });
     it('can deal with references in schemas', async () => {
         const loader = new StubLoader({
@@ -258,7 +259,9 @@ describe('references', () => {
         const refStore = arc._stores[1];
         assert.strictEqual(refStore.type.entitySchema.name, 'Foo');
         await refStore.set({ id: 'id:2', rawData: { result: { id: 'id:1', storageKey: backingStore.storageKey } } });
-        await assertSingletonWillChangeTo(arc, arc._stores[0], 'value', 'what a result!');
+        await arc.idle;
+        const store = arc._stores[0];
+        assert.deepStrictEqual((await store.get()).rawData, { value: 'what a result!' });
     });
     it('can construct references in schemas', async () => {
         // This test looks at different scenarios for creating references

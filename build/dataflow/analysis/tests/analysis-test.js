@@ -10,7 +10,7 @@
 import { assert } from '../../../platform/chai-web.js';
 import { validateGraph, Solver, EdgeExpression } from '../analysis.js';
 import { buildFlowGraph, TestEdge, TestNode } from '../testing/flow-graph-testing.js';
-import { assertThrowsAsync } from '../../../runtime/testing/test-util.js';
+import { assertThrowsAsync } from '../../../testing/test-util.js';
 import { FlowSet, Flow, FlowModifier, TagOperation, FlowModifierSet } from '../graph-internals.js';
 import { Flags } from '../../../runtime/flags.js';
 /** Checks that the given ValidationResult failed with the expected failure messages. */
@@ -1883,7 +1883,7 @@ describe('FlowGraph validation', () => {
             assertGraphFailures(graph, [`'check input is not from store 'my-store-id'' failed for path: P.input`]);
         }));
         it('SLANDLES SYNTAX fails when the data store identified by name is missing', Flags.withPostSlandlesSyntax(async () => {
-            assertThrowsAsync(async () => await buildFlowGraph(`
+            await assertThrowsAsync(async () => await buildFlowGraph(`
         particle P
           input: reads Foo {}
           check input is from store MyStore
@@ -1893,7 +1893,7 @@ describe('FlowGraph validation', () => {
       `), 'Store with name MyStore not found.');
         }));
         it('fails when the data store identified by name is missing', Flags.withPreSlandlesSyntax(async () => {
-            assertThrowsAsync(async () => await buildFlowGraph(`
+            await assertThrowsAsync(async () => await buildFlowGraph(`
         particle P
           in Foo {} input
           check input is from store MyStore
@@ -1903,7 +1903,7 @@ describe('FlowGraph validation', () => {
       `), 'Store with name MyStore not found.');
         }));
         it('SLANDLES SYNTAX fails when the data store identified by ID is missing', Flags.withPostSlandlesSyntax(async () => {
-            assertThrowsAsync(async () => await buildFlowGraph(`
+            await assertThrowsAsync(async () => await buildFlowGraph(`
         particle P
           input: reads Foo {}
           check input is from store 'my-store-id'
@@ -1913,7 +1913,7 @@ describe('FlowGraph validation', () => {
       `), `Store with id 'my-store-id' not found.`);
         }));
         it('fails when the data store identified by ID is missing', Flags.withPreSlandlesSyntax(async () => {
-            assertThrowsAsync(async () => await buildFlowGraph(`
+            await assertThrowsAsync(async () => await buildFlowGraph(`
         particle P
           in Foo {} input
           check input is from store 'my-store-id'
@@ -1923,7 +1923,7 @@ describe('FlowGraph validation', () => {
       `), `Store with id 'my-store-id' not found.`);
         }));
         it('SLANDLES SYNTAX fails when the data store is not connected', Flags.withPostSlandlesSyntax(async () => {
-            assertThrowsAsync(async () => await buildFlowGraph(`
+            await assertThrowsAsync(async () => await buildFlowGraph(`
         schema MyEntity
           text: Text
         resource MyResource
@@ -1941,7 +1941,7 @@ describe('FlowGraph validation', () => {
       `), 'Store with id my-store-id is not connected by a handle.');
         }));
         it('fails when the data store is not connected', Flags.withPreSlandlesSyntax(async () => {
-            assertThrowsAsync(async () => await buildFlowGraph(`
+            await assertThrowsAsync(async () => await buildFlowGraph(`
         schema MyEntity
           Text text
         resource MyResource

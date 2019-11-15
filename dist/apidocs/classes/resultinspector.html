@@ -66,44 +66,6 @@
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
-			<section class="tsd-panel tsd-comment">
-				<div class="tsd-comment tsd-typography">
-					<div class="lead">
-						<p>Helper class for testing a Collection-based store that collects messages from a particle.
-							This detects when too few or too many messages are sent in addition to matching the message
-						values, and can be used multiple times within the same unit test.</p>
-					</div>
-					<p>Example usage:</p>
-					<pre><code>  <span class="hljs-literal">[<span class="hljs-identifier">manifest</span>]</span>
-    schema Result
-      Text value
-    particle P
-      out <span class="hljs-literal">[R<span class="hljs-identifier">esult</span>]</span> res
-
-  <span class="hljs-literal">[<span class="hljs-identifier">particle</span> <span class="hljs-identifier">code</span>]</span>
-    set<span class="hljs-constructor">Handles(<span class="hljs-params">handles</span>)</span> {
-      this._resHandle = handles.get('res');
-    }
-    test<span class="hljs-constructor">Function(<span class="hljs-params">arg</span>)</span> {
-      await this.<span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">_resHandle</span>.</span></span>store(<span class="hljs-keyword">new</span> this.<span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">_resHandle</span>.</span></span>entity<span class="hljs-constructor">Class({<span class="hljs-params">value</span>: <span class="hljs-params">arg</span>})</span>);
-    }
-
-  <span class="hljs-literal">[<span class="hljs-identifier">test</span> <span class="hljs-identifier">code</span>]</span>
-    <span class="hljs-keyword">let</span> {manifest, arc} = set<span class="hljs-constructor">UpManifestAndArc()</span>;
-    <span class="hljs-keyword">let</span> Result = manifest.find<span class="hljs-constructor">SchemaByName('Result')</span>.entity<span class="hljs-constructor">Class()</span>;
-    <span class="hljs-keyword">let</span> resStore = await arc.create<span class="hljs-constructor">Store(Result.<span class="hljs-params">type</span>.<span class="hljs-params">collectionOf</span>()</span>, 'res');
-    <span class="hljs-keyword">let</span> recipe = set<span class="hljs-constructor">UpRecipeWithResHandleMapped(<span class="hljs-params">resStore</span>)</span>;
-
-    <span class="hljs-keyword">let</span> inspector = <span class="hljs-keyword">new</span> util.<span class="hljs-constructor">ResultInspector(<span class="hljs-params">arc</span>, <span class="hljs-params">resStore</span>, '<span class="hljs-params">value</span>')</span>;
-    await arc.instantiate(recipe);
-    trigger<span class="hljs-constructor">ParticleTestFunctionWith('<span class="hljs-params">one</span>')</span>;
-    trigger<span class="hljs-constructor">ParticleTestFunctionWith('<span class="hljs-params">two</span>')</span>;
-    await inspector.verify('one', 'two');
-
-    trigger<span class="hljs-constructor">ParticleTestFunctionWith('<span class="hljs-params">three</span>')</span>;
-    await inspector.verify('three');</code></pre>
-				</div>
-			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
@@ -116,42 +78,42 @@
 				<h2>Index</h2>
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
-						<section class="tsd-index-section ">
+						<section class="tsd-index-section tsd-is-not-exported">
 							<h3>Constructors</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="resultinspector.html#constructor" class="tsd-kind-icon">constructor</a></li>
+								<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-not-exported"><a href="resultinspector.html#constructor" class="tsd-kind-icon">constructor</a></li>
 							</ul>
 						</section>
-						<section class="tsd-index-section tsd-is-private tsd-is-private-protected">
+						<section class="tsd-index-section tsd-is-private tsd-is-private-protected tsd-is-not-exported">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="resultinspector.html#_arc" class="tsd-kind-icon">_arc</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="resultinspector.html#_field" class="tsd-kind-icon">_field</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="resultinspector.html#_store" class="tsd-kind-icon">_store</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-not-exported"><a href="resultinspector.html#_arc" class="tsd-kind-icon">_arc</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-not-exported"><a href="resultinspector.html#_field" class="tsd-kind-icon">_field</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-not-exported"><a href="resultinspector.html#_store" class="tsd-kind-icon">_store</a></li>
 							</ul>
 						</section>
-						<section class="tsd-index-section ">
+						<section class="tsd-index-section tsd-is-not-exported">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="resultinspector.html#verify" class="tsd-kind-icon">verify</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="resultinspector.html#verify" class="tsd-kind-icon">verify</a></li>
 							</ul>
 						</section>
 					</div>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group ">
+			<section class="tsd-panel-group tsd-member-group tsd-is-not-exported">
 				<h2>Constructors</h2>
-				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class">
+				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class tsd-is-not-exported">
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
-					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
+					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-not-exported">
 						<li class="tsd-signature tsd-kind-icon">new <wbr>Result<wbr>Inspector<span class="tsd-signature-symbol">(</span>arc<span class="tsd-signature-symbol">: </span><a href="arc.html" class="tsd-signature-type">Arc</a>, store<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, field<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="resultinspector.html" class="tsd-signature-type">ResultInspector</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/5a026ab/src/runtime/testing/test-util.ts#L55">src/runtime/testing/test-util.ts:55</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/47a3470/src/runtime/tests/particle-api-test.ts#L31">src/runtime/tests/particle-api-test.ts:31</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -188,52 +150,52 @@
 					</ul>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group tsd-is-private tsd-is-private-protected">
+			<section class="tsd-panel-group tsd-member-group tsd-is-private tsd-is-private-protected tsd-is-not-exported">
 				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-not-exported">
 					<a name="_arc" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _arc</h3>
 					<div class="tsd-signature tsd-kind-icon">_arc<span class="tsd-signature-symbol">:</span> <a href="arc.html" class="tsd-signature-type">Arc</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/5a026ab/src/runtime/testing/test-util.ts#L53">src/runtime/testing/test-util.ts:53</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/47a3470/src/runtime/tests/particle-api-test.ts#L29">src/runtime/tests/particle-api-test.ts:29</a></li>
 						</ul>
 					</aside>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-not-exported">
 					<a name="_field" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _field</h3>
 					<div class="tsd-signature tsd-kind-icon">_field<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/5a026ab/src/runtime/testing/test-util.ts#L55">src/runtime/testing/test-util.ts:55</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/47a3470/src/runtime/tests/particle-api-test.ts#L31">src/runtime/tests/particle-api-test.ts:31</a></li>
 						</ul>
 					</aside>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-not-exported">
 					<a name="_store" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _store</h3>
 					<div class="tsd-signature tsd-kind-icon">_store<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/5a026ab/src/runtime/testing/test-util.ts#L54">src/runtime/testing/test-util.ts:54</a></li>
+							<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/47a3470/src/runtime/tests/particle-api-test.ts#L30">src/runtime/tests/particle-api-test.ts:30</a></li>
 						</ul>
 					</aside>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group ">
+			<section class="tsd-panel-group tsd-member-group tsd-is-not-exported">
 				<h2>Methods</h2>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
 					<a name="verify" class="tsd-anchor"></a>
 					<h3>verify</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
 						<li class="tsd-signature tsd-kind-icon">verify<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">...</span>expectations<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/5a026ab/src/runtime/testing/test-util.ts#L74">src/runtime/testing/test-util.ts:74</a></li>
+									<li>Defined in <a href="https://github.com/PolymerLabs/arcs/blob/47a3470/src/runtime/tests/particle-api-test.ts#L50">src/runtime/tests/particle-api-test.ts:50</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -267,22 +229,22 @@
 				<ul class="before-current">
 				</ul>
 				<ul class="current">
-					<li class="current tsd-kind-class">
+					<li class="current tsd-kind-class tsd-is-not-exported">
 						<a href="resultinspector.html" class="tsd-kind-icon">Result<wbr>Inspector</a>
 						<ul>
-							<li class=" tsd-kind-constructor tsd-parent-kind-class">
+							<li class=" tsd-kind-constructor tsd-parent-kind-class tsd-is-not-exported">
 								<a href="resultinspector.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-not-exported">
 								<a href="resultinspector.html#_arc" class="tsd-kind-icon">_arc</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-not-exported">
 								<a href="resultinspector.html#_field" class="tsd-kind-icon">_field</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-not-exported">
 								<a href="resultinspector.html#_store" class="tsd-kind-icon">_store</a>
 							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
 								<a href="resultinspector.html#verify" class="tsd-kind-icon">verify</a>
 							</li>
 						</ul>

@@ -14,7 +14,7 @@ import { path } from '../../platform/path-web.js';
 import { Manifest, ErrorSeverity } from '../manifest.js';
 import { checkDefined, checkNotNull } from '../testing/preconditions.js';
 import { StubLoader } from '../testing/stub-loader.js';
-import { assertThrowsAsync } from '../testing/test-util.js';
+import { assertThrowsAsync } from '../../testing/test-util.js';
 import { ClaimType } from '../particle-claim.js';
 import { CheckHasTag, CheckBooleanExpression, CheckIsFromStore } from '../particle-check.js';
 import { ProvideSlotConnectionSpec } from '../particle-spec.js';
@@ -2438,7 +2438,7 @@ resource SomeName
             assert.include(manifest.toString(), '  claim is property1 and is property2');
         });
         it(`doesn't allow mixing 'and' and 'or' operations without nesting`, async () => {
-            assertThrowsAsync(async () => await Manifest.parse(`
+            await assertThrowsAsync(async () => await Manifest.parse(`
         particle A
           input: reads T {}
           check input is property1 or is property2 and is property3
@@ -2491,33 +2491,33 @@ resource SomeName
             assert.strictEqual(manifest.toString(), manifestString);
         }));
         it('fails for unknown handle names', async () => {
-            assertThrowsAsync(async () => await Manifest.parse(`
+            await assertThrowsAsync(async () => await Manifest.parse(`
         particle A
           output: writes T {}
           claim oops is trusted
       `), `Can't make a claim on unknown handle oops`);
-            assertThrowsAsync(async () => await Manifest.parse(`
+            await assertThrowsAsync(async () => await Manifest.parse(`
         particle A
           input: reads T {}
           check oops is trusted
       `), `Can't make a check on unknown handle oops`);
         });
         it(`doesn't allow claims on inputs`, async () => {
-            assertThrowsAsync(async () => await Manifest.parse(`
+            await assertThrowsAsync(async () => await Manifest.parse(`
         particle A
           foo: reads T {}
           claim foo is trusted
       `), `Can't make a claim on handle foo (not an output handle)`);
         });
         it(`doesn't allow checks on outputs`, async () => {
-            assertThrowsAsync(async () => await Manifest.parse(`
+            await assertThrowsAsync(async () => await Manifest.parse(`
         particle A
           foo: writes T {}
           check foo is trusted
       `), `Can't make a check on handle foo with direction out (not an input handle)`);
         });
         it(`doesn't allow multiple different claims for the same output`, async () => {
-            assertThrowsAsync(async () => await Manifest.parse(`
+            await assertThrowsAsync(async () => await Manifest.parse(`
         particle A
           foo: writes T {}
           claim foo is trusted
@@ -2525,7 +2525,7 @@ resource SomeName
       `), `Can't make multiple claims on the same output (foo)`);
         });
         it(`doesn't allow multiple different checks for the same input`, async () => {
-            assertThrowsAsync(async () => await Manifest.parse(`
+            await assertThrowsAsync(async () => await Manifest.parse(`
         particle A
           foo: reads T {}
           check foo is trusted
@@ -2533,7 +2533,7 @@ resource SomeName
       `), `Can't make multiple checks on the same input (foo)`);
         });
         it(`doesn't allow checks on consumed slots`, async () => {
-            assertThrowsAsync(async () => await Manifest.parse(`
+            await assertThrowsAsync(async () => await Manifest.parse(`
         particle A
           someOtherSlot: consumes
             mySlot: provides
@@ -2541,7 +2541,7 @@ resource SomeName
       `), `Slot someOtherSlot is a consumed slot. Can only make checks on provided slots`);
         });
         it(`doesn't allow checks on unknown slots`, async () => {
-            assertThrowsAsync(async () => await Manifest.parse(`
+            await assertThrowsAsync(async () => await Manifest.parse(`
         particle A
           someOtherSlot: consumes
             mySlot: provides
@@ -2549,7 +2549,7 @@ resource SomeName
       `), `Can't make a check on unknown slot missingSlot`);
         });
         it(`doesn't allow multiple provided slots with the same name`, async () => {
-            assertThrowsAsync(async () => await Manifest.parse(`
+            await assertThrowsAsync(async () => await Manifest.parse(`
         particle A
           firstSlot: consumes
             mySlot: provides

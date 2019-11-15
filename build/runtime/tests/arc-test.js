@@ -19,8 +19,7 @@ import { CallbackTracker } from '../testing/callback-tracker.js';
 import { FakeSlotComposer } from '../testing/fake-slot-composer.js';
 import { MockSlotComposer } from '../testing/mock-slot-composer.js';
 import { StubLoader } from '../testing/stub-loader.js';
-import { assertThrowsAsync } from '../testing/test-util.js';
-import * as util from '../testing/test-util.js';
+import { assertThrowsAsync } from '../../testing/test-util.js';
 import { ArcType, SingletonType } from '../type.js';
 import { Runtime } from '../runtime.js';
 import { RecipeResolver } from '../recipe/recipe-resolver.js';
@@ -161,12 +160,14 @@ describe('Arc new storage', () => {
             const fooStore = await arc.createStore(Foo.type, undefined, 'test:1');
             const barStore = await arc.createStore(Bar.type, undefined, 'test:2');
             const fooHandle = await singletonHandleForTest(arc, fooStore);
+            const barHandle = await singletonHandleForTest(arc, barStore);
             await fooHandle.set(new Foo({ value: 'a Foo' }));
             recipe.handles[0].mapToStorage(fooStore);
             recipe.handles[1].mapToStorage(barStore);
             assert(recipe.normalize());
             await arc.instantiate(recipe);
-            await util.assertSingletonWillChangeTo(arc, barStore, 'value', 'a Foo1');
+            await arc.idle;
+            assert.deepStrictEqual(await barHandle.get(), { value: 'a Foo1' });
         });
         it('applies new stores to a particle ', async function () {
             if (!storageKeyPrefix.startsWith('volatile')) {
@@ -177,12 +178,14 @@ describe('Arc new storage', () => {
             const fooStore = await arc.createStore(Foo.type, undefined, 'test:1');
             const barStore = await arc.createStore(Bar.type, undefined, 'test:2');
             const fooHandle = await singletonHandleForTest(arc, fooStore);
+            const barHandle = await singletonHandleForTest(arc, barStore);
             recipe.handles[0].mapToStorage(fooStore);
             recipe.handles[1].mapToStorage(barStore);
             recipe.normalize();
             await arc.instantiate(recipe);
             await fooHandle.set(new Foo({ value: 'a Foo' }));
-            await util.assertSingletonWillChangeTo(arc, barStore, 'value', 'a Foo1');
+            await arc.idle;
+            assert.deepStrictEqual(await barHandle.get(), { value: 'a Foo1' });
         });
         it('optional provided handles do not resolve without parent', async function () {
             if (!storageKeyPrefix.startsWith('volatile')) {
@@ -219,7 +222,9 @@ describe('Arc new storage', () => {
             const cStore = await arc.createStore(thingClass.type, 'cStore', 'test:3');
             const dStore = await arc.createStore(thingClass.type, 'dStore', 'test:4');
             const aHandle = await singletonHandleForTest(arc, aStore);
+            const bHandle = await singletonHandleForTest(arc, bStore);
             const cHandle = await singletonHandleForTest(arc, cStore);
+            const dHandle = await singletonHandleForTest(arc, dStore);
             const recipe = manifest.recipes[0];
             recipe.handles[0].mapToStorage(aStore);
             recipe.handles[1].mapToStorage(bStore);
@@ -229,10 +234,11 @@ describe('Arc new storage', () => {
             await arc.instantiate(recipe);
             await aHandle.set(new thingClass({ value: 'from_a' }));
             await cHandle.set(new thingClass({ value: 'from_c' }));
-            await util.assertSingletonWillChangeTo(arc, bStore, 'value', 'from_a1');
-            await util.assertSingletonWillChangeTo(arc, dStore, 'value', '(null)');
+            await arc.idle;
+            assert.deepStrictEqual(await bHandle.get(), { value: 'from_a1' });
+            assert.isNull(await dHandle.get());
         });
-        it(`instantiates recipes only if fate is correct ` + storageKeyPrefix, async function () {
+        it('instantiates recipes only if fate is correct ' + storageKeyPrefix, async function () {
             if (!storageKeyPrefix.startsWith('volatile')) {
                 // TODO(lindner): fix pouch/firebase timing
                 this.skip();
@@ -327,7 +333,9 @@ describe('Arc new storage', () => {
             const cStore = await arc.createStore(thingClass.type, 'cStore', 'test:3');
             const dStore = await arc.createStore(thingClass.type, 'dStore', 'test:4');
             const aHandle = await singletonHandleForTest(arc, aStore);
+            const bHandle = await singletonHandleForTest(arc, bStore);
             const cHandle = await singletonHandleForTest(arc, cStore);
+            const dHandle = await singletonHandleForTest(arc, dStore);
             const recipe = manifest.recipes[0];
             recipe.handles[0].mapToStorage(aStore);
             recipe.handles[1].mapToStorage(bStore);
@@ -337,8 +345,9 @@ describe('Arc new storage', () => {
             await arc.instantiate(recipe);
             await aHandle.set(new thingClass({ value: 'from_a' }));
             await cHandle.set(new thingClass({ value: 'from_c' }));
-            await util.assertSingletonWillChangeTo(arc, bStore, 'value', 'from_a1');
-            await util.assertSingletonWillChangeTo(arc, dStore, 'value', '(null)');
+            await arc.idle;
+            assert.deepStrictEqual(await bHandle.get(), { value: 'from_a1' });
+            assert.isNull(await dHandle.get());
         });
         it('optional provided handles cannot resolve without parent', async () => {
             await assertThrowsAsync(async () => {
@@ -456,7 +465,9 @@ describe('Arc new storage', () => {
             const cStore = await arc.createStore(thingClass.type, 'cStore', 'test:3');
             const dStore = await arc.createStore(thingClass.type, 'dStore', 'test:4');
             const aHandle = await singletonHandleForTest(arc, aStore);
+            const bHandle = await singletonHandleForTest(arc, bStore);
             const cHandle = await singletonHandleForTest(arc, cStore);
+            const dHandle = await singletonHandleForTest(arc, dStore);
             const recipe = manifest.recipes[0];
             recipe.handles[0].mapToStorage(aStore);
             recipe.handles[1].mapToStorage(bStore);
@@ -468,8 +479,9 @@ describe('Arc new storage', () => {
             await arc.instantiate(recipe);
             await cHandle.set(new thingClass({ value: 'from_c' }));
             await arc.instantiate(recipe);
-            await util.assertSingletonWillChangeTo(arc, bStore, 'value', 'from_a1');
-            await util.assertSingletonWillChangeTo(arc, dStore, 'value', '(null)');
+            await arc.idle;
+            assert.deepStrictEqual(await bHandle.get(), { value: 'from_a1' });
+            assert.isNull(await dHandle.get());
         });
         it('required provided handles must resolve with dependencies', async () => await assertThrowsAsync(async () => {
             const loader = new Loader();
@@ -547,7 +559,9 @@ describe('Arc new storage', () => {
             const cStore = await arc.createStore(thingClass.type, 'cStore', 'test:3');
             const dStore = await arc.createStore(thingClass.type, 'dStore', 'test:4');
             const aHandle = await singletonHandleForTest(arc, aStore);
+            const bHandle = await singletonHandleForTest(arc, bStore);
             const cHandle = await singletonHandleForTest(arc, cStore);
+            const dHandle = await singletonHandleForTest(arc, dStore);
             const recipe = manifest.recipes[0];
             recipe.handles[0].mapToStorage(aStore);
             recipe.handles[1].mapToStorage(bStore);
@@ -557,8 +571,9 @@ describe('Arc new storage', () => {
             await arc.instantiate(recipe);
             await aHandle.set(new thingClass({ value: 'from_a' }));
             await cHandle.set(new thingClass({ value: 'from_c' }));
-            await util.assertSingletonWillChangeTo(arc, bStore, 'value', 'from_a1');
-            await util.assertSingletonWillChangeTo(arc, dStore, 'value', 'from_c1');
+            await arc.idle;
+            assert.deepStrictEqual(await bHandle.get(), { value: 'from_a1' });
+            assert.deepStrictEqual(await dHandle.get(), { value: 'from_c1' });
         });
         it('required provided handles can resolve with parent 2', async function () {
             if (!storageKeyPrefix.startsWith('volatile')) {
@@ -597,7 +612,9 @@ describe('Arc new storage', () => {
             const cStore = await arc.createStore(thingClass.type, 'cStore', 'test:3');
             const dStore = await arc.createStore(thingClass.type, 'dStore', 'test:4');
             const aHandle = await singletonHandleForTest(arc, aStore);
+            const bHandle = await singletonHandleForTest(arc, bStore);
             const cHandle = await singletonHandleForTest(arc, cStore);
+            const dHandle = await singletonHandleForTest(arc, dStore);
             const recipe = manifest.recipes[0];
             recipe.handles[0].mapToStorage(aStore);
             recipe.handles[1].mapToStorage(bStore);
@@ -607,8 +624,9 @@ describe('Arc new storage', () => {
             await arc.instantiate(recipe);
             await aHandle.set(new thingClass({ value: 'from_a' }));
             await cHandle.set(new thingClass({ value: 'from_c' }));
-            await util.assertSingletonWillChangeTo(arc, bStore, 'value', 'from_a1');
-            await util.assertSingletonWillChangeTo(arc, dStore, 'value', 'from_c1');
+            await arc.idle;
+            assert.deepStrictEqual(await bHandle.get(), { value: 'from_a1' });
+            assert.deepStrictEqual(await dHandle.get(), { value: 'from_c1' });
         });
         it('deserializing a serialized empty arc produces an empty arc', async () => {
             const slotComposer = new FakeSlotComposer();
@@ -633,11 +651,13 @@ describe('Arc new storage', () => {
             const fooStoreCallbacks = await CallbackTracker.create(fooStore, 1);
             await fooHandle.set(new Foo({ value: 'a Foo' }));
             let barStore = await arc.createStore(Bar.type, undefined, 'test:2', ['tag1', 'tag2']);
+            const barHandle = await singletonHandleForTest(arc, barStore);
             recipe.handles[0].mapToStorage(fooStore);
             recipe.handles[1].mapToStorage(barStore);
             recipe.normalize();
             await arc.instantiate(recipe);
-            await util.assertSingletonWillChangeTo(arc, barStore, 'value', 'a Foo1');
+            await arc.idle;
+            assert.deepStrictEqual(await barHandle.get(), { value: 'a Foo1' });
             assert.strictEqual(fooStore.versionToken, '1');
             assert.strictEqual(barStore.versionToken, '1');
             fooStoreCallbacks.verify();
@@ -996,7 +1016,7 @@ describe('Arc storage migration', () => {
         });
         it('rejects old string storage keys', async () => {
             const { arc, Foo } = await setup('volatile://');
-            assertThrowsAsync(async () => {
+            await assertThrowsAsync(async () => {
                 await arc.createStore(Foo.type, undefined, 'test:1');
             }, `Can't use string storage keys with the new storage stack.`);
         });
@@ -1017,7 +1037,7 @@ describe('Arc storage migration', () => {
         });
         it('rejects new StorageKey type', async () => {
             const { arc, Foo } = await setup(arcId => new VolatileStorageKey(arcId, ''));
-            assertThrowsAsync(async () => {
+            await assertThrowsAsync(async () => {
                 await arc.createStore(Foo.type, undefined, 'test:1');
             }, `Can't use new-style storage keys with the old storage stack.`);
         });

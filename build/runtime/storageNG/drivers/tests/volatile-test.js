@@ -13,7 +13,7 @@ import { Exists } from '../driver-factory.js';
 import { Runtime } from '../../../runtime.js';
 import { ArcId } from '../../../id.js';
 import { RamDiskStorageKey } from '../ramdisk.js';
-import { assertThrowsAsync } from '../../../testing/test-util.js';
+import { assertThrowsAsync } from '../../../../testing/test-util.js';
 describe('Volatile Driver', async () => {
     const arcId = ArcId.newForTest('arc');
     const memory = new VolatileMemory();
@@ -112,8 +112,8 @@ describe('VolatileStorageDriverProvider', () => {
         const storageKey2 = new VolatileStorageKey(arc2.id, 'unique');
         await provider1.driver(storageKey1, Exists.ShouldCreate);
         await provider2.driver(storageKey2, Exists.ShouldCreate);
-        assertThrowsAsync(async () => await provider1.driver(storageKey1, Exists.ShouldCreate));
-        assertThrowsAsync(async () => await provider2.driver(storageKey2, Exists.ShouldCreate));
+        await assertThrowsAsync(async () => await provider1.driver(storageKey1, Exists.ShouldCreate));
+        await assertThrowsAsync(async () => await provider2.driver(storageKey2, Exists.ShouldCreate));
     });
 });
 //# sourceMappingURL=volatile-test.js.map

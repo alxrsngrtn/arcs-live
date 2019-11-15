@@ -9,7 +9,6 @@
  */
 import { Manifest } from '../manifest.js';
 import { assert } from '../../platform/chai-web.js';
-import * as util from '../testing/test-util.js';
 import { Arc } from '../arc.js';
 import { Loader } from '../../platform/loader.js';
 import { StubLoader } from '../testing/stub-loader.js';
@@ -100,7 +99,9 @@ describe('particle interface loading', () => {
         assert(recipe.normalize(), 'can\'t normalize recipe');
         assert(recipe.isResolved(), 'recipe isn\'t resolved');
         await arc.instantiate(recipe);
-        await util.assertSingletonWillChangeTo(arc, outStore, 'value', 'a foo1');
+        await arc.idle;
+        const outHandle = await singletonHandleForTest(arc, outStore);
+        assert.deepStrictEqual(await outHandle.get(), { value: 'a foo1' });
     });
     it('loads interfaces into particles declaratively', async () => {
         const loader = new Loader();
@@ -197,7 +198,9 @@ describe('particle interface loading', () => {
         assert.isTrue(recipe.normalize());
         assert.isTrue(recipe.isResolved());
         await arc.instantiate(recipe);
-        await util.assertSingletonWillChangeTo(arc, fooStore, 'value', 'hello world!!!');
+        await arc.idle;
+        const fooHandle = await singletonHandleForTest(arc, fooStore);
+        assert.deepStrictEqual(await fooHandle.get(), { value: 'hello world!!!' });
     });
 });
 //# sourceMappingURL=particle-interface-loading-test.js.map

@@ -1,11 +1,10 @@
-commit 5a026ab3b0ec46a748ec02788aa28497ac4da010
-Author: Jason Feinstein <jwf@google.com>
-Date:   Thu Nov 14 17:09:36 2019 -0800
+commit 47a34705315baf1cb77c66894efd37bbfc7bd829
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Fri Nov 15 12:49:57 2019 +1100
 
-    arcs.arcs.util - no thanks (#4071)
+    Trim and move test-util.ts up to src/testing level. (#4073)
     
-    * arcs.arcs.util - no thanks
-    
-    * more package name fixes.
-    
-    * More, fewer arcs.arcs.
+    - Tests outside of src/runtime use it, so it shouldn't be under runtime.
+    - ResultInspector is only used by particle-api-test.ts; put it back there.
+    - assertSingletonWillChangeTo and assertSingletonIs provide very little utility and actually make some testing worse (e.g. null checking); remove them.
+    - Also fixed a bunch of floating assertThrowsAsync promises.

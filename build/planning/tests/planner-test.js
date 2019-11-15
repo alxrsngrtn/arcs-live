@@ -15,7 +15,7 @@ import { Manifest } from '../../runtime/manifest.js';
 import { StubLoader } from '../../runtime/testing/stub-loader.js';
 import { Planner } from '../planner.js';
 import { Speculator } from '../speculator.js';
-import { assertThrowsAsync } from '../../runtime/testing/test-util.js';
+import { assertThrowsAsync } from '../../testing/test-util.js';
 import { StrategyTestHelper } from '../testing/strategy-test-helper.js';
 import { ArcId } from '../../runtime/id.js';
 import { Flags } from '../../runtime/flags.js';
@@ -222,7 +222,7 @@ describe('Planner', () => {
         assert.lengthOf(results, 0);
     }));
     it('SLANDLES cannot resolve multiple consumed slots with incorrect directions', Flags.withPostSlandlesSyntax(async () => {
-        assertThrowsAsync(async () => {
+        await assertThrowsAsync(async () => {
             await planFromManifest(`
         particle P1 in './some-particle.js'
           one: \`consumes Slot
@@ -235,7 +235,7 @@ describe('Planner', () => {
         }, 'not compatible with \'`consume\'');
     }));
     it('SLANDLES cannot resolve multiple consumed set slots with incorrect directions', Flags.withPostSlandlesSyntax(async () => {
-        assertThrowsAsync(async () => {
+        await assertThrowsAsync(async () => {
             await planFromManifest(`
         particle P1 in './some-particle.js'
           one: \`consumes [Slot]

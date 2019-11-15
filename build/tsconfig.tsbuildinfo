@@ -877,12 +877,12 @@
         "version": "78453bb89038c3c2c4627721f99731d13175be68d73fd019f57cfea5b69944e3",
         "signature": "8f56eed4f4ddb93e7aa4bab322a1019e15622cb386aebf6e874bdd9e63c01745"
       },
-      "../src/runtime/testing/test-util.ts": {
-        "version": "ebb2fa6249512c48982049e9d565a7a79fca355af941d02381c3ee2197fca1e2",
-        "signature": "aa657cc3c9324f71d7c84ac68f4e20b1eedea2e1e8b93efd81051208cf69c5f6"
+      "../src/testing/test-util.ts": {
+        "version": "9c39a2330c4c2d55ebac73c63b7645ad929fb80fda7e053508aad4097c8eac83",
+        "signature": "5f7cc22c4c42e5fc03302bc0c46e9b9db053c740f3861819033659b63b605a38"
       },
       "../src/dataflow/analysis/tests/analysis-test.ts": {
-        "version": "040b3e4a604a05a94b445251bea9854d8583fee11ccd723a6819a23339c0ba28",
+        "version": "d234a7eff720c9c095c3d5f1e51d4ea74a6af3a78e05bca033c209b873603f59",
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
       },
       "../src/dataflow/analysis/tests/deep-set-test.ts": {
@@ -1362,7 +1362,7 @@
         "signature": "70ec31185ba202997da2613e9400fff44ef0abf3c22f4794f67d658fe0c909b2"
       },
       "../src/planning/tests/planner-test.ts": {
-        "version": "49213b98dbffc39e1d6902b3bbaec7066b94a401c76b678408852b2e9fb13703",
+        "version": "c3bc6dcddaf9207a8278e252b1edafff93b48123e33c37d61b9f97b773a1c7d8",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/testing/manifest-integration-test-setup.ts": {
@@ -2361,7 +2361,7 @@
         "signature": "8f5a620739fe50aeaf57d49ad4ea706c68679355ccf9ee65c43b078ba6f26ced"
       },
       "../src/runtime/storageNG/drivers/tests/firebase-test.ts": {
-        "version": "ba7df445241880451811a6191fe64ce2ae20cf327518d7e6b67fc02c84ae1b3b",
+        "version": "f4728b89a5b0fb963e147024e3b73f3516e1e78d51be5d61eef7376917ec0233",
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "../src/runtime/storageNG/drivers/tests/ramdisk-test.ts": {
@@ -2369,7 +2369,7 @@
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
       },
       "../src/runtime/storageNG/drivers/tests/volatile-test.ts": {
-        "version": "91a5ca2f1fd283258854955590c715b7d95ec0a3ae305cbea441f94e1c114c58",
+        "version": "10954c8f0d46772907559908c930cafc2e9c1d409d1d172013634aa802166f8f",
         "signature": "fd95df5d076cbfed143dc4904d376b5c6d9cb1091b630994ffe2366010afa6b3"
       },
       "../src/runtime/storageNG/testing/test-storage.ts": {
@@ -2433,7 +2433,7 @@
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/runtime/tests/arc-test.ts": {
-        "version": "ce89f9891e028f2372accda2b46426e5897d7a9319b5b1d0ae4b5a26ebf8bc03",
+        "version": "8720ef7caf2e43976bd397ea1dc7a87520e4c11328e4c801e2c9e3ed048bfa57",
         "signature": "600636836c17982e77369e742e2b185b3a695f0407d06b57f41cbf45b0a11d8b"
       },
       "../src/runtime/tests/arcfmt-test.ts": {
@@ -2485,7 +2485,7 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/manifest-test.ts": {
-        "version": "0ad4c3c6d2ae00e53816ff87ddd6cca3978c32c15fee84c552d64450751f3af1",
+        "version": "68c9685d745c197fae23acd324938bde4edef9d2799da8d54a67ddc8e579b51f",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/multiplexer-test.ts": {
@@ -2501,7 +2501,7 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/particle-api-test.ts": {
-        "version": "dddb1fcaa1ac4eeff8781ed0c3cd8c313177ece70572b57c3eeeaef444630929",
+        "version": "0d756fae90f385086d9eaaaaac3ccd31f33256671231e11ac6e6d7434e2ba72d",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/particle-execution-context-test.ts": {
@@ -2509,7 +2509,7 @@
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/runtime/tests/particle-interface-loading-test.ts": {
-        "version": "fa2c2f8b19dcc4ddbb50565e5837d40cb47c9fd57887c278938c133c1961a1d5",
+        "version": "b0188335ef886247d5b8b23f72c2fd5093dfe37d5e841759c12afb1c5a5b1cf6",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/particle-interface-loading-with-slots-test.ts": {
@@ -2533,7 +2533,7 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/reference-test.ts": {
-        "version": "3d8b9b2d5a2860675212bc6ac998f75f81d88c758b97f7a4f698dab142d23d43",
+        "version": "1163d1cf0280431013d6a4d9289b43401d424e69586c7b709eed2df840796bc5",
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/runtime/tests/runtime-manifest-integration-test.ts": {
@@ -2557,7 +2557,7 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/synthetic-storage-test.ts": {
-        "version": "79dad2e3270e636e1077a0152ca6a427c6200dfd18bb50343239a53d2e0f18fe",
+        "version": "a81499e1f84acdb9218f57b5ca52219012a43f2d35013656bc9008be842b8259",
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/runtime/tests/test-environment-test.ts": {
@@ -2657,7 +2657,7 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/tests/hotreload-integration-test.ts": {
-        "version": "ba4f2ab18b507090db0f562cc34cf0b0b1e744e48f54036204c70692e64ffb00",
+        "version": "73a29f157207329a76ddd9016d25b4217ff9ec222b8d8060ae12b8c1dd354c56",
         "signature": "43a5176681925d9f51b139647154e4a52c2eb1b1a64bb428595000952bcbc7f1"
       },
       "../src/tests/multiplexer-integration-test.ts": {
@@ -2821,7 +2821,7 @@
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/wasm/tests/wasm-api-tests.ts": {
-        "version": "a1ec44c05d798bbcf313b055570ad1661acd6f36b6b22998d8cabed4ff63af5d",
+        "version": "562cfc1fe470e098488d5fff09c523320e6e931c7ea09c85173666a172688774",
         "signature": "a2b75277977abae98ac357640599bb500a2621d1f3cfb443b830e8417680fdfb"
       },
       "../node_modules/@types/long/index.d.ts": {
@@ -4873,10 +4873,8 @@
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.2/util.d.ts"
       ],
-      "../src/runtime/testing/test-util.ts": [
+      "../src/testing/test-util.ts": [
         "../src/platform/chai-web.d.ts",
-        "../src/runtime/arc.ts",
-        "../src/runtime/type.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.2/util.d.ts"
       ],
@@ -4884,7 +4882,7 @@
         "../src/platform/chai-web.d.ts",
         "../src/dataflow/analysis/analysis.ts",
         "../src/dataflow/analysis/testing/flow-graph-testing.ts",
-        "../src/runtime/testing/test-util.ts",
+        "../src/testing/test-util.ts",
         "../src/dataflow/analysis/graph-internals.ts",
         "../src/dataflow/analysis/flow-graph.ts",
         "../src/runtime/flags.ts",
@@ -5845,7 +5843,7 @@
         "../src/runtime/testing/stub-loader.ts",
         "../src/planning/planner.ts",
         "../src/planning/speculator.ts",
-        "../src/runtime/testing/test-util.ts",
+        "../src/testing/test-util.ts",
         "../src/planning/testing/strategy-test-helper.ts",
         "../src/runtime/id.ts",
         "../src/runtime/flags.ts",
@@ -7574,7 +7572,7 @@
         "../src/platform/chai-web.d.ts",
         "../src/runtime/storageNG/drivers/driver-factory.ts",
         "../src/runtime/storageNG/testing/mock-firebase.ts",
-        "../src/runtime/testing/test-util.ts",
+        "../src/testing/test-util.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.2/util.d.ts"
       ],
@@ -7593,7 +7591,7 @@
         "../src/runtime/runtime.ts",
         "../src/runtime/id.ts",
         "../src/runtime/storageNG/drivers/ramdisk.ts",
-        "../src/runtime/testing/test-util.ts",
+        "../src/testing/test-util.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.2/util.d.ts"
       ],
@@ -7784,7 +7782,7 @@
         "../src/runtime/testing/fake-slot-composer.ts",
         "../src/runtime/testing/mock-slot-composer.ts",
         "../src/runtime/testing/stub-loader.ts",
-        "../src/runtime/testing/test-util.ts",
+        "../src/testing/test-util.ts",
         "../src/runtime/type.ts",
         "../src/runtime/runtime.ts",
         "../src/runtime/recipe/recipe-resolver.ts",
@@ -7929,7 +7927,7 @@
         "../src/runtime/testing/preconditions.ts",
         "../src/runtime/testing/stub-loader.ts",
         "../src/runtime/hot.ts",
-        "../src/runtime/testing/test-util.ts",
+        "../src/testing/test-util.ts",
         "../src/runtime/particle-claim.ts",
         "../src/runtime/particle-check.ts",
         "../src/runtime/particle-spec.ts",
@@ -7978,7 +7976,6 @@
         "../src/runtime/testing/fake-slot-composer.ts",
         "../src/runtime/testing/mock-slot-composer.ts",
         "../src/runtime/testing/stub-loader.ts",
-        "../src/runtime/testing/test-util.ts",
         "../src/runtime/arc.ts",
         "../src/runtime/description.ts",
         "../src/runtime/id.ts",
@@ -8008,7 +8005,6 @@
       "../src/runtime/tests/particle-interface-loading-test.ts": [
         "../src/runtime/manifest.ts",
         "../src/platform/chai-web.d.ts",
-        "../src/runtime/testing/test-util.ts",
         "../src/runtime/arc.ts",
         "../src/platform/loader.ts",
         "../src/runtime/testing/stub-loader.ts",
@@ -8082,7 +8078,6 @@
         "../src/runtime/storage/storage-provider-base.ts",
         "../src/runtime/storage/volatile-storage.ts",
         "../src/runtime/testing/stub-loader.ts",
-        "../src/runtime/testing/test-util.ts",
         "../src/runtime/type.ts",
         "../src/runtime/id.ts",
         "../src/runtime/testing/handle-for-test.ts",
@@ -8151,7 +8146,7 @@
         "../src/runtime/storage/storage-provider-base.ts",
         "../src/runtime/storage/storage-provider-factory.ts",
         "../src/runtime/storage/volatile-storage.ts",
-        "../src/runtime/testing/test-util.ts",
+        "../src/testing/test-util.ts",
         "../src/runtime/type.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.2/util.d.ts"
@@ -8363,7 +8358,6 @@
         "../src/runtime/testing/fake-slot-composer.ts",
         "../src/runtime/fake-pec-factory.ts",
         "../src/runtime/headless-slot-dom-consumer.ts",
-        "../src/runtime/testing/test-util.ts",
         "../src/runtime/testing/handle-for-test.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.2/util.d.ts"
@@ -8674,7 +8668,7 @@
         "../src/runtime/runtime.ts",
         "../src/runtime/testing/fake-slot-composer.ts",
         "../src/runtime/storage/volatile-storage.ts",
-        "../src/runtime/testing/test-util.ts",
+        "../src/testing/test-util.ts",
         "../src/runtime/type.ts",
         "../src/services/clock-service.ts",
         "../src/services/random-service.ts",
@@ -9081,9 +9075,6 @@
         "../src/runtime/slot-composer.ts",
         "../src/runtime/recipe/particle.ts",
         "../src/runtime/testing/fake-slot-composer.ts"
-      ],
-      "../src/runtime/testing/test-util.ts": [
-        "../src/runtime/arc.ts"
       ],
       "../src/runtime/api-channel.ts": [
         "../src/runtime/arc-inspector.ts",
@@ -12192,7 +12183,7 @@
       "../src/platform/chai-web.d.ts",
       "../src/common/time/tests/instant-tests.ts",
       "../src/dataflow/analysis/testing/flow-graph-testing.ts",
-      "../src/runtime/testing/test-util.ts",
+      "../src/testing/test-util.ts",
       "../src/dataflow/analysis/tests/analysis-test.ts",
       "../src/dataflow/analysis/tests/deep-set-test.ts",
       "../src/runtime/testing/preconditions.ts",
