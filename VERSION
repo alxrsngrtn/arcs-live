@@ -1,11 +1,5 @@
-commit 784965ec2a0ed1906e53114955586eb057ad756a
-Author: Sarah Heimlich <heimlich@google.com>
-Date:   Thu Nov 14 15:16:58 2019 -0800
+commit cf4b73dcc986207ceb8b9bc2832f1921791cfae5
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Thu Nov 14 15:27:52 2019 -0800
 
-    Updating TTT to be the new recipe syntax. (#4034)
-    
-    * Updating TTT to be the new recipe syntax.
-    
-    * Updating more schema things.
-    
-    * Removing any.
+    remove pecId from runArc in ArcsAndroidClient (#4061)
