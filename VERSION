@@ -1,5 +1,5 @@
-commit cf4b73dcc986207ceb8b9bc2832f1921791cfae5
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Thu Nov 14 15:27:52 2019 -0800
+commit 95d1194580b0484b7d2c274d571abedacb6ce537
+Author: Ray Cromwell <cromwellian@gmail.com>
+Date:   Thu Nov 14 15:39:06 2019 -0800
 
-    remove pecId from runArc in ArcsAndroidClient (#4061)
+    Align wasm output directory with G3 (#4060)
