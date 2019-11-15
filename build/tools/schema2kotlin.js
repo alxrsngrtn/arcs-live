@@ -68,7 +68,7 @@ class KotlinGenerator {
         this.encode.push(`${fixed}?.let { encoder.encode("${field}:${typeChar}", it) }`);
     }
     addReference(field, refName) {
-        throw new Error('TODO: support reference types in kotlin');
+        // TODO: support reference types in kotlin
     }
     generate(fieldCount) {
         const { name, aliases } = this.node;

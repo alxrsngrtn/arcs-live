@@ -2745,7 +2745,7 @@
         "signature": "83ab8b3321d362bae33fceaeeec77280d5c39ff040d6517f45f04e715a036daa"
       },
       "../src/tools/schema2kotlin.ts": {
-        "version": "0393855e685195f9d5f3e0d8cce75554f1490690ac94b92dbda524618afaf36a",
+        "version": "8e82fb175254dc6a696c5d10268504f67b0e1493b8698a327e61f9482ff2e01b",
         "signature": "5b4ab1b3ee04aa06b7ed036714edd3ff58e3134f5f506943be302ec9b2000f41"
       },
       "../src/tools/schema2wasm.ts": {
@@ -2821,7 +2821,7 @@
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/wasm/tests/wasm-api-tests.ts": {
-        "version": "d405d8ed3308605ac80d8dc66155f8e59891c9dfbfe61bcc6fff1ed6a7200d2c",
+        "version": "a1ec44c05d798bbcf313b055570ad1661acd6f36b6b22998d8cabed4ff63af5d",
         "signature": "a2b75277977abae98ac357640599bb500a2621d1f3cfb443b830e8417680fdfb"
       },
       "../node_modules/@types/long/index.d.ts": {

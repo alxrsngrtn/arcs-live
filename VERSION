@@ -1,5 +1,11 @@
-commit 95d1194580b0484b7d2c274d571abedacb6ce537
-Author: Ray Cromwell <cromwellian@gmail.com>
-Date:   Thu Nov 14 15:39:06 2019 -0800
+commit 65cc1c72e661f02490c80e2052b910dc31daee4b
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Fri Nov 15 11:20:17 2019 +1100
 
-    Align wasm output directory with G3 (#4060)
+    Update wasm tests to only use inline schemas (#4066)
+    
+    * Update wasm tests to only use inline schemas
+    
+    * Use the new recipe syntax \o/
+    
+    * Fixed ktlint complaints that caused travis to fail
