@@ -1,49 +1,9 @@
-commit 6ae7f0aaa414072b72ea44dee4b6216cdeb5464e
-Author: Alex Rosengarten <alxr@google.com>
-Date:   Fri Nov 15 11:48:29 2019 -0800
+commit 730cb402f86f0361381a00de70fe101ff2136e67
+Author: Sarah Heimlich <heimlich@google.com>
+Date:   Fri Nov 15 15:44:32 2019 -0800
 
-    Wasm API Tests: Rendering in Kotlin (#4047)
+    Adding KT tutorial text for tutorials 4-6 (#4083)
     
-    * modify fake slotComposer to listen to new rendering system
+    * Adding kt tutorial text for tutorials 4-6
     
-    * enabling first render test for kotlin
-    
-    * Adapting render for null cases
-    
-    * Updating render test -- now passing
-    
-    * enable kotlin test for autoRender
-    
-    * Specify render on handle sync and update
-    
-    * Default particle handle behavior is now to renderOutput
-    
-    * renderTest: more idiomatic kt
-    
-    * fix: sp
-    
-    * Documented Particle class
-    - added docs
-    - also converted {} to Unit
-    
-    * reducing variables
-    
-    * Added more comments to wasm interop
-    
-    * update connectHandle to match ABI
-    - added Direction enum
-    - TODO(alxr): Make direction meaningful for connections
-    
-    * Revert behavior: Handle update --> Rendering
-    
-    * Autoformat
-    
-    * Fixed LOTS of lint errors in interop
-    
-    * fixed kt lint errors in tests
-    
-    * Fixed particle lint erros
-    
-    * revert import change; hopefully doesn't fail lint
-    
-    * got ktlint and bazel build right
+    * Cleanups for PR
