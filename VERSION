@@ -1,9 +1,5 @@
-commit 730cb402f86f0361381a00de70fe101ff2136e67
-Author: Sarah Heimlich <heimlich@google.com>
-Date:   Fri Nov 15 15:44:32 2019 -0800
+commit db180b9ea1322a2919244d22a098ccb34e7c397c
+Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
+Date:   Mon Nov 18 11:06:26 2019 +1100
 
-    Adding KT tutorial text for tutorials 4-6 (#4083)
-    
-    * Adding kt tutorial text for tutorials 4-6
-    
-    * Cleanups for PR
+    Deliberately remove deliberately broken test (#4084)
