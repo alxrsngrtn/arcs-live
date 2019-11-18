@@ -141,7 +141,7 @@ export class PouchDbSingleton extends PouchDbStorageProvider {
             const doc = await this.upsert(async (doc) => doc);
             let value = doc.value;
             if (value == null) {
-                console.warn('value is null and refmode=' + this.referenceMode);
+                //console.warn('value is null and refmode=' + this.referenceMode);
             }
             if (this.referenceMode && value) {
                 const backingStore = await this.ensureBackingStore();

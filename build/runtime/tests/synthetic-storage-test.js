@@ -11,7 +11,7 @@ import { assert } from '../../platform/chai-web.js';
 import { ArcId } from '../id.js';
 import { StorageProviderFactory } from '../storage/storage-provider-factory.js';
 import { resetVolatileStorageForTesting } from '../storage/volatile-storage.js';
-import { assertThrowsAsync } from '../../testing/test-util.js';
+import { assertThrowsAsync, ConCap } from '../../testing/test-util.js';
 import { ArcType } from '../type.js';
 describe('synthetic storage ', () => {
     before(() => {
@@ -50,8 +50,9 @@ describe('synthetic storage ', () => {
         assert.isNull(synth);
     });
     it('invalid manifest', async () => {
-        const { synth } = await setup('bad manifest, no cookie for you');
-        assert.isEmpty(await synth.toList());
+        const cc = await ConCap.capture(() => setup('bad manifest, no cookie for you'));
+        assert.isEmpty(await cc.result.synth.toList());
+        assert.match(cc.warn[0], /Error parsing manifest/);
     });
     it('manifest with no active recipe', async () => {
         const { synth } = await setup(`

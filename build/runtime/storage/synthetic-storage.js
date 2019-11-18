@@ -93,7 +93,7 @@ export class SyntheticStorage extends StorageBase {
         if (targetStore === null) {
             return null;
         }
-        return new SyntheticCollection(synthKey.syntheticType, id, key, targetStore, this.storageFactory);
+        return SyntheticCollection.create(synthKey.syntheticType, id, key, targetStore, this.storageFactory);
     }
     async baseStorageFor(type, key) {
         throw new Error('baseStorageFor not implemented for SyntheticStorage');
@@ -113,11 +113,13 @@ class SyntheticCollection extends StorageProviderBase {
         this.backingStore = undefined;
         this.targetStore = targetStore;
         this.storageFactory = storageFactory;
-        this.initialized = (async () => {
-            const data = await targetStore.get();
-            await this.process(data, false);
-            targetStore.legacyOn(details => this.process(details.data, true));
-        })();
+    }
+    static async create(type, id, key, targetStore, storageFactory) {
+        const sc = new SyntheticCollection(type, id, key, targetStore, storageFactory);
+        const data = await targetStore.get();
+        await sc.process(data, false);
+        targetStore.legacyOn(details => sc.process(details.data, true));
+        return sc;
     }
     async process(data, fireEvent) {
         let handles;
@@ -150,7 +152,6 @@ class SyntheticCollection extends StorageProviderBase {
         }
     }
     async toList() {
-        await this.initialized;
         return this.model;
     }
     async serializeContents() {

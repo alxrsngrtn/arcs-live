@@ -12,6 +12,7 @@ import { MockSlotComposer } from '../../runtime/testing/mock-slot-composer.js';
 import { PlanningTestHelper } from '../testing/planning-test-helper.js';
 import { PlanningModalityHandler } from '../planning-modality-handler.js';
 import { SuggestionComposer } from '../suggestion-composer.js';
+import { ConCap } from '../../testing/test-util.js';
 class TestSuggestionComposer extends SuggestionComposer {
     get suggestConsumers() {
         return this._suggestConsumers;
@@ -26,7 +27,7 @@ describe('suggestion composer', () => {
             manifestFilename: './src/runtime/tests/artifacts/suggestions/Cake.recipes',
             slotComposer
         });
-        const suggestionComposer = new TestSuggestionComposer(helper.arc, slotComposer);
+        const suggestionComposer = ConCap.silence(() => new TestSuggestionComposer(helper.arc, slotComposer));
         await suggestionComposer.setSuggestions(helper.suggestions);
         assert.lengthOf(helper.suggestions, 1);
         assert.isEmpty(suggestionComposer.suggestConsumers);
@@ -58,7 +59,7 @@ describe('suggestion composer', () => {
             manifestFilename: './src/runtime/tests/artifacts/suggestions/Cakes.recipes',
             slotComposer
         });
-        const suggestionComposer = new TestSuggestionComposer(helper.arc, slotComposer);
+        const suggestionComposer = ConCap.silence(() => new TestSuggestionComposer(helper.arc, slotComposer));
         await suggestionComposer.setSuggestions(helper.suggestions);
         assert.lengthOf(helper.suggestions, 1);
         assert.isEmpty(suggestionComposer.suggestConsumers);

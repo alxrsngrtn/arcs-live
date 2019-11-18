@@ -63,7 +63,9 @@ export class SlotComposer {
         else if (contexts.length === 1) {
             return contexts[0].container;
         }
-        console.warn(`Ambiguous containers for '${name}'`);
+        else {
+            console.warn(`Ambiguous containers for '${name}'`);
+        }
         return undefined;
     }
     findContextsByName(name) {

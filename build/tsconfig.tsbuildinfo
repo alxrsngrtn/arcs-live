@@ -366,7 +366,7 @@
         "signature": "3309ecbd50ef76633d39a67db2576ed36d800c60eb7b7536d949bc9586288490"
       },
       "../src/runtime/slot-composer.ts": {
-        "version": "9642bf0a166d824818f8066a492c874bf4b6cda6cbd653ff8b05cf111c511d52",
+        "version": "9b06c335f14d783a47db09a008508eef8d7712c1277c2fa87de0ff4943822758",
         "signature": "2cbb7b40f60602ed3699823aa26e2f5915221dcf6b559d77444fd2c6db36b590"
       },
       "../src/runtime/ui-slot-composer.ts": {
@@ -634,8 +634,8 @@
         "signature": "6bdc15e464571d6e0f3b775c9b852bf01b99ce8d1bcdf7b6d6abf078ddd1bbc3"
       },
       "../src/runtime/storage/synthetic-storage.ts": {
-        "version": "61e53c22fb11c0a5f9fa11b76f63cc194c03cdcce7576b55596422724effc88c",
-        "signature": "83e3fc4d3ee14cef72c5db6b9ef76261c71021b98ffd01b8914c8ba39696fac9"
+        "version": "61b1bfad318ee954d2bb266ef919aa39c6a16bb766615f76bdda55501dce6480",
+        "signature": "8efe43f57d3d3cc19ece47ead7396b98d77983104f7ccd6521c8ffe2af904f85"
       },
       "../src/runtime/mutex.ts": {
         "version": "94deca042e1f398b75d078f763212d8ff7415d8388582a7d505e5e3d6119a6e5",
@@ -878,8 +878,8 @@
         "signature": "8f56eed4f4ddb93e7aa4bab322a1019e15622cb386aebf6e874bdd9e63c01745"
       },
       "../src/testing/test-util.ts": {
-        "version": "9c39a2330c4c2d55ebac73c63b7645ad929fb80fda7e053508aad4097c8eac83",
-        "signature": "5f7cc22c4c42e5fc03302bc0c46e9b9db053c740f3861819033659b63b605a38"
+        "version": "0a5cb5828fccf60983c24035c1afa4f084218d4cf44031b58bdfd97ff9afc5e5",
+        "signature": "56788d85f1d6a49165758617685bf59a81109e1fb95ea45fe032b6798bcc78f5"
       },
       "../src/dataflow/analysis/tests/analysis-test.ts": {
         "version": "d234a7eff720c9c095c3d5f1e51d4ea74a6af3a78e05bca033c209b873603f59",
@@ -1234,7 +1234,7 @@
         "signature": "444e035e90bcf3d2dd3e382ec6607231b60e5ba57008a9beb49025e1af162b45"
       },
       "../src/runtime/storage/pouchdb/pouch-db-singleton.ts": {
-        "version": "341d7b61586dc7860270c5c59b7081c35412b4f88828954d50dcae91593022fc",
+        "version": "57c7a495ebdb6f93897a01d15d9f63fc2ac00a2aebcbec6a646434e6fd64b884",
         "signature": "8bec3111fc1bc26e8f1e646eb101f12493b74f09ba62cfbadbf81151f8b49e9d"
       },
       "../src/runtime/storage/pouchdb/pouch-db-storage.ts": {
@@ -1362,7 +1362,7 @@
         "signature": "70ec31185ba202997da2613e9400fff44ef0abf3c22f4794f67d658fe0c909b2"
       },
       "../src/planning/tests/planner-test.ts": {
-        "version": "c3bc6dcddaf9207a8278e252b1edafff93b48123e33c37d61b9f97b773a1c7d8",
+        "version": "0c36db568242bacf9a15b1dc8b35f9207616a6b96c8945f6c0d05531bc3ec159",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/testing/manifest-integration-test-setup.ts": {
@@ -1386,7 +1386,7 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/planning/tests/suggestion-composer-test.ts": {
-        "version": "c46f0d560dcebcb18e7ba5d8f8f72fc5936461380fa0c7836209e71ae4733b80",
+        "version": "3c48140f9a2b61e6c1c4bd27e73bf6ff44fc3f3b3dd41d2f10bda35493bddeda",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/platform/assert-node.ts": {
@@ -2453,11 +2453,11 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/description-test.ts": {
-        "version": "63d80b79c4e8411a0580b9a7162523de949bef4b0ad7724017a4d48cf770836b",
+        "version": "95583f1c9115b524ca122eb1ada838edd61074f4f0227f55572e8c824eaae32c",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/entity-test.ts": {
-        "version": "d478300f11fd5a5441fed53ebe0521d7e0fabc2ead0f33bc3f84367766de0cc5",
+        "version": "c427b4d8a08b0612e5ea20da726f48835fca4c4878f178f2b2d2f4102902f714",
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
       },
       "../src/runtime/tests/handle-test.ts": {
@@ -2485,7 +2485,7 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/manifest-test.ts": {
-        "version": "68c9685d745c197fae23acd324938bde4edef9d2799da8d54a67ddc8e579b51f",
+        "version": "7669123169f601490aa02f3d395d7a05934647707e6310319c5a6360ef9620fe",
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/multiplexer-test.ts": {
@@ -2557,7 +2557,7 @@
         "signature": "6a3bebdf89109260ae7b3d38f08c3d8ac7ab7ad75d66020edd972cfe4c147403"
       },
       "../src/runtime/tests/synthetic-storage-test.ts": {
-        "version": "a81499e1f84acdb9218f57b5ca52219012a43f2d35013656bc9008be842b8259",
+        "version": "62586ebdfd79cc787199bb45f4842f904d860316443940145202074e6c1b1f96",
         "signature": "8bc1d39a3b8ec61064f9969316a088e314895e7ffd094468dcc0b238f33cb4a6"
       },
       "../src/runtime/tests/test-environment-test.ts": {
@@ -5912,6 +5912,7 @@
         "../src/planning/headless-suggest-dom-consumer.ts",
         "../src/planning/planning-modality-handler.ts",
         "../src/planning/suggestion-composer.ts",
+        "../src/testing/test-util.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.2/util.d.ts"
       ],
@@ -7849,6 +7850,7 @@
         "../src/runtime/type.ts",
         "../src/runtime/id.ts",
         "../src/runtime/testing/handle-for-test.ts",
+        "../src/testing/test-util.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.2/util.d.ts"
       ],
@@ -7860,6 +7862,7 @@
         "../src/runtime/schema.ts",
         "../src/runtime/type.ts",
         "../src/runtime/symbols.ts",
+        "../src/testing/test-util.ts",
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.2/util.d.ts"
       ],

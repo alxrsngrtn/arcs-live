@@ -47,10 +47,10 @@ export declare class SyntheticStorage extends StorageBase {
 declare class SyntheticCollection extends StorageProviderBase implements CollectionStorageProvider {
     private readonly targetStore;
     private readonly storageFactory;
-    private readonly initialized;
     private model;
     backingStore: any;
-    constructor(type: Type, id: string, key: string, targetStore: SingletonStorageProvider, storageFactory: StorageProviderFactory);
+    static create(type: Type, id: string, key: string, targetStore: SingletonStorageProvider, storageFactory: StorageProviderFactory): Promise<SyntheticCollection>;
+    private constructor();
     private process;
     toList(): Promise<ModelValue[]>;
     serializeContents(): Promise<{

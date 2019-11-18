@@ -1,5 +1,12 @@
-commit db180b9ea1322a2919244d22a098ccb34e7c397c
+commit 313374b7ec08989600b22c91b9fbc86a6d0ae794
 Author: mykmartin <34528845+mykmartin@users.noreply.github.com>
-Date:   Mon Nov 18 11:06:26 2019 +1100
+Date:   Mon Nov 18 13:57:00 2019 +1100
 
-    Deliberately remove deliberately broken test (#4084)
+    ConCap: test tutility to capture or silence console logging. (#4086)
+    
+    Some tests result in console output as a normal result of the test case
+    (usually due to error logging). This tends to obfuscate the output of
+    the test execution, and sometimes hides genuine problems because we end
+    up ignoring them amidst the noise. The ConCap class provides a simple
+    mechanism for disabling console output completely, or capturing it to
+    verify that specific messages were logged.
