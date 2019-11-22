@@ -1,0 +1,264 @@
+/**
+ * @license
+ * Copyright (c) 2018 Google Inc. All rights reserved.
+ * This code may only be used under the BSD style license found at
+ * http://polymer.github.io/LICENSE.txt
+ * Code distributed by Google as part of this project is also
+ * subject to an additional IP rights grant found at
+ * http://polymer.github.io/PATENTS.txt
+ */
+import { assert } from '../platform/assert-web.js';
+import { Description } from './description.js';
+import { Manifest } from './manifest.js';
+import { Arc } from './arc.js';
+import { RuntimeCacheService } from './runtime-cache.js';
+import { IdGenerator } from './id.js';
+import { UiSlotComposer } from './ui-slot-composer.js';
+import { FakeSlotComposer } from './testing/fake-slot-composer.js';
+import { VolatileMemory } from './storageNG/drivers/volatile.js';
+import { RecipeResolver } from './recipe/recipe-resolver.js';
+import { Loader } from '../platform/loader.js';
+import { pecIndustry } from '../platform/pec-industry.js';
+import { logsFactory } from '../platform/logs-factory.js';
+import { devtoolsArcInspectorFactory } from '../devtools-connector/devtools-arc-inspector.js';
+const { warn } = logsFactory('Runtime', 'orange');
+let runtime = null;
+// To start with, this class will simply hide the runtime classes that are
+// currently imported by ArcsLib.js. Once that refactoring is done, we can
+// think about what the api should actually look like.
+export class Runtime {
+    constructor(loader, composerClass, context, pecFactory) {
+        this.arcById = new Map();
+        this.cacheService = new RuntimeCacheService();
+        this.loader = loader;
+        this.pecFactory = pecFactory;
+        this.composerClass = composerClass;
+        this.context = context || new Manifest({ id: 'manifest:default' });
+        this.ramDiskMemory = new VolatileMemory();
+        runtime = this;
+        // user information. One persona per runtime for now.
+    }
+    /**
+     * `Runtime.getRuntime()` returns the most recently constructed Runtime object
+     * (or creates one if necessary). Therefore, the most recently created Runtime
+     * object represents the default runtime environemnt.
+     * Systems can use `Runtime.getRuntime()` to access this environment instead of
+     * plumbing `runtime` arguments through numerous functions.
+     * Some static methods on this class automatically use the default environment.
+     */
+    static getRuntime() {
+        if (!runtime) {
+            runtime = new Runtime();
+        }
+        return runtime;
+    }
+    static clearRuntimeForTesting() {
+        if (runtime) {
+            runtime.destroy();
+            runtime = null;
+        }
+    }
+    static newForNodeTesting(context) {
+        return new Runtime(new Loader(), FakeSlotComposer, context);
+    }
+    /**
+     * Call `init` to establish a default Runtime environment (capturing the return value is optional).
+     * Systems can use `Runtime.getRuntime()` to access this environment instead of plumbing `runtime`
+     * arguments through numerous functions.
+     * Some static methods on this class automatically use the default environment.
+     */
+    static async init(root, urls, manifest) {
+        const map = { ...Runtime.mapFromRootPath(root), ...urls };
+        const loader = new Loader(map);
+        const pecFactory = pecIndustry(loader);
+        // TODO(sjmiles): UiSlotComposer type shenanigans are temporary pending complete replacement
+        // of SlotComposer by UiSlotComposer. Also it's weird that `new Runtime(..., UiSlotComposer, ...)`
+        // doesn't bother tslint at all when done in other modules.
+        if (typeof manifest === 'string') {
+            manifest = await Manifest.parse(manifest, { ...Runtime.initManifestParseOptions(), loader });
+        }
+        return new Runtime(loader, UiSlotComposer, manifest, pecFactory);
+    }
+    static mapFromRootPath(root) {
+        // TODO(sjmiles): this is a commonly-used map, but it's not generic enough to live here.
+        // Shells that use this default should be provide it to `init` themselves.
+        return {
+            // important: path to `worker.js`
+            'https://$build/': `${root}/shells/lib/build/`,
+            // these are optional (?)
+            'https://$arcs/': `${root}/`,
+            'https://$particles/': {
+                root,
+                path: '/particles/',
+                buildDir: '/bazel-bin',
+                buildOutputRegex: /\.wasm$/.source
+            }
+        };
+    }
+    getCacheService() {
+        return this.cacheService;
+    }
+    getRamDiskMemory() {
+        return this.ramDiskMemory;
+    }
+    destroy() {
+    }
+    /**
+     * Given an arc name, return either:
+     * (1) the already running arc
+     * (2) a deserialized arc (TODO: needs implementation)
+     * (3) a newly created arc
+     */
+    runArc(name, storageKeyPrefix, options) {
+        if (!this.arcById.has(name)) {
+            // TODO: Support deserializing serialized arcs.
+            this.arcById.set(name, this.newArc(name, storageKeyPrefix, options));
+        }
+        return this.arcById.get(name);
+    }
+    // TODO(shans): Clean up once old storage is removed.
+    // Note that this incorrectly assumes every storage key can be of the form `prefix` + `arcId`.
+    // Should ids be provided to the Arc constructor, or should they be constructed by the Arc?
+    // How best to provide default storage to an arc given whatever we decide?
+    newArc(name, storageKeyPrefix, options) {
+        const { loader, context } = this;
+        const id = IdGenerator.newSession().newArcId(name);
+        const slotComposer = this.composerClass ? new this.composerClass() : null;
+        const storageKey = (typeof storageKeyPrefix === 'string')
+            ? `${storageKeyPrefix}${id.toString()}` : storageKeyPrefix(id);
+        return new Arc({ id, storageKey, loader, slotComposer, context, ...options });
+    }
+    stop(name) {
+        assert(this.arcById.has(name), `Cannot stop nonexistent arc ${name}`);
+        this.arcById.get(name).dispose();
+        this.arcById.delete(name);
+    }
+    findArcByParticleId(particleId) {
+        return [...this.arcById.values()].find(arc => !!arc.activeRecipe.findParticle(particleId));
+    }
+    // TODO: This is a temporary method to allow sharing stores with other Arcs.
+    registerStore(store, tags) {
+        if (!this.context.findStoreById(store.id) && tags.includes('shared')) {
+            this.context['_addStore'](store, tags);
+        }
+    }
+    // Temporary method to allow sharing stores with other Arcs.
+    unregisterStore(storeId, tags) {
+        // #shared tag indicates that a store was made available to all arcs.
+        if (!tags.includes('shared')) {
+            return;
+        }
+        const index = this.context.stores.findIndex(store => store.id === storeId);
+        if (index >= 0) {
+            const store = this.context.stores[index];
+            this.context.storeTags.delete(store);
+            this.context.stores.splice(index, 1);
+        }
+    }
+    /**
+     * Given an arc, returns it's description as a string.
+     */
+    static async getArcDescription(arc) {
+        // Verify that it's one of my arcs, and make this non-static, once I have
+        // Runtime objects in the calling code.
+        return (await Description.create(arc)).getArcDescription();
+    }
+    /**
+     * Parse a textual manifest and return a Manifest object. See the Manifest
+     * class for the options accepted.
+     */
+    static async parseManifest(content, options) {
+        return Manifest.parse(content, options);
+    }
+    /**
+     * Load and parse a manifest from a resource (not strictly a file) and return
+     * a Manifest object. The loader determines the semantics of the fileName. See
+     * the Manifest class for details.
+     */
+    static async loadManifest(fileName, loader, options) {
+        return Manifest.load(fileName, loader, options);
+    }
+    // TODO(sjmiles): there is redundancy vs `parse/loadManifest` above, but
+    // this is temporary until we polish the Utils->Runtime integration.
+    // TODO(sjmiles): These methods represent boilerplate factored out of
+    // various shells.These needs could be filled other ways or represented
+    // by other modules. Suggestions welcome.
+    async parse(content, options) {
+        const { loader } = this;
+        const opts = { ...Runtime.initManifestParseOptions(), loader, ...options };
+        return Manifest.parse(content, opts);
+    }
+    static initManifestParseOptions() {
+        // TODO(sjmiles): this method of generating a manifest id is ad-hoc,
+        // maybe should be using one of the id generators, or even better
+        // we could eliminate it if the Manifest object takes care of this.
+        const id = `in-memory-${Math.floor((Math.random() + 1) * 1e6)}.manifest`;
+        // TODO(sjmiles): this is a virtual manifest, the fileName is invented
+        return { id, fileName: `./${id}` };
+    }
+    async parseFile(path, options) {
+        const content = await this.loader.loadResource(path);
+        const opts = { id: path, fileName: path, loader: this.loader, ...options };
+        return this.parse(content, opts);
+    }
+    async resolveRecipe(arc, recipe) {
+        if (this.normalize(recipe)) {
+            if (recipe.isResolved()) {
+                return recipe;
+            }
+            const resolver = new RecipeResolver(arc);
+            const plan = await resolver.resolve(recipe);
+            if (plan && plan.isResolved()) {
+                return plan;
+            }
+            warn('failed to resolve:\n', (plan || recipe).toString({ showUnresolved: true }));
+        }
+        return null;
+    }
+    normalize(recipe) {
+        if (Runtime.isNormalized(recipe)) {
+            return true;
+        }
+        const errors = new Map();
+        if (recipe.normalize({ errors })) {
+            return true;
+        }
+        warn('failed to normalize:\n', errors, recipe.toString());
+        return false;
+    }
+    static isNormalized(recipe) {
+        return Object.isFrozen(recipe);
+    }
+    // TODO(sjmiles): redundant vs. newArc, but has some impedance mismatch
+    // strategy is to merge first, unify second
+    async spawnArc({ id, serialization, context, composer, storage, portFactories }) {
+        const params = {
+            id: IdGenerator.newSession().newArcId(id),
+            fileName: './serialized.manifest',
+            serialization,
+            context,
+            storageKey: storage || 'volatile',
+            slotComposer: composer,
+            pecFactories: [this.pecFactory, ...(portFactories || [])],
+            loader: this.loader,
+            // TODO(sjmiles): maybe doesn't belong here, but empirically it's
+            // wanted in (almost?) all Arc instantiations
+            inspectorFactory: devtoolsArcInspectorFactory
+        };
+        return serialization ? Arc.deserialize(params) : new Arc(params);
+    }
+    // static interface for the default runtime environment
+    static async parse(content, options) {
+        return this.getRuntime().parse(content, options);
+    }
+    static async parseFile(path, options) {
+        return this.getRuntime().parseFile(path, options);
+    }
+    static async resolveRecipe(arc, recipe) {
+        return this.getRuntime().resolveRecipe(arc, recipe);
+    }
+    static async spawnArc(args) {
+        return this.getRuntime().spawnArc(args);
+    }
+}
+//# sourceMappingURL=runtime.js.map

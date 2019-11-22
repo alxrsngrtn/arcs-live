@@ -1,9 +1,13 @@
-commit 95fad3ce6cc2fda8ecb91fb7552512fff852f5a5
-Author: Walter Korman <wkorman@chromium.org>
-Date:   Thu Nov 21 23:39:20 2019 -0800
+commit c49599c11b3c454b4234f674df93a0815559e8ca
+Author: Alex Rosengarten <alxr@google.com>
+Date:   Fri Nov 22 12:12:57 2019 -0800
 
-    Ignore result of final move. (#4127)
+    Fix deploy script -- build/ folder (#4130)
     
-    * Ignore result of final move.
+    * explicitly mv the gitignore file
     
-    * explictily move the gitignore file from deployment
+    * Adding a sigh build step to the deploy script
+    
+    * Re-organizing build file
+    
+    putting like steps next to each other.
