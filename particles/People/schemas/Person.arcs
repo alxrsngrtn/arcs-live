@@ -1,0 +1,5 @@
+schema Person
+  id: Text
+  name: Text
+  occasion: Text
+  date: Text

@@ -1,0 +1,2 @@
+schema Text
+  text: Text

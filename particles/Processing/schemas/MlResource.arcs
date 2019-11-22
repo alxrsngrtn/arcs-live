@@ -1,0 +1,14 @@
+schema MlResource
+  ref: Number
+
+schema TfTensor
+  ref: Number
+
+schema TfModel
+  ref: Number
+
+schema Shape
+  dim: Number
+
+schema ResizeOptions
+  alignCorners: Boolean
