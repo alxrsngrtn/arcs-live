@@ -1,5 +1,5 @@
-commit 48af63ac6bdb27a09cf0d2298759b1da4cc7a28b
-Author: Walter Korman <wkorman@chromium.org>
-Date:   Thu Nov 21 19:29:30 2019 -0800
+commit cc4cdcc86f62d4953d3f585a8d0400be2f3183aa
+Author: Joshua Pratt <jp10010101010000@gmail.com>
+Date:   Fri Nov 22 15:03:39 2019 +1100
 
-    Move dotfiles to root during arcs-live update. (#4124)
+    Make it easy to tell that wdio fails if the ADLS does not start (#4116)
