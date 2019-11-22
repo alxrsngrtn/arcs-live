@@ -1,5 +1,5 @@
-commit 34c70fe11b281c2b8b03448fc84d70ac55edddf9
-Author: Maria Mandlis <mmandlis@chromium.org>
-Date:   Thu Nov 21 18:28:41 2019 -0800
+commit 48af63ac6bdb27a09cf0d2298759b1da4cc7a28b
+Author: Walter Korman <wkorman@chromium.org>
+Date:   Thu Nov 21 19:29:30 2019 -0800
 
-    refactor Runtime to not set context dynamically. (#4112)
+    Move dotfiles to root during arcs-live update. (#4124)
