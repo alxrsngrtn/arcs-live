@@ -1,15 +1,5 @@
-commit 92f4a89ec5eb18c53f2299d9bfe0a5f50b41a66f
-Author: Alex Rosengarten <alxr@google.com>
-Date:   Thu Nov 21 18:20:16 2019 -0800
+commit 34c70fe11b281c2b8b03448fc84d70ac55edddf9
+Author: Maria Mandlis <mmandlis@chromium.org>
+Date:   Thu Nov 21 18:28:41 2019 -0800
 
-    Fix: arcs-live deployment (#4121)
-    
-    * Created deploy script + artifacts
-    
-    * Added deploy step to travis stages
-    
-    * made tools/deploy executable
-    
-    * targeting cron on master
-    
-    * fix: sp
+    refactor Runtime to not set context dynamically. (#4112)
