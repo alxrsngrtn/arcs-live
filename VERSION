@@ -1,5 +1,9 @@
-commit cc4cdcc86f62d4953d3f585a8d0400be2f3183aa
-Author: Joshua Pratt <jp10010101010000@gmail.com>
-Date:   Fri Nov 22 15:03:39 2019 +1100
+commit 95fad3ce6cc2fda8ecb91fb7552512fff852f5a5
+Author: Walter Korman <wkorman@chromium.org>
+Date:   Thu Nov 21 23:39:20 2019 -0800
 
-    Make it easy to tell that wdio fails if the ADLS does not start (#4116)
+    Ignore result of final move. (#4127)
+    
+    * Ignore result of final move.
+    
+    * explictily move the gitignore file from deployment
