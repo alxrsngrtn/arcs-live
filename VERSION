@@ -1,9 +1,0 @@
-commit 95fad3ce6cc2fda8ecb91fb7552512fff852f5a5
-Author: Walter Korman <wkorman@chromium.org>
-Date:   Thu Nov 21 23:39:20 2019 -0800
-
-    Ignore result of final move. (#4127)
-    
-    * Ignore result of final move.
-    
-    * explictily move the gitignore file from deployment
