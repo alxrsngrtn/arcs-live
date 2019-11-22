@@ -44,16 +44,11 @@ http_archive(
 
 # Kotlin
 
-RULES_KOTLIN_VERSION = "legacy-modded-1_0_0-01"
-
-RULES_KOTLIN_SHA = "b7984b28e0a1e010e225a3ecdf0f49588b7b9365640af783bd01256585cbb3ae"
-
-http_archive(
+load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
+git_repository(
     name = "io_bazel_rules_kotlin",
-    sha256 = RULES_KOTLIN_SHA,
-    strip_prefix = "rules_kotlin-%s" % RULES_KOTLIN_VERSION,
-    type = "zip",
-    urls = ["https://github.com/cgruber/rules_kotlin/archive/%s.zip" % RULES_KOTLIN_VERSION],
+    remote = "https://github.com/cromwellian/rules_kotlin.git",
+    commit = "e1a4f61521b9bba4b0584ef55f5cb621093d705d"
 )
 
 load("@io_bazel_rules_kotlin//kotlin:kotlin.bzl", "kotlin_repositories")
@@ -72,6 +67,17 @@ KOTLINC_RELEASE = {
 kotlin_repositories(compiler_release = KOTLINC_RELEASE)
 
 register_toolchains("//third_party/java/arcs/build_defs/internal:kotlin_toolchain")
+
+# Robolectric
+
+http_archive(
+    name = "robolectric",
+    urls = ["https://github.com/robolectric/robolectric-bazel/archive/4.1.tar.gz"],
+    sha256 = "2ee850ca521288db72b0dedb9ecbda55b64d11c470435a882f8daf615091253d",
+    strip_prefix = "robolectric-bazel-4.1",
+)
+load("@robolectric//bazel:robolectric.bzl", "robolectric_repositories")
+robolectric_repositories()
 
 # Java deps from Maven.
 
@@ -97,6 +103,10 @@ KOTLINX_COROUTINES_VERSION = "1.3.2"
 maven_install(
     artifacts = [
         "androidx.webkit:webkit:1.1.0-rc01",
+        "androidx.test:core:1.0.0",
+        "androidx.test.ext:junit:1.0.0",
+        "androidx.test:runner:1.1.0",
+        "androidx.test:rules:1.1.0",
         "com.google.flogger:flogger:0.4",
         "com.google.flogger:flogger-system-backend:0.4",
         "com.google.dagger:dagger:2.23.1",
@@ -114,6 +124,7 @@ maven_install(
         "org.jetbrains.kotlinx:atomicfu-js:" + KOTLINX_ATOMICFU_VERSION,
         "org.json:json:20141113",
         "org.mockito:mockito-core:2.23.0",
+        "org.robolectric:robolectric:4.1",
     ],
     fetch_sources = True,
     repositories = [

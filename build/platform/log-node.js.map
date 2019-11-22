@@ -1,1 +1,0 @@
-{"version":3,"file":"log-node.js","sourceRoot":"","sources":["../../src/platform/log-node.ts"],"names":[],"mappings":"AAAA;;;;;;;;GAQG;AAEH,4FAA4F;AAC5F,MAAM,CAAC,MAAM,UAAU,GAAG,CAAC,QAAQ,EAAE,KAAK,EAAE,GAAG,GAAG,KAAK,EAAE,EAAE;IACzD,OAAO,OAAO,CAAC,GAAG,CAAC,CAAC,IAAI,CAAC,OAAO,EAAE,IAAI,QAAQ,GAAG,CAAC,CAAC;AACrD,CAAC,CAAC"}

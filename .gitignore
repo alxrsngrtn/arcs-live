@@ -1,4 +1,5 @@
-**/node_modules/**/*.exe
+**/node_modules
+**/dist
 **/*.swp
 **/*.swo
 **/.DS_Store
@@ -16,12 +17,15 @@ flow-assertion-railroad.html
 **/*.code-workspace
 shell/build
 shell/test/errorShots
+shells/env/build
 shells/test/errorShots
+devtools/deps
 enclave/bazel-*
 enclave/sdk
 enclave/toolchains
 enclave/host/storage/db.img
 enclave/host/storage/key
+build
 src/gen
 coverage
 .vscode
